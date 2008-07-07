@@ -1,18 +1,21 @@
-/////////////////////////////////////////////////////////////////
-//*************************************************************//
-//*            Package d'outils de création graphique         *//
-//*************************************************************//
-/////////////////////////////////////////////////////////////////
+/**
+* Display graphishapes
+* 
+* @author Richard Rodney
+* @version 0.2
+*/
+
 package railk.as3.display {
 	
-	//___________________________________________________________________________ import flash
+	//_________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
 	import flash.display.Graphics;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
+	import flash.geom.Point;
 	
-	//___________________________________________________________________________ import railk
+	//_________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.DynamicRegistration;
 	
 	
@@ -38,6 +41,7 @@ package railk.as3.display {
 			var matrix:Matrix = new Matrix();
 			matrix.createGradientBox(W, H, rotation, 0, 0);
 
+			this.graphics.clear();
 			this.graphics.beginGradientFill(type, colors, alphas, ratios, matrix, "pad","RGB"); 
 			this.graphics.lineTo(W, 0);
 			this.graphics.lineTo(W, H);
@@ -61,11 +65,35 @@ package railk.as3.display {
 		* @param	H
 		* @return
 		*/
-		public function rectangle (color:uint, X:int, Y:int, W:int, H:int):void{
+		public function rectangle (color:uint, X:int, Y:int, W:int, H:int):void
+		{
+			this.graphics.clear();
 			this.graphics.beginFill(color);
 			this.graphics.drawRect(X,Y,W,H);
 			this.graphics.endFill();
 		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	TRIANGLE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * 
+		 * @param	A  point
+		 * @param	B  point
+		 * @param	C  point
+		 * @param	color
+		 */
+		public function triangle (A:Point, B:Point, C:Point, color:uint):void
+		{
+			this.graphics.clear();
+			this.graphics.beginFill(color);
+			this.graphics.moveTo( A.x, A.y );
+			this.graphics.lineTo( B.x, B.y );
+			this.graphics.lineTo( C.x, C.y );
+			this.graphics.endFill();
+		}
+		
 		
 		
 		
@@ -83,12 +111,13 @@ package railk.as3.display {
 		* @param	cornerH
 		* @return
 		*/
-		public function roundRectangle (color:uint, X:int, Y:int, W:int, H:int, cornerW:int, cornerH:int):void{
+		public function roundRectangle (color:uint, X:int, Y:int, W:int, H:int, cornerW:int, cornerH:int):void
+		{
+			this.graphics.clear();
 			this.graphics.beginFill(color);
 			this.graphics.drawRoundRect(X,Y,W,H,cornerW,cornerH);
 			this.graphics.endFill();
 		}
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -103,9 +132,10 @@ package railk.as3.display {
 		* @return
 		*/
 		public function cercle (color:uint, X:int, Y:int, radius:Number, alpha:Number=-1):void {
-			if(alpha == -1){ alpha=1; }
+			if (alpha == -1){ alpha = 1; }
+			this.graphics.clear();
 			this.graphics.beginFill(color,alpha);
-			this.graphics.drawCircle(X,Y,radius);
+			this.graphics.drawCircle(radius,radius,radius);
 			this.graphics.endFill();
 		}
 		
@@ -131,6 +161,8 @@ package railk.as3.display {
 			var rad:Number = Math.PI/180;
 			var segm:Number = (endAngle-startAngle)/segments;
 			
+			//--erase existing
+			this.graphics.clear();
 			//camembert évolutif
 			this.graphics.beginFill(color,1);
 			this.graphics.moveTo(X,Y);
@@ -161,8 +193,9 @@ package railk.as3.display {
 		* @param	steps
 		*/
 		public function arcCircle(epaisseur:int, color:uint, centerX:int, centerY:int, radius:int, startAngle:int, arcAngle:int, precision:int):void {
-			//--
+			//--erase existing
 			this.graphics.clear();
+			//
 			startAngle = startAngle/360;
 			arcAngle = arcAngle/360;
 			//--
@@ -321,8 +354,8 @@ package railk.as3.display {
 		* @param	color
 		* @param	W
 		* @param	H
-		* @param	espaceW
-		* @param	espaceH
+		* @param	espaceW  minimum = 1
+		* @param	espaceH  minimum = 1
 		* @param	pair
 		*/
 		public function pixel( color:uint, W:int, H:int, espaceW:int, espaceH:int, pair:Boolean=false ):void { 	
@@ -331,6 +364,7 @@ package railk.as3.display {
 			var X:int = 0;
 			var Y:int = 0;
 			var bmp:Bitmap = new Bitmap( new BitmapData( W, H, true, 0x00FFFFFF ) );
+			bmp.name = 'bmp';
 			
 			//pair
 			if (flagPair == 0){ X=0; if(!pair){ flagPair = 1; } }
@@ -360,6 +394,10 @@ package railk.as3.display {
 			}
 			
 			this.addChild( bmp );
+		}
+		
+		public function erasePixel():void { 
+			this.removeChild( this.getChildByName( 'bmp' ) );
 		}
 		
 		

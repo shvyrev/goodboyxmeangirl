@@ -13,8 +13,8 @@ package railk.as3.utils {
 
 	public dynamic class DynamicRegistration extends MovieClip{
 		
-		private var _a                      :Point;
-		private var _b                      :Point;
+		private var _a                       :Point;
+		private var _b                       :Point;
 		private var _x2                      :Number;
 		private var _y2                      :Number;
 		private var _scaleX2                 :Number;
@@ -50,7 +50,7 @@ package railk.as3.utils {
 			this._x2 = value;
 		}
 		public function get x2():Number {
-			return this._x2;
+			return this.getOrigin().x;
 		}
 
 		//Y
@@ -60,7 +60,7 @@ package railk.as3.utils {
 			this._y2 = value;
 		}
 		public function get y2():Number {
-			return this._y2;
+			return this.getOrigin().y;
 		}
 		
 		//scaleX
@@ -139,7 +139,7 @@ package railk.as3.utils {
 		//recuperation du centre du clip
 		private function getOrigin():Point{
 			_bounds = this.getBounds(this.parent);
-			return( new Point((_bounds.left+_bounds.right)/2,(_bounds.top+_bounds.bottom)/2) );
+			return( new Point((_bounds.left+_bounds.right)*.5,(_bounds.top+_bounds.bottom)*.5) );
 		}
 	}
 }
