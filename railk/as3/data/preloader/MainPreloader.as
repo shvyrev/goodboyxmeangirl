@@ -82,19 +82,19 @@ package railk.as3.data.preloader {
 				
 				loading = createLoading();
 				container.addChild( loading );
-				loading.x2 = container.width*.5;
-				loading.y2 = container.height*.5;
+				loading.x2 = Math.round(container.width*.5);
+				loading.y2 = Math.round(container.height*.5);
 				
 				masker = createMask();
 				container.addChild( masker );
-				masker.x2 = container.width*.5;
-				masker.y2 = container.height*.5;
+				masker.x2 = Math.round(container.width*.5);
+				masker.y2 = Math.round(container.height*.5);
 				loading.mask = masker;
 				
 				foreground = createForeground();
 				container.addChild( foreground );
-				foreground.x2 = container.width*.5;
-				foreground.y2 = container.height*.5;
+				foreground.x2 = Math.round(container.width*.5);
+				foreground.y2 = Math.round(container.height*.5);
 			
 			container.x2 = stage.stageWidth*.5;
 			container.y2 = stage.stageHeight*.5;	
@@ -188,8 +188,8 @@ package railk.as3.data.preloader {
 			switch( evt.type ) {
 				case Event.RESIZE :
 				case Event.ACTIVATE:
-					container.x2 = stage.stageWidth*.5;
-					container.y2 = stage.stageHeight*.5;
+					container.x2 = Math.round(stage.stageWidth*.5);
+					container.y2 = Math.round(stage.stageHeight*.5);
 					break;
 				
 				case ProgressEvent.PROGRESS :
