@@ -9,7 +9,7 @@
 package railk.as3.stage {
 	
 	
-	// _________________________________________________________________________________________ IMPORT FLASH
+	// ___________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.display.StageDisplayState;
@@ -18,17 +18,20 @@ package railk.as3.stage {
 	
 	public class FullScreenMode extends Sprite {
 		
+		//__________________________________________________________________________________________ VARIABLES
+		private static var _stage                                        :Stage;
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————		
-		public function FullScreenMode( button:Sprite, stage:Stage ):void {
+		public static function Activate( button:Sprite, stage:Stage ):void {
+			//--vars
+			_stage = stage;
 			
-			//si le player accepte le mode fullscreen le bouton devient visible et inversement
+			//--si le player accepte le mode fullscreen le bouton devient visible et inversement
 			button.visible = stage.hasOwnProperty("displayState");
 			
-			
-			//ajout des evenement au bouton
+			//--ajout des evenement au bouton
 			button.addEventListener( MouseEvent.CLICK, onClick ,false,0,true );
 			button.buttonMode = true;
 		}
@@ -37,15 +40,15 @@ package railk.as3.stage {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	                GESTION FULLSCREEN
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function onClick( evt:MouseEvent ):void{
+		private static function onClick( evt:MouseEvent ):void{
 			
-			if( stage.hasOwnProperty("displayState") )
+			if( _stage.hasOwnProperty("displayState") )
 			{
-				if( stage.displayState != StageDisplayState.FULL_SCREEN ){
-					stage.displayState = StageDisplayState.FULL_SCREEN;
+				if( _stage.displayState != StageDisplayState.FULL_SCREEN ){
+					_stage.displayState = StageDisplayState.FULL_SCREEN;
 				}	
 				else{
-					stage.displayState = StageDisplayState.NORMAL;
+					_stage.displayState = StageDisplayState.NORMAL;
 				}	
 			}
 			

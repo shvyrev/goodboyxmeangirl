@@ -26,14 +26,14 @@ package railk.as3.utils.link.linkItem {
 	
 	
 	
-	public class Link extends Sprite  {
+	public class Link extends DynamicRegistration  {
 		
-		//________________________________________________________________________________________ VARIABLES
-		private var linkContainer                              :DynamicRegistration;
-		private var nom                                        :String;
-		private var obj                                        :*;
-		private var content                                    :Object;
-		private var action                                     :Function;
+		//________________________________________________________________________________________ VARIABLES		
+		private var _name                                       :String;
+		private var _displayObject                              :*;
+		private var _content                                    :Object;
+		private var _onClick                                    :Function;
+		private var _type                                       :String;
 		
 		//___________________________________________________________________________________ VARIABLES ETATS
 		private var swfAdress                                  :Boolean;     
@@ -51,22 +51,20 @@ package railk.as3.utils.link.linkItem {
 		 * @param	onClick
 		 * @param	swfAdressEnable
 		 */
-		public function Link(  name:String, displayObject:*, displayObjectContent:Object,  onClick:Function=null, swfAdressEnable:Boolean=false ):void {
+		public function Link(  name:String, displayObject:*, content:Object, type:String, onClick:Function=null, swfAdressEnable:Boolean=false ):void {
 			
 			//--vars
-			nom = name;
-			obj = displayObject;
-			content = displayObjectContent;
-			action = onClick;
+			_name = name;
+			_displayObject = displayObject;
+			_content = content;
+			_onClick = onClick;
+			_type = type;
 			
 			//--swfadress ?
 			swfAdress = swfAdressEnable;
 				
 			//--Container
-			linkContainer = new DynamicRegistration();
-			addChild( linkContainer );
-			linkContainer.addChild( obj );
-			linkContainer.buttonMode = true;
+			_displayObject.buttonMode = true;
 
 			
 			//--setup
@@ -97,15 +95,31 @@ package railk.as3.utils.link.linkItem {
 		// 																				   GESTION LISTERNERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function initListeners():void {
-			linkContainer.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
-			linkContainer.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
-			linkContainer.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			if ( _type == 'mouse')
+			{
+				_displayObject.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
+				_displayObject.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
+			}
+			else if ( _type == 'roll')
+			{
+				_displayObject.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
+				_displayObject.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
+			}
+			_displayObject.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 		}
 		
 		public function delListeners():void {
-			linkContainer.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent );
-			linkContainer.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );
-			linkContainer.removeEventListener( MouseEvent.CLICK, manageEvent );
+			if ( _type == 'mouse')
+			{
+				_displayObject.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent );
+				_displayObject.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );
+			}
+			else if ( _type == 'roll')
+			{
+				_displayObject.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
+				_displayObject.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
+			}
+			_displayObject.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
 		
@@ -113,11 +127,11 @@ package railk.as3.utils.link.linkItem {
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function doAction():void {
-			if ( action != null ) { active = true; action("do", obj); }
+			if ( _onClick != null ) { active = true; _onClick("do", _displayObject); }
 		}
 		
 		public function undoAction():void {
-			if( action != null ){ active = false; action("undo", obj); }
+			if( _onClick != null ){ active = false; _onClick("undo", _displayObject); }
 		}
 		
 		public function isActive():Boolean {
@@ -125,20 +139,19 @@ package railk.as3.utils.link.linkItem {
 		}
 		
 		public override function get name():String {
-			return nom;
+			return _name;
 		}
 		
 		public function get object():*{
-			return obj;
+			return _displayObject;
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		      DESTROY
+		// 																				  		 DISPOSE LINK
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose() {
 			delListeners();
-			linkContainer = null;
 		}
 		
 		
@@ -152,49 +165,51 @@ package railk.as3.utils.link.linkItem {
 			
 			switch( evt.type ) {
 				case MouseEvent.MOUSE_OVER :
+				case MouseEvent.ROLL_OVER :
 					
 					//--swfadress
 					if ( swfAdress ) {
-						SWFAddress.setStatus(nom);
+						SWFAddress.setStatus(_name);
 					}
 					
-					for ( prop in content ) {
-						type = getType( content[prop].objet );
-						if( content[prop].colors != null ) {
+					for ( prop in _content ) {
+						type = getType( _content[prop].objet );
+						if( _content[prop].colors != null ) {
 							if ( type == "text" ) {
-								Tweener.addTween( content[prop].objet, { _text_color:content[prop].colors.hover, time:.2, transition:"linear" } );
+								Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.hover, time:.2, transition:"linear" } );
 							}
 							else if ( type == "sprite" ) {
-								Tweener.addTween( content[prop].objet, { _color:content[prop].colors.hover, time:.2, transition:"linear" } );	
+								Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.hover, time:.2, transition:"linear" } );	
 							}
 						}	
 						
-						if ( content[prop].action != null ) {
-							content[prop].action("hover", content[prop].objet);
+						if ( _content[prop].action != null ) {
+							_content[prop].action("hover", _content[prop].objet);
 						}
 					}
 					break;
 					
 				case MouseEvent.MOUSE_OUT :
+				case MouseEvent.ROLL_OUT :
 				
 					//--swfadress
 					if ( swfAdress ) {
 						SWFAddress.resetStatus();
 					}
 				
-					for ( prop in content ) {
-						type = getType( content[prop].objet );
-						if( content[prop].colors != null ) {
+					for ( prop in _content ) {
+						type = getType( _content[prop].objet );
+						if( _content[prop].colors != null ) {
 							if( type == "text" ){
-								Tweener.addTween( content[prop].objet, { _text_color:content[prop].colors.out, time:.2, transition:"linear" } );
+								Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.out, time:.2, transition:"linear" } );
 							}
 							else if ( type == "sprite" ) {
-								Tweener.addTween( content[prop].objet, { _color:content[prop].colors.out, time:.2, transition:"linear" } );	
+								Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.out, time:.2, transition:"linear" } );	
 							}
 						}
 						
-						if ( content[prop].action != null ) {
-							content[prop].action("out", content[prop].objet);
+						if ( _content[prop].action != null ) {
+							_content[prop].action("out", _content[prop].objet);
 						}
 					}	
 					break;
@@ -203,21 +218,21 @@ package railk.as3.utils.link.linkItem {
 					
 					//--swfadress && Action && State
 					if ( swfAdress ) {
-						SWFAddress.setValue(nom);
+						SWFAddress.setValue(_name);
 					}
 					else {
-						if (active) { active = false; if( action != null ){ action("undo", obj); } }
-						else{ active = true; if( action != null ){ action("do", obj); } }
+						if (active) { active = false; if( _onClick != null ){ _onClick("undo", _displayObject); } }
+						else{ active = true; if( _onClick != null ){ _onClick("do", _displayObject); } }
 					}	
 				
-					for ( prop in content ) {
-						type = getType( content[prop].objet );
-						if( content[prop].colors != null ) {
+					for ( prop in _content ) {
+						type = getType( _content[prop].objet );
+						if( _content[prop].colors != null ) {
 							if( type == "text" ){
-								Tweener.addTween( content[prop].objet, { _text_color:content[prop].colors.click, time:.2, transition:"linear" } );
+								Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.click, time:.2, transition:"linear" } );
 							}
 							else if ( type == "sprite" ) {
-								Tweener.addTween( content[prop].objet, { _color:content[prop].colors.click, time:.2, transition:"linear" } );	
+								Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.click, time:.2, transition:"linear" } );	
 							}
 						}	
 					}	
