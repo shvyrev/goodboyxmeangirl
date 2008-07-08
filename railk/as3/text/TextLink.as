@@ -1,0 +1,225 @@
+﻿/**
+* TextLink class to create textfield link
+* 
+* @author Richard Rodney
+* @version 0.1
+* 
+*/
+
+package railk.as3.text
+{
+	// ________________________________________________________________________________________ IMPORT FLASH
+	import flash.display.Sprite;
+	import flash.text.TextField;
+	import flash.text.TextFormat;
+	import flash.text.TextFieldAutoSize;
+	import flash.text.TextFieldType;
+	
+	// ________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.utils.DynamicRegistration;
+	
+	
+	
+	public class  TextLink extends DynamicRegistration
+	{
+		//________________________________________________________________________________________ CONSTANTES
+		public static const AUTOSIZE_LEFT                         :String = TextFieldAutoSize.LEFT;
+		public static const AUTOSIZE_RIGHT                        :String = TextFieldAutoSize.RIGHT;
+		public static const AUTOSIZE_CENTER                       :String = TextFieldAutoSize.CENTER;
+		
+		public static const DYNAMIC_TYPE                          :String = TextFieldType.DYNAMIC;
+		public static const INPUT_TYPE                            :String = TextFieldType.INPUT;
+		
+		//_________________________________________________________________________________________ VARIABLES
+		private var textLink                                      :Sprite;
+		private var format                                        :TextFormat;
+		private var texte                                         :TextField;
+		
+		//________________________________________________________________________________ VARIABLES TEXTLINK
+		private var _name                                         :String;
+		private var _type                                         :String;
+		private var _text                                         :String; 
+		private var _color                                        :uint;
+		private var _font                                         :String; 
+		private var _embedFonts                                   :String; 
+		private var _size                                         :String; 
+		private var _align                                        :String; 
+		private var _selectable                                   :Boolean; 
+		private var _width                                        :Number; 
+		private var _height                                       :Number; 
+		private var _autoSize                                     :Boolean; 
+		private var _autoSizeType                                 :String;
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  				 INIT
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFonts:String, size:String, align:String, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
+		{
+			//--vars
+			_name = name;
+			_type = type;
+			_text = text;
+			_color = color;
+			_font = font;
+			_embedFonts = embedFonts;
+			_size = size;
+			_align = align;
+			_selectable = selectable;
+			_width = width;
+			_height = height;
+			_autoSize = autoSize;
+			_autoSizeType = autoSizeType;
+			
+			//--textelink
+			textLink = new Sprite();
+			
+				format = new TextFormat();
+				format.color = color;
+				format.font =  font;
+				format.size = size;
+				format.align = align;
+			
+				texte = new TextField();
+				texte.name = name;
+				texte.text = text;
+				texte.type = type;
+				texte.embedFonts = embedFonts;
+				texte.selectable = selectable;
+				if ( autoSize )
+				{
+					texte.autoSize = autoSizeType;				
+				}
+				else
+				{
+					texte.width = width;
+					texte.height = height;
+				}
+				texte.setTextFormat( format );
+				texte.mouseEnabled = false;
+				textLink.addChild( texte );
+			
+			addChild( textLink );	
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  	    GETTER/SETTER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function get textfield():TextField { return texte; }
+		
+		public function get name():String { return _name; }
+		
+		public function set name(value:String):void 
+		{
+			texte.name = value;
+			_name = value;
+		}
+		
+		public function get type():String { return _type; }
+		
+		public function set type(value:String):void 
+		{
+			texte.type = value;
+			_type = value;
+		}
+		
+		public function get text():String { return _text; }
+		
+		public function set text(value:String):void 
+		{
+			texte.appendText('');
+			texte.text = value;
+			_text = value;
+		}
+		
+		public function get color():uint { return _color; }
+		
+		public function set color(value:uint):void 
+		{
+			format.color = value;
+			_color = value;
+		}
+		
+		public function get font():String { return _font; }
+		
+		public function set font(value:String):void 
+		{
+			format.font =  value;
+			_font = value;
+		}
+		
+		public function get embedFonts():String { return _embedFonts; }
+		
+		public function set embedFonts(value:String):void 
+		{
+			texte.embedFonts = value;
+			_embedFonts = value;
+		}
+		
+		public function get size():String { return _size; }
+		
+		public function set size(value:String):void 
+		{
+			format.size = value;
+			_size = value;
+		}
+		
+		public function get align():String { return _align; }
+		
+		public function set align(value:String):void 
+		{
+			format.align = value;
+			_align = value;
+		}
+		
+		public function get selectable():Boolean { return _selectable; }
+		
+		public function set selectable(value:Boolean):void 
+		{
+			texte.selectable = value;
+			_selectable = value;
+		}
+		
+		public function get width():Number { return _width; }
+		
+		public function set width(value:Number):void 
+		{
+			if (!_autoSize)
+			{
+				texte.width = value;
+				_width = value;
+			}	
+		}
+		
+		public function get height():Number { return _height; }
+		
+		public function set height(value:Number):void 
+		{
+			if (!_autoSize)
+			{
+				texte.height = value;
+				_height = value;
+			}
+		}
+		
+		public function get autoSize():Boolean { return _autoSize; }
+		
+		public function set autoSize(value:Boolean):void 
+		{
+			_autoSize = value;
+		}
+		
+		public function get autoSizeType():String { return _autoSizeType; }
+		
+		public function set autoSizeType(value:String):void 
+		{
+			if (_autoSize)
+			{
+				texte.autoSize = value;
+				_autoSizeType = value;
+			}
+			
+		}
+
+	}
+	
+}

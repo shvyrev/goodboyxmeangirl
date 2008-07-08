@@ -98,17 +98,18 @@ package railk.as3.utils.link {
 		 * @param	name                   nom du lien de type /.../.../...
 		 * @param	displayObject		   displayObject clickable
 		 * @param	displayObjectContent   Object de { nom:{ objet:dislplayObject , colors:{click:uint,out:uint,hover:uint}=null, action:Function(type="hover"|"out")=null } }
+		 * @param   type                   'mouse' | 'roll'
 		 * @param	onClick                fonction qui se declenche lors du clik function( ..., type=String("do"|"undo") )
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 */
-		public static function add( name:String, displayObject:*, displayObjectContent:Object, onClick:Function = null, swfAdressEnable:Boolean = false ):void {
+		public static function add( name:String, displayObject:*, displayObjectContent:Object, type:String='mouse', onClick:Function = null, swfAdressEnable:Boolean = false ):void {
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) { enable = true; }
 			else if( swfAdress && !swfAdressEnable ) { enable = false; }
 			else if( !swfAdress && swfAdressEnable ) { enable = false; }
 			else if( !swfAdress && !swfAdressEnable ) { enable = false; }
 			
-			link = new Link( name, displayObject, displayObjectContent, onClick, enable );
+			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable );
 			linkList.append( link );
 		}
 		
