@@ -11,7 +11,7 @@ package {
 	import flash.display.Sprite;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.preloader.mainPreloader;
+	import railk.as3.root.Current;
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
 	import railk.as3.stage.FullScreenMode;
@@ -31,10 +31,6 @@ package {
 		
 		// _______________________________________________________________________________________ CONSTANTES
 		private static var __PATH__            :String = "";
-		
-		// _______________________________________________________________________________ VARIABLES DE STAGE
-		private var f                            :FullScreenMode;
-		private var fBt                          :Sprite;
 
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -43,11 +39,11 @@ package {
 		public function main():void {
 			
 			//--flashVars
-			__PATH__ = mainPreloader.info.root.loaderInfo.parameters.path;
+			__PATH__ = Current.root.loaderInfo.parameters.path;
 			if ( __PATH__ == null ) __PATH__ = "";
 			
 			//--stage
-			StageManager.init( mainPreloader.info.stage );
+			StageManager.init( Current.stage );
 			StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );
@@ -55,7 +51,7 @@ package {
 			StageManager.GlobalVars.title = "Site Web Title";
 			
 			//--Mac Mouse Wheel
-			MacMouseWheel.setup( mainPreloader.info.stage );
+			MacMouseWheel.setup( Current.stage );
 			
 			//--Tweener
 			ColorShortcuts.init();
