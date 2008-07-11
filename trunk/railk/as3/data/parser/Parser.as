@@ -64,8 +64,8 @@ package railk.as3.data.parser {
 						result[name+"Att"] = getAttributes( child.children()[i] );
 					}
 					else if ( hasChildren == 0 ) {
-						name = String( child.children()[i].name() );
-						result[name] = getAttributes( child.children()[i] );
+						name = String( child.name() );
+						result[name] = child;
 					}
 				}
 				result["attributes"] = attributes;

@@ -97,5 +97,44 @@ package railk.as3.utils {
 			return tmpStr
 		}
 		
+		/**
+		 * 
+		 * @param	value
+		 * @return
+		 */
+		static public function numberToTime( value:Number ):String 
+		{
+			var result:String;
+			var minutes = Math.floor(value/ 60);
+			
+			if (displayHours) 
+			{
+				var hours = Math.floor(minutes / 60);
+			}
+			var seconds = Math.round(value - (minutes * 60));
+			
+			if (seconds < 10) 
+			{
+				seconds = "0" + seconds;
+			}
+			if (minutes < 10) 
+			{
+				minutes = "0" + minutes;
+			}
+			
+			if (displayHours) 
+			{
+				if (hours < 10) 
+				{
+					hours = "0" + hours;
+				}
+			}
+			
+			var result = hours + ":" + minutes + ":" + seconds;
+			
+			return result;
+		}
+
+		
 	}	
 }		
