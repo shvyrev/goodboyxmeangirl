@@ -37,7 +37,7 @@ package railk.as3.utils.link.linkItem {
 		
 		//___________________________________________________________________________________ VARIABLES ETATS
 		private var swfAdress                                  :Boolean;     
-		private var active                                     :Boolean = false;;
+		private var active                                     :Boolean = false;
 		
 		
 		

@@ -31,20 +31,21 @@ package railk.as3.utils.resize.resizeItem
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get name():String {
-			return _name;
+		public function get name():String { return _name; }
+		
+		public function get content():* { return _displayObject; }
+		
+		
+		public function get group():String { return _group; }
+		
+		public function set group( value:String ):void {
+			_group = value;
 		}
 		
-		public function get content():* {
-			return _displayObject;
-		}
+		public function get action():Function { return _action; }
 		
-		public function get group():String {
-			return _group;
-		}
-		
-		public function get action():Function {
-			return _action;
+		public function set action( value:Function ):void {
+			_action = value;
 		}
 	}
 	

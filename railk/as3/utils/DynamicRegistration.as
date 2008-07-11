@@ -1,17 +1,19 @@
-﻿/////////////////////////////////////////////////////////////////
-//*************************************************************//
-//*            Package d'outils de création graphique         *//
-//*************************************************************//
-/////////////////////////////////////////////////////////////////
+﻿/**
+* Dynamic registration class that allow displayobject to have a centered registration point
+* 
+* @author Richard Rodney
+* @version 0.2
+* 
+*/
+
 package railk.as3.utils {
 	
 	import flash.display.Sprite;
-	import flash.display.MovieClip;
 	import flash.geom.Rectangle;
 	import flash.geom.Point;
 	
 
-	public dynamic class DynamicRegistration extends MovieClip{
+	public class DynamicRegistration extends Sprite {
 		
 		private var _a                       :Point;
 		private var _b                       :Point;
@@ -26,7 +28,7 @@ package railk.as3.utils {
 		
 		
 		//constructeur
-		public function DynamicRegistration() {
+		public function DynamicRegistration( extra:Object=null ) {
 			//on initialise le clip
 			_x2 = 0;
 			_y2 = 0;
@@ -34,7 +36,7 @@ package railk.as3.utils {
 			_scaleY2 = 1;
 			_scaleXY = 1;
 			_rotation2 = 0;
-			_extra = new Object();
+			_extra = extra;
 		}
 		
 		//point d'encrage

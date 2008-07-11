@@ -37,6 +37,8 @@ package railk.as3.utils.resize {
 		
 		//____________________________________________________________________________________ VARIABLES ITEM
 		private static var item                               :ResizeItem;
+		private static var _maxWidth                          :Number=0;
+		private static var _maxheight                         :Number=0;
 		
 		// _______________________________________________________________________________ VARIABLE EVENEMENT
 		private static var eEvent                             :ResizeManagerEvent;
@@ -85,7 +87,7 @@ package railk.as3.utils.resize {
 		 * @param	action
 		 * @param	group
 		 */
-		public static function add( name:String, displayObject:*, action:Function, group:String='main' ):void {
+		public static function add( name:String, displayObject:*, action:Function=null, group:String='main' ):void {
 			item = new ResizeItem( name, displayObject, group, action );
 			itemList.append( item );
 		}
@@ -97,7 +99,11 @@ package railk.as3.utils.resize {
 		 * 
 		 * @param	name
 		 */
-		public static function moveItem( name:String ):void {
+		public static function itemAction( name:String, width:Number, height:Number ):void {
+			//--vars
+			_maxheight = height;
+			_maxWidth = width;
+			
 			walker = itemList.head;
 			while ( walker ) 
 			{
@@ -118,7 +124,11 @@ package railk.as3.utils.resize {
 		 * 
 		 * @param	name
 		 */
-		public static function moveGroup( name:String='main' ):void {
+		public static function groupAction( width:Number, height:Number, name:String = 'main' ):void {
+			//--vars
+			_maxheight = height;
+			_maxWidth = width;
+			
 			walker = itemList.head;
 			while ( walker ) 
 			{
@@ -201,6 +211,25 @@ package railk.as3.utils.resize {
 				walker = walker.next;
 			}
 			return result;
+		}
+		
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						GETTER/SETTER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		static public function get maxWidth():Number { return _maxWidth; }
+		
+		static public function set maxWidth(value:Number):void 
+		{
+			_maxWidth = value;
+		}
+		
+		static public function get maxheight():Number { return _maxheight; }
+		
+		static public function set maxheight(value:Number):void 
+		{
+			_maxheight = value;
 		}
 		
 	}

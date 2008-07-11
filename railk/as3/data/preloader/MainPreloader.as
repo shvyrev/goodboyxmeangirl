@@ -18,7 +18,7 @@
 * 		for acces to root or stage use mainLoader.info.root/mainLoader.info.stage
 * 	}
 * 
-* you can override this class to change the loading bar aspect
+* you can extends this class and override  fucntions to change the loading bar aspect
 * 
 */
 

@@ -585,7 +585,7 @@ package railk.as3.data.loader.loaderItems {
 			return itemBytesTotal;
 		}
 		
-		public function duration():Number {
+		public function flvDuration():Number {
 			return streamMedatada.duration;
 		}
 		
