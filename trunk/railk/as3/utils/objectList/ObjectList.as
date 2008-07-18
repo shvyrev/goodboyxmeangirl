@@ -94,20 +94,20 @@ package railk.as3.utils.objectList
 				{ 
 					if ( _length > 1 )
 					{
-						if ( current === _head )
+						if ( current == _head )
 						{
 							_head = _head.next;
 							_head.prev = null;
 						}
-						else if (current === _tail )
+						else if (current == _tail )
 						{
 							_tail = _tail.prev;
 							_tail.next = null;
 						}
 						else
 						{
-							var node:ObjectNode = current.prev;
-							node.next = current.next;
+							current.prev.next = current.next;
+							current.next.prev = current.prev;
 						}
 					}
 					else
