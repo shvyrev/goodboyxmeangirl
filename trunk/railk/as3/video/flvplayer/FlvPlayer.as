@@ -40,15 +40,10 @@ package railk.as3.video.flvplayer {
 	import railk.as3.utils.link.LinkManager;
 	import railk.as3.utils.Loading;
 	import railk.as3.utils.Logger;
-	import railk.as3.utils.ObjectList;
+	import railk.as3.utils.objectList.*;
 	import railk.as3.utils.resize.ResizeManager;
 	import railk.as3.utils.tag.TagManager;
 	import railk.as3.utils.Utils;
-	
-	// ___________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
 	
 	// _________________________________________________________________________________________ IMPORT ADOBE
 	import com.adobe.images.PNGEncoder;
@@ -73,7 +68,7 @@ package railk.as3.video.flvplayer {
 		private var _standalone                         :Boolean;
 		private var _playListContent                    :Array;
 		private var _config                             :Array;
-		private var _interfaceZindexList                :Object = null;
+		private var _interfaceZindexList                :ObjectList;
 		
 		// _______________________________________________________________________________ VARIABLES CONTRÔLE
 		private var _enableMask                         :Boolean;
@@ -93,11 +88,6 @@ package railk.as3.video.flvplayer {
 		private var total                               :Number;
 		private var current                             :Number;
 		private var time                                :String;
-		
-		// _______________________________________________________________________________ SORTLIST VARIABLES
-		private var sortList                            :DLinkedList;
-		private var walker                              :DListNode;
-		private var itr                                 :DListIterator;
 		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
 		private var container                           :DynamicRegistration;
@@ -123,7 +113,7 @@ package railk.as3.video.flvplayer {
 		private var playList                            :DynamicRegistration;
 		private var tagList                             :DynamicRegistration;
 		private var bulle                               :DynamicRegistration;
-		private var interfaceItemList                   :ObjectList = {
+		private var interfaceItemList                   :ObjectList = new ObjectList(
 																	['bg',bg],
 																	['videoContainer',videoContainer],
 																	['playLis',playList],
@@ -144,7 +134,7 @@ package railk.as3.video.flvplayer {
 																	['tagList',tagList],
 																	['replayButton',replayButton],
 																	['bulle',bulle],
-																	['loading',loading] };
+																	['loading',loading] );
 																	
 		// _________________________________________________________________________________ VARIABLES PLAYER															
 		private var share                               :String
@@ -453,35 +443,19 @@ package railk.as3.video.flvplayer {
 		 */
 		public function addInterfaceItem( name:String, item:*, insert:String, action:Function=null ):void {
 			//--vars
-			var sortList:DLinkedList = new DLinkedList();
 			var insertMode = insert.split(':')[0];
 			var insertPoint = insert.split(':')[1];
 			item.name = name;
 			
-			//--list
-			for ( var prop in interfaceItemList )
+			//--add
+			for ( var i:int=1; i < interfaceItemList.length; i++ )
 			{
-				sortList.append( interfaceItemList[prop] );
-			}
-			
-			//--sort
-			walker = sortList.head;
-			while ( walker ) {
-				if( insertPoint == walker.data.name ){
-					itr = new DListIterator(sortList, walker);
-					if ( insertMode == 'before') sortList.insertBefore( itr, item );
-					else if ( insertMode == 'after') sortList.insertAfter( itr, item );
+				var node:ObjectNode = interfaceItemList.iterate(i);
+				if( insertPoint == node.data.name ){
+					if ( insertMode == 'before') interfaceItemList.insertBefore( node, name, item );
+					else if ( insertMode == 'after') interfaceItemList.insertAfter( node, name, item );
 					break;
 				}
-				walker = walker.next;
-			}
-			
-			//--to object list
-			interfaceItemList = new Object();
-			walker = sortList.head;
-			while ( walker ) {
-				interfaceItemList[walker.data.name] = walker.data;
-				walker = walker.next;
 			}
 			
 		}
@@ -506,19 +480,20 @@ package railk.as3.video.flvplayer {
 		// 																						 	 	LAYOUT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createLayout():void {
-			/*for ( var prop in interfaceItemList )
+			for ( var i:int=1; i < interfaceItemList.length; i++ )
 			{
-				if ( interfaceItemList[prop].extra.x != undefined ) interfaceItemList[prop].x =  interfaceItemList[prop].extra.x;
-				else if ( interfaceItemList[prop].extra.x2 != undefined ) interfaceItemList[prop].x =  interfaceItemList[prop].extra.x2;
-				if ( interfaceItemList[prop].extra.y != undefined ) interfaceItemList[prop].y =  interfaceItemList[prop].extra.y;
-				else if ( interfaceItemList[prop].extra.y2 != undefined ) interfaceItemList[prop].y2 =  interfaceItemList[prop].extra.y2;
-				if ( interfaceItemList[prop].extra.alpha != undefined ) interfaceItemList[prop].alpha =  interfaceItemList[prop].extra.alpha;
+				var node:ObjectNode = interfaceItemList.iterate(i);
+				if ( node.data.extra.x != undefined ) node.data.x =  node.data.extra.x;
+				else if ( node.data.extra.x2 != undefined ) node.data.x =  node.data.extra.x2;
+				if ( node.data.extra.y != undefined ) node.data.y =  node.data.extra.y;
+				else if ( node.data.extra.y2 != undefined ) node.data.y2 =  node.data.extra.y2;
+				if ( node.data.extra.alpha != undefined ) node.data.alpha =  node.data.extra.alpha;
 				
-				//ResizeManager.add( prop, interfaceItemList[prop], interfaceItemList[prop].extra.resize );
-				trace( interfaceItemList[prop] );
-				container.addChild( interfaceItemList[prop] );
+				//ResizeManager.add( prop, node.data, node.data.extra.resize );
+				trace( node.name );
+				container.addChild( node.data );
 				if ( _enableMask ) container.mask = containerMask;
-			}*/
+			}
 			trace( videoContainer.extra.x2 );
 			if ( _standalone ) FullScreenMode.Activate( fullscreenButton, Current.stage );
 		}
