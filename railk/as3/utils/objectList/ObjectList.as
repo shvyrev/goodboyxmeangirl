@@ -13,7 +13,7 @@ package railk.as3.utils.objectList
 		// ____________________________________________________________________________ VARIABLES OBJECT LIST
 		private var _head                                   :ObjectNode;
 		private var _tail                                   :ObjectNode;
-		private var _nodes                                  :Number;
+		private var _length                                 :int;
 		private var node                                    :ObjectNode;
 		
 		
@@ -53,24 +53,93 @@ package railk.as3.utils.objectList
 					_tail = _tail.next;
 				}
 			}
-			_nodes += args.length;
+			_length += args.length;
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   			  ITERATE
+		// 																				   		 INSERT AFTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function iterate( value:int ):ObjectNode
+		public function insertAfter( node:ObjectNode, name:String, object:* ):void
 		{
-			var result:ObjectNode;
+			node.insertAfter( new ObjectNode( node.id + 1, name, object ) );
+			_length += 1;
+			if ( node === _tail ) _tail = tail.next;
+			else rebuildID();
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   		INSERT BEFORE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function insertBefore( node:ObjectNode, name:String, object:* ):void
+		{
+			node.insertBefore( new ObjectNode( node.id - 1, name, object ) );
+			_length += 1;
+			if ( node === _head ) _head = _head.prev;
+			rebuildID();
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   		       REMOVE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function remove( name:String ):Boolean
+		{
+			var result:Boolean;
 			var current:ObjectNode = _head;
 			loop:while ( current )
 			{
-				if (current.id == value ){ result = current;  break loop; }	
-				else { result = null; }	
+				if (current.name == name )
+				{ 
+					if ( _length > 1 )
+					{
+						if ( current === _head )
+						{
+							_head = _head.next;
+							_head.prev = null;
+						}
+						else if (current === _tail )
+						{
+							_tail = _tail.prev;
+							_tail.next = null;
+						}
+						else
+						{
+							var node:ObjectNode = current.prev;
+							node.next = current.next;
+						}
+					}
+					else
+					{
+						_tail = _head = null;
+					}
+					current.dispose();
+					
+					_length -= 1;
+					rebuildID();
+					result = true;
+					break loop; 
+				}	
+				else { result = false; }	
 				current = current.next;
 			}
 			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   		   REBUILD ID
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function rebuildID():void {
+			var current:ObjectNode = _head;
+			var id:int = 1;
+			loop:while ( current )
+			{
+				current.id = id;
+				id += 1;
+				current = current.next;
+			}
 		}
 		
 		
@@ -82,7 +151,7 @@ package railk.as3.utils.objectList
 		 * @param	name
 		 * @return
 		 */
-		public function getObjectByName( name:String ):*
+		public function getObjectByName( name:String ):ObjectNode
 		{
 			var result:*;
 			var current:ObjectNode = _head;
@@ -94,6 +163,34 @@ package railk.as3.utils.objectList
 			}
 			return result;
 		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   	 GET OBJECT BY ID
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * 
+		 * @param	id
+		 * @return
+		 */
+		public function getObjectByID( id:int ):ObjectNode
+		{
+			var result:ObjectNode;
+			var current:ObjectNode = _head;
+			loop:while ( current )
+			{
+				if (current.id == id ){ result = current;  break loop; }	
+				else { result = null; }	
+				current = current.next;
+			}
+			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				              ITERATE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function iterate( id:int ):ObjectNode { return getObjectByID( id ); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -134,7 +231,7 @@ package railk.as3.utils.objectList
 		
 		public function get tail():ObjectNode { return _tail; }
 		
-		public function get nodes():Number { return _nodes; }
+		public function get length():int { return _length; }
 	}
 	
 }
