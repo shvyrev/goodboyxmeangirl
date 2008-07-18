@@ -1,4 +1,4 @@
-/////////////////////////////////////////////////////////////////
+ï»¿/////////////////////////////////////////////////////////////////
 //*************************************************************//
 //*                     Package d'utilitaire                  *//
 //*************************************************************//
@@ -11,7 +11,7 @@ package railk.as3.utils {
 	
 	public class Utils extends Sprite {
 		
-		//création de nombre aléatoire compris entre deux nombres
+		//crÃ©ation de nombre alÃ©atoire compris entre deux nombres
 		/**
 		* 
 		* @param	min
@@ -24,7 +24,7 @@ package railk.as3.utils {
 			return randomNum;
 		}
 		
-		//détermine si un nombre est positif ou négatif
+		//dÃ©termine si un nombre est positif ou nÃ©gatif
 		/**
 		* 
 		* @param	n
@@ -130,7 +130,7 @@ package railk.as3.utils {
 				}
 			}
 			
-			var result = hours + ":" + minutes + ":" + seconds;
+			result = hours + ":" + minutes + ":" + seconds;
 			
 			return result;
 		}
