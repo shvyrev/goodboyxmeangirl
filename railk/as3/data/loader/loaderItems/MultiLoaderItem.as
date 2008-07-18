@@ -102,7 +102,7 @@ package railk.as3.data.loader.loaderItems {
 		private var ch                               :SoundChannel;
 		private var nc                               :NetConnection;
 		private var streamTriggerEvent               :Sprite;
-		private var streamMedatada                   :Object;
+		private var streamMetadata                   :Object={};
 		private var streamReady                      :Boolean = false;
 		private var streamBufferState                :Number = 0;
 		private var previousBytesLoaded              :Number = 0;
@@ -178,6 +178,7 @@ package railk.as3.data.loader.loaderItems {
                 loader.client = customClient;
                 loader.play( itemURL.url );
                 loader.seek(0);
+				loader.togglePause();
 			}
 		}
 		
@@ -271,7 +272,7 @@ package railk.as3.data.loader.loaderItems {
                 onloadComplete( event);
 				//////////////////////////////////////////////
 			}
-			else if ( Math.round(loader.time) == Math.round(streamMedatada.duration) ) {
+			else if ( Math.round(loader.time) == Math.round(streamMetadata.duration) ) {
 				////////////////////////////////////////////
 				streamTriggerEvent.removeEventListener( Event.ENTER_FRAME, onStreamEvent );
 				////////////////////////////////////////////
@@ -378,9 +379,9 @@ package railk.as3.data.loader.loaderItems {
 				var timeElapsed:Number = getTimer() - itemResponseTime;
                 var currentSpeed:Number = itemBytesLoaded / (timeElapsed/1000);
                 var downloadTimeLeft:Number = itemBytesLeft / (currentSpeed * 0.8);
-                var remainingBuffer:Number = streamMedatada.duration - loader.bufferLength ;
-				var buffer = ( itemBufferSize * itemBytesTotal ) / streamMedatada.duration;
-				itemBytesPlayed = Math.round(( Math.round(loader.time) * itemBytesTotal )/Math.round(streamMedatada.duration));
+                var remainingBuffer:Number = streamMetadata.duration - loader.bufferLength ;
+				var buffer = ( itemBufferSize * itemBytesTotal ) / streamMetadata.duration;
+				itemBytesPlayed = Math.round(( Math.round(loader.time) * itemBytesTotal )/Math.round(streamMetadata.duration));
 				
 				
 				///////////////////////////////////////////////////////////////////////////////////////////////
@@ -431,7 +432,7 @@ package railk.as3.data.loader.loaderItems {
 				itemContent = loader.content;
 				delListeners( loader );
 				loader.unload();
-				loader = null
+				loader = null;
 			}
 			//--
 			else if (loader is URLLoader ) {
@@ -451,13 +452,13 @@ package railk.as3.data.loader.loaderItems {
 			else if ( loader is NetStream ) {
 				itemContent = loader;
 				delListeners( loader );
-				loader = null;
+				//loader = null;
 			}
 			//--
 			else if (loader is Sound ) {
 				itemContent = loader;
 				delListeners( loader );
-				loader = null;
+				//loader = null;
 			}
 			
 			//////////////////////////////////////////////
@@ -512,7 +513,7 @@ package railk.as3.data.loader.loaderItems {
 		
 		//TODO
 		private  function onVideoMetaData( metaData:Object ):void {
-			streamMedatada = metaData;
+			streamMetadata = metaData;
 		}
 		
 		private  function onVideoCuePoint( evt:* ):void {
@@ -586,7 +587,7 @@ package railk.as3.data.loader.loaderItems {
 		}
 		
 		public function flvDuration():Number {
-			return streamMedatada.duration;
+			return streamMetadata.duration;
 		}
 		
 		public function get bytesPlayed():Number {

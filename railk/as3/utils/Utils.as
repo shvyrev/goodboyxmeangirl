@@ -102,7 +102,7 @@ package railk.as3.utils {
 		 * @param	value
 		 * @return
 		 */
-		static public function numberToTime( value:Number ):String 
+		static public function numberToTime( value:Number, displayHours:Boolean ):String 
 		{
 			var result:String;
 			var minutes = Math.floor(value/ 60);

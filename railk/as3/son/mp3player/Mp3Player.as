@@ -232,21 +232,111 @@ package railk.as3.son.mp3player {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	 INTERFACE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBG():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createMask():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createPlayPauseButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createBufferBar():DynamicRegistration{ return new DynamicRegistration( { x:0, y:0, alpha:1} ); }
-		protected function createSeekBar():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createSeeker():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createVolumeBar():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createVolumeButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createVolumeSeeker():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createShareButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createDownloadButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createPlayListButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createPlayList():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createTagList():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1} ); }
-		protected function createBulle():DynamicRegistration{ return new DynamicRegistration( { x:0, y:0, alpha:1} ); }
+		protected function createBG():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createMask():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createPlayPauseButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createBufferBar():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createSeekBar():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createSeeker():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createVolumeBar():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createVolumeButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createVolumeSeeker():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createShareButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createDownloadButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createPlayListButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createPlayList():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createTagList():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createBulle():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
