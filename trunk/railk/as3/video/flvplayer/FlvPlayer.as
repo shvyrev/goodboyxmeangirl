@@ -13,9 +13,11 @@
 package railk.as3.video.flvplayer {
 	
 	// _________________________________________________________________________________________ IMPORT FLASH
+	import flash.display.BitmapData;
 	import flash.net.NetStream;
 	import flash.media.Video;
 	import flash.media.SoundTransform;
+	import flash.net.URLRequest;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.events.MouseEvent;
@@ -23,6 +25,7 @@ package railk.as3.video.flvplayer {
 	import flash.external.ExternalInterface;
 	import flash.net.navigateToURL;
 	import flash.system.System;
+	import flash.utils.ByteArray;
 
 	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
@@ -35,7 +38,9 @@ package railk.as3.video.flvplayer {
 	import railk.as3.text.TextLink;
 	import railk.as3.utils.DynamicRegistration;
 	import railk.as3.utils.link.LinkManager;
+	import railk.as3.utils.Loading;
 	import railk.as3.utils.Logger;
+	import railk.as3.utils.ObjectList;
 	import railk.as3.utils.resize.ResizeManager;
 	import railk.as3.utils.tag.TagManager;
 	import railk.as3.utils.Utils;
@@ -71,6 +76,7 @@ package railk.as3.video.flvplayer {
 		private var _interfaceZindexList                :Object = null;
 		
 		// _______________________________________________________________________________ VARIABLES CONTRÔLE
+		private var _enableMask                         :Boolean;
 		private var _enableShare                        :Boolean;
 		private var _enableDownload                     :Boolean;
 		private var _enablefullscreen                   :Boolean;
@@ -94,10 +100,11 @@ package railk.as3.video.flvplayer {
 		private var itr                                 :DListIterator;
 		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
-		private var container                           :DynamicRegistration;											
+		private var container                           :DynamicRegistration;
+		private var containerMask                       :DynamicRegistration;
 		private var videoContainer                      :DynamicRegistration;
 		private var bg                                  :DynamicRegistration;
-		private var mask                                :DynamicRegistration;
+		private var loading                             :DynamicRegistration;
 		private var playPauseButton                     :DynamicRegistration;
 		private var replayButton                        :DynamicRegistration;
 		private var bufferBar                           :DynamicRegistration;
@@ -116,28 +123,28 @@ package railk.as3.video.flvplayer {
 		private var playList                            :DynamicRegistration;
 		private var tagList                             :DynamicRegistration;
 		private var bulle                               :DynamicRegistration;
-		private var interfaceItemList                   :Object = {
-																	bg:bg,
-																	videoContainer:videoContainer,
-																	playList:playList,
-																	bufferBar:bufferBar,
-																	seekBar:seekBar,
-																	seeker:seeker,
-																	playPauseButton:playPauseButton,
-																	volumeBar:volumeBar,
-																	volumeButton:volumeButton,
-																	volumeSeeker:volumeSeeker,
-																	fullscreenButton:fullscreenButton,
-																	x2Button:x2Button,
-																	/*resizeButton:resizeButton,*/
-																	shareButton:shareButton,
-																	downloadButton:downloadButton,
-																	screenshotButton:screenshotButton,
-																	playListButton:playListButton,
-																	tagList:tagList,
-																	replayButton:replayButton,
-																	bulle:bulle,
-																	mask:mask };
+		private var interfaceItemList                   :ObjectList = {
+																	['bg',bg],
+																	['videoContainer',videoContainer],
+																	['playLis',playList],
+																	['bufferBar',bufferBar],
+																	['seekBar',seekBar],
+																	['seeker',seeker],
+																	['playPauseButton',playPauseButton],
+																	['volumeBar',volumeBar],
+																	['volumeButton',volumeButton],
+																	['volumeSeeker',volumeSeeker],
+																	['fullscreenButton',fullscreenButton],
+																	['x2Button',x2Button],
+																	/*['resizeButton',resizeButton],*/
+																	['shareButton',shareButton],
+																	['downloadButton',downloadButton],
+																	['screenshotButton',screenshotButton],
+																	['playListButton',playListButton],
+																	['tagList',tagList],
+																	['replayButton',replayButton],
+																	['bulle',bulle],
+																	['loading',loading] };
 																	
 		// _________________________________________________________________________________ VARIABLES PLAYER															
 		private var share                               :String
@@ -168,10 +175,10 @@ package railk.as3.video.flvplayer {
 		 * @param	playListContent
 		 * @param	config               xmlfile <configs><path>needed</path>...</configs>
 		 */
-		public function init( name:String = '', stream:NetStream, streamPath:String, duration:Number, width:Number, height:Number, videoWidth:Number, videoHeight:Number, type:String='stream', standalone:Boolean=false, playListContent:Array=null, config:XML=null ):void 
+		public function init( name:String, stream:NetStream, streamPath:String, duration:Number, width:Number, height:Number, videoWidth:Number, videoHeight:Number, type:String='stream', standalone:Boolean=false, playListContent:Array=null, config:XML=null ):void 
 		{
 			//--logger
-			Logger.print( 'FlvPlayer' + name +'enabled', Logger.MESSAGE );
+			Logger.print( 'FlvPlayer ' + name +' enabled', Logger.MESSAGE );
 			
 			//--managers
 			TagManager.init();
@@ -190,10 +197,19 @@ package railk.as3.video.flvplayer {
 			_type = type;
 			_standalone = standalone;
 			_playListContent = playListContent;
-			_config = Parser.XMLItem( config );
+			if ( config != null ) _config = Parser.XMLItem( config );
+			
+			//--prepare interface list
+			for ( var prop in interfaceItemList )
+			{
+				interfaceItemList[prop] = new DynamicRegistration();
+				interfaceItemList[prop].name = prop;
+			}
+			
+			_stream.togglePause();
 			
 			//--Sharing the player + the exact .flv
-			var path:String = ExternalInterface.call("window.location.href.toString");
+			/*var path:String = ExternalInterface.call("window.location.href.toString");
 			share = '<object width="'+width+'" height="'+height+'">';
 			share += '<param name="allowscriptaccess" value="always" />';
 			if ( config != null )
@@ -207,10 +223,10 @@ package railk.as3.video.flvplayer {
 				share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
 				share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
 			}
-			share += '</embed></object>';
+			share += '</embed></object>';*/
 			
 			//--main container
-			container = new Sprite();
+			container = new DynamicRegistration();
 			addChild( container );
 			
 			//--attach video
@@ -218,17 +234,11 @@ package railk.as3.video.flvplayer {
 			
 				video = new Video( videoWidth, videoHeight );
 				video.attachNetStream ( stream );
-				videoContainer.addChild( video );
+				videoContainer.addChild( video );	
 				
 			//--enable volume modification
 			volume = new SoundTransform();
 			stream.soundTransform = volume;
-			
-			//--prepare interface list
-			for ( var prop in _interfaceItemList )
-			{
-				interfaceItemList[prop].name = prop;
-			}
 			
 			//////////////////////////
 			create();
@@ -243,7 +253,8 @@ package railk.as3.video.flvplayer {
 		{
 			///////////////////////////////
 			bg = createBG();
-			mask = createMask();
+			containerMask = createMask();
+			loading = createLoading();
 			playPauseButton = createPlayPauseButton();
 			replayButton = createReplayButton();
 			bufferBar = createBufferBar();
@@ -272,26 +283,162 @@ package railk.as3.video.flvplayer {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	 INTERFACE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBG():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createMask():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createPlayPauseButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createReplayButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createBufferBar():DynamicRegistration{ return new DynamicRegistration( { x:0, y:0, alpha:1,resize:function(){} } ); }
-		protected function createSeekBar():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createSeeker():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createVolumeBar():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createVolumeButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createVolumeSeeker():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createFullscreenButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createX2Button():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		//protected function createResizeButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createShareButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createDownloadButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createScreenShotButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createPlayListButton():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createPlayList():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createTagList():DynamicRegistration{ return new DynamicRegistration( {x:0,y:0,alpha:1,resize:function(){}} ); }
-		protected function createBulle():DynamicRegistration{ return new DynamicRegistration( { x:0, y:0, alpha:1, resize:function(){}} ); }
+		protected function createBG():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+			
+				var b:GraphicShape = new GraphicShape();
+				b.rectangle( 0xffffff, 0, 0, _width, _height );
+				result.addChild( b );
+				b.alpha = 0;
+
+			return result; 
+		}
+		protected function createMask():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+			
+				//var m:GraphicShape = new GraphicShape();
+				//m.roundRectangle( 0x000000, 0, 0, _width, _height,30,30 );
+				//result.addChild( m );
+
+			return result; 
+		}
+		protected function createLoading():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createPlayPauseButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createReplayButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createBufferBar():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createSeekBar():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createSeeker():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createVolumeBar():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createVolumeButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createVolumeSeeker():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createFullscreenButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createX2Button():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createShareButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createDownloadButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createScreenshotButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createPlayListButton():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createPlayList():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		protected function createTagList():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result;  
+		}
+		protected function createBulle():DynamicRegistration
+		{ 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}
+		/*protected function createResizeButton():DynamicRegistration
+		 { 
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+
+			return result; 
+		}*/
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -324,7 +471,6 @@ package railk.as3.video.flvplayer {
 					itr = new DListIterator(sortList, walker);
 					if ( insertMode == 'before') sortList.insertBefore( itr, item );
 					else if ( insertMode == 'after') sortList.insertAfter( itr, item );
-					inserted = true;
 					break;
 				}
 				walker = walker.next;
@@ -352,7 +498,7 @@ package railk.as3.video.flvplayer {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   SORT ZINDEX
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function sortZindex( zindex:Array ):void {}
+		private function sortZindex( zindex:Object ):void {}
 		
 		
 		
@@ -360,18 +506,20 @@ package railk.as3.video.flvplayer {
 		// 																						 	 	LAYOUT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createLayout():void {
-			for ( var prop in _interfaceItemList )
+			/*for ( var prop in interfaceItemList )
 			{
 				if ( interfaceItemList[prop].extra.x != undefined ) interfaceItemList[prop].x =  interfaceItemList[prop].extra.x;
 				else if ( interfaceItemList[prop].extra.x2 != undefined ) interfaceItemList[prop].x =  interfaceItemList[prop].extra.x2;
-				if ( interfaceItemList[prop].extra.y != undefined ) interfaceItemList[prop].y =  _interfaceItemList[prop].extra.y;
+				if ( interfaceItemList[prop].extra.y != undefined ) interfaceItemList[prop].y =  interfaceItemList[prop].extra.y;
 				else if ( interfaceItemList[prop].extra.y2 != undefined ) interfaceItemList[prop].y2 =  interfaceItemList[prop].extra.y2;
 				if ( interfaceItemList[prop].extra.alpha != undefined ) interfaceItemList[prop].alpha =  interfaceItemList[prop].extra.alpha;
 				
-				ResizeManager.add( prop, interfaceItemList[prop], interfaceItemList[prop].extra.resize );
+				//ResizeManager.add( prop, interfaceItemList[prop], interfaceItemList[prop].extra.resize );
+				trace( interfaceItemList[prop] );
 				container.addChild( interfaceItemList[prop] );
-			}
-			
+				if ( _enableMask ) container.mask = containerMask;
+			}*/
+			trace( videoContainer.extra.x2 );
 			if ( _standalone ) FullScreenMode.Activate( fullscreenButton, Current.stage );
 		}
 		
@@ -432,9 +580,11 @@ package railk.as3.video.flvplayer {
 		private function screenshot( name:String ):void {
 			//--vars
 			var toSave:ByteArray;
+			var bmp:BitmapData = new BitmapData( _videoWidth, _videoHeight );
 			var saveImg:FileSaver = new FileSaver( name );
 			
-			toSave = PNGEncoder.encode( paint.canvas );
+			bmp.draw( videoContainer );
+			toSave = PNGEncoder.encode( bmp );
 			saveImg.create( 'local','assets\images',name, 'png', toSave, true );
 		}
 		
@@ -473,7 +623,7 @@ package railk.as3.video.flvplayer {
 					total = Math.round( _duration );
 					played = stream.time / _duration;
 					loaded = stream.bytesLoaded / stream.bytesTotal;
-					time = Utils.numberToTime( played );
+					time = Utils.numberToTime( played, true );
 					break;
 				
 				case MouseEvent.MOUSE_UP :
@@ -573,7 +723,7 @@ package railk.as3.video.flvplayer {
 							break;
 						
 						case 'downloadbutton':
-							navigateToURL( _streamPath, '_blank' );
+							navigateToURL( new URLRequest( _streamPath ), '_blank' );
 							break;
 							
 						case 'screenshotbutton':
@@ -590,9 +740,9 @@ package railk.as3.video.flvplayer {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					     GETTER/SETTER
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get name():String { return _name; }
+		public override function get name():String { return _name; }
 		
-		public function set name(value:String):void 
+		public override function set name(value:String):void 
 		{
 			_name = value;
 		}
@@ -619,17 +769,17 @@ package railk.as3.video.flvplayer {
 			_duration = value;
 		}
 		
-		public function get width():Number { return _width; }
+		public override function get width():Number { return _width; }
 		
-		public function set width(value:Number):void 
+		public override function set width(value:Number):void 
 		{
 			_width = value;
 			ResizeManager.groupAction( _width, _height );
 		}
 		
-		public function get height():Number { return _height; }
+		public override function get height():Number { return _height; }
 		
-		public function set height(value:Number):void 
+		public override function set height(value:Number):void 
 		{
 			_height = value;
 			ResizeManager.groupAction( _width, _height );
@@ -689,6 +839,13 @@ package railk.as3.video.flvplayer {
 		{
 			_enableScreenshot = value;
 			screenshotButton.visible = value;
+		}
+		
+		public function get enableMask():Boolean { return _enableMask; }
+		
+		public function set enableMask(value:Boolean):void 
+		{
+			_enableMask = value;
 		}
 		
 		public function get playListContent():Array { return _playListContent; }

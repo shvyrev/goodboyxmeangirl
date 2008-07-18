@@ -28,7 +28,7 @@ package railk.as3.utils {
 		
 		
 		//constructeur
-		public function DynamicRegistration( extra:Object=null ) {
+		public function DynamicRegistration( xtra:Object=null ) {
 			//on initialise le clip
 			_x2 = 0;
 			_y2 = 0;
@@ -36,7 +36,8 @@ package railk.as3.utils {
 			_scaleY2 = 1;
 			_scaleXY = 1;
 			_rotation2 = 0;
-			_extra = extra;
+			if(xtra == null)_extra = new Object();
+			else _extra = xtra;
 		}
 		
 		//point d'encrage

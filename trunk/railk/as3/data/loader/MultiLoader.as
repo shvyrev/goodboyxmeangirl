@@ -437,7 +437,7 @@ package railk.as3.data.loader {
 				loadNext();
 			}
 			else {
-				if( loading == false ) {
+				if( loading == false && _state != 'stop' ) {
 					delMLoaderListener();
 					
 					//state
