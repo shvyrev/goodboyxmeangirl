@@ -14,18 +14,27 @@ package railk.as3.video.flvplayer {
 	
 	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.BitmapData;
+	import flash.display.Sprite;
 	import flash.net.NetStream;
 	import flash.media.Video;
 	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
+	import flash.net.NetConnection;
+	import flash.net.NetStream;
+	import flash.system.ApplicationDomain;
+	import flash.system.SecurityDomain;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.events.MouseEvent;
 	import flash.events.Event;
+	import flash.events.ProgressEvent;
+	import flash.events.NetStatusEvent;
+	import flash.events.IOErrorEvent;
 	import flash.external.ExternalInterface;
 	import flash.net.navigateToURL;
 	import flash.system.System;
 	import flash.utils.ByteArray;
+	import flash.utils.getTimer;
 
 	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
@@ -55,11 +64,26 @@ package railk.as3.video.flvplayer {
 	
 	public class FlvPlayer extends DynamicRegistration  
 	{
+		// _________________________________________________________________________________ VARIABLES STREAM
+		private var nc                                  :NetConnection;
+		private var stream                              :NetStream;
+		private var streamTriggerEvent                  :Sprite;
+		private var streamMetadata                      :Object={};
+		private var streamReady                         :Boolean = false;
+		private var streamBufferState                   :Number = 0;
+		private var previousBytesLoaded                 :Number = 0;
+		private var previousBytesPLayed                 :Number = 0;
+		private var responseTime                        :Number;
+		private var loaded                              :Number;
+		private var played                              :Number;
+		private var total                               :Number;
+		private var current                             :Number;
+		private var time                                :String;
+		
 		// _____________________________________________________________________________ VARIABLES RAPATRIEES
 		private var _name                               :String;
-		private var _stream                             :NetStream;
-		private var _streamPath                         :String;
-		private var _duration                           :Number;
+		private var _url                                :String;
+		private var _bufferSize                         :int;
 		private var _width                              :Number;
 		private var _height                             :Number;
 		private var _videoWidth                         :Number;
@@ -83,11 +107,6 @@ package railk.as3.video.flvplayer {
 		// __________________________________________________________________________ VARIABLES VIDEO & SOUND
 		private var video                               :Video;
 		private var volume                              :SoundTransform;
-		private var loaded                              :Number;
-		private var played                              :Number;
-		private var total                               :Number;
-		private var current                             :Number;
-		private var time                                :String;
 		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
 		private var container                           :DynamicRegistration;
@@ -143,10 +162,23 @@ package railk.as3.video.flvplayer {
 		
 		
 		
+		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRCUTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function FlvPlayer():void{}
+		public function FlvPlayer():void 
+		{
+			nc = new NetConnection();
+			nc.connect( null );
+			stream = new NetStream( nc );
+			streamTriggerEvent = new Sprite();
+			streamTriggerEvent.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+			var customClient:Object = new Object();
+			customClient.onMetaData = onVideoMetaData;
+			//customClient.onCuePoint = onVideoCuePoint;
+			//customClient.onPlayStatus = onVideoPlayStatus;
+			stream.client = customClient;
+		}
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -155,18 +187,18 @@ package railk.as3.video.flvplayer {
 		/**
 		 * 
 		 * @param	name
-		 * @param	stream
-		 * @param	streamPath
-		 * @param	duration
+		 * @param	url
+		 * @param	buffersize
 		 * @param	width
 		 * @param	height
 		 * @param	videoWidth
 		 * @param	videoHeight
-		 * @param	type                 'stream' | 'rtpm'
+		 * @param	type               'stream'|'rtpm'
+		 * @param	standalone
 		 * @param	playListContent
-		 * @param	config               xmlfile <configs><path>needed</path>...</configs>
+		 * @param	config             xmlfile <configs><path>needed</path>...</configs>
 		 */
-		public function init( name:String, stream:NetStream, streamPath:String, duration:Number, width:Number, height:Number, videoWidth:Number, videoHeight:Number, type:String='stream', standalone:Boolean=false, playListContent:Array=null, config:XML=null ):void 
+		public function init( name:String, url:String, width:Number, height:Number, videoWidth:Number, videoHeight:Number, buffersize:int=0, type:String='stream', standalone:Boolean=false, playListContent:Array=null, config:XML=null ):void 
 		{
 			//--logger
 			Logger.print( 'FlvPlayer ' + name +' enabled', Logger.MESSAGE );
@@ -178,9 +210,7 @@ package railk.as3.video.flvplayer {
 			
 			//--vars
 			_name = name;
-			_stream = stream;
-			_streamPath = streamPath;
-			_duration = duration;
+			_url = url;
 			_width = width;
 			_height = height;
 			_videoWidth = videoWidth;
@@ -233,7 +263,14 @@ package railk.as3.video.flvplayer {
 			
 			//////////////////////////
 			create();
+			createLayout();
+			initListeners();
 			//////////////////////////
+			
+			//--launch stream and apuse lecture
+			stream.play( url );
+			stream.seek(0);
+			stream.togglePause();	
 		}
 		
 		
@@ -264,10 +301,6 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('playList').data = createPlayList();
 			interfaceItemList.getObjectByName('tagList').data = createTagList();
 			interfaceItemList.getObjectByName('bulle').data = createBulle();
-			//////////////////////////////
-			createLayout();
-			initListeners();
-			//////////////////////////////
 		}
 		
 		
@@ -431,6 +464,82 @@ package railk.as3.video.flvplayer {
 		}*/
 		
 		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	 	LAYOUT
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private function createLayout():void {
+			for ( var i:int=1; i < interfaceItemList.length; i++ )
+			{
+				var node:ObjectNode = interfaceItemList.iterate(i);
+				if ( node.data.extra.x != undefined ) node.data.x =  node.data.extra.x;
+				else if ( node.data.extra.x2 != undefined ) node.data.x =  node.data.extra.x2;
+				if ( node.data.extra.y != undefined ) node.data.y =  node.data.extra.y;
+				else if ( node.data.extra.y2 != undefined ) node.data.y2 =  node.data.extra.y2;
+				if ( node.data.extra.alpha != undefined ) node.data.alpha =  node.data.extra.alpha;
+				
+				//ResizeManager.add( prop, node.data, node.data.extra.resize );
+				container.addChild( node.data );
+				if ( _enableMask ) container.mask = containerMask;
+			}
+			if ( _standalone ) FullScreenMode.Activate( fullscreenButton, Current.stage );
+		}
+		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					 GESTION LISTENERS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private function initListeners():void 
+		{
+			stream.addEventListener( IOErrorEvent.IO_ERROR, manageEvent, false, 0, true );
+            stream.addEventListener( NetStatusEvent.NET_STATUS, manageEvent, false, 0, true );
+			StageManager.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+			StageManager.addEventListener( StageManagerEvent.ONMOUSELEAVE, manageEvent, false, 0, true );
+			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );
+			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
+			StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('seeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('seeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('playPauseButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('replayButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeBar').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('fullscreenButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('x2Button').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			//interfaceItemList.getObjectByName('resizeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('shareButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('downloadButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('screenshotButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+		}
+		
+		private function delListeners():void 
+		{
+			stream.removeEventListener( IOErrorEvent.IO_ERROR, manageEvent );
+            stream.removeEventListener( NetStatusEvent.NET_STATUS, manageEvent );
+			StageManager.removeEventListener( Event.ENTER_FRAME, manageEvent );
+			StageManager.removeEventListener( StageManagerEvent.ONMOUSELEAVE, manageEvent );
+			StageManager.removeEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent );
+			StageManager.removeEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent );
+			StageManager.removeEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent );
+			interfaceItemList.getObjectByName('seeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getObjectByName('seeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getObjectByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getObjectByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getObjectByName('volumeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('playPauseButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('replayButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('volumeBar').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('fullscreenButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('x2Button').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			//interfaceItemList.getObjectByName('resizeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('shareButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('downloadButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('screenshotButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+		}
+		
+		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					ADD INTERFACE ITEM
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -476,77 +585,6 @@ package railk.as3.video.flvplayer {
 		
 		
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	 	LAYOUT
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createLayout():void {
-			for ( var i:int=1; i < interfaceItemList.length; i++ )
-			{
-				var node:ObjectNode = interfaceItemList.iterate(i);
-				if ( node.data.extra.x != undefined ) node.data.x =  node.data.extra.x;
-				else if ( node.data.extra.x2 != undefined ) node.data.x =  node.data.extra.x2;
-				if ( node.data.extra.y != undefined ) node.data.y =  node.data.extra.y;
-				else if ( node.data.extra.y2 != undefined ) node.data.y2 =  node.data.extra.y2;
-				if ( node.data.extra.alpha != undefined ) node.data.alpha =  node.data.extra.alpha;
-				
-				//ResizeManager.add( prop, node.data, node.data.extra.resize );
-				container.addChild( node.data );
-				if ( _enableMask ) container.mask = containerMask;
-			}
-			if ( _standalone ) FullScreenMode.Activate( fullscreenButton, Current.stage );
-		}
-		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 GESTION LISTENERS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function initListeners():void 
-		{
-			StageManager.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
-			StageManager.addEventListener( StageManagerEvent.ONMOUSELEAVE, manageEvent, false, 0, true );
-			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );
-			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
-			StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('seeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('seeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('playPauseButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('replayButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeBar').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('fullscreenButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('x2Button').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			//interfaceItemList.getObjectByName('resizeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('shareButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('downloadButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('screenshotButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-		}
-		
-		private function delListeners():void 
-		{
-			StageManager.removeEventListener( Event.ENTER_FRAME, manageEvent );
-			StageManager.removeEventListener( StageManagerEvent.ONMOUSELEAVE, manageEvent );
-			StageManager.removeEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent );
-			StageManager.removeEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent );
-			StageManager.removeEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent );
-			interfaceItemList.getObjectByName('seeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			interfaceItemList.getObjectByName('seeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			interfaceItemList.getObjectByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			interfaceItemList.getObjectByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			interfaceItemList.getObjectByName('volumeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('playPauseButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('replayButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('volumeBar').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('fullscreenButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('x2Button').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			//interfaceItemList.getObjectByName('resizeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('shareButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('downloadButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('screenshotButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-		}
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				     	  IMAGE SAVER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -561,6 +599,23 @@ package railk.as3.video.flvplayer {
 			saveImg.create( 'local','assets\images',name, 'png', toSave, true );
 		}
 		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					     	 METADATAS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private  function onVideoMetaData( metaData:Object ):void {
+			streamMetadata = metaData;
+		}
+		
+		private  function onVideoCuePoint( evt:* ):void {
+			//return evt;
+		}
+		
+		private  function onVideoPlayStatus( evt:* ):void {
+			//return evt;
+		}
+		
+		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			   DISPOSE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -571,11 +626,12 @@ package railk.as3.video.flvplayer {
 		}
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					      MANAGE EVENT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ):void {
+		private function manageEvent( evt:*):void 
+		{
+			var event:Event;
 			switch( evt.type )
 			{
 				case StageManagerEvent.ONSTAGERESIZE :
@@ -589,14 +645,104 @@ package railk.as3.video.flvplayer {
 					break;
 					
 				case StageManagerEvent.ONMOUSEIDLE :
-					break;	
+					break;
+				
+				case NetStatusEvent.NET_STATUS :
+					switch( evt.info.code ) 
+					{
+						case "NetStream.Play.Start" :
+							//////////////////////////////////////////////
+							event = new Event( Event.OPEN );
+							manageEvent( event );
+							//////////////////////////////////////////////
+							break;
+					}
+					break;
 					
-				case Event.ENTER_FRAME :
+				case IOErrorEvent.IO_ERROR :
+					//todo error loading flv
+					break;
+					
+				case Event.OPEN :
+					responseTime = getTimer();
+					break;
+					
+				case ProgressEvent.PROGRESS :
 					current = Math.floor( stream.time );	
-					total = Math.round( _duration );
-					played = stream.time / _duration;
+					total = Math.round( streamMetadata.duration );
+					played = stream.time / streamMetadata.duration;
 					loaded = stream.bytesLoaded / stream.bytesTotal;
 					time = Utils.numberToTime( played, true );
+					var percentLoaded = Math.round((evt.bytesLoaded * 100) / evt.bytesTotal);
+					var bytesLoaded = evt.bytesLoaded;
+					var bytesTotal = evt.bytesTotal;
+					var bytesLeft = bytesTotal - bytesLoaded;
+					var timeElapsed:Number = getTimer() - responseTime;
+					var currentSpeed:Number = bytesLoaded / (timeElapsed/1000);
+					var downloadTimeLeft:Number = bytesLeft / (currentSpeed * 0.8);
+					var remainingBuffer:Number = streamMetadata.duration - stream.bufferLength ;
+					var buffer = ( _bufferSize * bytesTotal ) / streamMetadata.duration;
+					var bytesPlayed = Math.round(( Math.round(stream.time) * bytesTotal )/Math.round(streamMetadata.duration));
+					
+					
+					///////////////////////////////////////////////////////////////////////////////////////////////
+					//                                   gestion du buffer                                       //
+					///////////////////////////////////////////////////////////////////////////////////////////////
+					if ( _bufferSize == 0 ) {
+						//temps a télécharger ce qui reste moindre que le nombre de seconde de données restantes
+						if ( remainingBuffer > downloadTimeLeft && bytesLoaded > 8 ) {
+							streamReady = true;
+						}
+					}
+					else {
+						if ( streamReady == false ) {
+							if ( streamBufferState <= buffer ) {
+								streamBufferState += bytesLoaded - previousBytesLoaded;
+							}
+							else {
+								streamReady = true;
+							}
+						}
+						else if ( streamReady == true ) {
+							if ( streamBufferState > buffer*.02 && (bytesLoaded - bytesPlayed) >= stream.bufferLength ){
+								streamBufferState = streamBufferState - ( bytesPlayed - previousBytesPLayed );
+							}
+							else {
+								streamReady = false;
+							}
+						}
+					}	
+					//////////////////////////////////////////////////////////////////////////////////////////////
+					//                                                                                          //
+					//////////////////////////////////////////////////////////////////////////////////////////////
+					
+					
+					previousBytesLoaded = bytesLoaded;
+					previousBytesPLayed = bytesPlayed;
+					break;
+					
+				case Event.ENTER_FRAME :
+					if ( stream.bytesLoaded == 0 ) {
+						stream.pause();
+						//////////////////////////////////////////////
+						event = new Event( Event.OPEN );
+						manageEvent( event );
+						//////////////////////////////////////////////
+					}
+					else if ( stream.bytesLoaded == stream.bytesTotal ) {
+						streamReady = true;
+					}
+					else if ( Math.round(stream.time) == Math.round(streamMetadata.duration) ) {
+						////////////////////////////////////////////
+						streamTriggerEvent.removeEventListener( Event.ENTER_FRAME, manageEvent );
+						////////////////////////////////////////////
+					}
+					else {
+						//////////////////////////////////////////////
+						event = new ProgressEvent( ProgressEvent.PROGRESS, false, false, stream.bytesLoaded, stream.bytesTotal );
+						manageEvent( event );
+						//////////////////////////////////////////////
+					}
 					break;
 				
 				case MouseEvent.MOUSE_UP :
@@ -629,12 +775,12 @@ package railk.as3.video.flvplayer {
 					switch( evt.target.name )
 					{
 						case 'seeker':
-							_stream.seek( (seeker.extra.pos*_duration)/seekBar.extra.size );
+							stream.seek( (seeker.extra.pos*streamMetadata.duration)/seekBar.extra.size );
 							break;
 							
 						case 'volumeseeker':
 							volume.volume = (volumeSeeker.extra.pos*100)/volumeBar.extra.size;
-							_stream.soundTransform = volume;
+							stream.soundTransform = volume;
 							break;	
 					}
 					evt.updateAfterEvent();
@@ -644,21 +790,21 @@ package railk.as3.video.flvplayer {
 					switch( evt.target.name )
 					{
 						case 'playpausebutton':
-							_stream.togglePause();
+							stream.togglePause();
 							break;
 						
 						case 'replaybutton':
-							_stream.seek(0);
+							stream.seek(0);
 							break;	
 							
 						case 'volumebutton':
 							if ( LinkManager.getLink( 'volumebutton').isActive() )
 							{
-								Tweener.addTween( volume, { volume:(volumeSeeker.extra.pos*100)/volumeBar.extra.size, time:.4, onUpdate:function(){ _stream.soundTransform = volume; } } );
+								Tweener.addTween( volume, { volume:(volumeSeeker.extra.pos*100)/volumeBar.extra.size, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
 							}
 							else
 							{
-								Tweener.addTween( volume, { volume:0, time:.4, onUpdate:function(){ _stream.soundTransform = volume; } } );
+								Tweener.addTween( volume, { volume:0, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
 							}
 							break;
 						
@@ -696,7 +842,7 @@ package railk.as3.video.flvplayer {
 							break;
 						
 						case 'downloadbutton':
-							navigateToURL( new URLRequest( _streamPath ), '_blank' );
+							navigateToURL( new URLRequest( _url ), '_blank' );
 							break;
 							
 						case 'screenshotbutton':
@@ -720,26 +866,11 @@ package railk.as3.video.flvplayer {
 			_name = value;
 		}
 		
-		public function get stream():NetStream { return _stream; }
+		public function get url():String { return _url; }
 		
-		public function set stream(value:NetStream):void 
+		public function set url(value:String):void 
 		{
-			video.attachNetStream( stream );
-			_stream = value;
-		}
-		
-		public function get streamPath():String { return _streamPath; }
-		
-		public function set streamPath(value:String):void 
-		{
-			_streamPath = value;
-		}
-		
-		public function get duration():Number { return _duration; }
-		
-		public function set duration(value:Number):void 
-		{
-			_duration = value;
+			_url = value;
 		}
 		
 		public override function get width():Number { return _width; }
