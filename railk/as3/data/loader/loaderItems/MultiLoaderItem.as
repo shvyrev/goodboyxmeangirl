@@ -272,7 +272,8 @@ package railk.as3.data.loader.loaderItems {
                 onloadComplete( event);
 				//////////////////////////////////////////////
 			}
-			else if ( Math.round(loader.time) == Math.round(streamMetadata.duration) ) {
+			
+			if ( Math.round(loader.time) == Math.round(streamMetadata.duration) ) {
 				////////////////////////////////////////////
 				streamTriggerEvent.removeEventListener( Event.ENTER_FRAME, onStreamEvent );
 				////////////////////////////////////////////
