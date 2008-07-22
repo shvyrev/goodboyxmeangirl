@@ -36,9 +36,10 @@ package railk.as3.video.flvplayer {
 	import flash.utils.getTimer;
 
 	// _________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.display.GraphicShape;
 	import railk.as3.data.saver.FileSaver;
 	import railk.as3.data.parser.Parser;
+	import railk.as3.display.GraphicShape;
+	import railk.as3.display.AnimatedClip;
 	import railk.as3.root.Current;
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
@@ -354,16 +355,25 @@ package railk.as3.video.flvplayer {
 		}
 		protected function createPlayPauseButton():DynamicRegistration
 		{ 
-			var placement:Object = { x:18, y:_height-20, alpha:1, resize:function(){ } };
+			var placement:Object = { x:18, y:_height-15, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			result.buttonMode = true;
 			
 				var pl:GraphicShape = new GraphicShape();
-				pl.triangle( new Point( -5, -5), new Point( -5, 5), new Point( 4, 0),0xffffff );
+				pl.triangle( new Point( 0, -5), new Point( 0, 5), new Point( 8, -5),0xffffff );
 				result.addChild( pl );
 				
-				//var pa
-
+				var pa:Sprite = new Sprite();
+					
+					var b1:GraphicShape = new GraphicShape();
+					b1.rectangle( 0xffffff, 0, 0, 3, 10 );
+					pa.addChild( b1 );
+					
+					var b2:GraphicShape = new GraphicShape();
+					b2.rectangle( 0xffffff, 5, 0, 3, 10 );
+					pa.addChild( b2 );
+				result.addChild( pa );	
+					
 			return result; 
 		}
 		protected function createReplayButton():DynamicRegistration
@@ -383,7 +393,7 @@ package railk.as3.video.flvplayer {
 		}
 		protected function createBufferBar():DynamicRegistration
 		{ 
-			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-50, resize:function(){ } };
+			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-150, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 				
 				var bb:GraphicShape = new GraphicShape();
@@ -394,7 +404,7 @@ package railk.as3.video.flvplayer {
 		}
 		protected function createSeekBar():DynamicRegistration
 		{ 
-			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-50, resize:function(){ } };
+			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-150, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
 				var sb:GraphicShape = new GraphicShape();
@@ -405,16 +415,22 @@ package railk.as3.video.flvplayer {
 		}
 		protected function createSeeker():DynamicRegistration
 		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:40, y:200, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
+				var pl:GraphicShape = new GraphicShape();
+				pl.triangle( new Point( 0, -5), new Point( 0, 5), new Point( 8, -5),0xffffff );
+				result.addChild( pl );
 			return result; 
 		}
 		protected function createVolumeBar():DynamicRegistration
 		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width-150, y:_height-20, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
+				
+				var barre:GraphicShape = new GraphicShape();
+				barre.rectangle(0xffffff, 0, 0, 50, 10);
+				result.addChild( barre );
+			
 			return result; 
 		}
 		protected function createVolumeButton():DynamicRegistration
@@ -435,7 +451,9 @@ package railk.as3.video.flvplayer {
 		{ 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
+				
+				var full:AnimatedClip = new AnimatedClip( 10 );		
+				
 			return result; 
 		}
 		protected function createX2Button():DynamicRegistration
@@ -723,7 +741,8 @@ package railk.as3.video.flvplayer {
 					var percentPlayed = bytesPlayed * 100 / bytesTotal;
 					
 					interfaceItemList.getObjectByName( 'bufferBar' ).data.width = (interfaceItemList.getObjectByName( 'bufferBar' ).data.extra.size * percentLoaded) / 100;
-					interfaceItemList.getObjectByName( 'seekBar' ).data.width = (interfaceItemList.getObjectByName( 'seekBar' ).data.extra.size * percentPlayed) / 100;
+					Tweener.addTween( interfaceItemList.getObjectByName( 'seekBar' ).data, { width:(interfaceItemList.getObjectByName( 'seekBar' ).data.extra.size * percentPlayed) / 100, time:1 } );
+					interfaceItemList.getObjectByName( 'seeker' ).data.x2 = interfaceItemList.getObjectByName( 'seekBar' ).data.width + 40;
 					
 					//--buffer
 					if ( _bufferSize == 0 ) {
