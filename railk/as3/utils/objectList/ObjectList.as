@@ -42,7 +42,7 @@ package railk.as3.utils.objectList
 		 */
 		public function add( ...args ):void
 		{
-			if ( !head ) _head = _tail = new ObjectNode( 1, args[0][0], args[0][1], args[0][2] );
+			if ( !head ) _head = _tail = new ObjectNode( 0, args[0][0], args[0][1], args[0][2] );
 			else _tail.insertAfter( new ObjectNode( _tail.id+1, args[0][0], args[0][1], args[0][2] ) );
 			
 			if ( args.length > 1 )
@@ -134,7 +134,7 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function rebuildID():void {
 			var current:ObjectNode = _head;
-			var id:int = 1;
+			var id:int = 0;
 			loop:while ( current )
 			{
 				current.id = id;

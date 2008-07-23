@@ -97,9 +97,9 @@ package railk.as3.utils.link {
 		 * 
 		 * @param	name                   nom du lien de type /.../.../...
 		 * @param	displayObject		   displayObject clickable
-		 * @param	displayObjectContent   Object de { nom:{ objet:dislplayObject , colors:{click:uint,out:uint,hover:uint}=null, action:Function(type="hover"|"out")=null } }
+		 * @param	displayObjectContent   Object de { nom:{ objet:dislplayObject , colors:{click:uint,out:uint,hover:uint}=null, action:Function(type:String("hover"|"out"),o:*)=null } }
 		 * @param   type                   'mouse' | 'roll'
-		 * @param	onClick                fonction qui se declenche lors du clik function( ..., type=String("do"|"undo") )
+		 * @param	onClick                Function(type:String("hover"|"out"),o:*)=null
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 */
 		public static function add( name:String, displayObject:*, displayObjectContent:Object, type:String='mouse', onClick:Function = null, swfAdressEnable:Boolean = false ):void {
