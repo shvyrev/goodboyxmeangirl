@@ -116,7 +116,10 @@ package railk.as3.utils
 				txt.embedFonts = true;
 				txt.setTextFormat( format );
 			
-			info.addChild( txt );	
+			info.addChild( txt );
+			
+			if ( txt.textWidth >= 20 ) _width = txt.textWidth + 20
+			else _width = txt.textWidth;
 			
 			//--bulle
 			bulle = new GraphicShape();

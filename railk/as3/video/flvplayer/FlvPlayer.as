@@ -39,6 +39,7 @@ package railk.as3.video.flvplayer {
 	import railk.as3.data.saver.FileSaver;
 	import railk.as3.data.parser.Parser;
 	import railk.as3.display.GraphicShape;
+	import railk.as3.display.Shapes;
 	import railk.as3.display.AnimatedClip;
 	import railk.as3.root.Current;
 	import railk.as3.stage.StageManager;
@@ -87,6 +88,7 @@ package railk.as3.video.flvplayer {
 		private var _height                             :Number;
 		private var _videoWidth                         :Number;
 		private var _videoHeight                        :Number;
+		private var _fonts                              :Object;
 		private var _backgroundImage                    :BitmapData;
 		private var _type                               :String;
 		private var _standalone                         :Boolean;
@@ -122,6 +124,7 @@ package railk.as3.video.flvplayer {
 																	['seekBar',component],
 																	['seeker',component],
 																	['playPauseButton',component],
+																	['volumeBarBG',component],
 																	['volumeBar',component],
 																	['volumeButton',component],
 																	['volumeSeeker',component],
@@ -132,7 +135,6 @@ package railk.as3.video.flvplayer {
 																	['downloadButton',component],
 																	['screenshotButton',component],
 																	['playListButton',component],
-																	['tagList',component],
 																	['replayButton',component],
 																	['bulle',component],
 																	['loading',component] );
@@ -186,17 +188,19 @@ package railk.as3.video.flvplayer {
 		 * 
 		 * @param	name
 		 * @param	url
-		 * @param	buffersize
 		 * @param	width
 		 * @param	height
 		 * @param	videoWidth
 		 * @param	videoHeight
+		 * @param	fonts              {name:fontName,...}
+		 * @param	backgroundImage
+		 * @param	buffersize
 		 * @param	type               'stream'|'rtpm'
 		 * @param	standalone
 		 * @param	playListContent
 		 * @param	config             xmlfile <configs><path>needed</path>...</configs>
 		 */
-		public function create( name:String, url:String, width:Number, height:Number, videoWidth:Number, videoHeight:Number, backgroundImage:BitmapData=null, buffersize:int=0, type:String='stream', standalone:Boolean=false, playListContent:Array=null, config:XML=null ):void 
+		public function create( name:String, url:String, width:Number, height:Number, videoWidth:Number, videoHeight:Number, fonts:Object=null, backgroundImage:BitmapData=null, buffersize:int=0, type:String='stream', standalone:Boolean=false, playListContent:Array=null, config:XML=null ):void 
 		{
 			//--logger
 			Logger.print( 'FlvPlayer ' + name +' enabled', Logger.MESSAGE );
@@ -213,6 +217,7 @@ package railk.as3.video.flvplayer {
 			_height = height;
 			_videoWidth = videoWidth;
 			_videoHeight = videoHeight;
+			_fonts = fonts;
 			_type = type;
 			_backgroundImage = backgroundImage;
 			_bufferSize = buffersize;
@@ -221,7 +226,7 @@ package railk.as3.video.flvplayer {
 			if ( config != null ) _config = Parser.XMLItem( config );
 			
 			//--Sharing the player + the exact .flv
-			/*var path:String = ExternalInterface.call("window.location.href.toString");
+			var path:String = ExternalInterface.call("window.location.href.toString");
 			share = '<object width="'+width+'" height="'+height+'">';
 			share += '<param name="allowscriptaccess" value="always" />';
 			if ( config != null )
@@ -235,7 +240,7 @@ package railk.as3.video.flvplayer {
 				share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
 				share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
 			}
-			share += '</embed></object>';*/
+			share += '</embed></object>';
 			
 			//--main container
 			container = new DynamicRegistration();
@@ -250,7 +255,6 @@ package railk.as3.video.flvplayer {
 				
 			//--enable volume modification
 			volume = new SoundTransform();
-			volume.volume = 0;
 			stream.soundTransform = volume;
 			
 			//////////////////////////
@@ -281,6 +285,7 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('bufferBar').data = createBufferBar();
 			interfaceItemList.getObjectByName('seekBar').data = createSeekBar();
 			interfaceItemList.getObjectByName('seeker').data = createSeeker();
+			interfaceItemList.getObjectByName('volumeBarBG').data = createVolumeBarBG();
 			interfaceItemList.getObjectByName('volumeBar').data = createVolumeBar();
 			interfaceItemList.getObjectByName('volumeButton').data = createVolumeButton();
 			interfaceItemList.getObjectByName('volumeSeeker').data = createVolumeSeeker();
@@ -292,7 +297,6 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('screenshotButton').data = createScreenshotButton();
 			interfaceItemList.getObjectByName('playListButton').data = createPlayListButton();
 			interfaceItemList.getObjectByName('playList').data = createPlayList();
-			interfaceItemList.getObjectByName('tagList').data = createTagList();
 			interfaceItemList.getObjectByName('bulle').data = createBulle();
 		}
 		
@@ -354,7 +358,7 @@ package railk.as3.video.flvplayer {
 				playPause.addFrameContent( 1, pause );
 				result.addChild( playPause );
 				
-				LinkManager.add('playPause', playPause, { playPause: { objet:playPause, colors:null, action:null }}, 'mouse', function(type:String,o:*)
+				LinkManager.add('playPause', result, { playPause: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
 				{
 					if ( type == 'do') Tweener.addTween( playPause.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ playPause.nextFrame(); Tweener.addTween( playPause.currentFrame.data, { alpha:1, time:.4 } ); }} );
 					else if ( type == 'undo') Tweener.addTween( playPause.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ playPause.previousFrame(); Tweener.addTween( playPause.currentFrame.data, { alpha:1, time:.4 } ); }} );
@@ -397,30 +401,55 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createSeeker():DynamicRegistration { 
-			var placement:Object = { x:40, y:_height-20, alpha:1, resize:function(){ } };
+			var placement:Object = { x:40, y:_height-21.5, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 				var pl:GraphicShape = new GraphicShape();
-				pl.triangle( new Point( 0, -5), new Point( 0, 5), new Point( 8, -5),0xffffff );
+				pl.cercle(0xffffff, 0, 0, 2);
 				result.addChild( pl );
 			return result; 
 		}
-		protected function createVolumeBar():DynamicRegistration { 
-			var placement:Object = { x:_width-150, y:_height-20, size:25, alpha:1, resize:function(){ } };
+		protected function createVolumeBarBG():DynamicRegistration { 
+			var placement:Object = { x:_width-90, y:_height-15, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-				
+			result.buttonMode = true;
+			
 				var barre:GraphicShape = new GraphicShape();
-				barre.rectangle(0xffffff, 0, 0, 25, 10);
+				barre.triangle(new Point(20,0),new Point(20,-8),new Point(0,0),0x111111);
+				result.addChild( barre );
+			
+			return result; 
+		}
+		protected function createVolumeBar():DynamicRegistration { 
+			var placement:Object = { x:_width-90, y:_height-15, size:20, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+			result.mouseEnabled = false;
+			result.mouseChildren = false;
+			
+				var barre:GraphicShape = new GraphicShape();
+				barre.triangle(new Point(20,0),new Point(20,-8),new Point(0,0),0xffffff);
 				result.addChild( barre );
 			
 			return result; 
 		}
 		protected function createVolumeButton():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width-100, y:height-24, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
+			
+				var vbt:GraphicShape = new GraphicShape();
+				vbt.drawShape( 0xffffff, Shapes.speaker() );
+				result.addChild( vbt );
+				
+				LinkManager.add('volumeButton', result, { vbt: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
+				{
+					if ( type == 'do') Tweener.addTween( vbt, { alpha:.2, time:.2} );
+					else if ( type == 'undo') Tweener.addTween( vbt, { alpha:1, time:.4} );
+				} );
+				
+			
 			return result; 
 		}
 		protected function createVolumeSeeker():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:200, y:200, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			return result; 
 		}
@@ -433,7 +462,7 @@ package railk.as3.video.flvplayer {
 				full.addFrameContent( 0, f1 );
 				full.addFrameContent( 1, f2 );
 				
-				LinkManager.add('full', full, { full: { objet:full, colors:null, action:null }}, 'mouse', function(type:String,o:*)
+				LinkManager.add('full', result, { full: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
 				{
 					if ( type == 'do') Tweener.addTween( full.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ full.nextFrame(); Tweener.addTween( full.currentFrame.data, { alpha:1, time:.4 } ); }} );
 					else if ( type == 'undo') Tweener.addTween( full.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ full.previousFrame(); Tweener.addTween( full.currentFrame.data, { alpha:1, time:.4 } ); }} );
@@ -444,15 +473,15 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createX2Button():DynamicRegistration { 
-			var placement:Object = { x:_width-65, y:_height-29, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width-60, y:_height-29, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
 				var x2:AnimatedClip = new AnimatedClip( 2 );
 				x2.addFrameContent( 0, new TextLink('x2','dynamic','x2',0xffffff,'arial',false,11,'left',false,true,TextLink.AUTOSIZE_LEFT ) );
-				x2.addFrameContent( 1, new TextLink('/2', 'dynamic', 'x2', 0xffffff, 'arial', false, 11, 'left', false, true, TextLink.AUTOSIZE_LEFT ) );
+				x2.addFrameContent( 1, new TextLink('/2', 'dynamic', '/2', 0xffffff, 'arial', false, 11, 'left', false, true, TextLink.AUTOSIZE_LEFT ) );
 				result.addChild( x2 );
 				
-				LinkManager.add('full', x2, { x2: { objet:x2, colors:null, action:null }}, 'mouse', function(type:String,o:*)
+				LinkManager.add('x2', result, { x2: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
 				{
 					if ( type == 'do') Tweener.addTween( x2.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ x2.nextFrame(); Tweener.addTween( x2.currentFrame.data, { alpha:1, time:.4 } ); }} );
 					else if ( type == 'undo') Tweener.addTween( x2.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ x2.previousFrame(); Tweener.addTween( x2.currentFrame.data, { alpha:1, time:.4 } ); }} );
@@ -485,15 +514,13 @@ package railk.as3.video.flvplayer {
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			return result; 
 		}
-		protected function createTagList():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result;  
-		}
 		protected function createBulle():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:200, y:200, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
+			
+				var bulle:InfoBulle = new InfoBulle( 'rectangle', 12, 'H', 0xffffff, 'currently playing', 0x000000, _fonts['kroeger0555'], 8 );
+				result.addChild( bulle );
+			
 			return result; 
 		}
 		/*protected function createResizeButton():DynamicRegistration{ 
@@ -792,8 +819,8 @@ package railk.as3.video.flvplayer {
 							break;	
 							
 						case 'volumeButton':
-							if ( LinkManager.getLink( 'volumeButton').isActive() ) Tweener.addTween( volume, { volume:(interfaceItemList.getObjectByName('volumeSeeker').data.extra.pos*100)/interfaceItemList.getObjectByName('volumeBar').data.extra.size, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
-							else Tweener.addTween( volume, { volume:0, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
+							if ( LinkManager.getLink( 'volumeButton').isActive() ) 	Tweener.addTween( volume, { volume:0, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
+							else Tweener.addTween( volume, { volume:1, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
 							break;
 						
 						case 'fullscreenButton':
