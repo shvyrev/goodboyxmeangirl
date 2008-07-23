@@ -69,7 +69,7 @@ package railk.as3.utils.link.linkItem {
 			
 			//--setup
 			for ( var prop in content ) { 
-				 content[prop].objet.mouseEnabled = false; 
+				content[prop].objet.mouseEnabled = false; 
 			}
 			
 			
@@ -215,7 +215,6 @@ package railk.as3.utils.link.linkItem {
 					break;
 					
 				case MouseEvent.CLICK :
-					
 					//--swfadress && Action && State
 					if ( swfAdress ) {
 						SWFAddress.setValue(_name);

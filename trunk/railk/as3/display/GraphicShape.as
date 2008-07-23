@@ -2,7 +2,7 @@
 * Display graphishapes
 * 
 * @author Richard Rodney
-* @version 0.2
+* @version 0.3
 */
 
 package railk.as3.display {
@@ -21,6 +21,35 @@ package railk.as3.display {
 	
 	public class GraphicShape extends DynamicRegistration {
 	
+		/**
+		 * 
+		 * @param	...args   new point(x,y),.../ or an array of point
+		 */
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						   DRAW SHAPE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function drawShape( color:uint, ...args ):void {
+			var i:int;
+			this.graphics.clear();
+			this.graphics.beginFill(color);
+			
+			if ( args[0] is Point ){
+				this.graphics.moveTo( args[0].x, args[0].y );
+				for ( i= 1; i < args.length; i++ )
+				{
+					this.graphics.lineTo( args[i].x, args[i].y );
+				}
+			}
+			else if ( args[0] is Array )
+			{
+				this.graphics.moveTo( args[0][0].x, args[0][0].y );
+				for ( i= 1; i < args[0].length; i++ )
+				{
+					this.graphics.lineTo( args[0][i].x, args[0][i].y );
+				}
+			}
+			this.graphics.endFill();
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	  DEGRADE
