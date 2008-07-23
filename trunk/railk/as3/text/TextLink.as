@@ -41,8 +41,8 @@ package railk.as3.text
 		private var _text                                         :String; 
 		private var _color                                        :uint;
 		private var _font                                         :String; 
-		private var _embedFonts                                   :String; 
-		private var _size                                         :String; 
+		private var _embedFont                                    :Boolean; 
+		private var _size                                         :Number; 
 		private var _align                                        :String; 
 		private var _selectable                                   :Boolean; 
 		private var _width                                        :Number; 
@@ -53,7 +53,23 @@ package railk.as3.text
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFonts:String, size:String, align:String, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
+		/**
+		 * 
+		 * @param	name
+		 * @param	type         'dynamic'
+		 * @param	text
+		 * @param	color
+		 * @param	font
+		 * @param	embedFonts
+		 * @param	size
+		 * @param	align
+		 * @param	selectable
+		 * @param	autoSize
+		 * @param	autoSizeType
+		 * @param	width
+		 * @param	height
+		 */
+		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
 		{
 			//--vars
 			_name = name;
@@ -61,7 +77,7 @@ package railk.as3.text
 			_text = text;
 			_color = color;
 			_font = font;
-			_embedFonts = embedFonts;
+			_embedFont = embedFont;
 			_size = size;
 			_align = align;
 			_selectable = selectable;
@@ -83,7 +99,7 @@ package railk.as3.text
 				texte.name = name;
 				texte.text = text;
 				texte.type = type;
-				texte.embedFonts = embedFonts;
+				texte.embedFonts = embedFont;
 				texte.selectable = selectable;
 				if ( autoSize )
 				{
@@ -106,9 +122,9 @@ package railk.as3.text
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function get textfield():TextField { return texte; }
 		
-		public function get name():String { return _name; }
+		public override function get name():String { return _name; }
 		
-		public function set name(value:String):void 
+		public override function set name(value:String):void 
 		{
 			texte.name = value;
 			_name = value;
@@ -147,17 +163,17 @@ package railk.as3.text
 			_font = value;
 		}
 		
-		public function get embedFonts():String { return _embedFonts; }
+		public function get embedFont():Boolean { return _embedFont; }
 		
-		public function set embedFonts(value:String):void 
+		public function set embedFont(value:Boolean):void 
 		{
 			texte.embedFonts = value;
-			_embedFonts = value;
+			_embedFont = value;
 		}
 		
-		public function get size():String { return _size; }
+		public function get size():Number { return _size; }
 		
-		public function set size(value:String):void 
+		public function set size(value:Number):void 
 		{
 			format.size = value;
 			_size = value;
@@ -179,9 +195,9 @@ package railk.as3.text
 			_selectable = value;
 		}
 		
-		public function get width():Number { return _width; }
+		public override function get width():Number { return _width; }
 		
-		public function set width(value:Number):void 
+		public override function set width(value:Number):void 
 		{
 			if (!_autoSize)
 			{
@@ -190,9 +206,9 @@ package railk.as3.text
 			}	
 		}
 		
-		public function get height():Number { return _height; }
+		public override function get height():Number { return _height; }
 		
-		public function set height(value:Number):void 
+		public override function set height(value:Number):void 
 		{
 			if (!_autoSize)
 			{

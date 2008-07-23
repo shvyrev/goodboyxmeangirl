@@ -77,8 +77,6 @@ package railk.as3.video.flvplayer {
 		private var responseTime                        :Number;
 		private var loaded                              :Number;
 		private var played                              :Number;
-		private var total                               :Number;
-		private var current                             :Number;
 		private var time                                :String;
 		
 		// _____________________________________________________________________________ VARIABLES RAPATRIEES
@@ -153,7 +151,6 @@ package railk.as3.video.flvplayer {
 		{
 			//Security.allowDomain("localhost");
 			//Security.loadPolicyFile("http://localhost/crossdomain.xml");
-			
 			nc = new NetConnection();
 			nc.connect( null );
 			stream = new NetStream( nc );
@@ -223,16 +220,8 @@ package railk.as3.video.flvplayer {
 			_playListContent = playListContent;
 			if ( config != null ) _config = Parser.XMLItem( config );
 			
-			//--prepare interface list
-			/*for ( var i:int=1; i < interfaceItemList.length; i++ ){
-				var node:ObjectNode = interfaceItemList.iterate(i);
-				node.data = new DynamicRegistration();
-				node.data.name = node.name;
-			}*/
-			
-			
 			//--Sharing the player + the exact .flv
-			var path:String = ExternalInterface.call("window.location.href.toString");
+			/*var path:String = ExternalInterface.call("window.location.href.toString");
 			share = '<object width="'+width+'" height="'+height+'">';
 			share += '<param name="allowscriptaccess" value="always" />';
 			if ( config != null )
@@ -246,7 +235,7 @@ package railk.as3.video.flvplayer {
 				share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
 				share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
 			}
-			share += '</embed></object>';
+			share += '</embed></object>';*/
 			
 			//--main container
 			container = new DynamicRegistration();
@@ -311,8 +300,7 @@ package railk.as3.video.flvplayer {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  INTERFACE COMPONENTS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBG():DynamicRegistration
-		{ 
+		protected function createBG():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
@@ -322,8 +310,7 @@ package railk.as3.video.flvplayer {
 
 			return result; 
 		}
-		protected function createBGimage():DynamicRegistration
-		{ 
+		protected function createBGimage():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
@@ -331,8 +318,7 @@ package railk.as3.video.flvplayer {
 
 			return result; 
 		}
-		protected function createMask():DynamicRegistration
-		{ 
+		protected function createMask():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
@@ -342,42 +328,41 @@ package railk.as3.video.flvplayer {
 
 			return result; 
 		}
-		protected function createLoading():DynamicRegistration
-		{ 
+		protected function createLoading():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-				
-				var l:Loading = new Loading();
-				l.cercleLoading( { fond:0x000000, cercle:0xffffff, mask:0x000000 }, 30, 18 );
-				result.addChild( l );
-				
 			return result;  
 		}
-		protected function createPlayPauseButton():DynamicRegistration
-		{ 
-			var placement:Object = { x:18, y:_height-15, alpha:1, resize:function(){ } };
+		protected function createPlayPauseButton():DynamicRegistration { 
+			var placement:Object = { x:18, y:_height-25, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-			result.buttonMode = true;
 			
-				var pl:GraphicShape = new GraphicShape();
-				pl.triangle( new Point( 0, -5), new Point( 0, 5), new Point( 8, -5),0xffffff );
-				result.addChild( pl );
+				var play:GraphicShape = new GraphicShape();
+				play.triangle( new Point( 0,0), new Point( 0, 10), new Point( 8, 5),0xffffff );
 				
-				var pa:Sprite = new Sprite();
-					
+				var pause:Sprite = new Sprite();
 					var b1:GraphicShape = new GraphicShape();
 					b1.rectangle( 0xffffff, 0, 0, 3, 10 );
-					pa.addChild( b1 );
+					pause.addChild( b1 );
 					
 					var b2:GraphicShape = new GraphicShape();
 					b2.rectangle( 0xffffff, 5, 0, 3, 10 );
-					pa.addChild( b2 );
-				result.addChild( pa );	
+					pause.addChild( b2 );
+				
+				var playPause:AnimatedClip = new AnimatedClip( 2 );
+				playPause.addFrameContent( 0, play );
+				playPause.addFrameContent( 1, pause );
+				result.addChild( playPause );
+				
+				LinkManager.add('playPause', playPause, { playPause: { objet:playPause, colors:null, action:null }}, 'mouse', function(type:String,o:*)
+				{
+					if ( type == 'do') Tweener.addTween( playPause.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ playPause.nextFrame(); Tweener.addTween( playPause.currentFrame.data, { alpha:1, time:.4 } ); }} );
+					else if ( type == 'undo') Tweener.addTween( playPause.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ playPause.previousFrame(); Tweener.addTween( playPause.currentFrame.data, { alpha:1, time:.4 } ); }} );
+				} );
 					
 			return result; 
 		}
-		protected function createReplayButton():DynamicRegistration
-		{ 
+		protected function createReplayButton():DynamicRegistration { 
 			var placement:Object = { x2:_width/2, y2:_height/2, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			result.buttonMode = true;
@@ -391,19 +376,17 @@ package railk.as3.video.flvplayer {
 
 			return result; 
 		}
-		protected function createBufferBar():DynamicRegistration
-		{ 
+		protected function createBufferBar():DynamicRegistration { 
 			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-150, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 				
 				var bb:GraphicShape = new GraphicShape();
-				bb.rectangle(0x000000, 0, 0, _width - 50, 1);
+				bb.rectangle(0x111111, 0, 0, _width - 50, 1);
 				result.addChild( bb );
 
 			return result; 
 		}
-		protected function createSeekBar():DynamicRegistration
-		{ 
+		protected function createSeekBar():DynamicRegistration { 
 			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-150, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
@@ -413,107 +396,107 @@ package railk.as3.video.flvplayer {
 			
 			return result; 
 		}
-		protected function createSeeker():DynamicRegistration
-		{ 
-			var placement:Object = { x:40, y:200, alpha:1, resize:function(){ } };
+		protected function createSeeker():DynamicRegistration { 
+			var placement:Object = { x:40, y:_height-20, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 				var pl:GraphicShape = new GraphicShape();
 				pl.triangle( new Point( 0, -5), new Point( 0, 5), new Point( 8, -5),0xffffff );
 				result.addChild( pl );
 			return result; 
 		}
-		protected function createVolumeBar():DynamicRegistration
-		{ 
-			var placement:Object = { x:_width-150, y:_height-20, alpha:1, resize:function(){ } };
+		protected function createVolumeBar():DynamicRegistration { 
+			var placement:Object = { x:_width-150, y:_height-20, size:25, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 				
 				var barre:GraphicShape = new GraphicShape();
-				barre.rectangle(0xffffff, 0, 0, 50, 10);
+				barre.rectangle(0xffffff, 0, 0, 25, 10);
 				result.addChild( barre );
 			
 			return result; 
 		}
-		protected function createVolumeButton():DynamicRegistration
-		{ 
+		protected function createVolumeButton():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result; 
 		}
-		protected function createVolumeSeeker():DynamicRegistration
-		{ 
+		protected function createVolumeSeeker():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result; 
 		}
-		protected function createFullscreenButton():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+		protected function createFullscreenButton():DynamicRegistration { 
+			var placement:Object = { x:_width-40, y:_height-25, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
+				var f1:GraphicShape = new GraphicShape(); f1.rectangle(0xffffff, 0, 0, 20, 10);
+				var f2:GraphicShape = new GraphicShape(); f2.rectangle(0xffffff, 5, 3, 10, 5);
+				var full:AnimatedClip = new AnimatedClip( 2 );
+				full.addFrameContent( 0, f1 );
+				full.addFrameContent( 1, f2 );
 				
-				var full:AnimatedClip = new AnimatedClip( 10 );		
+				LinkManager.add('full', full, { full: { objet:full, colors:null, action:null }}, 'mouse', function(type:String,o:*)
+				{
+					if ( type == 'do') Tweener.addTween( full.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ full.nextFrame(); Tweener.addTween( full.currentFrame.data, { alpha:1, time:.4 } ); }} );
+					else if ( type == 'undo') Tweener.addTween( full.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ full.previousFrame(); Tweener.addTween( full.currentFrame.data, { alpha:1, time:.4 } ); }} );
+				} );
+				
+			result.addChild( full );
 				
 			return result; 
 		}
-		protected function createX2Button():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+		protected function createX2Button():DynamicRegistration { 
+			var placement:Object = { x:_width-65, y:_height-29, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
+			
+				var x2:AnimatedClip = new AnimatedClip( 2 );
+				x2.addFrameContent( 0, new TextLink('x2','dynamic','x2',0xffffff,'arial',false,11,'left',false,true,TextLink.AUTOSIZE_LEFT ) );
+				x2.addFrameContent( 1, new TextLink('/2', 'dynamic', 'x2', 0xffffff, 'arial', false, 11, 'left', false, true, TextLink.AUTOSIZE_LEFT ) );
+				result.addChild( x2 );
+				
+				LinkManager.add('full', x2, { x2: { objet:x2, colors:null, action:null }}, 'mouse', function(type:String,o:*)
+				{
+					if ( type == 'do') Tweener.addTween( x2.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ x2.nextFrame(); Tweener.addTween( x2.currentFrame.data, { alpha:1, time:.4 } ); }} );
+					else if ( type == 'undo') Tweener.addTween( x2.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ x2.previousFrame(); Tweener.addTween( x2.currentFrame.data, { alpha:1, time:.4 } ); }} );
+				} );
+			
 			return result; 
 		}
-		protected function createShareButton():DynamicRegistration
-		{ 
+		protected function createShareButton():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result; 
 		}
-		protected function createDownloadButton():DynamicRegistration
-		{ 
+		protected function createDownloadButton():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result; 
 		}
-		protected function createScreenshotButton():DynamicRegistration
-		{ 
+		protected function createScreenshotButton():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result; 
 		}
-		protected function createPlayListButton():DynamicRegistration
-		{ 
+		protected function createPlayListButton():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result; 
 		}
-		protected function createPlayList():DynamicRegistration
-		{ 
+		protected function createPlayList():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result; 
 		}
-		protected function createTagList():DynamicRegistration
-		{ 
+		protected function createTagList():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-
 			return result;  
 		}
-		protected function createBulle():DynamicRegistration
-		{ 
+		protected function createBulle():DynamicRegistration { 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 
 			return result; 
 		}
-		/*protected function createResizeButton():DynamicRegistration
-		 { 
+		/*protected function createResizeButton():DynamicRegistration{ 
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 
@@ -526,7 +509,7 @@ package railk.as3.video.flvplayer {
 		// 																					  INTERFACE LAYOUT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createLayout():void {
-			for ( var i:int=1; i < interfaceItemList.length; i++ )
+			for ( var i:int=0; i < interfaceItemList.length; i++ )
 			{
 				var node:ObjectNode = interfaceItemList.iterate(i);
 				if ( node.data.extra.x != undefined ) node.data.x =  node.data.extra.x;
@@ -540,7 +523,7 @@ package railk.as3.video.flvplayer {
 				container.addChild( node.data );
 			}
 			if ( _enableMask ) container.mask = containerMask;	
-			if ( _standalone ) FullScreenMode.Activate( interfaceItemList.getObjectByName('fullscreenButton').data, Current.stage );
+			if ( _standalone && _enablefullscreen ) FullScreenMode.Activate( interfaceItemList.getObjectByName('fullscreenButton').data, Current.stage );
 		}
 		
 		
@@ -615,7 +598,7 @@ package railk.as3.video.flvplayer {
 			item.name = name;
 			
 			//--add
-			for ( var i:int=1; i < interfaceItemList.length; i++ ){
+			for ( var i:int=0; i < interfaceItemList.length; i++ ){
 				var node:ObjectNode = interfaceItemList.iterate(i);
 				if( insertPoint == node.data.name ){
 					if ( insertMode == 'before') interfaceItemList.insertBefore( node, name, item );
@@ -706,10 +689,7 @@ package railk.as3.video.flvplayer {
 				case NetStatusEvent.NET_STATUS :
 					switch( evt.info.code ) {
 						case "NetStream.Play.Start" :
-							//////////////////////////////////////////////
-							event = new Event( Event.OPEN );
-							manageEvent( event );
-							//////////////////////////////////////////////
+							responseTime = getTimer();
 							break;
 					}
 					break;
@@ -718,84 +698,48 @@ package railk.as3.video.flvplayer {
 					//todo error loading flv
 					break;
 					
-				case Event.OPEN :
-					responseTime = getTimer();
-					break;
-					
-				case ProgressEvent.PROGRESS :
-					current = Math.floor( stream.time );	
-					total = Math.round( streamMetadata.duration );
-					played = stream.time / streamMetadata.duration;
-					loaded = stream.bytesLoaded / stream.bytesTotal;
-					time = Utils.numberToTime( played, true );
-					var percentLoaded = Math.round((evt.bytesLoaded * 100) / evt.bytesTotal);
-					var bytesLoaded = evt.bytesLoaded;
-					var bytesTotal = evt.bytesTotal;
-					var bytesLeft = bytesTotal - bytesLoaded;
-					var timeElapsed:Number = getTimer() - responseTime;
-					var currentSpeed:Number = bytesLoaded / (timeElapsed/1000);
-					var downloadTimeLeft:Number = bytesLeft / (currentSpeed * 0.8);
-					var remainingBuffer:Number = streamMetadata.duration - stream.bufferLength ;
-					var buffer = ( _bufferSize * bytesTotal ) / streamMetadata.duration;
-					var bytesPlayed = Math.round(( Math.round(stream.time) * bytesTotal ) / Math.round(streamMetadata.duration));
-					var percentPlayed = bytesPlayed * 100 / bytesTotal;
-					
-					interfaceItemList.getObjectByName( 'bufferBar' ).data.width = (interfaceItemList.getObjectByName( 'bufferBar' ).data.extra.size * percentLoaded) / 100;
-					Tweener.addTween( interfaceItemList.getObjectByName( 'seekBar' ).data, { width:(interfaceItemList.getObjectByName( 'seekBar' ).data.extra.size * percentPlayed) / 100, time:1 } );
-					interfaceItemList.getObjectByName( 'seeker' ).data.x2 = interfaceItemList.getObjectByName( 'seekBar' ).data.width + 40;
-					
-					//--buffer
-					if ( _bufferSize == 0 ) {
-						//temps a télécharger ce qui reste moindre que le nombre de seconde de données restantes
-						if ( remainingBuffer > downloadTimeLeft && bytesLoaded > 8 ) {
-							streamReady = true;
-						}
-					}
-					else {
-						if ( streamReady == false ) {
-							if ( streamBufferState <= buffer ) {
-								streamBufferState += bytesLoaded - previousBytesLoaded;
-							}
-							else {
-								streamReady = true;
-							}
-						}
-						else if ( streamReady == true ) {
-							if ( streamBufferState > buffer*.02 && (bytesLoaded - bytesPlayed) >= stream.bufferLength ){
-								streamBufferState = streamBufferState - ( bytesPlayed - previousBytesPLayed );
-							}
-							else {
-								streamReady = false;
-							}
-						}
-					}	
-					
-					previousBytesLoaded = bytesLoaded;
-					previousBytesPLayed = bytesPlayed;
-					break;
-					
 				case Event.ENTER_FRAME :
-					if ( stream.bytesLoaded == 0 ) {
-						stream.togglePause();
-						//////////////////////////////////////////////
-						event = new Event( Event.OPEN );
-						manageEvent( event );
-						//////////////////////////////////////////////
-					}
-					else if ( stream.bytesLoaded == stream.bytesTotal ) {
-						streamReady = true;
-					}
+					if ( stream.bytesLoaded == 0 ) responseTime = getTimer();
+					else if ( stream.bytesLoaded == stream.bytesTotal ) streamReady = true;
 					
-					if ( Math.round(stream.time) == Math.round(streamMetadata.duration) ) {
-						//////////////////////////////////////////////
-						streamTriggerEvent.removeEventListener( Event.ENTER_FRAME, manageEvent );
-						//////////////////////////////////////////////
-					}
-					else {
-						//////////////////////////////////////////////
-						event = new ProgressEvent( ProgressEvent.PROGRESS, false, false, stream.bytesLoaded, stream.bytesTotal );
-						manageEvent( event );
-						//////////////////////////////////////////////
+					if ( Math.round(stream.time) == Math.round(streamMetadata.duration) ) streamTriggerEvent.removeEventListener( Event.ENTER_FRAME, manageEvent );
+					else 
+					{
+						time = Utils.numberToTime( (getTimer() - responseTime), true );
+						played = stream.time / streamMetadata.duration;
+						loaded = stream.bytesLoaded / stream.bytesTotal;
+						
+						interfaceItemList.getObjectByName( 'bufferBar' ).data.width = interfaceItemList.getObjectByName( 'bufferBar' ).data.extra.size * loaded;
+						interfaceItemList.getObjectByName( 'seekBar' ).data.width = interfaceItemList.getObjectByName( 'seekBar' ).data.extra.size * played;
+						interfaceItemList.getObjectByName( 'seeker' ).data.x2 = interfaceItemList.getObjectByName( 'seekBar' ).data.width+interfaceItemList.getObjectByName( 'seekBar' ).data.x;
+						
+						
+						////////////////////////////////////////////////buffer//////////////////////////////////////////////////////////
+						var remainingBuffer:Number = streamMetadata.duration - stream.bufferLength ;
+						var buffer:Number = ( _bufferSize * stream.bytesTotal ) / streamMetadata.duration;
+						var bytesPlayed:Number = Math.round(( Math.round(stream.time) * stream.bytesTotal ) / Math.round(streamMetadata.duration));
+						var bytesLoaded:Number = stream.bytesLoaded;
+						var bytesLeft:Number = stream.bytesTotal - stream.bytesLoaded;
+						var currentSpeed = loaded / ((getTimer() - responseTime)/1000);
+						var downloadTimeLeft:Number = bytesLeft / (currentSpeed * 0.8);
+						
+						if ( _bufferSize == 0 ) {
+							if ( remainingBuffer > downloadTimeLeft && bytesLoaded > 8 ) streamReady = true;
+						}
+						else {
+							if ( streamReady == false ) {
+								if ( streamBufferState <= buffer ) streamBufferState += bytesLoaded - previousBytesLoaded;
+								else streamReady = true;
+							}
+							else if ( streamReady == true ) {
+								if ( streamBufferState > buffer*.02 && (bytesLoaded - bytesPlayed) >= stream.bufferLength ) streamBufferState = streamBufferState - ( bytesPlayed - previousBytesPLayed );
+								else streamReady = false;
+							}
+						}	
+						////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+						
+						previousBytesLoaded = bytesLoaded;
+						previousBytesPLayed = bytesPlayed;
 					}
 					break;
 				
@@ -848,36 +792,38 @@ package railk.as3.video.flvplayer {
 							break;	
 							
 						case 'volumeButton':
-							if ( LinkManager.getLink( 'volumebutton').isActive() ) Tweener.addTween( volume, { volume:(interfaceItemList.getObjectByName('volumeSeeker').data.extra.pos*100)/interfaceItemList.getObjectByName('volumeBar').data.extra.size, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
+							if ( LinkManager.getLink( 'volumeButton').isActive() ) Tweener.addTween( volume, { volume:(interfaceItemList.getObjectByName('volumeSeeker').data.extra.pos*100)/interfaceItemList.getObjectByName('volumeBar').data.extra.size, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
 							else Tweener.addTween( volume, { volume:0, time:.4, onUpdate:function(){ stream.soundTransform = volume; } } );
 							break;
 						
 						case 'fullscreenButton':
-							if ( ! _standalone ){
-								if ( LinkManager.getLink( 'fullscreenbutton').isActive() ) ResizeManager.groupAction( StageManager.W, StageManager.H );
+							if ( ! _standalone && _enablefullscreen ){
+								if ( LinkManager.getLink( 'fullscreenButton').isActive() ) ResizeManager.groupAction( StageManager.W, StageManager.H );
 								else ResizeManager.groupAction( _width, _height );
 							}
 							break;
 							
 						case 'x2Button' :
-							if ( LinkManager.getLink( 'x2button').isActive() ) ResizeManager.groupAction(_width*.5,_height*.5);
-							else ResizeManager.groupAction(_width*2,_height*2);
+							if( _enableX2 ){
+								if ( LinkManager.getLink( 'x2Button').isActive() ) ResizeManager.groupAction(_width*.5,_height*.5);
+								else ResizeManager.groupAction(_width * 2, _height * 2); 
+							}
 							break;
 							
 						/*case 'resizeButton':
-							//function to resize manually
+							//if( _enableResize )function to resize manually
 							break;*/
-						
+							
 						case 'shareButton':
-							System.setClipboard( share );
+							if( _enableShare ) System.setClipboard( share );
 							break;
 						
 						case 'downloadButton':
-							navigateToURL( new URLRequest( _url ), '_blank' );
+							if ( _enableDownload )  navigateToURL( new URLRequest( _url ), '_blank' );
 							break;
 							
 						case 'screenshotButton':
-							screenshot( String(current) );
+							if( _enableScreenshot ) screenshot( time );
 							break;
 							
 					}

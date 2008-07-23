@@ -33,11 +33,12 @@ package railk.as3.display
 		public function AnimatedClip( frames:int ):void {
 			_frames = frames;
 			framesList = new ObjectList();
-			for ( var i:int = 0; i < frames; i++ )
+			for ( var i:int=0; i < frames; i++ )
 			{
 				framesList.add( [String(i),null] );
 			}
-			t = new Timer();
+			_current = framesList.head;
+			t = new Timer(1);
 			t.addEventListener( TimerEvent.TIMER, manageEvent, false, 0, true );
 		}
 		
@@ -82,6 +83,7 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function addFrameContent( frame:int, data:*, script:Function = null ):void {
 			framesList.getObjectByID( frame ).data = data;
+			pushFrameOnScreen();
 		}
 		
 		/**
@@ -91,9 +93,9 @@ package railk.as3.display
 		 * @param	content
 		 * @param	script
 		 */
-		public function addFrame( type:String, place:int, data:*=null, script:Function=null ):void {
+		public function addFrame( type:String, place:int, data:*= null, script:Function = null ):void {
 			if ( type == 'before' ) framesList.insertBefore( framesList.getObjectByID( place ), String(place - 1), data, script );
-			else ( type == 'after' ) framesList.insertBefore( framesList.getObjectByID( place ), String(place + 1), data, script );
+			else if ( type == 'after' ) framesList.insertAfter( framesList.getObjectByID( place ), String(place + 1), data, script );
 			_frames += 1;
 		}
 		
@@ -111,7 +113,7 @@ package railk.as3.display
 		// 																				 PUSH FRAME ON SCREEN
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function pushFrameOnScreen():void {
-			this.removeChildAt( 0 );
+			if( this.numChildren > 0 ) this.removeChildAt( 0 );
 			this.addChild( _current.data );
 		}
 		
@@ -121,7 +123,7 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void {
 			t.removeEventListener( TimerEvent.TIMER, manageEvent );
-			for ( var i:int; i < framesList.length; i++ )
+			for ( var i:int=0; i < framesList.length; i++ )
 			{
 				framesList.iterate( i ).dispose();
 			}
@@ -144,9 +146,7 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get currentFrame():void {
-			return _current;
-		}
+		public function get currentFrame():ObjectNode { return _current; }
 		
 		public function get frames():int { return _frames; }
 		
@@ -157,7 +157,7 @@ package railk.as3.display
 		public function get frameRate():Number { return _frameRate; }
 		
 		public function set frameRate( value:Number ):void {
-			_frameRate = vlue;
+			_frameRate = value;
 			t.delay = value
 		}
 		
