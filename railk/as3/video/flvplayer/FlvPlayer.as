@@ -137,13 +137,18 @@ package railk.as3.video.flvplayer {
 																	['playListButton',component],
 																	['replayButton',component],
 																	['bulle',component],
-																	['loading',component] );
+																	['loading', component],
+																	['sharePanel',component]);
 																	
 		// _________________________________________________________________________________ VARIABLES PLAYER															
-		private var share                               :String
+		protected var share                               :String
 		
-		
-		
+		// ________________________________________________________________________________________ FUCNTIONS
+		private var txtHoverOut                         :Function = function( type:String, o:TextLink)
+		{
+			if ( type == 'hover') Tweener.addTween( o.textfield, { _text_color:0xFFFF00, time:.2 } );
+			else if ( type == 'out') Tweener.addTween( o.textfield, { _text_color:0xFFFFff, time:.2 } );
+		}
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -293,6 +298,7 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('x2Button').data = createX2Button();
 			//interfaceItemList.getObjectByName('resizeButton').data = createResizeButton();
 			interfaceItemList.getObjectByName('shareButton').data = createShareButton();
+			interfaceItemList.getObjectByName('sharePanel').data = createSharePanel(share);
 			interfaceItemList.getObjectByName('downloadButton').data = createDownloadButton();
 			interfaceItemList.getObjectByName('screenshotButton').data = createScreenshotButton();
 			interfaceItemList.getObjectByName('playListButton').data = createPlayListButton();
@@ -371,11 +377,8 @@ package railk.as3.video.flvplayer {
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			result.buttonMode = true;
 			result.mouseChildren = false;
-			
-				var replay:TextField = new TextField();
-				replay.text = 'replay';
-				replay.height = 20;
-				replay.setTextFormat( new TextFormat( 'arial', 12, 0xffffff, null, null, null, null, null, 'left') );
+				
+				var replay:TextLink = new TextLink('share','dynamic','replay',0xffffff,'arial',false,12,'center',true,false,false,'',50,20);
 				result.addChild( replay );
 
 			return result; 
@@ -477,8 +480,8 @@ package railk.as3.video.flvplayer {
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
 				var x2:AnimatedClip = new AnimatedClip( 2 );
-				x2.addFrameContent( 0, new TextLink('x2','dynamic','x2',0xffffff,'arial',false,11,'left',false,true,TextLink.AUTOSIZE_LEFT ) );
-				x2.addFrameContent( 1, new TextLink('/2', 'dynamic', '/2', 0xffffff, 'arial', false, 11, 'left', false, true, TextLink.AUTOSIZE_LEFT ) );
+				x2.addFrameContent( 0, new TextLink('x2','dynamic','x2',0xffffff,'arial',false,11,'left',false,false,true,TextLink.AUTOSIZE_LEFT ) );
+				x2.addFrameContent( 1, new TextLink('/2', 'dynamic', '/2', 0xffffff, 'arial', false, 11, 'left',false, false, true, TextLink.AUTOSIZE_LEFT ) );
 				result.addChild( x2 );
 				
 				LinkManager.add('x2', result, { x2: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
@@ -490,18 +493,47 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createShareButton():DynamicRegistration { 
+			var placement:Object = { x:_width-40, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+			
+				var share:TextLink = new TextLink( 'share', 'dynamic', 'SHARE', 0xffffff, _fonts['kroeger0555'], true, 8, 'left', false, false, true, TextLink.AUTOSIZE_LEFT );
+				result.addChild( share );
+				LinkManager.add('shareButton', share, { share: { objet:share, colors:null, action:txtHoverOut }}, 'mouse' );
+			
+			return result; 
+		}
+		protected function createSharePanel( share:String ):DynamicRegistration {
 			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
+			result.visible = false;
+			
+				var bg:GraphicShape = new GraphicShape();
+				bg.rectangle( 0x000000, 0, 0, _width, _height );
+				result.addChild( bg );
+				
+				var txt:TextLink = new TextLink('share','dynamic',share,0xffffff,_fonts['kroeger0555'],true,8,'left',true,false,false,'',_width-120,_height-120);
+				result.addChild( txt );
+			
 			return result; 
 		}
 		protected function createDownloadButton():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width-90, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
+			
+				var dwl:TextLink = new TextLink( 'download', 'dynamic', 'DOWNLOAD', 0xffffff, _fonts['kroeger0555'], true, 8, 'left',false, false, true, TextLink.AUTOSIZE_LEFT );
+				result.addChild( dwl );
+				LinkManager.add('downloadButton', dwl, { dwl: { objet:dwl, colors:null, action:txtHoverOut }}, 'mouse' );
+				
 			return result; 
 		}
 		protected function createScreenshotButton():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width-150, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
+			
+				var sc:TextLink = new TextLink( 'screenshot', 'dynamic', 'SCREENSHOT', 0xffffff, _fonts['kroeger0555'], true, 8, 'left',false, false, true, TextLink.AUTOSIZE_LEFT );
+				result.addChild( sc );
+				LinkManager.add('screenshotButton', sc, { sc: { objet:sc, colors:null, action:txtHoverOut }}, 'mouse' );
+			
 			return result; 
 		}
 		protected function createPlayListButton():DynamicRegistration { 
