@@ -44,6 +44,7 @@ package railk.as3.text
 		private var _embedFont                                    :Boolean; 
 		private var _size                                         :Number; 
 		private var _align                                        :String; 
+		private var _wordwrap                                     :Boolean; 
 		private var _selectable                                   :Boolean; 
 		private var _width                                        :Number; 
 		private var _height                                       :Number; 
@@ -69,7 +70,7 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
+		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
 		{
 			//--vars
 			_name = name;
@@ -80,6 +81,7 @@ package railk.as3.text
 			_embedFont = embedFont;
 			_size = size;
 			_align = align;
+			_wordwrap = wordwrap;
 			_selectable = selectable;
 			_width = width;
 			_height = height;
@@ -107,9 +109,10 @@ package railk.as3.text
 				}
 				else
 				{
-					texte.width = width;
-					texte.height = height;
+					if( width != 0) texte.width = width;
+					if( height != 0) texte.height = height;
 				}
+				texte.wordWrap = wordwrap;
 				texte.setTextFormat( format );
 				texte.mouseEnabled = false;
 				textLink.addChild( texte );

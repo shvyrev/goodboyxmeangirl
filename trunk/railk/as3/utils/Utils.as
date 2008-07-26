@@ -11,6 +11,21 @@ package railk.as3.utils {
 	
 	public class Utils extends Sprite {
 		
+		/**
+		 * 
+		 * @param	x1
+		 * @param	y1
+		 * @param	x2
+		 * @param	y2
+		 * @return
+		 */
+		static public function getDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number  
+		{  
+			var dx:Number = x2 - x1;  
+			var dy:Number = y2 - y1;  
+            return Math.sqrt(dx*dx + dy*dy);  
+        }  
+		
 		//création de nombre aléatoire compris entre deux nombres
 		/**
 		* 
