@@ -4,6 +4,8 @@
 * @author Richard Rodney.
 * @version 0.2
 * 
+* need at least itc StoneSans font for this basic player to work, extented doesn't need it
+* 
 * TODO:
 * 	_Resize Button for manual resize, External config parsing, sort new Zindex
 */
@@ -39,7 +41,7 @@ package railk.as3.video.flvplayer {
 	import railk.as3.data.saver.FileSaver;
 	import railk.as3.data.parser.Parser;
 	import railk.as3.display.GraphicShape;
-	import railk.as3.display.Shapes;
+	import railk.as3.display.PixelShapes;
 	import railk.as3.display.AnimatedClip;
 	import railk.as3.root.Current;
 	import railk.as3.stage.StageManager;
@@ -137,6 +139,7 @@ package railk.as3.video.flvplayer {
 																	['playListButton',component],
 																	['replayButton',component],
 																	['bulle',component],
+																	['time',component],
 																	['loading', component],
 																	['sharePanel',component]);
 																	
@@ -304,6 +307,7 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('playListButton').data = createPlayListButton();
 			interfaceItemList.getObjectByName('playList').data = createPlayList();
 			interfaceItemList.getObjectByName('bulle').data = createBulle();
+			interfaceItemList.getObjectByName('time').data = createTime();
 		}
 		
 		
@@ -333,7 +337,7 @@ package railk.as3.video.flvplayer {
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
 				var m:GraphicShape = new GraphicShape();
-				m.roundRectangle( 0x000000, 0, 0, _width, _height,30,30 );
+				m.rectangle( 0x000000, 0, 0, _width, _height );
 				result.addChild( m );
 
 			return result; 
@@ -344,20 +348,11 @@ package railk.as3.video.flvplayer {
 			return result;  
 		}
 		protected function createPlayPauseButton():DynamicRegistration { 
-			var placement:Object = { x:18, y:_height-25, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width/2-50, y:_height/2-20, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
-				var play:GraphicShape = new GraphicShape();
-				play.triangle( new Point( 0,0), new Point( 0, 10), new Point( 8, 5),0xffffff );
-				
-				var pause:Sprite = new Sprite();
-					var b1:GraphicShape = new GraphicShape();
-					b1.rectangle( 0xffffff, 0, 0, 3, 10 );
-					pause.addChild( b1 );
-					
-					var b2:GraphicShape = new GraphicShape();
-					b2.rectangle( 0xffffff, 5, 0, 3, 10 );
-					pause.addChild( b2 );
+				var play:TextLink = new TextLink('play','dynamic','PLAY',0xfe5815,_fonts['itcStone'],false,19,'center',true,false,false,false,'',60,30);
+				var pause:TextLink = new TextLink('pause','dynamic','PAUSE',0xfe5815,_fonts['itcStone'],false,19,'center',true,false,false,false,'',150,30);
 				
 				var playPause:AnimatedClip = new AnimatedClip( 2 );
 				playPause.addFrameContent( 0, play );
@@ -373,63 +368,60 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createReplayButton():DynamicRegistration { 
-			var placement:Object = { x2:_width/2, y2:_height/2, alpha:1, resize:function(){ } };
+			var placement:Object = { x2:_width>>1, y2:_height/2, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-			result.buttonMode = true;
-			result.mouseChildren = false;
-				
-				var replay:TextLink = new TextLink('share','dynamic','replay',0xffffff,'arial',false,12,'center',true,false,false,'',50,20);
+			
+				var replay:TextLink = new TextLink('share', 'dynamic', '<font face="' + _fonts['itcStone'] + '" size="19" color="#fe5815">REPLAY </font> <font face="' + _fonts['itcStone'] + '" size="19" color="#ffffff">THIS VIDEO ?</font>', 0xffffff, _fonts['itcStone'], true, 19, 'center', false, true, false, false, '', 185, 30);
+				replay.alpha = 0;
 				result.addChild( replay );
-
+				result.buttonMode = true;
+				result.mouseChildren = false;
 			return result; 
 		}
 		protected function createBufferBar():DynamicRegistration { 
-			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-150, resize:function(){ } };
+			var placement:Object = { x:0, y:_height-4, alpha:1, size:_width, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 				
 				var bb:GraphicShape = new GraphicShape();
-				bb.rectangle(0x111111, 0, 0, _width - 50, 1);
+				bb.rectangle(0x545454, 0, 0, _width, 4);
 				result.addChild( bb );
 
 			return result; 
 		}
 		protected function createSeekBar():DynamicRegistration { 
-			var placement:Object = { x:40, y:_height-20, alpha:1, size:_width-150, resize:function(){ } };
+			var placement:Object = { x:0, y:_height-4, alpha:1, size:_width, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
 				var sb:GraphicShape = new GraphicShape();
-				sb.rectangle(0xffffff, 0, 0, 1, 1);
+				sb.rectangle(0xfe5815, 0, 0, 1, 4);
 				result.addChild( sb );
 			
 			return result; 
 		}
 		protected function createSeeker():DynamicRegistration { 
-			var placement:Object = { x:40, y:_height-21.5, alpha:1, resize:function(){ } };
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-				var pl:GraphicShape = new GraphicShape();
-				pl.cercle(0xffffff, 0, 0, 2);
-				result.addChild( pl );
 			return result; 
 		}
 		protected function createVolumeBarBG():DynamicRegistration { 
-			var placement:Object = { x:_width-90, y:_height-15, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width>>1, y:_height*.6, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			result.buttonMode = true;
 			
 				var barre:GraphicShape = new GraphicShape();
-				barre.triangle(new Point(20,0),new Point(20,-8),new Point(0,0),0x111111);
+				barre.roundRectangle(0x2e2e2e,0,0,26,71,15,15);
 				result.addChild( barre );
 			
 			return result; 
 		}
 		protected function createVolumeBar():DynamicRegistration { 
-			var placement:Object = { x:_width-90, y:_height-15, size:20, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width>>1, y:_height*.6, size:71, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			result.mouseEnabled = false;
 			result.mouseChildren = false;
 			
 				var barre:GraphicShape = new GraphicShape();
-				barre.triangle(new Point(20,0),new Point(20,-8),new Point(0,0),0xffffff);
+				barre.roundRectangle(0x4a4a4a,0,0,26,71,15,15);
 				result.addChild( barre );
 			
 			return result; 
@@ -437,18 +429,6 @@ package railk.as3.video.flvplayer {
 		protected function createVolumeButton():DynamicRegistration { 
 			var placement:Object = { x:_width-100, y:height-24, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var vbt:GraphicShape = new GraphicShape();
-				vbt.drawShape( 0xffffff, Shapes.speaker() );
-				result.addChild( vbt );
-				
-				LinkManager.add('volumeButton', result, { vbt: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
-				{
-					if ( type == 'do') Tweener.addTween( vbt, { alpha:.2, time:.2} );
-					else if ( type == 'undo') Tweener.addTween( vbt, { alpha:1, time:.4} );
-				} );
-				
-			
 			return result; 
 		}
 		protected function createVolumeSeeker():DynamicRegistration { 
@@ -457,18 +437,15 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createFullscreenButton():DynamicRegistration { 
-			var placement:Object = { x:_width-40, y:_height-25, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width/2-7, y:_height/2, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-				var f1:GraphicShape = new GraphicShape(); f1.rectangle(0xffffff, 0, 0, 20, 10);
-				var f2:GraphicShape = new GraphicShape(); f2.rectangle(0xffffff, 5, 3, 10, 5);
-				var full:AnimatedClip = new AnimatedClip( 2 );
-				full.addFrameContent( 0, f1 );
-				full.addFrameContent( 1, f2 );
+				var full:TextLink = new TextLink('x2','dynamic','FULLSCREEN',0xffffff,_fonts['itcStone'],true,14,'left',false,false,false,true,TextLink.AUTOSIZE_LEFT )
+				full.alpha = .28;
 				
 				LinkManager.add('full', result, { full: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
 				{
-					if ( type == 'do') Tweener.addTween( full.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ full.nextFrame(); Tweener.addTween( full.currentFrame.data, { alpha:1, time:.4 } ); }} );
-					else if ( type == 'undo') Tweener.addTween( full.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ full.previousFrame(); Tweener.addTween( full.currentFrame.data, { alpha:1, time:.4 } ); }} );
+					if ( type == 'do') Tweener.addTween( full, { alpha:0, time:.5 } );
+					else if ( type == 'undo') Tweener.addTween( full, { alpha:0, time:.28 } );
 				} );
 				
 			result.addChild( full );
@@ -476,12 +453,13 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createX2Button():DynamicRegistration { 
-			var placement:Object = { x:_width-60, y:_height-29, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width/2-7, y:_height/2, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
+			result.visible = false;
 				var x2:AnimatedClip = new AnimatedClip( 2 );
-				x2.addFrameContent( 0, new TextLink('x2','dynamic','x2',0xffffff,'arial',false,11,'left',false,false,true,TextLink.AUTOSIZE_LEFT ) );
-				x2.addFrameContent( 1, new TextLink('/2', 'dynamic', '/2', 0xffffff, 'arial', false, 11, 'left',false, false, true, TextLink.AUTOSIZE_LEFT ) );
+				x2.alpha = .28;
+				x2.addFrameContent( 0, new TextLink('X2','dynamic','X2',0xffffff,_fonts['itcStone'],true,14,'left',false,false,false,true,TextLink.AUTOSIZE_LEFT ) );
+				x2.addFrameContent( 1, new TextLink('NORMAL', 'dynamic', 'NORMAL', 0xffffff, _fonts['itcStone'], true, 14, 'left',false, false,false, true, TextLink.AUTOSIZE_LEFT ) );
 				result.addChild( x2 );
 				
 				LinkManager.add('x2', result, { x2: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
@@ -493,10 +471,10 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createShareButton():DynamicRegistration { 
-			var placement:Object = { x:_width-40, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width/2+5, y:_height/2-20, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
-				var share:TextLink = new TextLink( 'share', 'dynamic', 'SHARE', 0xffffff, _fonts['kroeger0555'], true, 8, 'left', false, false, true, TextLink.AUTOSIZE_LEFT );
+				var share:TextLink = new TextLink( 'share', 'dynamic', 'SHARE ME', 0xffffff, _fonts['itcStone'], true, 19, 'left', false,false, false, true, TextLink.AUTOSIZE_LEFT );
 				result.addChild( share );
 				LinkManager.add('shareButton', share, { share: { objet:share, colors:null, action:txtHoverOut }}, 'mouse' );
 			
@@ -511,28 +489,44 @@ package railk.as3.video.flvplayer {
 				bg.rectangle( 0x000000, 0, 0, _width, _height );
 				result.addChild( bg );
 				
-				var txt:TextLink = new TextLink('share','dynamic',share,0xffffff,_fonts['kroeger0555'],true,8,'left',true,false,false,'',_width-120,_height-120);
+				var txt:TextLink = new TextLink('share', 'dynamic', share, 0xffffff, _fonts['itcStone'], true, 8, 'left', true, false, false, false, '', _width - 120, _height - 120);
+				txt.y2 = _height >> 1;
 				result.addChild( txt );
 			
 			return result; 
 		}
 		protected function createDownloadButton():DynamicRegistration { 
-			var placement:Object = { x:_width-90, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:_width/2-95, y:_height/2, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
-				var dwl:TextLink = new TextLink( 'download', 'dynamic', 'DOWNLOAD', 0xffffff, _fonts['kroeger0555'], true, 8, 'left',false, false, true, TextLink.AUTOSIZE_LEFT );
+				var dwl:TextLink = new TextLink( 'download', 'dynamic', 'DOWNLOAD', 0xffffff, _fonts['itcStone'], true, 14, 'left', false, false, false, true, TextLink.AUTOSIZE_LEFT );
+				dwl.alpha = .28;
 				result.addChild( dwl );
 				LinkManager.add('downloadButton', dwl, { dwl: { objet:dwl, colors:null, action:txtHoverOut }}, 'mouse' );
 				
 			return result; 
 		}
 		protected function createScreenshotButton():DynamicRegistration { 
-			var placement:Object = { x:_width-150, y:0, alpha:1, resize:function(){ } };
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
-				var sc:TextLink = new TextLink( 'screenshot', 'dynamic', 'SCREENSHOT', 0xffffff, _fonts['kroeger0555'], true, 8, 'left',false, false, true, TextLink.AUTOSIZE_LEFT );
+				var bg:GraphicShape = new GraphicShape();
+				bg.rectangle( 0x0d0d0d, 0, 0, _width, 24 );
+				result.addChild( bg );
+			
+				var sc:GraphicShape = new GraphicShape();
+				sc.drawPixels( 0xffffffff, PixelShapes.cam() );
+				sc.x2 = _width >> 1;
+				sc.y = 3;
+				sc.alpha = .25;
 				result.addChild( sc );
-				LinkManager.add('screenshotButton', sc, { sc: { objet:sc, colors:null, action:txtHoverOut }}, 'mouse' );
+				
+				LinkManager.add('screenshotButton', result, { screenshot: { objet:result, colors:null, action:function(type:String,o:*)
+				{
+					if ( type == 'hover') Tweener.addTween( sc, { alpha:.5, time:.4 } );
+					else if ( type == 'out') Tweener.addTween( sc, { alpha:.25, time:.4 } );
+				}
+				}}, 'mouse' );
 			
 			return result; 
 		}
@@ -547,11 +541,16 @@ package railk.as3.video.flvplayer {
 			return result; 
 		}
 		protected function createBulle():DynamicRegistration { 
-			var placement:Object = { x:200, y:200, alpha:1, resize:function(){ } };
+			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
+			var result:DynamicRegistration = new DynamicRegistration( placement );
+			return result; 
+		}
+		protected function createTime():DynamicRegistration { 
+			var placement:Object = { x:width/2-95, y:_height/2-20, alpha:1, resize:function(){ } };
 			var result:DynamicRegistration = new DynamicRegistration( placement );
 			
-				var bulle:InfoBulle = new InfoBulle( 'rectangle', 12, 'H', 0xffffff, 'currently playing', 0x000000, _fonts['kroeger0555'], 8 );
-				result.addChild( bulle );
+				var time:TextLink = new TextLink( 'time', 'dynamic', "00'00", 0xffffff, _fonts['itcStone'], true, 18, 'left',false, false,false, true, TextLink.AUTOSIZE_LEFT );
+				result.addChild( time );
 			
 			return result; 
 		}
