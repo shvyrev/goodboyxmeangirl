@@ -70,7 +70,7 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
+		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
 		{
 			//--vars
 			_name = name;
@@ -99,8 +99,11 @@ package railk.as3.text
 			
 				texte = new TextField();
 				texte.name = name;
-				texte.text = text;
 				texte.type = type;
+				if ( !htmlText ){
+					texte.text = text;
+					texte.setTextFormat( format ); }
+				else texte.htmlText = text;
 				texte.embedFonts = embedFont;
 				texte.selectable = selectable;
 				if ( autoSize )
@@ -113,7 +116,6 @@ package railk.as3.text
 					if( height != 0) texte.height = height;
 				}
 				texte.wordWrap = wordwrap;
-				texte.setTextFormat( format );
 				texte.mouseEnabled = false;
 				textLink.addChild( texte );
 			
