@@ -94,8 +94,8 @@ package railk.as3.display
 		 * @param	script
 		 */
 		public function addFrame( type:String, place:int, data:*= null, script:Function = null ):void {
-			if ( type == 'before' ) framesList.insertBefore( framesList.getObjectByID( place ), String(place - 1), data, script );
-			else if ( type == 'after' ) framesList.insertAfter( framesList.getObjectByID( place ), String(place + 1), data, script );
+			if ( type == 'before' ) framesList.insertBefore( framesList.getObjectByID( place ), String(place - 1), data, "", script );
+			else if ( type == 'after' ) framesList.insertAfter( framesList.getObjectByID( place ), String(place + 1), data, "", script );
 			_frames += 1;
 		}
 		
