@@ -8,13 +8,9 @@
 package railk.as3.utils.comment {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
-	import flash.text.TextField;
-	import flash.text.TextFormat;
-	import railk.as3.utils.DynamicRegistration;
+	import flash.events.MouseEvent
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.stage.StageManager;
 	import railk.as3.data.loader.MultiLoader;
 	import railk.as3.data.loader.MultiLoaderEvent;
 	import railk.as3.data.saver.XmlSaver;
@@ -22,47 +18,44 @@ package railk.as3.utils.comment {
 	import railk.as3.data.parser.Parser;
 	import railk.as3.data.checker.FileCheck;
 	import railk.as3.data.checker.FileCheckEvent;
+	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.ScrollBar;
+	import railk.as3.utils.link.LinkManager;
+	import railk.as3.utils.objectList.*;	
+	import railk.as3.utils.StringValidation;
+	import railk.as3.utils.Utils;
+	import railk.as3.utils.Logger;
 	
-	import railk.as3.utils.comment.CommentsEvent;
-	
-	// ______________________________________________________________________________________ IMPORT TWEENER
-	import caurina.transitions.Tweener;
+	import railk.as3.utils.comment.commentItem.Comment;
+	import railk.as3.utils.comment.commentItem.Form;
 	
 	
-	
-	public class Comments extends Sprite {
+	public class Comments extends DynamicRegistration {
 		
-		// ________________________________________________________________________________ VARIABLES LOADER
-		private var loader              		:MultiLoader;
+		// _____________________________________________________________________________ VARIABLES RAPATRIEES
+		private var _path                       		:String;
+		private var _name                       		:String;
+		private var _type                       		:String;
+		private var _config                     		:Class;
 		
-		// _______________________________________________________________________________ VARIABLES COMMENT
-		private var comments                    :Sprite;
-		private var cPseudo                     :TextField;
-		private var cMail                       :TextField;
-		private var cTexte                      :TextField;
-		private var cDate                       :TextField;
+		// _________________________________________________________________________________ VARIABLES LOADER
+		private var loader              				:MultiLoader;
 		
-		// __________________________________________________________________________________ VARIABLES FORM
-		private var form                        :Sprite;
-		private var fPseudo                     :TextField;
-		private var fMail                       :TextField;
-		private var fTexte                      :TextField;
-		private var fDate                       :TextField;
-		private var reset                       :Sprite;
-		private var send                        :Sprite
+		// ______________________________________________________________________________ VARIABLES INTERFACE
+		private var container                  			:DynamicRegistration;
+		private var scroll                     			:ScrollBar;
+		private var comments                            :DynamicRegistration;
+		private var comment                             :Comment;
+		private var form                                :Form;
+		private var commentNode                         :Array;
+		private var commentsXml                         :Array;
+																	
+		// ____________________________________________________________________________________ VARIABLES XML
+		private var xmlSave                     		:XmlSaver;
+		private var check                       		:FileCheck;
 		
-		// ________________________________________________________________________________ VARIABLES SCROLL
-		private var scroll                      :Sprite;
-		
-		// _______________________________________________________________________________________ VARIABLES
-		private var container                   :DynamicRegistration;
-		private var fontClasses                 :Object;
-		private var files                       :Array;
-		private var current                     :int;
-		
-		// ___________________________________________________________________________________ VARIABLES XML
-		private var xmlSave                     :XmlSaver;
-		private var check                       :FileCheck;
+		// _______________________________________________________________________________ VARIABLES CONTROLE
+		private var hasComments                         :Boolean=false;
 		
 		
 		
@@ -70,24 +63,16 @@ package railk.as3.utils.comment {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function Comments():void {
-		}
-		
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   INITIALISATION
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function create( __current__:int, __files__:Array, __fontClasses__:Object  ):void {
+		public function Comments( path:String, name:String, type:String, config:Class ):void {
 			
 			//--vars
-			current = __current__;
-			files = __files__;
-			fontClasses = __fontClasses__;
+			_path = path;
+			_name = name;
+			_type = type;
+			_config = _config;
 			
 			//--conteneur
 			container = new DynamicRegistration();
-			container.name = "container";
 			addChild( container );
 			
 			//--xml saver
@@ -95,58 +80,168 @@ package railk.as3.utils.comment {
 			xmlSave.addEventListener( XmlSaverEvent.ONCHECKCOMLETE, manageEvent, false, 0, true );
 			xmlSave.addEventListener( XmlSaverEvent.ONLOADPROGRESS, manageEvent, false, 0, true );
 			xmlSave.addEventListener( XmlSaverEvent.ONLOADCOMPLETE, manageEvent, false, 0, true );
-			xmlSave.addEventListener( XmlSaverEvent.ONSAVEBEGIN, manageEvent, false, 0, true );
 			xmlSave.addEventListener( XmlSaverEvent.ONSAVECOMLETE, manageEvent, false, 0, true );
 			xmlSave.addEventListener( XmlSaverEvent.ONSAVEIOERROR, manageEvent, false, 0, true );
-			xmlSave.addEventListener( XmlSaverEvent.ONCREATE, manageEvent, false, 0, true );
-			xmlSave.addEventListener( XmlSaverEvent.ONUPDATE, manageEvent, false, 0, true );
 			
 			//--multiloader
-			loader = new MultiLoader( "comment" );
+			loader = new MultiLoader( "comment", 'first' );
 			loader.addEventListener( MultiLoaderEvent.ONMULTILOADERBEGIN, manageEvent, false, 0, true );
 			loader.addEventListener( MultiLoaderEvent.ONMULTILOADERPROGRESS, manageEvent, false, 0, true );
 			loader.addEventListener( MultiLoaderEvent.ONMULTILOADERCOMPLETE, manageEvent, false, 0, true );
 			loader.addEventListener( MultiLoaderEvent.ONITEMCOMPLETE, manageEvent, false, 0, true );
 			
 			//--filechecker
-			FileCheck.check( files[current].texte );
-			FileCheck.addEventListener( FileCheckEvent.ONFILECHECKRESPONSE, manageEvent );
-			FileCheck.addEventListener( FileCheckEvent.ONFILECHECKERROR, manageEvent );
+			FileCheck.check( path +''+ name );
+			FileCheck.addEventListener( FileCheckEvent.ONFILECHECKRESPONSE, manageEvent, false, 0, true );
+			FileCheck.addEventListener( FileCheckEvent.ONFILECHECKERROR, manageEvent, false, 0, true );
 			
 			
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					  CREATE COMMENTS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createComments( com:Array ):void {
-			trace( comments )
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  CREATE COMMENT FORM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createForm():void {
+		private function createLayout( mode:String ):void 
+		{
+			comments = new DynamicRegistration();
+			if ( mode == 'empty' )
+			{
+				comment = new Comment( _config, mode );
+				comments.addChild( comment );
+			}
+			else if ( mode == 'comment')
+			{
+				var H:int=0;
+				for (var i:int = 0; i < commentsXml.length; i++) 
+				{
+					comment = new Comment( _config, mode )
+					comment.name = commentsXml[i].name;
+					comment.mail = commentsXml[i].mail;
+					comment.date = commentsXml[i].date;
+					comment.website = commentsXml[i].website;
+					comment.texte = commentsXml[i].texte;
+					comment.x = 0; 
+					comment.y = H;
+					comments.addChild( comment );
+					H += comment.height;
+				}
+			}
 			
+			form = new Form( _config );
+			form.x = comments.x;
+			form.y = comments.y + comments.height;
+			
+			container.addChild( comments );
+			container.addChild( form )
+			////////////////////
+			initActions()
+			////////////////////
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																		         GESTIONS DES ACTIONS
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function initActions():void {
+			LinkManager.add( 'reset', form.resetBT, { objets: { objet:form.resetBT, colors:null, action:null }, 'mouse', form.reset() });
+			LinkManager.add( 'send', form.sendBT, { objets: { objet:form.sendBT, colors:null, action:null }, 'mouse', createXmlComment() });
+			LinkManager.add( 'view', form.viewBT, { objets: { objet:form.viewBT, colors:null, action:null }, 'mouse', } );
+			LinkManager.add( 'mail', comment.mailBT, { objets: { objet:comment.mailBT, colors:null, action:null }, 'mouse',});
+			LinkManager.add( 'website', comment.websiteBT, { objets: { objet:comment.websiteBT, colors:null, action:null }, 'mouse', });
+			LinkManager.add( 'answer', comment.answerBT, { objets: { objet:comment.answerBT, colors:null, action:null }, 'mouse', });
+			LinkManager.add( 'note', comment.noteBT, { objets: { objet:comment.noteBT, colors:null, action:null }, 'mouse', });
+			LinkManager.add( 'delete', comment.deleteBT, { objets: { objet:comment.deleteBT, colors:null, action:null }, 'mouse', });
+			LinkManager.add( 'edit', comment.editBT, { objets: { objet:comment.editBT, colors:null, action:null }, 'mouse', });
+		}
+		
+		private function delActions():void {
+			LinkManager.getLink('reset' ).dispose();
+			LinkManager.getLink('send' ).dispose();
+			LinkManager.getLink('view' ).dispose();
+			LinkManager.getLink('mail' ).dispose();
+			LinkManager.getLink('website' ).dispose();
+			LinkManager.getLink('answer' ).dispose();
+			LinkManager.getLink('note' ).dispose();
+			LinkManager.getLink('delete' ).dispose();
+			LinkManager.getLink('edit' ).dispose();
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				CREATE OVERALL SCROLL
+		// 																				ANALYSE COMMENT TEXTE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createScroll():void {
-			
+		private function analyseCommentTexte( texte:String ):String {
+			var linkPattern:RegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+			linkPattern.exec( texte );
+			return texte.replace( linkPattern, '<a href='+linkPattern.exec( texte )[0]+'>'+linkPattern.exec( texte )[0]+'</a>') );
 		}
 		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   CREATE XML COMMENT
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function createXmlComment( id:int=null ):void {
+			commentNode = new Array();
+			commentNode.push( { root:"comments", type:"comment", attribute:null, content:[ { type:"id", attribute:null, content:commentsXml.lenght+1  },
+																							{ type:"name", attribute:null, content:form.name }, 
+																							{ type:"date", attribute:null, content:Utils.date() },
+																							{ type:"website", attribute:null, content:form.website },
+																							{ type:"texte", attribute:null, content:form.texte }, 
+																							{ type:"answer", attribute:null, content:String( id ) }, 
+			});
+			
+			var zipMode:Boolean;
+			if ( _type == 'zip' ) zipMode = true;
+			else zipMode = false;
+			
+			xmlSave.create( _path + '' + _name, commentNode, true, zipMode );
+		}
+		
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  	   PARSE COMMENTS
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function parseComments( data:* ):void 
+		{
+			if ( _type == 'xml' )
+			{
+				commentsXml = Parser.XMLItem( new XML( data.toString()) );
+			}
+			else if (_type == 'zip' )
+			{
+				var loadedData:IDataInput = data ;
+				var zipFile:ZipFile = new ZipFile(loadedData);
+				for(var i:int = 0; i < zipFile.entries.length; i++) {
+					var entry:ZipEntry = zipFile.entries[i];
+					var data:ByteArray = zipFile.getInput(entry);
+					
+					switch( entry.name )
+					{
+						case _name+'.xml' :
+							commentsXml = Parser.XMLItem( new XML( data.toString()) );
+							break;
+					}
+				}
+			}
+		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 		  DISPOSE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function dispose():void {
-			
+			delActions()
+			xmlSave.removeEventListener( XmlSaverEvent.ONCHECKCOMLETE, manageEvent );
+			xmlSave.removeEventListener( XmlSaverEvent.ONLOADPROGRESS, manageEvent );
+			xmlSave.removeEventListener( XmlSaverEvent.ONLOADCOMPLETE, manageEvent );
+			xmlSave.removeEventListener( XmlSaverEvent.ONSAVECOMLETE, manageEvent );
+			xmlSave.removeEventListener( XmlSaverEvent.ONSAVEIOERROR, manageEvent );
+			loader.removeEventListener( MultiLoaderEvent.ONMULTILOADERBEGIN, manageEvent );
+			loader.removeEventListener( MultiLoaderEvent.ONMULTILOADERPROGRESS, manageEvent );
+			loader.removeEventListener( MultiLoaderEvent.ONMULTILOADERCOMPLETE, manageEvent );
+			FileCheck.removeEventListener( FileCheckEvent.ONFILECHECKRESPONSE, manageEvent );
+			FileCheck.removeEventListener( FileCheckEvent.ONFILECHECKERROR, manageEvent );
 		}
 		
 		
@@ -161,15 +256,13 @@ package railk.as3.utils.comment {
 					trace( evt.info );
 					if ( evt.rep == true ) {
 						
-						loader.add( files[current].texte, "first" );
+						loader.add( ''+_path+''+_name, "com" );
 						loader.start();
 						
 					}else {
-						//////////////////////////////////////
-						createComments( null );
-						createForm();
-						createScroll();
-						//////////////////////////////////////
+						////////////////////////
+						createLayout( 'empty' )
+						////////////////////////
 					}
 					break;
 					
@@ -177,39 +270,29 @@ package railk.as3.utils.comment {
 					trace( evt.info );
 					break;	
 				
-				case MultiLoaderEvent.ONITEMBEGIN :
-					trace( evt.info );
-					break;
-					
-				case MultiLoaderEvent.ONITEMPROGRESS :
-					trace( evt.info );
-					break;
-					
-				case MultiLoaderEvent.ONITEMCOMPLETE :
-					trace( evt.info );
-					if ( evt.item.name == "first" ) {
-						//////////////////////////////////////
-						createComments( null );
-						createForm();
-						createScroll();
-						//////////////////////////////////////
-					}
-					else if ( evt.item.name == "reload" ) {
-						
-					}
-					break;
 					
 				case MultiLoaderEvent.ONMULTILOADERBEGIN :
-					trace( evt.info );
+					Logger.print( evt.info, Logger.MESSAGE );
 					break;
 					
 				case MultiLoaderEvent.ONMULTILOADERPROGRESS :
-					trace( evt.info );
+					
 					break;
 					
 				case MultiLoaderEvent.ONMULTILOADERCOMPLETE :
-					trace( evt.info );
+					Logger.print( evt.info, Logger.MESSAGE );
+					if ( loader.role == 'first' ) {
+						loader.role = 'reload';
+						////////////////////////////
+						parseComments( loader.getItemContent( 'com' ) );
+						createLayout( 'comment' );
+						////////////////////////////
+					}
+					else if ( loader.role = 'reload' ) {
+						
+					}
 					break;	
+					
 			}
 		}
 		

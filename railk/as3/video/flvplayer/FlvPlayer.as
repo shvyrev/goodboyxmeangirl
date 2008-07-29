@@ -649,7 +649,7 @@ package railk.as3.video.flvplayer {
 		 * @param	insert   'before:name' | 'after:name'
 		 * @param	action
 		 */
-		public function addInterfaceItem( name:String, item:*, insert:String, action:Function=null ):void {
+		public function addInterfaceItem( name:String, item:*, insert:String, group:String='', action:Function=null ):void {
 			//--vars
 			var insertMode = insert.split(':')[0];
 			var insertPoint = insert.split(':')[1];
@@ -659,8 +659,8 @@ package railk.as3.video.flvplayer {
 			for ( var i:int=0; i < interfaceItemList.length; i++ ){
 				var node:ObjectNode = interfaceItemList.iterate(i);
 				if( insertPoint == node.data.name ){
-					if ( insertMode == 'before') interfaceItemList.insertBefore( node, name, item );
-					else if ( insertMode == 'after') interfaceItemList.insertAfter( node, name, item );
+					if ( insertMode == 'before') interfaceItemList.insertBefore( node, name, item, group, action );
+					else if ( insertMode == 'after') interfaceItemList.insertAfter( node, name, item, group, action  );
 					break;
 				}
 			}
