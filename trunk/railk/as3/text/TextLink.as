@@ -100,10 +100,15 @@ package railk.as3.text
 				texte = new TextField();
 				texte.name = name;
 				texte.type = type;
-				if ( !htmlText ){
+				if ( !htmlText )
+				{
 					texte.text = text;
-					texte.setTextFormat( format ); }
-				else texte.htmlText = text;
+					texte.setTextFormat( format ); 
+				}
+				else 
+				{ 
+					texte.htmlText = text; 
+				}
 				texte.embedFonts = embedFont;
 				texte.selectable = selectable;
 				if ( autoSize )

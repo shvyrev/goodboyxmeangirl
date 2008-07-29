@@ -1,12 +1,12 @@
 ﻿/**
 * 
-* Interface for the FLVPLAYER layout configutation
+* Interface for the MP3PLAYER layout configutation
 * 
 * @author Richard Rodney
 * @version 0.1
 */
 
-package railk.as3.video.flvplayer
+package railk.as3.son.mp3player
 {
 	import flash.display.BitmapData;
 	import railk.as3.utils.DynamicRegistration;

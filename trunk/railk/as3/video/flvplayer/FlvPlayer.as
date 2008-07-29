@@ -95,7 +95,7 @@ package railk.as3.video.flvplayer {
 		private var _type                               :String;
 		private var _standalone                         :Boolean;
 		private var _playListContent                    :Array;
-		private var _config                             :Array;
+		private var _config                             :*;
 		private var _interfaceZindexList                :ObjectList;
 		
 		// _______________________________________________________________________________ VARIABLES CONTRÔLE
@@ -132,7 +132,7 @@ package railk.as3.video.flvplayer {
 																	['volumeSeeker',component],
 																	['fullscreenButton',component],
 																	['x2Button',component],
-																	/*['resizeButton',component],*/
+																	['resizeButton',component],
 																	['shareButton',component],
 																	['downloadButton',component],
 																	['screenshotButton',component],
@@ -208,10 +208,10 @@ package railk.as3.video.flvplayer {
 		 * @param	playListContent
 		 * @param	config             xmlfile <configs><path>needed</path>...</configs>
 		 */
-		public function create( name:String, url:String, width:Number, height:Number, videoWidth:Number, videoHeight:Number, fonts:Object=null, backgroundImage:BitmapData=null, buffersize:int=0, type:String='stream', standalone:Boolean=false, playListContent:Array=null, config:XML=null ):void 
+		public function create( name:String, url:String, width:Number, height:Number, videoWidth:Number, videoHeight:Number, config:Class, fonts:Object=null, backgroundImage:BitmapData=null, buffersize:int=0, type:String='stream', standalone:Boolean=false, playListContent:Array=null ):void 
 		{
 			//--logger
-			Logger.print( 'FlvPlayer ' + name +' enabled', Logger.MESSAGE );
+			Logger.print( '' + config.NAME +' enabled', Logger.MESSAGE );
 			
 			//--managers
 			TagManager.init();
@@ -231,24 +231,20 @@ package railk.as3.video.flvplayer {
 			_bufferSize = buffersize;
 			_standalone = standalone;
 			_playListContent = playListContent;
-			if ( config != null ) _config = Parser.XMLItem( config );
+			
+			
 			
 			//--Sharing the player + the exact .flv
 			var path:String = ExternalInterface.call("window.location.href.toString");
 			share = '<object width="'+width+'" height="'+height+'">';
 			share += '<param name="allowscriptaccess" value="always" />';
-			if ( config != null )
-			{
-				share += '<param name="flashvars" value="config='+_config[0].path+'" />';
-				share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf?config='+_config[0].path+'" / >';
-				share += '< embed src ="' + path + 'flash/'+name+'.swf?config='+_config[0].path+'" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
-			}
-			else
-			{
-				share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
-				share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
-			}
+			share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
+			share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
 			share += '</embed></object>';
+			
+			//--config init
+			_config = new config();
+			_config.init( width, height, fonts, share, backgroundImage );
 			
 			//--main container
 			container = new DynamicRegistration();
@@ -283,284 +279,32 @@ package railk.as3.video.flvplayer {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createComponents():void 
 		{
-			containerMask = createMask();
+			containerMask = _config.createMask();
 			///////////////////////////////
-			interfaceItemList.getObjectByName('bg').data = createBG();
-			if( _backgroundImage ) interfaceItemList.getObjectByName('bgImage').data = createBGimage();
-			interfaceItemList.getObjectByName('loading').data = createLoading();
-			interfaceItemList.getObjectByName('playPauseButton').data = createPlayPauseButton();
-			interfaceItemList.getObjectByName('replayButton').data = createReplayButton();
-			interfaceItemList.getObjectByName('bufferBar').data = createBufferBar();
-			interfaceItemList.getObjectByName('seekBar').data = createSeekBar();
-			interfaceItemList.getObjectByName('seeker').data = createSeeker();
-			interfaceItemList.getObjectByName('volumeBarBG').data = createVolumeBarBG();
-			interfaceItemList.getObjectByName('volumeBar').data = createVolumeBar();
-			interfaceItemList.getObjectByName('volumeButton').data = createVolumeButton();
-			interfaceItemList.getObjectByName('volumeSeeker').data = createVolumeSeeker();
-			interfaceItemList.getObjectByName('fullscreenButton').data = createFullscreenButton();
-			interfaceItemList.getObjectByName('x2Button').data = createX2Button();
-			//interfaceItemList.getObjectByName('resizeButton').data = createResizeButton();
-			interfaceItemList.getObjectByName('shareButton').data = createShareButton();
-			interfaceItemList.getObjectByName('sharePanel').data = createSharePanel(share);
-			interfaceItemList.getObjectByName('downloadButton').data = createDownloadButton();
-			interfaceItemList.getObjectByName('screenshotButton').data = createScreenshotButton();
-			interfaceItemList.getObjectByName('playListButton').data = createPlayListButton();
-			interfaceItemList.getObjectByName('playList').data = createPlayList();
-			interfaceItemList.getObjectByName('bulle').data = createBulle();
-			interfaceItemList.getObjectByName('time').data = createTime();
+			interfaceItemList.getObjectByName('bg').data = _config.createBG();
+			if( _backgroundImage ) interfaceItemList.getObjectByName('bgImage').data = _config.createBGimage();
+			interfaceItemList.getObjectByName('loading').data = _config.createLoading();
+			interfaceItemList.getObjectByName('playPauseButton').data = _config.createPlayPauseButton();
+			interfaceItemList.getObjectByName('replayButton').data = _config.createReplayButton();
+			interfaceItemList.getObjectByName('bufferBar').data = _config.createBufferBar();
+			interfaceItemList.getObjectByName('seekBar').data = _config.createSeekBar();
+			interfaceItemList.getObjectByName('seeker').data =_config. createSeeker();
+			interfaceItemList.getObjectByName('volumeBarBG').data = _config.createVolumeBarBG();
+			interfaceItemList.getObjectByName('volumeBar').data = _config.createVolumeBar();
+			interfaceItemList.getObjectByName('volumeButton').data = _config.createVolumeButton();
+			interfaceItemList.getObjectByName('volumeSeeker').data = _config.createVolumeSeeker();
+			interfaceItemList.getObjectByName('fullscreenButton').data = _config.createFullscreenButton();
+			interfaceItemList.getObjectByName('x2Button').data = _config.createX2Button();
+			interfaceItemList.getObjectByName('resizeButton').data = _config.createResizeButton();
+			interfaceItemList.getObjectByName('shareButton').data = _config.createShareButton();
+			interfaceItemList.getObjectByName('sharePanel').data = _config.createSharePanel(share);
+			interfaceItemList.getObjectByName('downloadButton').data = _config.createDownloadButton();
+			interfaceItemList.getObjectByName('screenshotButton').data = _config.createScreenshotButton();
+			interfaceItemList.getObjectByName('playListButton').data = _config.createPlayListButton();
+			interfaceItemList.getObjectByName('playList').data = _config.createPlayList();
+			interfaceItemList.getObjectByName('bulle').data = _config.createBulle();
+			interfaceItemList.getObjectByName('time').data = _config.createTime();
 		}
-		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  INTERFACE COMPONENTS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBG():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var b:GraphicShape = new GraphicShape();
-				b.rectangle( 0x000000, 0, 0, _width, _height );
-				result.addChild( b );
-
-			return result; 
-		}
-		protected function createBGimage():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				result.addChild( new Bitmap( _backgroundImage, 'always', true ) );
-
-			return result; 
-		}
-		protected function createMask():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var m:GraphicShape = new GraphicShape();
-				m.rectangle( 0x000000, 0, 0, _width, _height );
-				result.addChild( m );
-
-			return result; 
-		}
-		protected function createLoading():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result;  
-		}
-		protected function createPlayPauseButton():DynamicRegistration { 
-			var placement:Object = { x:_width/2-50, y:_height/2-20, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var play:TextLink = new TextLink('play','dynamic','PLAY',0xfe5815,_fonts['itcStone'],false,19,'center',true,false,false,false,'',60,30);
-				var pause:TextLink = new TextLink('pause','dynamic','PAUSE',0xfe5815,_fonts['itcStone'],false,19,'center',true,false,false,false,'',150,30);
-				
-				var playPause:AnimatedClip = new AnimatedClip( 2 );
-				playPause.addFrameContent( 0, play );
-				playPause.addFrameContent( 1, pause );
-				result.addChild( playPause );
-				
-				LinkManager.add('playPause', result, { playPause: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
-				{
-					if ( type == 'do') Tweener.addTween( playPause.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ playPause.nextFrame(); Tweener.addTween( playPause.currentFrame.data, { alpha:1, time:.4 } ); }} );
-					else if ( type == 'undo') Tweener.addTween( playPause.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ playPause.previousFrame(); Tweener.addTween( playPause.currentFrame.data, { alpha:1, time:.4 } ); }} );
-				} );
-					
-			return result; 
-		}
-		protected function createReplayButton():DynamicRegistration { 
-			var placement:Object = { x2:_width>>1, y2:_height/2, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var replay:TextLink = new TextLink('share', 'dynamic', '<font face="' + _fonts['itcStone'] + '" size="19" color="#fe5815">REPLAY </font> <font face="' + _fonts['itcStone'] + '" size="19" color="#ffffff">THIS VIDEO ?</font>', 0xffffff, _fonts['itcStone'], true, 19, 'center', false, true, false, false, '', 185, 30);
-				replay.alpha = 0;
-				result.addChild( replay );
-				result.buttonMode = true;
-				result.mouseChildren = false;
-			return result; 
-		}
-		protected function createBufferBar():DynamicRegistration { 
-			var placement:Object = { x:0, y:_height-4, alpha:1, size:_width, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-				
-				var bb:GraphicShape = new GraphicShape();
-				bb.rectangle(0x545454, 0, 0, _width, 4);
-				result.addChild( bb );
-
-			return result; 
-		}
-		protected function createSeekBar():DynamicRegistration { 
-			var placement:Object = { x:0, y:_height-4, alpha:1, size:_width, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var sb:GraphicShape = new GraphicShape();
-				sb.rectangle(0xfe5815, 0, 0, 1, 4);
-				result.addChild( sb );
-			
-			return result; 
-		}
-		protected function createSeeker():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result; 
-		}
-		protected function createVolumeBarBG():DynamicRegistration { 
-			var placement:Object = { x:_width>>1, y:_height*.6, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			result.buttonMode = true;
-			
-				var barre:GraphicShape = new GraphicShape();
-				barre.roundRectangle(0x2e2e2e,0,0,26,71,15,15);
-				result.addChild( barre );
-			
-			return result; 
-		}
-		protected function createVolumeBar():DynamicRegistration { 
-			var placement:Object = { x:_width>>1, y:_height*.6, size:71, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			result.mouseEnabled = false;
-			result.mouseChildren = false;
-			
-				var barre:GraphicShape = new GraphicShape();
-				barre.roundRectangle(0x4a4a4a,0,0,26,71,15,15);
-				result.addChild( barre );
-			
-			return result; 
-		}
-		protected function createVolumeButton():DynamicRegistration { 
-			var placement:Object = { x:_width-100, y:height-24, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result; 
-		}
-		protected function createVolumeSeeker():DynamicRegistration { 
-			var placement:Object = { x:200, y:200, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result; 
-		}
-		protected function createFullscreenButton():DynamicRegistration { 
-			var placement:Object = { x:_width/2-7, y:_height/2, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-				var full:TextLink = new TextLink('x2','dynamic','FULLSCREEN',0xffffff,_fonts['itcStone'],true,14,'left',false,false,false,true,TextLink.AUTOSIZE_LEFT )
-				full.alpha = .28;
-				
-				LinkManager.add('full', result, { full: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
-				{
-					if ( type == 'do') Tweener.addTween( full, { alpha:0, time:.5 } );
-					else if ( type == 'undo') Tweener.addTween( full, { alpha:0, time:.28 } );
-				} );
-				
-			result.addChild( full );
-				
-			return result; 
-		}
-		protected function createX2Button():DynamicRegistration { 
-			var placement:Object = { x:_width/2-7, y:_height/2, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			result.visible = false;
-				var x2:AnimatedClip = new AnimatedClip( 2 );
-				x2.alpha = .28;
-				x2.addFrameContent( 0, new TextLink('X2','dynamic','X2',0xffffff,_fonts['itcStone'],true,14,'left',false,false,false,true,TextLink.AUTOSIZE_LEFT ) );
-				x2.addFrameContent( 1, new TextLink('NORMAL', 'dynamic', 'NORMAL', 0xffffff, _fonts['itcStone'], true, 14, 'left',false, false,false, true, TextLink.AUTOSIZE_LEFT ) );
-				result.addChild( x2 );
-				
-				LinkManager.add('x2', result, { x2: { objet:result, colors:null, action:null }}, 'mouse', function(type:String,o:*)
-				{
-					if ( type == 'do') Tweener.addTween( x2.currentFrame.data, { alpha:0, time:.2, onComplete:function(){ x2.nextFrame(); Tweener.addTween( x2.currentFrame.data, { alpha:1, time:.4 } ); }} );
-					else if ( type == 'undo') Tweener.addTween( x2.currentFrame.data, { alpha:0, time:.4, onComplete:function(){ x2.previousFrame(); Tweener.addTween( x2.currentFrame.data, { alpha:1, time:.4 } ); }} );
-				} );
-			
-			return result; 
-		}
-		protected function createShareButton():DynamicRegistration { 
-			var placement:Object = { x:_width/2+5, y:_height/2-20, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var share:TextLink = new TextLink( 'share', 'dynamic', 'SHARE ME', 0xffffff, _fonts['itcStone'], true, 19, 'left', false,false, false, true, TextLink.AUTOSIZE_LEFT );
-				result.addChild( share );
-				LinkManager.add('shareButton', share, { share: { objet:share, colors:null, action:txtHoverOut }}, 'mouse' );
-			
-			return result; 
-		}
-		protected function createSharePanel( share:String ):DynamicRegistration {
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			result.visible = false;
-			
-				var bg:GraphicShape = new GraphicShape();
-				bg.rectangle( 0x000000, 0, 0, _width, _height );
-				result.addChild( bg );
-				
-				var txt:TextLink = new TextLink('share', 'dynamic', share, 0xffffff, _fonts['itcStone'], true, 8, 'left', true, false, false, false, '', _width - 120, _height - 120);
-				txt.y2 = _height >> 1;
-				result.addChild( txt );
-			
-			return result; 
-		}
-		protected function createDownloadButton():DynamicRegistration { 
-			var placement:Object = { x:_width/2-95, y:_height/2, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var dwl:TextLink = new TextLink( 'download', 'dynamic', 'DOWNLOAD', 0xffffff, _fonts['itcStone'], true, 14, 'left', false, false, false, true, TextLink.AUTOSIZE_LEFT );
-				dwl.alpha = .28;
-				result.addChild( dwl );
-				LinkManager.add('downloadButton', dwl, { dwl: { objet:dwl, colors:null, action:txtHoverOut }}, 'mouse' );
-				
-			return result; 
-		}
-		protected function createScreenshotButton():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var bg:GraphicShape = new GraphicShape();
-				bg.rectangle( 0x0d0d0d, 0, 0, _width, 24 );
-				result.addChild( bg );
-			
-				var sc:GraphicShape = new GraphicShape();
-				sc.drawPixels( 0xffffffff, PixelShapes.cam() );
-				sc.x2 = _width >> 1;
-				sc.y = 3;
-				sc.alpha = .25;
-				result.addChild( sc );
-				
-				LinkManager.add('screenshotButton', result, { screenshot: { objet:result, colors:null, action:function(type:String,o:*)
-				{
-					if ( type == 'hover') Tweener.addTween( sc, { alpha:.5, time:.4 } );
-					else if ( type == 'out') Tweener.addTween( sc, { alpha:.25, time:.4 } );
-				}
-				}}, 'mouse' );
-			
-			return result; 
-		}
-		protected function createPlayListButton():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result; 
-		}
-		protected function createPlayList():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result; 
-		}
-		protected function createBulle():DynamicRegistration { 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			return result; 
-		}
-		protected function createTime():DynamicRegistration { 
-			var placement:Object = { x:width/2-95, y:_height/2-20, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-			
-				var time:TextLink = new TextLink( 'time', 'dynamic', "00'00", 0xffffff, _fonts['itcStone'], true, 18, 'left',false, false,false, true, TextLink.AUTOSIZE_LEFT );
-				result.addChild( time );
-			
-			return result; 
-		}
-		/*protected function createResizeButton():DynamicRegistration{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}*/
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -607,7 +351,7 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('volumeBar').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			interfaceItemList.getObjectByName('fullscreenButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			interfaceItemList.getObjectByName('x2Button').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			//interfaceItemList.getObjectByName('resizeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('resizeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			interfaceItemList.getObjectByName('shareButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			interfaceItemList.getObjectByName('downloadButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			interfaceItemList.getObjectByName('screenshotButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
@@ -632,7 +376,7 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('volumeBar').data.removeEventListener( MouseEvent.CLICK, manageEvent );
 			interfaceItemList.getObjectByName('fullscreenButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
 			interfaceItemList.getObjectByName('x2Button').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			//interfaceItemList.getObjectByName('resizeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('resizeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
 			interfaceItemList.getObjectByName('shareButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
 			interfaceItemList.getObjectByName('downloadButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
 			interfaceItemList.getObjectByName('screenshotButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
@@ -957,12 +701,12 @@ package railk.as3.video.flvplayer {
 			interfaceItemList.getObjectByName('playListButton').data.visible = value;
 		}
 		
-		/*public function get enableResize():Boolean { return _enableResize; }
+		public function get enableResize():Boolean { return _enableResize; }
 		
 		public function set enableResize(value:Boolean):void 
 		{
 			_enableResize = value;
-		}*/
+		}
 		
 		public function get enableX2():Boolean { return _enableX2; }
 		

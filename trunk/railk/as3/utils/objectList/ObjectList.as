@@ -8,7 +8,6 @@
 
 package railk.as3.utils.objectList
 {
-	import caurina.transitions.AuxFunctions;
 	public class  ObjectList
 	{
 		// ____________________________________________________________________________ VARIABLES OBJECT LIST
