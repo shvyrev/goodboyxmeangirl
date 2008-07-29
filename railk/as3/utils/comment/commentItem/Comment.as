@@ -15,6 +15,9 @@ package railk.as3.utils.comment.commentItem
 	
 	public class  Comment extends DynamicRegistration
 	{
+		// ________________________________________________________________________________ VARIABLES COMMENT
+		private var _id                                  :int;
+		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
 		private var component                   		:DynamicRegistration = new DynamicRegistration();
 		private var itemList                   			:ObjectList = new ObjectList(
@@ -118,6 +121,13 @@ package railk.as3.utils.comment.commentItem
 		public function get editBT():DynamicRegistration { return itemList.getObjectByID('edit').data; }
 		public function get mailBT():DynamicRegistration { return itemList.getObjectByID('mail').data; }
 		public function get answerBT():DynamicRegistration { return itemList.getObjectByID('answer').data; }
+		
+		public function get id():int { return _id; }
+		
+		public function set id(value:int):void 
+		{
+			_id = value;
+		}
 		
 	}
 	
