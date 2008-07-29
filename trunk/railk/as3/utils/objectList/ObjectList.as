@@ -42,14 +42,14 @@ package railk.as3.utils.objectList
 		 */
 		public function add( ...args ):void
 		{
-			if ( !head ) _head = _tail = new ObjectNode( 0, args[0][0], args[0][1], args[0][2] );
-			else _tail.insertAfter( new ObjectNode( _tail.id+1, args[0][0], args[0][1], args[0][2] ) );
+			if ( !head ) _head = _tail = new ObjectNode( 0, args[0][0], args[0][1], args[0][2], args[0][3] );
+			else _tail.insertAfter( new ObjectNode( _tail.id+1, args[0][0], args[0][1], args[0][2], args[0][3] ) );
 			
 			if ( args.length > 1 )
 			{
 				for ( var i:int = 1; i < args.length; i++)
 				{
-					node = new ObjectNode( _tail.id+1, args[i][0], args[i][1], args[i][2] );
+					node = new ObjectNode( _tail.id+1, args[i][0], args[i][1], args[i][2], args[i][3] );
 					_tail.insertAfter(node);
 					_tail = _tail.next;
 				}
@@ -61,9 +61,9 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		 INSERT AFTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertAfter( node:ObjectNode, name:String, object:*, script:Function=null ):void
+		public function insertAfter( node:ObjectNode, name:String, object:*, group:String='', script:Function=null ):void
 		{
-			node.insertAfter( new ObjectNode( node.id + 1, name, object, script ) );
+			node.insertAfter( new ObjectNode( node.id + 1, name, object, group, script ) );
 			_length += 1;
 			if ( node === _tail ) _tail = tail.next;
 			else rebuildID();
@@ -73,9 +73,9 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		INSERT BEFORE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertBefore( node:ObjectNode, name:String, object:*, script:Function=null ):void
+		public function insertBefore( node:ObjectNode, name:String, object:*, group:String='', script:Function=null ):void
 		{
-			node.insertBefore( new ObjectNode( node.id - 1, name, object, script ) );
+			node.insertBefore( new ObjectNode( node.id - 1, name, object, group, script ) );
 			_length += 1;
 			if ( node === _head ) _head = _head.prev;
 			rebuildID();
@@ -182,6 +182,27 @@ package railk.as3.utils.objectList
 			{
 				if (current.id == id ){ result = current;  break loop; }	
 				else { result = null; }	
+				current = current.next;
+			}
+			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  GET OBJECT BY GROUP
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * 
+		 * @param	name
+		 * @return
+		 */
+		public function getObjectByGroup( name:String ):Array
+		{
+			var result:Array = new Array();
+			var current:ObjectNode = _head;
+			loop:while ( current )
+			{
+				if (current.group == name ){ result.push( current ); break loop; }	
 				current = current.next;
 			}
 			return result;

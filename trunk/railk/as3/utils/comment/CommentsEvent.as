@@ -15,7 +15,9 @@ package railk.as3.utils.comment {
 	public dynamic class CommentsEvent extends Event{
 			
 		// _______________________________________________________________________________VARIABLES STATIQUES
-		static public const ONCOMMENTPOST                   :String = "onCommentPost";
+		static public const ON_COMMENT_POST                   :String = "onCommentPost";
+		static public const ON_COMMENT_EDIT                   :String = "onCommentEdit";
+		static public const ON_COMMENT_DELETE                 :String = "onCommentDelete";
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -23,7 +25,6 @@ package railk.as3.utils.comment {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function CommentsEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;
-				//on récupère les variables passées en paramètres
 				for(var name:String in data) {
 					this[name] = data[name];
 				}	
