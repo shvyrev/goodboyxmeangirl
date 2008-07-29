@@ -3,12 +3,22 @@
 * comment system
 * 
 * @author Richard rodney
+* @version 0.1
+* 
+* TODO
+* 	gestion des notes/pertinence de chaque commentaire
+* 	verification de la validité des champ website et email
+* 	edition d'un commentaire
+* 	repondre a un commentaire
+* 
 */
 
 package railk.as3.utils.comment {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.events.MouseEvent
+	import flash.events.MouseEvent;
+	import flash.net.navigateToURL;
+	import flash.net.URLRequest;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.loader.MultiLoader;
@@ -45,8 +55,10 @@ package railk.as3.utils.comment {
 		private var container                  			:DynamicRegistration;
 		private var scroll                     			:ScrollBar;
 		private var comments                            :DynamicRegistration;
+		private var commentList                         :ObjectList;
 		private var comment                             :Comment;
 		private var form                                :Form;
+		private var answerForm                          :Form;
 		private var commentNode                         :Array;
 		private var commentsXml                         :Array;
 																	
@@ -74,6 +86,9 @@ package railk.as3.utils.comment {
 			//--conteneur
 			container = new DynamicRegistration();
 			addChild( container );
+			
+			//--commentList
+			commentList = new ObjectList();
 			
 			//--xml saver
 			xmlSave = new XmlSaver();
@@ -116,6 +131,7 @@ package railk.as3.utils.comment {
 				for (var i:int = 0; i < commentsXml.length; i++) 
 				{
 					comment = new Comment( _config, mode )
+					comment.id = commentsXml[i].id;
 					comment.name = commentsXml[i].name;
 					comment.mail = commentsXml[i].mail;
 					comment.date = commentsXml[i].date;
@@ -125,6 +141,9 @@ package railk.as3.utils.comment {
 					comment.y = H;
 					comments.addChild( comment );
 					H += comment.height;
+					///////////////////////////////////////////////
+					commentList.add([commentsXml[i].id, comment]);
+					///////////////////////////////////////////////
 				}
 			}
 			
@@ -139,19 +158,50 @@ package railk.as3.utils.comment {
 			////////////////////
 		}
 		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  CREATE COMMENT FORM
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function createAnswerForm():void 
+		{
+			/*answerForm = new Form( _config );
+			answerForm.x = ;
+			answerForm.y = ;
+			container.addChild( answerForm );*/
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  CREATE COMMENT FORM
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function editComment():void 
+		{
+			//TODO
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  CREATE COMMENT FORM
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function deleteComment( id:int ):void 
+		{
+			//commentList.remove( String( id ) );
+		}
+		
+		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		         GESTIONS DES ACTIONS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function initActions():void {
-			LinkManager.add( 'reset', form.resetBT, { objets: { objet:form.resetBT, colors:null, action:null }, 'mouse', form.reset() });
-			LinkManager.add( 'send', form.sendBT, { objets: { objet:form.sendBT, colors:null, action:null }, 'mouse', createXmlComment() });
-			LinkManager.add( 'view', form.viewBT, { objets: { objet:form.viewBT, colors:null, action:null }, 'mouse', } );
-			LinkManager.add( 'mail', comment.mailBT, { objets: { objet:comment.mailBT, colors:null, action:null }, 'mouse',});
-			LinkManager.add( 'website', comment.websiteBT, { objets: { objet:comment.websiteBT, colors:null, action:null }, 'mouse', });
-			LinkManager.add( 'answer', comment.answerBT, { objets: { objet:comment.answerBT, colors:null, action:null }, 'mouse', });
-			LinkManager.add( 'note', comment.noteBT, { objets: { objet:comment.noteBT, colors:null, action:null }, 'mouse', });
-			LinkManager.add( 'delete', comment.deleteBT, { objets: { objet:comment.deleteBT, colors:null, action:null }, 'mouse', });
-			LinkManager.add( 'edit', comment.editBT, { objets: { objet:comment.editBT, colors:null, action:null }, 'mouse', });
+			LinkManager.add( 'reset', form.resetBT, { objets: { objet:form.resetBT, colors:null, action:null }, 'mouse', function(){ form.reset(); } });
+			LinkManager.add( 'send', form.sendBT, { objets: { objet:form.sendBT, colors:null, action:null }, 'mouse', function(){ createXmlComment(); } } );
+			LinkManager.add( 'view', form.viewBT, { objets: { objet:form.viewBT, colors:null, action:null }, 'mouse', function(){ form.view(); } } );
+			LinkManager.add( 'mail', comment.mailBT, { objets: { objet:comment.mailBT, colors:null, action:null }, 'mouse', function(){ navigateToURL( new URLRequest('mailto:'+comment.mail), '_blank') };});
+			LinkManager.add( 'website', comment.websiteBT, { objets: { objet:comment.websiteBT, colors:null, action:null }, 'mouse', function(){  navigateToURL( new URLRequest( comment.website ), '_blank'); } } });
+			LinkManager.add( 'answer', comment.answerBT, { objets: { objet:comment.answerBT, colors:null, action:null }, 'mouse', function(){ createAnswerForm(); } } });
+			LinkManager.add( 'note', comment.noteBT, { objets: { objet:comment.noteBT, colors:null, action:null }, 'mouse', function(){} } });
+			LinkManager.add( 'delete', comment.deleteBT, { objets: { objet:comment.deleteBT, colors:null, action:null }, 'mouse', function(){ deleteComment(); } } });
+			LinkManager.add( 'edit', comment.editBT, { objets: { objet:comment.editBT, colors:null, action:null }, 'mouse', function(){ editComment(); } } });
 		}
 		
 		private function delActions():void {
@@ -184,9 +234,10 @@ package railk.as3.utils.comment {
 			commentNode = new Array();
 			commentNode.push( { root:"comments", type:"comment", attribute:null, content:[ { type:"id", attribute:null, content:commentsXml.lenght+1  },
 																							{ type:"name", attribute:null, content:form.name }, 
+																							{ type:"mail", attribute:null, content:form.mail }, 
 																							{ type:"date", attribute:null, content:Utils.date() },
 																							{ type:"website", attribute:null, content:form.website },
-																							{ type:"texte", attribute:null, content:form.texte }, 
+																							{ type:"texte", attribute:null, content:analyseCommentTexte( form.texte ); }, 
 																							{ type:"answer", attribute:null, content:String( id ) }, 
 			});
 			

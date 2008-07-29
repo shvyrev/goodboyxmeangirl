@@ -24,7 +24,7 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	...args    ['name',*]
+		 * @param	...args    ['name',*,'group',function]
 		 */
 		public function ObjectList( ...args ):void 
 		{
@@ -38,7 +38,7 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	...args
+		 * @param	...args    ['name',*,'group'=null,function=null]
 		 */
 		public function add( ...args ):void
 		{
