@@ -36,11 +36,7 @@ package railk.as3.son.mp3player {
 	import railk.as3.utils.Logger;
 	import railk.as3.utils.tag.TagManager;
 	import railk.as3.utils.Utils;
-	
-	// ___________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
+	import railk.as3.utils.objectList.*;
 	
 	// _______________________________________________________________________________________ IMPORT TWEENER
 	import caurina.transitions.Tweener;
@@ -57,7 +53,7 @@ package railk.as3.son.mp3player {
 		private var _width                              :Number;
 		private var _height                             :Number;
 		private var _playListContent                    :Array;
-		private var _config                             :Array;
+		private var _config                             :*;
 		private var _interfaceZindexList                :Object = null;
 		
 		// _______________________________________________________________________________ VARIABLES CONTRÔLE
@@ -74,44 +70,28 @@ package railk.as3.son.mp3player {
 		private var current                             :Number;
 		private var time                                :String;
 		
-		// _______________________________________________________________________________ SORTLIST VARIABLES
-		private var sortList                            :DLinkedList;
-		private var walker                              :DListNode;
-		private var itr                                 :DListIterator;
-		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
-		private var container                           :DynamicRegistration;											
-		private var bg                                  :DynamicRegistration;
+		private var container                           :DynamicRegistration;
 		private var mask                                :DynamicRegistration;
-		private var playPauseButton                     :DynamicRegistration;
-		private var bufferBar                           :DynamicRegistration;
-		private var seekBar                             :DynamicRegistration;
-		private var seeker                              :DynamicRegistration;
-		private var volumeBar                           :DynamicRegistration;
-		private var volumeButton                        :DynamicRegistration;
-		private var volumeSeeker                        :DynamicRegistration;
-		private var shareButton                         :DynamicRegistration;
-		private var downloadButton                      :DynamicRegistration;
-		private var playListButton                      :DynamicRegistration;
-		private var playList                            :DynamicRegistration;
-		private var tagList                             :DynamicRegistration;
-		private var bulle                               :DynamicRegistration;
-		private var interfaceItemList                   :Object = {
-																	bg:bg,
-																	playList:playList,
-																	bufferBar:bufferBar,
-																	seekBar:seekBar,
-																	seeker:seeker,
-																	playPauseButton:playPauseButton,
-																	volumeBar:volumeBar,
-																	volumeButton:volumeButton,
-																	volumeSeeker:volumeSeeker,
-																	shareButton:shareButton,
-																	downloadButton:downloadButton,
-																	playListButton:playListButton,
-																	tagList:tagList,
-																	bulle:bulle,
-																	mask:mask };
+		
+		private var components                          :DynamicRegistration;
+		private var interfaceItemList                   :ObjectList = {
+																	['bg', component],
+																	['playList',component],
+																	['bufferBar',component],
+																	['seekBar',component],
+																	['seeker',component],
+																	['playPauseButton',component],
+																	['volumeBarBG',component],
+																	['volumeBar',component],
+																	['volumeButton',component],
+																	['volumeSeeker',component],
+																	['shareButton',component],
+																	['downloadButton',component],
+																	['playListButton',component],
+																	['bulle',component],
+																	['time',component],
+																	['sharePanel',component] };
 																	
 		// _________________________________________________________________________________ VARIABLES PLAYER															
 		private var share                               :String
@@ -139,7 +119,7 @@ package railk.as3.son.mp3player {
 		 * @param	playListContent
 		 * @param	config               xmlfile <configs><path>needed</path>...</configs>
 		 */
-		public function init( name:String = '', sound:Sound, width:Number, height:Number, playListContent:Array=null, config:XML=null ):void 
+		public function init( name:String = '', sound:Sound, width:Number, height:Number, config:Class, playListContent:Array=null ):void 
 		{
 			//--logger
 			Logger.print( 'FlvPlayer' + name +'enabled', Logger.MESSAGE );
@@ -157,25 +137,18 @@ package railk.as3.son.mp3player {
 			_width = width;
 			_height = height;
 			_playListContent = playListContent;
-			_config = Parser.XMLItem( config );
-			
 			
 			//--Sharing the player + the exact .flv
 			var path:String = ExternalInterface.call("window.location.href.toString");
 			share = '<object width="'+width+'" height="'+height+'">';
 			share += '<param name="allowscriptaccess" value="always" />';
-			if ( config != null )
-			{
-				share += '<param name="flashvars" value="config='+_config[0].path+'" />';
-				share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf?config='+_config[0].path+'" / >';
-				share += '< embed src ="' + path + 'flash/'+name+'.swf?config='+_config[0].path+'" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
-			}
-			else
-			{
-				share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
-				share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
-			}
+			share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
+			share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
 			share += '</embed></object>';
+			
+			//--config init
+			_config = new config();
+			_config.init( width, height, fonts, share );
 			
 			//--main container
 			container = new Sprite();
@@ -189,14 +162,10 @@ package railk.as3.son.mp3player {
 			channel = new SoundChannel()
 			channel.soundTransform = volume;
 			
-			//--prepare interface list
-			for ( var prop in _interfaceItemList )
-			{
-				interfaceItemList[prop].name = prop;
-			}
-			
 			//////////////////////////
-			create();
+			createComponents();
+			createLayout();
+			initListeners();
 			//////////////////////////
 		}
 		
@@ -204,138 +173,78 @@ package railk.as3.son.mp3player {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  	  CREATION
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function create():void 
+		private function createComponents():void 
 		{
+			containerMask = _config.createMask();
 			///////////////////////////////
-			bg = createBG();
-			mask = createMask();
-			playPauseButton = createPlayPauseButton();
-			bufferBar = createBufferBar();
-			seekBar = createSeekBar();
-			seeker = createSeeker();
-			volumeBar = createVolumeBar();
-			volumeButton = createVolumeButton();
-			volumeSeeker = createVolumeSeeker();
-			shareButton = createShareButton();
-			downloadButton = createDownloadButton();
-			playListButton = createPlayListButton();
-			playList = createPlayList();
-			tagList = createTagList();
-			bulle = createBulle();
-			//////////////////////////////
-			createLayout();
-			initListeners();
-			//////////////////////////////
+			interfaceItemList.getObjectByName( 'bg' ).data = _config.createBG();
+			interfaceItemList.getObjectByName( 'playPauseButton').data = _config.createPlayPauseButton();
+			interfaceItemList.getObjectByName( 'bufferBar').data = _config.createBufferBar();
+			interfaceItemList.getObjectByName( 'seekBar').data = _config.createSeekBar();
+			interfaceItemList.getObjectByName( 'seeker').data = _config.createSeeker();
+			interfaceItemList.getObjectByName( 'volumeBarBG').data = _config.createVolumeBarBG();
+			interfaceItemList.getObjectByName( 'volumeBar').data = _config.createVolumeBar();
+			interfaceItemList.getObjectByName( 'volumeButton').data = _config.createVolumeButton();
+			interfaceItemList.getObjectByName( 'volumeSeeker').data = _config.createVolumeSeeker();
+			interfaceItemList.getObjectByName( 'sharePanel').data = _config.createSharePanel();
+			interfaceItemList.getObjectByName( 'shareButton').data = _config.createShareButton();
+			interfaceItemList.getObjectByName( 'downloadButton').data = _config.createDownloadButton();
+			interfaceItemList.getObjectByName( 'playListButton').data = _config.createPlayListButton();
+			interfaceItemList.getObjectByName( 'playList').data = _config.createPlayList();
+			interfaceItemList.getObjectByName( 'time').data = _config.createTime();
+			interfaceItemList.getObjectByName( 'bulle').data = _config.createBulle();
 		}
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	 INTERFACE
+		// 																						 	 	LAYOUT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBG():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
+		private function createLayout():void {
+			for ( var i:int=0; i < interfaceItemList.length; i++ )
+			{
+				var node:ObjectNode = interfaceItemList.iterate(i);
+				if ( node.data.extra.x != undefined ) node.data.x =  node.data.extra.x;
+				else if ( node.data.extra.x2 != undefined ) node.data.x =  node.data.extra.x2;
+				if ( node.data.extra.y != undefined ) node.data.y =  node.data.extra.y;
+				else if ( node.data.extra.y2 != undefined ) node.data.y2 =  node.data.extra.y2;
+				if ( node.data.extra.alpha != undefined ) node.data.alpha =  node.data.extra.alpha;
+				
+				node.data.name = node.name;
+				container.addChild( node.data );
+			}
+			if ( _enableMask ) container.mask = containerMask;	
 		}
-		protected function createMask():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result;  
+		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					 GESTION LISTENERS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private function initListeners():void 
+		{
+			channel.addEventListener(  Event.SOUND_COMPLETE, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('seeker' ).data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('seeker' ).data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeSeeker' ).data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeSeeker' ).data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('playPauseButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('volumeBar' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('shareButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getObjectByName('downloadButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 		}
-		protected function createPlayPauseButton():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result;  
-		}
-		protected function createBufferBar():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result;  
-		}
-		protected function createSeekBar():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result;  
-		}
-		protected function createSeeker():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result;  
-		}
-		protected function createVolumeBar():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}
-		protected function createVolumeButton():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result;  
-		}
-		protected function createVolumeSeeker():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}
-		protected function createShareButton():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}
-		protected function createDownloadButton():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}
-		protected function createPlayListButton():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}
-		protected function createPlayList():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}
-		protected function createTagList():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result; 
-		}
-		protected function createBulle():DynamicRegistration
-		{ 
-			var placement:Object = { x:0, y:0, alpha:1, resize:function(){ } };
-			var result:DynamicRegistration = new DynamicRegistration( placement );
-
-			return result;  
+		
+		private function delListeners():void 
+		{
+			channel.removeEventListener(  Event.SOUND_COMPLETE, manageEvent );
+			interfaceItemList.getObjectByName('seeker' ).data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getObjectByName('seeker' ).data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getObjectByName('volumeSeeker' ).data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getObjectByName('volumeSeeker' ).data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getObjectByName('volumeButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('playPauseButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('volumeBar' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('shareButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getObjectByName('downloadButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
 		
@@ -349,48 +258,23 @@ package railk.as3.son.mp3player {
 		 * @param	insert   'before:name' | 'after:name'
 		 * @param	action
 		 */
-		public function addInterfaceItem( name:String, item:*, insert:String, action:Function=null ):void {
+		public function addInterfaceItem( name:String, item:*, insert:String, group:String='', action:Function=null ):void {
 			//--vars
-			var sortList:DLinkedList = new DLinkedList();
 			var insertMode = insert.split(':')[0];
 			var insertPoint = insert.split(':')[1];
 			item.name = name;
 			
-			//--list
-			for ( var prop in interfaceItemList )
-			{
-				sortList.append( interfaceItemList[prop] );
-			}
-			
-			//--sort
-			walker = sortList.head;
-			while ( walker ) {
-				if( insertPoint == walker.data.name ){
-					itr = new DListIterator(sortList, walker);
-					if ( insertMode == 'before') sortList.insertBefore( itr, item );
-					else if ( insertMode == 'after') sortList.insertAfter( itr, item );
-					inserted = true;
+			//--add
+			for ( var i:int=0; i < interfaceItemList.length; i++ ){
+				var node:ObjectNode = interfaceItemList.iterate(i);
+				if( insertPoint == node.data.name ){
+					if ( insertMode == 'before') interfaceItemList.insertBefore( node, name, item, group, action );
+					else if ( insertMode == 'after') interfaceItemList.insertAfter( node, name, item, group, action  );
 					break;
 				}
-				walker = walker.next;
-			}
-			
-			//--to object list
-			interfaceItemList = new Object();
-			walker = sortList.head;
-			while ( walker ) {
-				interfaceItemList[walker.data.name] = walker.data;
-				walker = walker.next;
 			}
 			
 		}
-		
-		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  PARSE CONFIG
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function parseConfig( config:Array ):void {}
 		
 		
 		
@@ -398,56 +282,6 @@ package railk.as3.son.mp3player {
 		// 																						   SORT ZINDEX
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function sortZindex( zindex:Array ):void {}
-		
-		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	 	LAYOUT
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createLayout():void {
-			for ( var prop in _interfaceItemList )
-			{
-				if ( interfaceItemList[prop].extra.x != undefined ) interfaceItemList[prop].x =  interfaceItemList[prop].extra.x;
-				else if ( interfaceItemList[prop].extra.x2 != undefined ) interfaceItemList[prop].x =  interfaceItemList[prop].extra.x2;
-				if ( interfaceItemList[prop].extra.y != undefined ) interfaceItemList[prop].y =  _interfaceItemList[prop].extra.y;
-				else if ( interfaceItemList[prop].extra.y2 != undefined ) interfaceItemList[prop].y2 =  interfaceItemList[prop].extra.y2;
-				if ( interfaceItemList[prop].extra.alpha != undefined ) interfaceItemList[prop].alpha =  interfaceItemList[prop].extra.alpha;
-				
-				container.addChild( interfaceItemList[prop] );
-			}
-		}
-		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 GESTION LISTENERS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function initListeners():void 
-		{
-			channel.addEventListener(  Event.SOUND_COMPLETE, manageEvent, false, 0, true );
-			seeker.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			seeker.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			volumeSeeker.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			volumeSeeker.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			volumeButton.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			playPauseButton.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			volumeBar.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			shareButton.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			downloadButton.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-		}
-		
-		private function delListeners():void 
-		{
-			channel.removeEventListener(  Event.SOUND_COMPLETE, manageEvent );
-			seeker.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			seeker.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			volumeSeeker.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			volumeSeeker.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			volumeButton.removeEventListener( MouseEvent.CLICK, manageEvent );
-			playPauseButton.removeEventListener( MouseEvent.CLICK, manageEvent );
-			volumeBar.removeEventListener( MouseEvent.CLICK, manageEvent );
-			shareButton.removeEventListener( MouseEvent.CLICK, manageEvent );
-			downloadButton.removeEventListener( MouseEvent.CLICK, manageEvent );
-		}
 		
 		
 		

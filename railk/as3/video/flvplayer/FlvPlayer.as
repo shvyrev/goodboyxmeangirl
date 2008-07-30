@@ -144,14 +144,8 @@ package railk.as3.video.flvplayer {
 																	['sharePanel',component]);
 																	
 		// _________________________________________________________________________________ VARIABLES PLAYER															
-		protected var share                               :String
+		private var share                               :String
 		
-		// ________________________________________________________________________________________ FUCNTIONS
-		private var txtHoverOut                         :Function = function( type:String, o:TextLink)
-		{
-			if ( type == 'hover') Tweener.addTween( o.textfield, { _text_color:0xFFFF00, time:.2 } );
-			else if ( type == 'out') Tweener.addTween( o.textfield, { _text_color:0xFFFFff, time:.2 } );
-		}
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -410,13 +404,6 @@ package railk.as3.video.flvplayer {
 			}
 			
 		}
-		
-		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  PARSE CONFIG
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function parseConfig( config:Array ):void {}
 		
 		
 		
