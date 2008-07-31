@@ -11,6 +11,7 @@ package railk.as3.utils.comment
 	
 	public interface IConfig
 	{
+		function init():void;
 		function createEmptyCom():Object;
 		function createComName():Object;
 		function createComMail():Object;

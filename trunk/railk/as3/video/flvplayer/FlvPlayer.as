@@ -733,15 +733,5 @@ package railk.as3.video.flvplayer {
 			sortZindex( _interfaceZindexList );
 		}
 		
-		
-		public function get config():Array { return _config; }
-		
-		public function set config(value:Array):void 
-		{
-			_config = value;
-			parseConfig( _config );
-		}
-		
-		
 	}	
 }

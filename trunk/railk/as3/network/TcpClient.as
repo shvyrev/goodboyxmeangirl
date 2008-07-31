@@ -2,7 +2,7 @@
 * 
 * Tcp Client
 * 
-* Connect to c# local server
+* Connect to c#/java local server
 * 
 * @author Richard Rodney
 * @version 0.1
