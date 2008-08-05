@@ -20,7 +20,7 @@
 		</div>
 	<?php else: ?>
 		<div id="logout">
-			<p>Hey !  <?php echo $username;  ?>| <?php echo anchor( 'admin/logout', 'D&eacute;connexion' ); ?></p>
+			<p>Hey !  <?php echo $username; ?> | <?php echo anchor( 'admin/logout', 'D&eacute;connexion' ); ?></p>
 		</div>
 	<?php endif; ?>
 	

@@ -1,6 +1,9 @@
 <?php
 class Admin extends Controller {
 
+	var $login_error;
+	var $login_banned;
+
 	function Admin()
 	{
 		parent::Controller();
@@ -15,7 +18,6 @@ class Admin extends Controller {
 		$data['title'] = "Flow Cms | Login";
 		$data['query'] = $this->db->get('users');
 		$data['browser'] = $this->_checkBrowser();
-		$data['login'] = $this->_create_login();
 		$data['meta'] = $this->_create_meta();
 		$data['css'] = $this->_create_css();
 		if ($this->redux_auth->logged_in()) 
@@ -27,7 +29,8 @@ class Admin extends Controller {
 		else 
 		{ 
 			$data['login_state'] = 'false'; 
-			$data['js'] = $this->_create_js(); 
+			$data['js'] = $this->_create_js();
+			$data['login'] = $this->_create_login();
 		}
 		
 		////////////////////////////////////////
@@ -40,8 +43,8 @@ class Admin extends Controller {
 		$ck = get_cookie('flow');
 		if ( !empty( $ck ) )
 		{
-			$data = $this->Get->getAdminPass($ck);
-			$this->login($data['user'], $data['pass']);
+			list($user, $pass) = split(',', $ck);
+			$this->redux_auth->login($user,$pass);
 		}
 	}
 	
@@ -150,7 +153,7 @@ class Admin extends Controller {
 				case true:
 					if ( $this->input->post('rememberme') == "checked" )
 					{
-						$cookie = array( 'name'  => 'flow', 'value'  => $this->input->post('username'),'expire' => '86500' );
+						$cookie = array( 'name'  => 'flow', 'value'  => $this->input->post('username').','.$this->input->post('password'),'expire' => '86500' );
 						set_cookie($cookie); 
 					}
 					redirect('admin');
@@ -166,39 +169,10 @@ class Admin extends Controller {
 		}
 	}
 	
-	function login_from_cookie ( $user, $pass )
-	{
-		$login = $this->redux_auth->login
-		(
-			$this->input->post( $user ),
-			$this->input->post( $pass )
-		);
-		
-		switch ((string)$login)
-		{
-			case 'NOT_ACTIVATED':
-				echo 'not activated';
-				break;
-			case 'BANNED':
-				echo 'banned';
-				break;
-			case true:
-				if ( $this->input->post('rememberme') == "checked" )
-				{
-					$cookie = array( 'name'  => 'flow', 'value'  => $this->input->post('email'),'expire' => '86500' );
-					set_cookie($cookie); 
-				}
-				redirect('admin');
-				break;
-			case false:
-				echo 'error';
-				break;
-		}
-	}
-	
 	function logout ()
 	{
 		$this->redux_auth->logout();
+		delete_cookie('flow');
 		redirect( 'admin' );
 	}
 	
@@ -241,6 +215,10 @@ class Admin extends Controller {
 	function register()
 	{
 		$data['title'] = "Flow Cms | Register";
+		$data['js'] = $this->_create_js();
+		$data['css'] = $this->_create_css();
+		$data['meta'] = $this->_create_meta();
+		
 		////////////////////////////////////////
 		$this->load->view('register_view', $data);
 		////////////////////////////////////////
