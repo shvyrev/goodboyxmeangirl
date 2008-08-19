@@ -89,7 +89,7 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   RESULT OF THE SERVICE CALL
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onResult( response:Object ):* {
+		private static function onResult( response:Object ):void {
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:"service call success", data:response };
@@ -97,13 +97,12 @@ package railk.as3.network.amfphp
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_RESULT, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-			return response;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   			   ERROR HANDLING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onError( response:Object ):String {
+		private static function onError( response:Object ):void {
 			var result:String = '';
 			for ( var prop in response )
 			{
@@ -117,8 +116,6 @@ package railk.as3.network.amfphp
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_ERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-			
-			return result;
 		}
 		
 		
