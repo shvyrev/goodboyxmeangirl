@@ -14,7 +14,7 @@ package
 	import railk.as3.utils.DynamicRegistration;
 	
 
-	public class ApplicationPreloader extends MainPreloader 
+	public class ApplicationPreloader extends MainPreloader
 	{
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

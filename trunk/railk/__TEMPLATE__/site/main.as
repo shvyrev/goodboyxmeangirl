@@ -71,19 +71,19 @@ package {
 		private function manageEvent( evt:* ):void {
 			switch( evt.type ) {
 				case StageManagerEvent.ONSTAGERESIZE :
-					Logger.print( evt.info );
+					Logger.print( evt.info, Logger.MESSAGE );
 					break;
 					
 				case StageManagerEvent.ONMOUSEIDLE :
-					Logger.print( evt.info );
+					Logger.print( evt.info, Logger.MESSAGE );
 					break;	
 				
 				case StageManagerEvent.ONMOUSEACTIVE :
-					Logger.print( evt.info );
+					Logger.print( evt.info, Logger.MESSAGE );
 					break;
 					
 				case StageManagerEvent.ONMOUSELEAVE :
-					Logger.print( evt.info );
+					Logger.print( evt.info, Logger.MESSAGE );
 					break;
 			}
 		}
