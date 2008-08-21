@@ -41,10 +41,10 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		  ADD
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function add( name:String, action:Function ):void
+		public function add( name:String, action:Function, separator=false ):void
 		{
 			actions[name] = action;
-			item = new ContextMenuItem( name );
+			item = new ContextMenuItem( name,separator );
 			item.addEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent, false, 0, true );
 			menu.customItems.push( item );
 		}
