@@ -110,6 +110,18 @@ package railk.as3.utils
 			}
 		}
 		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						      DISPOSE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function dispose():void
+		{
+			actions = null;
+			for ( var i:int = 0; i < menu.customItems.length; i++ )
+			{
+				menu.customItems[i].removeEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent );
+			}
+			menu.customItems = null;
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						    TO STRING
