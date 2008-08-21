@@ -30,10 +30,10 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function RightClickMenu( target:* ):void
+		public function RightClickMenu( target:*, hideDefault:Boolean=true ):void
 		{
 			menu = new ContextMenu();
-			menu.hideBuiltInItems();
+			if(hideDefault) menu.hideBuiltInItems();
 			target.contextMenu = menu;
 		}
 		
