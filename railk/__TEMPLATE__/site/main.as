@@ -50,6 +50,9 @@ package {
 			StageManager.addEventListener( StageManagerEvent.ONMOUSELEAVE, manageEvent, false, 0, true );
 			StageManager.GlobalVars.title = "Site Web Title";
 			
+			//--fullscreenMode
+			FullScreenMode.init( Current.stage );
+			
 			//--Mac Mouse Wheel
 			MacMouseWheel.setup( Current.stage );
 			
