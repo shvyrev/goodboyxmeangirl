@@ -77,7 +77,7 @@ package railk.as3.stage {
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, frameRate:int=40, align:String='TL', quality:String="high" ):void{
+		public static function init( stage:Stage, ctMenu=false, frameRate:int=40, align:String='TL', quality:String="high" ):void{
 			//trace
 			trace("                                   Stage initialise");
 			trace("---------------------------------------------------------------------------------------");
@@ -91,7 +91,7 @@ package railk.as3.stage {
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.quality = quality;
 			stage.frameRate = frameRate;
-			stage.showDefaultContextMenu = false;
+			stage.showDefaultContextMenu = ctMenu;
 			stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
 			stage.addEventListener( Event.MOUSE_LEAVE, manageEvent, false, 0, true );
 			
