@@ -59,16 +59,16 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	server 'http://'SERVER'/amfphp/gateway.php'
+		 * @param	server 'http://'SERVER'/'PATH'/gateway.php'
 		 */
-		public static function init( server:String ):void 
+		public static function init( server:String, path:String ):void 
 		{
 			//trace
 			trace("                                Amfphp Client initialise");
 			trace("---------------------------------------------------------------------------------------");
 			
 			connexion = new NetConnection();
-			connexion.connect( 'http://localhost/amfphp/gateway.php' );
+			connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
 			connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
 			responder = new Responder( onResult, onError );
 		}
