@@ -121,7 +121,7 @@ package railk.as3.text
 					if( height != 0) texte.height = height;
 				}
 				texte.wordWrap = wordwrap;
-				texte.mouseEnabled = false;
+				texte.mouseEnabled = selectable;
 				textLink.addChild( texte );
 			
 			addChild( textLink );	
