@@ -18,6 +18,7 @@ package railk.as3.network.amfphp
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.network.amfphp.AmfphpClientEvent;
+	import railk.as3.utils.ObjectDumper;
 	
 	
 	public class  AmfphpClient
@@ -67,7 +68,7 @@ package railk.as3.network.amfphp
 			trace("---------------------------------------------------------------------------------------");
 			
 			connexion = new NetConnection();
-			connexion.connect( 'http://' + server + '/amfphp/gateway.php' );
+			connexion.connect( 'http://localhost/amfphp/gateway.php' );
 			connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
 			responder = new Responder( onResult, onError );
 		}
@@ -125,7 +126,7 @@ package railk.as3.network.amfphp
 		private static function onNetStatus( evt:NetStatusEvent ):void {
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
-			var args:Object = { info:"connexion error" };
+			var args:Object = { info:"connexion error\n"+ ObjectDumper.dump(evt.info) };
 			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_CONNEXION_ERROR, args );
 			dispatchEvent( eEvent );
