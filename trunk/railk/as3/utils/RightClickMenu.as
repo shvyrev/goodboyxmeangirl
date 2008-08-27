@@ -74,9 +74,9 @@ package railk.as3.utils
 		public function show( name:String ):void
 		{
 			var chosenItem:ContextMenuItem = getItemByName( name );
-			if ( item )
+			if ( chosenItem )
 			{
-				item.visible = true;
+				chosenItem.visible = true;
 			}
 		}
 		
@@ -87,9 +87,9 @@ package railk.as3.utils
 		public function hide( name:String ):void
 		{
 			var chosenItem:ContextMenuItem = getItemByName( name );
-			if ( item )
+			if ( chosenItem )
 			{
-				item.visible = false;
+				chosenItem.visible = false;
 			}
 		}
 		
@@ -97,9 +97,9 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 GET ITEM BY NAME
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getItemByName( name:String ):*
+		public function getItemByName( name:String ):ContextMenuItem
 		{
-			var result:*;
+			var result:ContextMenuItem;
 			loop:for ( var i:int = 0; i < menu.customItems.length; i++ )
 			{
 				if ( menu.customItems[i].caption == name )
@@ -108,6 +108,7 @@ package railk.as3.utils
 					break loop;
 				}
 			}
+			return result;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -149,7 +150,7 @@ package railk.as3.utils
 			switch( evt.type )
 			{
 				case ContextMenuEvent.MENU_ITEM_SELECT :
-					actions[evt.target.caption].call();
+					actions[evt.target.caption].apply();
 					break;
 			}
 		}
