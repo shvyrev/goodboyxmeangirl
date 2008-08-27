@@ -64,7 +64,10 @@ package railk.as3.utils.objectList
 		// 																						    TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function toString():String {
-			return '[ ObjectNode/'+_id+' -> '+ _group +', '+ _name + ', ' + String( _data )+' ]';
+			var g:String;
+			if ( ! _group ) g = 'no group';
+			else g = _group;
+			return '[ ObjectNode/'+_id+' -> '+ g +', '+ _name + ', ' + String( _data )+' ]';
 		}
 		
 		

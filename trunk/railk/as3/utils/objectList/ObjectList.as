@@ -2,7 +2,7 @@
 * Object List
 * 
 * @author Richard Rodney
-* @version
+* @version 0.2
 */
 
 
@@ -96,32 +96,7 @@ package railk.as3.utils.objectList
 			{
 				if (current.name == name )
 				{ 
-					if ( _length > 1 )
-					{
-						if ( current == _head )
-						{
-							_head = _head.next;
-							_head.prev = null;
-						}
-						else if (current == _tail )
-						{
-							_tail = _tail.prev;
-							_tail.next = null;
-						}
-						else
-						{
-							current.prev.next = current.next;
-							current.next.prev = current.prev;
-						}
-					}
-					else
-					{
-						_tail = _head = null;
-					}
-					current.dispose();
-					
-					_length -= 1;
-					rebuildID();
+					removeObjectNode( current );
 					result = true;
 					break loop; 
 				}	
@@ -129,6 +104,40 @@ package railk.as3.utils.objectList
 				current = current.next;
 			}
 			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   		DIRECT REMOVE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function removeObjectNode( o:ObjectNode ):void
+		{
+			if ( _length > 1 )
+			{
+				if ( o == _head )
+				{
+					_head = _head.next;
+					_head.prev = null;
+				}
+				else if (o == _tail )
+				{
+					_tail = _tail.prev;
+					_tail.next = null;
+				}
+				else
+				{
+					o.prev.next = o.next;
+					o.next.prev = o.prev;
+				}
+			}
+			else
+			{
+				_tail = _head = null;
+			}
+			o.dispose();
+			
+			_length -= 1;
+			rebuildID();
 		}
 		
 		
@@ -144,6 +153,27 @@ package railk.as3.utils.objectList
 				id += 1;
 				current = current.next;
 			}
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   	CLEAR OBJECT LIST
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function clear():void
+		{
+			var next:ObjectNode;
+			var current:ObjectNode = _head;
+			_head = null;
+			
+			while ( current )
+			{
+				next = current.next;
+				current.next = current.prev = null;
+				current = next;
+			}
+			
+			_tail = null;
+			_length = 0;
 		}
 		
 		
@@ -213,12 +243,6 @@ package railk.as3.utils.objectList
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				              ITERATE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function iterate( id:int ):ObjectNode { return getObjectByID( id ); }
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						    TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function toString():String 
@@ -230,6 +254,7 @@ package railk.as3.utils.objectList
 				result += current.toString()+'\n';
 				current = current.next;
 			}
+			if( ! result ) result = '[ empty ]'
 			return result;
 		}
 		

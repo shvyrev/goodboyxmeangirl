@@ -26,6 +26,7 @@ package railk.as3.utils.resize {
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
 		private static var itemList                           :ObjectList;
+		private static var walker                             :ObjectNode;
 		
 		//____________________________________________________________________________________ VARIABLES ITEM
 		private static var _maxWidth                          :Number=0;
@@ -118,11 +119,12 @@ package railk.as3.utils.resize {
 			_maxheight = height;
 			_maxWidth = width;
 			
-			for ( var i:int = 0; i < itemList.length; i++ ) {
-				var node:ObjectNode = itemList.iterate(i);
-				if ( node.group == name ) {
-					node.action.apply();
+			walker = itemList.head;
+			loop:while ( walker ) {
+				if ( walker.group == name ) {
+					walker.action.apply();
 				}
+				walker = walker.next;
 			}
 		}
 		
@@ -149,12 +151,9 @@ package railk.as3.utils.resize {
 		}
 		
 
-		public function removeAll():void 
+		public static function removeAll():void 
 		{
-			for ( var i:int=0; i < itemList.length; i++ ){
-				var nodeName:String = itemList.iterate(i).name;
-				itemList.remove( nodeName );
-			}	
+			itemList.clear();
 			
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
@@ -177,11 +176,9 @@ package railk.as3.utils.resize {
 		}
 		
 		
-		/**
-		 * 
-		 * @param	name
-		 * @return
-		 */
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function toString():String
 		{
 			return itemList.toString();
