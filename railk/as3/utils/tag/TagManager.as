@@ -20,20 +20,14 @@ package railk.as3.utils.tag {
 	import railk.as3.utils.grid.Grid;
 	import railk.as3.utils.grid.Cell;
 	import railk.as3.utils.Utils;
-	
-	// __________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
-	
+	import railk.as3.utils.objectList.*;
 	
 	
 	public class TagManager extends Sprite {
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var tagList                            :DLinkedList;
-		private static var walker                             :DListNode;
-		private static var itr                                :DListIterator;
+		private static var tagList                            :ObjectList;
+		private static var walker                             :ObjectNode;
 	
 		//_____________________________________________________________________________________ VARIABLES TAG
 		private static var tag                                :Tag;
@@ -44,7 +38,7 @@ package railk.as3.utils.tag {
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function init():void {
-			 tagList = new DLinkedList();
+			 tagList = new ObjectList();
 		}
 		
 		
@@ -53,12 +47,12 @@ package railk.as3.utils.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function add( name:String, displayObjectName:String ):void {
 			
-			if ( getTag( name ) != null ) {
-				getTag( name ).addFile( displayObjectName );
+			if ( getTag(name) ) {
+				getTag(name).addFile( displayObjectName );
 			}
 			else {
 				tag = new Tag( name, displayObjectName );
-				tagList.append( tag );
+				tagList.add( [name,tag] );
 			}
 		}
 		
@@ -70,80 +64,35 @@ package railk.as3.utils.tag {
 		public static function remove( name:String ):Boolean {
 			var result:Boolean;
 			
-			walker = tagList.head;
-			//--
-			while ( walker ) {
-				//--
-				var t:Tag = walker.data ;
-				if ( t.name == name ) {
-					t.dispose();
-					itr = new DListIterator(tagList, walker);
-					itr.remove();
-					result = true;
-				}
-				else {
-					result = false;
-				}
-				walker = walker.next;
+			var t:ObjectNode = tagList.getObjectByName( name );
+			if ( t )
+			{
+				t.data.dispose();
+				tagList.removeObjectNode( t );
+				result = true;
 			}
+			else result = false;
 			
 			return result;
 		}
 		
-		
 		public static function getTag( name:String ):Tag {
-			walker = tagList.head;
-			
-			while ( walker ) {
-				if ( walker.data.name == name ) {
-					var result = walker.data;
-				}
-				walker = walker.next;
-			}
+			var result:Tag;
+			if ( tagList.getObjectByName( name ) ) result = tagList.getObjectByName( name ).data;
+			else result = null;
 			return result;
 		}
 		
 		public static function getTagByValue( value:Number ):Tag {
 			walker = tagList.head;
-			
-			while ( walker ) {
+			loop:while ( walker ) {
 				if ( walker.data.value == value ) {
 					var result = walker.data;
+					break loop;
 				}
 				walker = walker.next;
 			}
 			return result;
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						SORT TAG LIST
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function sortTagList( list:DLinkedList ):DLinkedList {
-			var tagSortList:DLinkedList = new DLinkedList();
-			var currentValue:Number = 0;
-			walker = list.head;
-			
-			while ( walker ) {
-				itr = new DListIterator( tagSortList, w );
-				
-				if ( tagSortList.size == 0 ) {
-					tagSortList.append( walker.data );
-					var w:DListNode = tagSortList.head;
-				}
-				else if ( walker.data.value <= currentValue ) {
-					tagSortList.insertAfter( itr, walker.data );
-					w = w.next;
-				}
-				else {
-					tagSortList.insertBefore( itr, walker.data );
-					w = w.prev;
-				}
-				
-				currentValue = walker.data.value;
-				walker = walker.next;
-			}
-			return tagSortList;
 		}
 		
 		
@@ -172,7 +121,7 @@ package railk.as3.utils.tag {
 			var txt:TextField;
 			var blocs:Array = new Array();
 			
-			var tagSortList:DLinkedList = sortTagList( tagList );
+			var tagSortList:ObjectList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, ObjectListSort.DESC, 'value' );
 			var grid:Grid = new Grid( "tag", H, W, minH, minW, 0, debug, debugContainer );
 			var multiplier:Number = computeSpace( grid, minH, minW, tagSortList, blocs, fontClassName );
 			
@@ -210,7 +159,7 @@ package railk.as3.utils.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						COMPUTE SPACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function computeSpace( grid:Grid,  cellH:int, cellW:int, list:DLinkedList, blocs:Array, fontClassName:String ):Number {
+		private static function computeSpace( grid:Grid,  cellH:int, cellW:int, list:ObjectList, blocs:Array, fontClassName:String ):Number {
 			var result:Number = 1;
 			var nbCells:int = 0;
 			var tagWidth:Number;
@@ -220,6 +169,7 @@ package railk.as3.utils.tag {
 			var largest:int=0;
 			var highest:int=0;
 				
+			
 			walker = list.head;
 			while ( walker ) {
 				format = new TextFormat();
@@ -268,24 +218,37 @@ package railk.as3.utils.tag {
 		 * 
 		 * @param	file
 		 * @param	sorted
+		 * @param	sortType   'desc' | 'asc'
 		 * @return
 		 */
-		public static function tagListArray( file:*= null, sorted:Boolean=false ):Array {
+		public static function tagListArray( file:String='', sorted:Boolean=false, sortMode:String='desc' ):Array {
 			var result:Array = new Array();
+			var tagSortList:ObjectList;
 			
-			if (sorted) {
-				var tagSortList:DLinkedList = sortTagList( tagList );
-				walker = tagSortList.head;
-			}
-			else {
-				walker = tagList.head;
-			}	
-			
-			while ( walker ) {
-				if ( walker.data.file( file ) ) {
-					result.push( walker.data.name );
+			if ( !file )
+			{
+				if (sorted) {
+					tagSortList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, sortMode, 'value' );
+					result = tagSortList.toArray();
 				}
-				walker = walker.next;
+				else {
+					result = tagList.toArray();
+				}
+			}	
+			else 
+			{
+				if (sorted) {
+					tagSortList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, sortMode, 'value' );
+					walker = tagSortList.head;
+				}
+				else {
+					walker = tagList.head
+				}
+				
+				loop:while ( walker ) {
+					if ( walker.data.file( file ) ) result.push( walker.data.name );
+					walker = walker.next;
+				}
 			}
 			
 			return result;
