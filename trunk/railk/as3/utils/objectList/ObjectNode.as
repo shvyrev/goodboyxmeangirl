@@ -15,7 +15,7 @@ package railk.as3.utils.objectList
 		private var _name                          :String;
 		private var _data                          :*;
 		private var _group                         :String;
-		private var _script                        :Function;
+		private var _action                        :Function;
 		private var _prev                          :ObjectNode;
 		private var _next                          :ObjectNode;
 		
@@ -28,11 +28,11 @@ package railk.as3.utils.objectList
 		 * @param	name
 		 * @param	data
 		 */
-		public function ObjectNode( id:int, name:String, data:*, group:String='', script:Function=null ):void {
+		public function ObjectNode( id:int, name:String, data:*, group:String='', action:Function=null ):void {
 			_name = name;
 			_data = data;
 			_group = group;
-			_script = script;
+			_action = action;
 			_id = id;
 			_prev = _next = null;
 		}
@@ -73,7 +73,7 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void {
 			_data = null;
-			_script = null;
+			_action = null;
 		}
 		
 		
@@ -115,11 +115,11 @@ package railk.as3.utils.objectList
 			_next = value;
 		}
 		
-		public function get script():Function { return _script; }
+		public function get action():Function { return _action; }
 		
-		public function set script(value:Function):void 
+		public function set action(value:Function):void 
 		{
-			_script = value;
+			_action = value;
 		}
 		
 		public function get group():String { return _group; }

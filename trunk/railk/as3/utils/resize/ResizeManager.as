@@ -14,29 +14,20 @@ package railk.as3.utils.resize {
 	import flash.events.EventDispatcher;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.utils.objectList.ObjectList;
+	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.resize.ResizeManagerEvent;
-	import railk.as3.utils.resize.resizeItem.ResizeItem;
-	
-	// __________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
 	
 	
-	
-	
-	public class ResizeManager extends Object {
+	public class ResizeManager {
 		
 		// ______________________________________________________________________________ VARIABLES PROTEGEES
 		protected static var disp                             :EventDispatcher;
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var itemList                           :DLinkedList;
-		private static var walker                             :DListNode;
-		private static var itr                                :DListIterator;
+		private static var itemList                           :ObjectList;
 		
 		//____________________________________________________________________________________ VARIABLES ITEM
-		private static var item                               :ResizeItem;
 		private static var _maxWidth                          :Number=0;
 		private static var _maxheight                         :Number=0;
 		
@@ -71,8 +62,9 @@ package railk.as3.utils.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init():void {
-			itemList = new DLinkedList();
+		public static function init():void 
+		{
+			itemList = new ObjectList();
 		}
 		
 		
@@ -83,14 +75,14 @@ package railk.as3.utils.resize {
 		 * 
 		 * @param	name
 		 * @param	displayObject
-		 * @param	actionType       'place' | 'personnal'
 		 * @param	action
 		 * @param	group
 		 */
-		public static function add( name:String, displayObject:*, action:Function=null, group:String='main' ):void {
-			item = new ResizeItem( name, displayObject, group, action );
-			itemList.append( item );
+		public static function add( name:String, displayObject:*, action:Function = null, group:String = 'main' ):void 
+		{
+			itemList.add( [name,displayObject,group,action] );
 		}
+		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			MOVE ITEM
@@ -98,22 +90,16 @@ package railk.as3.utils.resize {
 		/**
 		 * 
 		 * @param	name
+		 * @param	width
+		 * @param	height
 		 */
-		public static function itemAction( name:String, width:Number, height:Number ):void {
+		public static function itemAction( name:String, width:Number, height:Number ):void 
+		{
 			//--vars
 			_maxheight = height;
 			_maxWidth = width;
 			
-			walker = itemList.head;
-			while ( walker ) 
-			{
-				var i:ResizeItem = walker.data ;
-				if ( i.name == name ) 
-				{
-					i.action.apply();
-				}
-				walker = walker.next;
-			}
+			itemList.getObjectByName( name ).action.apply();
 		}
 		
 		
@@ -122,22 +108,21 @@ package railk.as3.utils.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
+		 * @param	width
+		 * @param	height
 		 * @param	name
 		 */
-		public static function groupAction( width:Number, height:Number, name:String = 'main' ):void {
+		public static function groupAction( width:Number, height:Number, name:String = 'main' ):void 
+		{
 			//--vars
 			_maxheight = height;
 			_maxWidth = width;
 			
-			walker = itemList.head;
-			while ( walker ) 
-			{
-				var i:ResizeItem = walker.data;
-				if ( i.group == name ) 
-				{
-					i.action.apply();
+			for ( var i:int = 0; i < itemList.length; i++ ) {
+				var node:ObjectNode = itemList.iterate(i);
+				if ( node.group == name ) {
+					node.action.apply();
 				}
-				walker = walker.next;
 			}
 		}
 		
@@ -150,20 +135,9 @@ package railk.as3.utils.resize {
 		 * @param	name
 		 * @return
 		 */
-		public static function remove( name:String ):void {
-			walker = itemList.head;
-			//--
-			while ( walker ) 
-			{
-				//--
-				var i:ResizeItem = walker.data ;
-				if ( i.name == name ) {
-					itr = new DListIterator(itemList, walker);
-					itr.remove();
-					
-				}
-				walker = walker.next;
-			}
+		public static function remove( name:String ):void 
+		{
+			itemList.remove( name );
 			
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
@@ -175,16 +149,13 @@ package railk.as3.utils.resize {
 		}
 		
 
-		public function removeAll():void {
-			walker = itemList.head;
+		public function removeAll():void 
+		{
+			for ( var i:int=0; i < itemList.length; i++ ){
+				var nodeName:String = itemList.iterate(i).name;
+				itemList.remove( nodeName );
+			}	
 			
-			while ( walker ) {
-				//suppression du node
-				itr = new DListIterator(itemList, walker);
-				itr.remove();
-				//incrementation
-				walker = walker.next;
-			}
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:"removed all item" };
@@ -200,17 +171,20 @@ package railk.as3.utils.resize {
 		 * @param	name
 		 * @return
 		 */
-		public static function getItemContent( name:String ):* {
-			walker = itemList.head;
-			
-			while ( walker ) {
-				//--
-				if ( walker.data.name == name ) {
-					var result = walker.data.content;
-				}
-				walker = walker.next;
-			}
-			return result;
+		public static function getItemContent( name:String ):* 
+		{
+			return itemList.getObjectByName( name ).data;
+		}
+		
+		
+		/**
+		 * 
+		 * @param	name
+		 * @return
+		 */
+		public static function toString():String
+		{
+			return itemList.toString();
 		}
 		
 		
