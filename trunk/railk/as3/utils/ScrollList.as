@@ -34,7 +34,6 @@ package railk.as3.utils {
 		private var scrollListSize                               :int;
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -58,7 +57,6 @@ package railk.as3.utils {
 			container = new Sprite();
 			addChild( container );
 			container.scrollRect = new Rectangle( 0,0,width,height );
-			
 		}
 		
 		
@@ -70,18 +68,15 @@ package railk.as3.utils {
 		 * @param	o
 		 * @param	size
 		 */
-		public function add( o:*, size:int ):void {
-			objects.push( { object:o, size:size } );
-		}
+		public function add( o:*, size:int ):void { objects.push( { object:o, size:size } ); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		CREATE THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function create():void {
-			//--vars
+		public function create():void 
+		{
 			var place = 0;
-			
 			//--mise ne place
 			for (var i:int = 0; i < objects.length; i++)
 			{
@@ -92,10 +87,8 @@ package railk.as3.utils {
 				place += objects[i].size + _espacement;
 				container.addChild( obj );
 			}
-			
 			//taille totale de la zone de scroll
 			scrollListSize = place;
-			
 			//on ajoute un fond a thumbs pour le scroll
 			var fond:GraphicShape = new GraphicShape();
 			fond.name = "bg";
@@ -146,7 +139,6 @@ package railk.as3.utils {
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     				 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -162,10 +154,7 @@ package railk.as3.utils {
 					break;
 				
 				case Event.ENTER_FRAME :
-					//--vars
 					var rect:Rectangle = container.scrollRect;
-					
-					//--change
 					if ( _orientation == 'V' )
 					{
 						if ( mouseY < _height && mouseY > _height-200 && rect.y < (scrollListSize-rect.height) )
@@ -195,8 +184,5 @@ package railk.as3.utils {
 					break;
 			}
 		}
-		
-		
 	}
-	
 }

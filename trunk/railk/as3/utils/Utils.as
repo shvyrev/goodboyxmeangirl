@@ -1,15 +1,18 @@
-﻿/////////////////////////////////////////////////////////////////
-//*************************************************************//
-//*                     Package d'utilitaire                  *//
-//*************************************************************//
-/////////////////////////////////////////////////////////////////
+﻿/**
+* 
+* Utils class
+* 
+* @author RICHARD RODNEY
+* @version 0.3
+*/
+
+
 package railk.as3.utils {
 		
 	import flash.display.Bitmap;
-
 	
-	public class Utils {
-		
+	public class Utils 
+	{
 		/**
 		 * 
 		 * @param	x1
@@ -148,7 +151,5 @@ package railk.as3.utils {
 			
 			return result;
 		}
-
-		
 	}	
 }		

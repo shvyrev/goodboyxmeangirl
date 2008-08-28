@@ -23,17 +23,14 @@ package railk.as3.network {
 	import railk.as3.network.TcpClientEvent;
 	
 	
-	
-	
-	public class TcpClient extends Sprite {
-		
+	public class TcpClient extends Sprite 
+	{	
 		// __________________________________________________________________________________ VARIABLES SOCKET
 		private var sc                                 :Socket;
 		private var _data                              :String;
 		
 		// ___________________________________________________________________________________ VARIABLES EVENT
 		private var eEvent                             :TcpClientEvent;
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -57,9 +54,7 @@ package railk.as3.network {
 		 * @param	adress
 		 * @param	port
 		 */
-		public function connect( adress:String, port:int ):void {
-			sc.connect(  adress, port );
-		}
+		public function connect( adress:String, port:int ):void { sc.connect(  adress, port ); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -74,14 +69,11 @@ package railk.as3.network {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							 GET DATA
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getData( data:String ):void {
-			
+		public function getData( data:String ):void 
+		{
 			_data = data;
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"data received from server", data:_data };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new TcpClientEvent( TcpClientEvent.ONDATARECEIVED, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -91,9 +83,7 @@ package railk.as3.network {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					    GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get receivedData():String {
-			return _data;
-		}
+		public function get receivedData():String { return _data; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -115,9 +105,7 @@ package railk.as3.network {
 				case Event.CONNECT :
 					Logger.print( 'connecté', Logger.MESSAGE );
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					var args:Object = { info:"connected to the server" };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new TcpClientEvent( TcpClientEvent.ONCONNECTED, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
@@ -132,7 +120,5 @@ package railk.as3.network {
 					break;
 			}
 		}
-		
-	}
-	
+	}	
 }

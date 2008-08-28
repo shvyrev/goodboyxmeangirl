@@ -21,7 +21,6 @@ package railk.as3.utils {
 			{
 				result += '['+ name +' => '+ o[name] +' ]\n';
 			}
-			
 			if ( !result ) result = '[ empty ]';
 			return result;
 		}

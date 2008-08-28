@@ -20,9 +20,8 @@ package railk.as3.utils.link.linkItem {
 	import com.asual.swfaddress.SWFAddress;
 	
 	
-	
-	public class Link  {
-		
+	public class Link  
+	{	
 		//________________________________________________________________________________________ VARIABLES		
 		private var _name                                       :String;
 		private var _displayObject                              :*;
@@ -46,9 +45,8 @@ package railk.as3.utils.link.linkItem {
 		 * @param	onClick
 		 * @param	swfAdressEnable
 		 */
-		public function Link(  name:String, displayObject:*, content:Object, type:String, onClick:Function=null, swfAdressEnable:Boolean=false ):void {
-			
-			//--vars
+		public function Link(  name:String, displayObject:*, content:Object, type:String, onClick:Function = null, swfAdressEnable:Boolean = false ):void 
+		{
 			_name = name;
 			_displayObject = displayObject;
 			_content = content;
@@ -61,12 +59,10 @@ package railk.as3.utils.link.linkItem {
 			//--Container
 			_displayObject.buttonMode = true;
 
-			
 			//--setup
 			for ( var prop in content ) { 
 				content[prop].objet.mouseEnabled = false; 
 			}
-			
 			
 			/////////////////////////////
 			initListeners();
@@ -81,7 +77,6 @@ package railk.as3.utils.link.linkItem {
 			var result:String;
 			if ( object is TextField ) { result = "text"; }
 			else { result = "sprite"; }
-			
 			return result;
 		}
 		
@@ -121,119 +116,73 @@ package railk.as3.utils.link.linkItem {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function doAction():void {
-			if ( _onClick != null ) { active = true; _onClick("do", _displayObject); }
-		}
+		public function doAction():void { if ( _onClick != null ) { active = true; _onClick("do", _displayObject); } }
 		
-		public function undoAction():void {
-			if( _onClick != null ){ active = false; _onClick("undo", _displayObject); }
-		}
+		public function undoAction():void { if( _onClick != null ){ active = false; _onClick("undo", _displayObject); } }
 		
-		public function isActive():Boolean {
-			return active;
-		}
+		public function isActive():Boolean { return active; }
 		
-		public function get name():String {
-			return _name;
-		}
+		public function get name():String { return _name; }
 		
-		public function get object():*{
-			return _displayObject;
-		}
+		public function get object():*{ return _displayObject; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		 DISPOSE LINK
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose() {
-			delListeners();
-		}
+		public function dispose() { delListeners(); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ):void {
-			
+		private function manageEvent( evt:* ):void 
+		{
 			var prop:String;
 			var type:String;
-			
-			switch( evt.type ) {
+			switch( evt.type ) 
+			{
 				case MouseEvent.MOUSE_OVER :
 				case MouseEvent.ROLL_OVER :
-					
-					//--swfadress
-					if ( swfAdress ) {
-						SWFAddress.setStatus(_name);
-					}
-					
+					if ( swfAdress ) { SWFAddress.setStatus(_name);}
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
-							if ( type == "text" ) {
-								Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.hover, time:.2, transition:"linear" } );
-							}
-							else if ( type == "sprite" ) {
-								Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.hover, time:.2, transition:"linear" } );	
-							}
+							if ( type == "text" ) { Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.hover, time:.2, transition:"linear" } ); }
+							else if ( type == "sprite" ) { Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.hover, time:.2, transition:"linear" } ); }
 						}	
-						
-						if ( _content[prop].action != null ) {
-							_content[prop].action("hover", _content[prop].objet);
-						}
+						if ( _content[prop].action != null ) { _content[prop].action("hover", _content[prop].objet); }
 					}
 					break;
 					
 				case MouseEvent.MOUSE_OUT :
 				case MouseEvent.ROLL_OUT :
-				
-					//--swfadress
-					if ( swfAdress ) {
-						SWFAddress.resetStatus();
-					}
-				
+					if ( swfAdress ) { SWFAddress.resetStatus(); }
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
-							if( type == "text" ){
-								Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.out, time:.2, transition:"linear" } );
-							}
-							else if ( type == "sprite" ) {
-								Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.out, time:.2, transition:"linear" } );	
-							}
+							if( type == "text" ){ Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.out, time:.2, transition:"linear" } ); }
+							else if ( type == "sprite" ) { Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.out, time:.2, transition:"linear" } ); }
 						}
-						
-						if ( _content[prop].action != null ) {
-							_content[prop].action("out", _content[prop].objet);
-						}
+						if ( _content[prop].action != null ) { _content[prop].action("out", _content[prop].objet); }
 					}	
 					break;
 					
 				case MouseEvent.CLICK :
-					//--swfadress && Action && State
-					if ( swfAdress ) {
-						SWFAddress.setValue(_name);
-					}
+					if ( swfAdress ) { SWFAddress.setValue(_name); }
 					else {
 						if (active) { active = false; if( _onClick != null ){ _onClick("undo", _displayObject); } }
 						else{ active = true; if( _onClick != null ){ _onClick("do", _displayObject); } }
 					}	
-				
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
-							if( type == "text" ){
-								Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.click, time:.2, transition:"linear" } );
-							}
-							else if ( type == "sprite" ) {
-								Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.click, time:.2, transition:"linear" } );	
-							}
+							if( type == "text" ){ Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.click, time:.2, transition:"linear" } ); }
+							else if ( type == "sprite" ) { Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.click, time:.2, transition:"linear" } ); }
 						}	
 					}	
 					break;
 			}
 		}
-		
-		
 	}
 }

@@ -5,7 +5,6 @@
 * @author Default
 */
 
-
 package railk.as3.data.checker {
 	
 	// _________________________________________________________________________________________ IMPORT FLASH
@@ -60,7 +59,6 @@ package railk.as3.data.checker {
       	}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -68,12 +66,9 @@ package railk.as3.data.checker {
 		 * 
 		 * @param	__file__    the file to check if it exist
 		 */
-		public static function check( __file__:String ):void {
-			
-			//--vars
+		public static function check( __file__:String ):void 
+		{	
 			file = __file__;
-			
-			//--loader
 			loader = new URLLoader();
 			req= new URLRequest( checkUrl );
 			req.data = __file__;
@@ -81,31 +76,29 @@ package railk.as3.data.checker {
 			req.contentType = "text";
 			loader.load( req );
 			
-			/////////////////////////////////////
+			////////////////////////////////////
 			initListeners()
 			////////////////////////////////////
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   INIT LISTENERS
+		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function initListeners():void {
 			loader.addEventListener(Event.COMPLETE, manageEvent);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, manageEvent);
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						DEL LISTENERS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function delListeners():void {
 			loader.addEventListener(Event.COMPLETE, manageEvent);
 			loader.addEventListener(IOErrorEvent.IO_ERROR, manageEvent);
 		}
 		
 		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							  DISPOSE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function dispose():void {
 			delListeners();
 			loader = null;
@@ -114,48 +107,31 @@ package railk.as3.data.checker {
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:* ):void {
-			//--vars
+		private static function manageEvent( evt:* ):void 
+		{
 			var args:Object;
-			
-			//--
-			switch( evt.type ) {
-				
+			switch( evt.type ) 
+			{	
 				case Event.COMPLETE :
 					rep = evt.currentTarget.data;
-
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"fichier "+ file +" present", rep:rep };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new FileCheckEvent( FileCheckEvent.ONFILECHECKRESPONSE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
-						
-					////////////////////////////////////
 					dispose();
-					////////////////////////////////////
-					
 					break;
 					
 				case IOErrorEvent.IO_ERROR :
-					
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"IOerror" };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new FileCheckEvent( FileCheckEvent.ONFILECHECKERROR, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
-					
-					////////////////////////////////////
 					dispose();
-					////////////////////////////////////
-					
 					break;
 			}
 		}

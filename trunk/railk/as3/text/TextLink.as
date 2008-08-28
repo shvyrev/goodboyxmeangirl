@@ -19,7 +19,6 @@ package railk.as3.text
 	import railk.as3.utils.DynamicRegistration;
 	
 	
-	
 	public class  TextLink extends DynamicRegistration
 	{
 		//________________________________________________________________________________________ CONSTANTES
@@ -72,7 +71,6 @@ package railk.as3.text
 		 */
 		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
 		{
-			//--vars
 			_name = name;
 			_type = type;
 			_text = text;
@@ -229,10 +227,7 @@ package railk.as3.text
 		
 		public function get autoSize():Boolean { return _autoSize; }
 		
-		public function set autoSize(value:Boolean):void 
-		{
-			_autoSize = value;
-		}
+		public function set autoSize(value:Boolean):void { _autoSize = value; }
 		
 		public function get autoSizeType():String { return _autoSizeType; }
 		
@@ -243,9 +238,6 @@ package railk.as3.text
 				texte.autoSize = value;
 				_autoSizeType = value;
 			}
-			
 		}
-
 	}
-	
 }

@@ -5,7 +5,6 @@
 * @version 0.1
 * 
 * TODO:AUTHORISE SPECIAL GRAPHIC PART INSTEAD OF TEXT OR WITH THE TEXT AND ADD THE CIRCLE TYPE AND ORIENTATION
-* 
 */
 
 package railk.as3.utils
@@ -27,7 +26,6 @@ package railk.as3.utils
 	
 	public class InfoBulle extends DynamicRegistration
 	{
-		
 		// __________________________________________________________________________________ VARIABLES BULLE
 		private var bulle                          :GraphicShape;
 		private var triangle                       :GraphicShape;
@@ -76,8 +74,8 @@ package railk.as3.utils
 		 * @param	triPlace       place of the marker top | bottom | left | right
 		 * 
 		 */
-		public function InfoBulle( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int=0, dropShadow:Boolean=false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' ):void {
-			//--vars
+		public function InfoBulle( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int = 0, dropShadow:Boolean = false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' ):void 
+		{
 			_type = type;
 			_thickness = thickness;
 			_orientation = orientation;
@@ -93,7 +91,6 @@ package railk.as3.utils
 			if ( triPoints == null) triPoints = [ new Point(0, 0), new Point(6, -6), new Point(-6, -6) ];
 			_triPoints = triPoints;
 			_filters = new Array();
-			
 			
 			//--dropShadow
 			if (dropShadow) _filters.push( new DropShadowFilter( 8, 45, 0xffffff, .1 ) );
@@ -139,12 +136,9 @@ package railk.as3.utils
 				addChild( triangle );
 				placeTriangle( triPlace );
 			}
-			
 					
-			//--width and height thx to texte size
 			_width = txt.textWidth;
 			_height = thickness;
-			
 		}
 		
 		
@@ -196,34 +190,7 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		//a voir si je garde ou ces possibilitées
-		/*public override function get width():Number {
-			return _width;
-		}
-		
-		public override function set width( value:Number ):void {
-			var add:int = 0;
-				if ( txt.textWidth >= 20 ) add = 20;
-				bulle.roundRectangle( bulleColor, 0, 0, value+add, _height, _corner, _corner );
-			if (_tri) placeTriangle( _triPlace );
-			_width = bulle.width;	
-		}
-		
-		public override function get height():Number {
-			return _height;
-		}
-		
-		public override function set height( value:Number ):void {
-			var add:int = 0;
-			if ( txt.textWidth >= 20 ) add = 20;
-			bulle.roundRectangle( bulleColor, 0, 0, _width, value+add, _corner, _corner );
-			if (_tri) placeTriangle( _triPlace );
-			_height = bulle.height;	
-		}*/
-		
-		public function get thickness():Number {
-			return _thickness;
-		}
+		public function get thickness():Number { return _thickness; }
 		
 		public function set thickness( value:Number ):void {
 			bulle.roundRectangle( bulleColor, 0, 0, value, _thickness, _corner, _corner );
@@ -231,33 +198,19 @@ package railk.as3.utils
 			_thickness = value;
 		}
 		
-		public function get orientation():String {
-			return _orientation;
-		}
+		public function get orientation():String { return _orientation; }
 		
-		public function set orientation( value:String ):void {
-			_orientation = value;
-		}
+		public function set orientation( value:String ):void { _orientation = value; }
 		
-		public function get font():String {
-			return _font;
-		}
+		public function get font():String { return _font; }
 		
-		public function set font( value:String ):void {
-			_font = value;
-		}
+		public function set font( value:String ):void { _font = value; }
 		
-		public function get fontSize():int {
-			return _fontSize;
-		}
+		public function get fontSize():int { return _fontSize; }
 		
-		public function set fontSize( value:int ):void {
-			_fontSize = value;
-		}
+		public function set fontSize( value:int ):void { _fontSize = value; }
 		
-		public function get corner():int {
-			return _corner;
-		}
+		public function get corner():int { return _corner; }
 		
 		public function set corner( value:int ):void {
 			bulle.roundRectangle( bulleColor, 0, 0, _width, _thickness, value, value );
@@ -265,25 +218,15 @@ package railk.as3.utils
 			_corner = value;
 		}
 		
-		public function get bulleColor():uint {
-			return _bulleColor;
-		}
+		public function get bulleColor():uint { return _bulleColor; }
 		
-		public function set bulleColor( value:uint ):void {
-			_bulleColor = value;
-		}
+		public function set bulleColor( value:uint ):void { _bulleColor = value; }
 		
-		public function get texteColor():uint {
-			return _texteColor;
-		}
+		public function get texteColor():uint { return _texteColor; }
 		
-		public function set texteColor( value:uint ):void {
-			_texteColor = value;
-		}
+		public function set texteColor( value:uint ):void { _texteColor = value; }
 		
-		public function get texte():String {
-			return _texte;
-		}
+		public function get texte():String { return _texte; }
 		
 		public function set texte( value:String ):void {
 			txt.appendText( '' );
@@ -311,31 +254,22 @@ package railk.as3.utils
 			_texte = value;
 		}
 		
-		public function get triEnabled():Boolean {
-			return _tri;
-		}
+		public function get triEnabled():Boolean { return _tri; }
 		
 		public function set triEnabled( value:Boolean ):void {
 			triangle.visible = false;
 			_tri = value;
 		}
 		
-		public function get triPoints():Array {
-			return _triPoints;
-		}
+		public function get triPoints():Array { return _triPoints; }
 		
-		public function set triPoints( value:Array ):void {
-			_triPoints = value;
-		}
+		public function set triPoints( value:Array ):void { _triPoints = value; }
 		
-		public function get triPlace():String {
-			return _triPlace;
-		}
+		public function get triPlace():String { return _triPlace; }
 		
 		public function set triPlace( value:String ):void {
 			_triPlace = value;
 			placeTriangle( _triPlace );
 		}
 	}
-	
 }

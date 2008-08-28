@@ -6,7 +6,6 @@
 * @version 0.1
 */
 
-
 package railk.as3.utils {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
@@ -23,7 +22,6 @@ package railk.as3.utils {
 	
 	// ______________________________________________________________________________________ IMPORT TWEENER
 	import caurina.transitions.Tweener;
-	
 	
 	
 	
@@ -75,8 +73,8 @@ package railk.as3.utils {
 		 * @param	autoCheck           To make the scrollBar adapt itself automaticaly when the content size change
 		 * @param	autoScroll          to follow the mouse when the mouse is hover the scrollbar.
 		 */
-		public function ScrollBar( name:String, orientation:String, toScroll:*, colors:Object, sizes:Object, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean=false ):void {
-			//--vars
+		public function ScrollBar( name:String, orientation:String, toScroll:*, colors:Object, sizes:Object, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false ):void 
+		{
 			scrollList[name] = this;
 			wheelEnable = wheel;
 			resizeEnable = resizeAble;
@@ -86,7 +84,6 @@ package railk.as3.utils {
 			scrollSize = sizes;
 			scrollColor = colors;
 			
-			//--
 			scrollContainer = new Sprite();
 			scrollContainer.alpha = 0;
 			scrollContainer.name = "container";
@@ -128,7 +125,6 @@ package railk.as3.utils {
 			if ( autoScrollEnable ) {
 				scrollContainer.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
 			}	
-			
 				
 			//--Scroll setup
 			if ( orientation == "V" ) {
@@ -138,16 +134,12 @@ package railk.as3.utils {
 					multiplier = distance / ( sizes.fH - sizes.sH );
 					way = orientation;
 					rect = new Rectangle(0, 0, 0, sizes.fH - sizes.sH);
-					
 					////////////////////////////////////
 					initListeners();
 					listeners = true;
 					////////////////////////////////////
-					
 				}
-				else {
-					showHide(0,false);
-				}
+				else { showHide(0,false); }
 			}
 			else if ( orientation == "H" ) {
 				if ( content.width > StageManager.W ) {
@@ -156,7 +148,6 @@ package railk.as3.utils {
 					multiplier = distance / ( sizes.fW - sizes.sW );
 					way = orientation;
 					rect = new Rectangle(0, 0, sizes.fW - sizes.sW, 0);
-					
 					////////////////////////////////////
 					initListeners();
 					listeners = true;
@@ -173,7 +164,7 @@ package railk.as3.utils {
 			}
 		}
 		
-				
+		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   GESTION LISTERNERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -183,9 +174,7 @@ package railk.as3.utils {
 			scrollContainer.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			slider.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 			slider.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			if ( wheelEnable ) {
-				StageManager._stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true );
-			}
+			if ( wheelEnable ) { StageManager._stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true ); }
 			StageManager._stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
 		}
 		
@@ -195,9 +184,7 @@ package railk.as3.utils {
 			scrollContainer.removeEventListener( MouseEvent.CLICK, manageEvent );
 			slider.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
 			slider.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			if ( wheelEnable ) {
-				StageManager._stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent );
-			}
+			if ( wheelEnable ) { StageManager._stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent ); }
 			StageManager._stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
 		}
 		
@@ -205,17 +192,13 @@ package railk.as3.utils {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	   RESIZE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function resize():void {
+		private function resize():void 
+		{
 			if ( way == "V" ) {
 				if ( content.height > StageManager.H ) {
 					showHide(1, true);
-					
-					if ( slider.y >= oldStageH - slider.height ) {
-						slider.y = StageManager.H - slider.height;
-					}
-					else {
-						slider.y = ( slider.y * StageManager.H ) / oldStageH;
-					}
+					if ( slider.y >= oldStageH - slider.height ) { slider.y = StageManager.H - slider.height; }
+					else { slider.y = ( slider.y * StageManager.H ) / oldStageH; }
 					
 					scrollBG.height = ( scrollSize.fH * StageManager.H ) / oldStageH;
 					rect = new Rectangle(0, 0, 0, scrollBG.height - scrollSize.sH);
@@ -230,7 +213,6 @@ package railk.as3.utils {
 						listeners = true;
 						////////////////////////////////////
 					}	
-					
 				}	
 				else {
 					Tweener.addTween( slider, { y:0, time:.4, onUpdate: function() { content.y = -(slider.y * multiplier); } } );
@@ -244,13 +226,8 @@ package railk.as3.utils {
 			else if ( way == "H" ) {
 				if ( content.height > StageManager.H ) {
 					showHide(1, true);
-					
-					if ( slider.x >= oldStageW - slider.width ) {
-						slider.x = StageManager.W - slider.width;
-					}
-					else {
-						slider.x = ( slider.x * StageManager.W ) / oldStageW;
-					}
+					if ( slider.x >= oldStageW - slider.width ) { slider.x = StageManager.W - slider.width; }
+					else { slider.x = ( slider.x * StageManager.W ) / oldStageW; }
 					
 					scrollBG.width = ( scrollSize.fW * StageManager.W ) / oldStageW; 
 					rect = new Rectangle(0, 0, scrollBG.width - scrollSize.sW, 0);
@@ -285,12 +262,8 @@ package railk.as3.utils {
 		 * @param	alpha
 		 */
 		public function showHide( alpha:Number, visibility:Boolean ):void {
-			if(alpha){
-				Tweener.addTween( scrollContainer, { alpha:alpha, time:.4, onStart:function() { scrollContainer.visible = visibility; } } );
-			}
-			else {
-				Tweener.addTween( scrollContainer, { alpha:alpha, time:.4, onComplete:function() { scrollContainer.visible = visibility; } } );
-			}
+			if(alpha){ Tweener.addTween( scrollContainer, { alpha:alpha, time:.4, onStart:function() { scrollContainer.visible = visibility; } } ); }
+			else { Tweener.addTween( scrollContainer, { alpha:alpha, time:.4, onComplete:function() { scrollContainer.visible = visibility; } } ); }
 		}	
 		
 		
@@ -305,7 +278,8 @@ package railk.as3.utils {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ) {
+		private function manageEvent( evt:* ) 
+		{
 			var value:Number;
 			switch( evt.type ) {
 				case Event.ENTER_FRAME:
@@ -364,9 +338,7 @@ package railk.as3.utils {
 					break;
 					
 				case MouseEvent.MOUSE_UP :
-					//--vars
 					var eEvent:MouseEvent = new MouseEvent( MouseEvent.ROLL_OUT, true,false, scrollContainer.x, scrollContainer.y, scrollContainer );
-					
 					if( evt.currentTarget.name == "slider" ){
 						evt.currentTarget.stopDrag();
 						StageManager._stage.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
@@ -432,6 +404,5 @@ package railk.as3.utils {
 					break;
 			}
 		}
-		
 	}
 }

@@ -20,7 +20,6 @@ package railk.as3.data.uploader {
 	import railk.as3.data.uploader.UpLoaderEvent;
 	import railk.as3.data.uploader.UpLoaderFilters;
 	
-	
 
 	public class UpLoader extends EventDispatcher {
 		
@@ -39,20 +38,19 @@ package railk.as3.data.uploader {
 		private var eEvent                 :UpLoaderEvent;
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function UpLoader():void {
-			//init
+		public function UpLoader():void 
+		{
 			uploadURL = new URLRequest( uploadPHPFile );
 			uploadURL.method = URLRequestMethod.POST;
 			uploadVAR = new URLVariables();
 			
 			fileRef = new FileReference();
 			configListenersFile( fileRef );
-			
 		}
+		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 FILEREF LISTENERS
@@ -85,41 +83,35 @@ package railk.as3.data.uploader {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		  FILEREF LISTERNERS FONCTIONS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function onCancel( evt:Event ):void {
-			//arguments du messages
+		private function onCancel( evt:Event ):void 
+		{
 			var args:Object = { info:"upload annule" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONCANCEL, args );
 			dispatchEvent( eEvent );
 		}
 		
-		private function onSelect( evt:Event ):void {
-			//on lance l'upload du fichier
+		private function onSelect( evt:Event ):void 
+		{
             fileRef.upload( uploadURL );
 			
-			//arguments du messages
 			var args:Object = { info: fileRef.name };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONSELECT, args );
 			dispatchEvent( eEvent );
 		}
 		
-		private function onBegin( evt:Event ):void {
-			//arguments du messages
+		private function onBegin( evt:Event ):void 
+		{
 			var args:Object = { info:"debut du transfert" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONBEGIN, args );
 			dispatchEvent( eEvent );
 		}
 		
-		private function onProgress( evt:ProgressEvent ):void {
+		private function onProgress( evt:ProgressEvent ):void 
+		{
 			try
 			{
-				//calcul du pourcentage d'avancement
 				var percent:Number = Math.floor(evt.bytesLoaded * 100 / evt.bytesTotal);
-				//arguments du messages
 				var args:Object = { info:percent };
-				//envoie de l'evenement pour les listeners de uploader
 				eEvent = new UpLoaderEvent( UpLoaderEvent.ONPROGRESS, args );
 				dispatchEvent( eEvent );
 				
@@ -128,45 +120,39 @@ package railk.as3.data.uploader {
 				trace("Error: " + e.message)
 				return;
 			}	
-			
 		}
 		
-		private function onComplete( evt:Event ):void {
-			//arguments du messages
+		private function onComplete( evt:Event ):void 
+		{
 			var args:Object = { info:"transfert termine" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONCOMPLETE, args );
 			dispatchEvent( eEvent );
 		}
 		
-		private function onDataUploaded( evt:DataEvent ):void {
-			//arguments du messages
+		private function onDataUploaded( evt:DataEvent ):void 
+		{
 			var args:Object = { info:"data uploaded" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONDATAUPLOADED, args );
 			dispatchEvent( eEvent );
 		}
 		
-		private function onHttpStatus( evt:HTTPStatusEvent ):void {
-			//arguments du messages
+		private function onHttpStatus( evt:HTTPStatusEvent ):void 
+		{
 			var args:Object = { info:evt };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONHTTPSTATUS, args );
 			dispatchEvent( eEvent );
 		}
 		
-		private function onIOError( evt:IOErrorEvent ):void {
-			//arguments du messages
+		private function onIOError( evt:IOErrorEvent ):void 
+		{
 			var args:Object = { info:evt };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONIOERROR, args );
 			dispatchEvent( eEvent );
 		}
 		
-		private function onSecurityError( evt:SecurityErrorEvent ):void {
-			//arguments du messages
+		private function onSecurityError( evt:SecurityErrorEvent ):void 
+		{
 			var args:Object = { info:evt };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new UpLoaderEvent( UpLoaderEvent.ONSECURITYERROR, args );
 			dispatchEvent( eEvent );
 		}
@@ -181,14 +167,12 @@ package railk.as3.data.uploader {
 		 * @param	type UpLoaderFilters.IMGFILE/TXTFILE/SWFFILE/XMLFILE/
 		 * @param	url the folder where to save the file
 		 */
-		public function create( button:Sprite, type:String, urlFolder:String ):void {
-			//choix du type de fichiers uploadable
+		public function create( button:Sprite, type:String, urlFolder:String ):void 
+		{
 			fileType = type;
 			uploadBT = button;
-			//indication de l'url de sauvegarde
 			uploadVAR.folder = urlFolder;
 			uploadURL.data = uploadVAR;
-			//configutation des ecouteurs
 			configListernersButton( uploadBT );
 		}
 		
@@ -204,7 +188,6 @@ package railk.as3.data.uploader {
 			button.buttonMode = false;
 			button.removeEventListener( MouseEvent.CLICK, browse );
 		}
-		
 
 		private function browse( evt:MouseEvent ):void {
 			var target = evt.currentTarget;
@@ -227,8 +210,5 @@ package railk.as3.data.uploader {
 		public function get fileName():String {
 			return fileRef.name;
 		}
-		
-		
 	}
-	
 }

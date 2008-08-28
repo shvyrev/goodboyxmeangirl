@@ -6,8 +6,8 @@
 */
 
 
-package railk.as3.utils {
-
+package railk.as3.utils 
+{
 
     public class StringValidation {
 

@@ -1,9 +1,6 @@
-﻿	
-/**
+﻿/**
 * 
 * PixelShapes for the drawPixel function of GraphicShape class
-* 
-* basic shapes that i often use
 * 
 * @author Richard Rodney
 * @version 0.1
@@ -33,5 +30,4 @@ package railk.as3.display
 		{A:new Point(1, 15) , B:new Point(9, 15) },
 		{A:new Point(2, 16) ,B:new Point(8, 16)}] }; }
 	}
-	
 }

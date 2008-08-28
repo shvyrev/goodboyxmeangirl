@@ -123,9 +123,7 @@ package railk.as3.data.loader {
 			_state = "start";
 			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"Multiloader "+MloaderName+" is started" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONMULTILOADERBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -146,9 +144,7 @@ package railk.as3.data.loader {
 			_state = "stop";
 			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"Multiloader "+MloaderName+" is stopped" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONMULTILOADERSTOPPED, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -287,7 +283,6 @@ package railk.as3.data.loader {
 				}
 				walker = walker.next;
 			}
-			
 			return result;
 		}
 		
@@ -328,9 +323,7 @@ package railk.as3.data.loader {
 		private function loadNext():void 
 		{
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"******load next files******" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONMULTILOADERLOADNEXT, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////	
@@ -373,14 +366,12 @@ package railk.as3.data.loader {
 			//loadNext ?
 			if ( waiting == true ) { loadNext(); }
 			else {
-				if( loading == false && _state != 'stop' ) {
+				if ( loading == false && _state != 'stop' ) 
+				{
 					delMLoaderListener();
 					_state = "stop";
-					
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					var args:Object = { info:"Multiloader "+MloaderName+" is finished" };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONMULTILOADERCOMPLETE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////	
@@ -452,9 +443,7 @@ package railk.as3.data.loader {
 		private function onItemBegin( evt:Event ):void 
 		{
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"item "+evt.currentTarget.url+" is loading", item:evt.currentTarget };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONITEMBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -463,11 +452,8 @@ package railk.as3.data.loader {
 		private function onItemProgress( evt:ProgressEvent ):void 
 		{	
 			var percent = evt.currentTarget.percentLoaded;
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"item " +evt.currentTarget.url+ " on progress", item:evt.currentTarget, percent:percent };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONITEMPROGRESS, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -477,11 +463,8 @@ package railk.as3.data.loader {
 		{
 			evt.currentTarget.state = MultiLoaderItem.LOADED;
 			_takenSlots -= 1;
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"item " +evt.currentTarget.url+ " is Complete", item:evt.currentTarget };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONITEMCOMPLETE, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -493,9 +476,7 @@ package railk.as3.data.loader {
 		private function onItemIOerror( evt:IOErrorEvent ):void 
 		{	
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"item "+evt.currentTarget.url+" have failed" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONITEMIOERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -504,9 +485,7 @@ package railk.as3.data.loader {
 		private function onItemHttpStatus( evt:HTTPStatusEvent ):void 
 		{	
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"error" + evt };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONITEMHTTPSTATUS, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -532,9 +511,7 @@ package railk.as3.data.loader {
 			}
 			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info: message +" "+ evt };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONITEMNETSTATUS, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -551,11 +528,8 @@ package railk.as3.data.loader {
 			}
 			
 			percent = Math.floor( percent/itemNumber );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"Multiloader "+MloaderName+" on progress", percent:percent };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONMULTILOADERPROGRESS, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -564,9 +538,7 @@ package railk.as3.data.loader {
 		private function onStreamReady( evt:MultiLoaderEvent ):void 
 		{	
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:evt.info, item:evt.item };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMREADY, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -575,9 +547,7 @@ package railk.as3.data.loader {
 		private function onStreamBuffering( evt:MultiLoaderEvent ):void 
 		{	
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:evt.info, item:evt.item };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMBUFFERING, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -586,9 +556,7 @@ package railk.as3.data.loader {
 		private function onStreamPlayed( evt:MultiLoaderEvent ):void 
 		{	
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:evt.info, item:evt.item };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMPLAYED, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////

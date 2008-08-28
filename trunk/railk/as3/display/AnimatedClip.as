@@ -18,7 +18,6 @@ package railk.as3.display
 	
 	public class AnimatedClip extends DynamicRegistration 
 	{
-		
 		// ________________________________________________________________________________________ VARIABLES
 		private var _frames                                               :int = 0;
 		private var _frameRate                                            :Number;
@@ -150,9 +149,7 @@ package railk.as3.display
 		
 		public function get frames():int { return _frames; }
 		
-		public function set frames( value:int ):void {
-			_frames = value;
-		}
+		public function set frames( value:int ):void { _frames = value; }
 		
 		public function get frameRate():Number { return _frameRate; }
 		

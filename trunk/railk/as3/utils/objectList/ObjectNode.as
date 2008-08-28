@@ -2,9 +2,8 @@
 * Object Node
 * 
 * @author Richard Rodney
-* @version
+* @version 0.1
 */
-
 
 package railk.as3.utils.objectList
 {
@@ -25,8 +24,11 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
+		 * @param	id
 		 * @param	name
 		 * @param	data
+		 * @param	group
+		 * @param	action
 		 */
 		public function ObjectNode( id:int, name:String, data:*, group:String='', action:Function=null ):void {
 			_name = name;
@@ -85,53 +87,30 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function get id():int { return _id; }
 		
-		public function set id(value:int):void 
-		{
-			_id = value;
-		}
+		public function set id(value:int):void { _id = value; }
 		
 		public function get name():String { return _name; }
 		
-		public function set name(value:String):void 
-		{
-			_name = value;
-		}
+		public function set name(value:String):void { _name = value; }
 		
 		public function get data():* { return _data; }
 		
-		public function set data(value:*):void 
-		{
-			_data = value;
-		}
+		public function set data(value:*):void { _data = value; }
 		
 		public function get prev():ObjectNode { return _prev; }
 		
-		public function set prev(value:ObjectNode):void 
-		{
-			_prev = value;
-		}
+		public function set prev(value:ObjectNode):void { _prev = value; }
 		
 		public function get next():ObjectNode { return _next; }
 		
-		public function set next(value:ObjectNode):void 
-		{
-			_next = value;
-		}
+		public function set next(value:ObjectNode):void { _next = value; }
 		
 		public function get action():Function { return _action; }
 		
-		public function set action(value:Function):void 
-		{
-			_action = value;
-		}
+		public function set action(value:Function):void { _action = value; }
 		
 		public function get group():String { return _group; }
 		
-		public function set group(value:String):void 
-		{
-			_group = value;
-		}
-		
+		public function set group(value:String):void { _group = value; }
 	}
-	
 }

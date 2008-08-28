@@ -30,12 +30,15 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	list  ObjectList to sort
+		 * @param	list
+		 * @param	sortType
+		 * @param	sortMode
+		 * @param	sortValue
+		 * @return
 		 */
 		public static function sort( list:ObjectList, sortType:String, sortMode:String, sortValue:String ):ObjectList 
 		{
 			var result:ObjectList;
-			
 			switch( sortType )
 			{
 				case NUMERIC:
@@ -46,7 +49,6 @@ package railk.as3.utils.objectList
 					result = alphaSort( list, sortMode, sortValue );
 					break;
 			}
-			
 			return result;
 		}
 		
@@ -112,7 +114,6 @@ package railk.as3.utils.objectList
 		private static function alphaSort(list:ObjectList, mode:String, value:String):ObjectList
 		{
 			sortedList = new ObjectList();
-			
 			switch( mode )
 			{
 				case DESC :
@@ -121,7 +122,6 @@ package railk.as3.utils.objectList
 				case ASC :
 					break;
 			}
-			
 			return sortedList;
 		}
 	}	

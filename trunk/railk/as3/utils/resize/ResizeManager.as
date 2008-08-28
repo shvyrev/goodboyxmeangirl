@@ -37,8 +37,6 @@ package railk.as3.utils.resize {
 		
 		
 		
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   LISTENERS DE CLASS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -56,8 +54,6 @@ package railk.as3.utils.resize {
       			if (disp == null) { return; }
       			disp.dispatchEvent(p_event);
       	}
-		
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -88,18 +84,10 @@ package railk.as3.utils.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			MOVE ITEM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 * @param	width
-		 * @param	height
-		 */
 		public static function itemAction( name:String, width:Number, height:Number ):void 
 		{
-			//--vars
 			_maxheight = height;
 			_maxWidth = width;
-			
 			itemList.getObjectByName( name ).action.apply();
 		}
 		
@@ -107,21 +95,13 @@ package railk.as3.utils.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		MOVE ALL ITEM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	width
-		 * @param	height
-		 * @param	name
-		 */
-		public static function groupAction( width:Number, height:Number, name:String = 'main' ):void 
+		public static function groupAction( width:Number, height:Number, group:String = 'main' ):void 
 		{
-			//--vars
 			_maxheight = height;
 			_maxWidth = width;
-			
 			walker = itemList.head;
 			loop:while ( walker ) {
-				if ( walker.group == name ) {
+				if ( walker.group == group ) {
 					walker.action.apply();
 				}
 				walker = walker.next;
@@ -132,58 +112,33 @@ package railk.as3.utils.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE ITEMS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 * @return
-		 */
 		public static function remove( name:String ):void 
 		{
 			itemList.remove( name );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:'removed'+ name +'item' };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new ResizeManagerEvent( ResizeManagerEvent.ON_REMOVE_ONE, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 		
-
 		public static function removeAll():void 
 		{
 			itemList.clear();
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"removed all item" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new ResizeManagerEvent( ResizeManagerEvent.ON_REMOVE_ALL, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 		
-		
-		/**
-		 * 
-		 * @param	name
-		 * @return
-		 */
-		public static function getItemContent( name:String ):* 
-		{
-			return itemList.getObjectByName( name ).data;
-		}
+		public static function getItemContent( name:String ):* { return itemList.getObjectByName( name ).data; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function toString():String
-		{
-			return itemList.toString();
-		}
-		
+		public static function toString():String { return itemList.toString(); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -191,18 +146,10 @@ package railk.as3.utils.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		static public function get maxWidth():Number { return _maxWidth; }
 		
-		static public function set maxWidth(value:Number):void 
-		{
-			_maxWidth = value;
-		}
+		static public function set maxWidth(value:Number):void { _maxWidth = value; }
 		
 		static public function get maxheight():Number { return _maxheight; }
 		
-		static public function set maxheight(value:Number):void 
-		{
-			_maxheight = value;
-		}
-		
+		static public function set maxheight(value:Number):void { _maxheight = value; }
 	}
-	
 }

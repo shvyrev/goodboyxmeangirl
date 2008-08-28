@@ -10,7 +10,6 @@ package railk.as3.network.amfphp.service
 	import flash.net.NetConnection;
 	import flash.net.Responder;
 	
-	
 	public class FlowService implements IService
 	{
 		private var _method                          :String;

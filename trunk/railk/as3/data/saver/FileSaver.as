@@ -2,11 +2,8 @@
 * 
 * update and save data files
 * 
-* 
 * @author Richard Rodney.
 * @version 0.1
-* 
-* 
 */
 
 package railk.as3.data.saver {
@@ -77,8 +74,8 @@ package railk.as3.data.saver {
 		 * @param	data
 		 * @param	update
 		 */
-		public function create( type:String, path:String, nom:String, fileType:String, data:ByteArray, update:Boolean=false ):void {
-			//recupération des variables
+		public function create( type:String, path:String, nom:String, fileType:String, data:ByteArray, update:Boolean = false ):void 
+		{
 			_type = type,
 			_path = path
 			_nom = nom;
@@ -107,21 +104,17 @@ package railk.as3.data.saver {
 			loader.addEventListener(IOErrorEvent.IO_ERROR, checkError, false, 0, true );
 			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"checkingfile " + _nom };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new FileSaverEvent( FileSaverEvent.ONCHECKBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 
-		private function checkComplete( evt:Event ):void {
-			
+		private function checkComplete( evt:Event ):void 
+		{
 			rep = evt.currentTarget.data;
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"checkfilecomplete " + rep };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new FileSaverEvent( FileSaverEvent.ONCHECKBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -141,15 +134,12 @@ package railk.as3.data.saver {
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, checkError );
 		}
 
-		private function checkError( evt:IOErrorEvent ):void {
-			
+		private function checkError( evt:IOErrorEvent ):void 
+		{	
 			loader.removeEventListener(Event.COMPLETE, checkComplete );
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, checkError );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:evt };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new FileSaverEvent( FileSaverEvent.ONCHECKIOERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -159,8 +149,8 @@ package railk.as3.data.saver {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	  SAVE THE CREATED OR UPDATED FILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function saveFile():void {
-			
+		private function saveFile():void 
+		{	
 			loader = new URLLoader();
 			if( _type == 'local' ){
 				req = new URLRequest( saveFileLocal+"?nom="+_nom+"."+_fileType+"&filetype="+_fileType );
@@ -181,51 +171,43 @@ package railk.as3.data.saver {
 				loader.addEventListener(IOErrorEvent.IO_ERROR, saveError, false, 0, true );
 			}
 			
-			
 			var args:Object;
 			/////////////////////////////////////////////////////////////
-			//arguments du messages
 			if ( message == '' ) args = { info:"saving file begin" };
 			else if (message =='overwrite' ) args = { info:"overwrite file begin" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new FileSaverEvent( FileSaverEvent.ONSAVEBEGIN, args );
 			dispatchEvent( eEvent );
 			/////////////////////////////////////////////////////////////
 		}
 
 
-		private function saveComplete( evt:Event ):void {
+		private function saveComplete( evt:Event ):void 
+		{
 			var rep = evt.currentTarget.data;
 			var args:Object;
 			
 			loader.removeEventListener(Event.COMPLETE, saveComplete );
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, saveError );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			if ( message == '' ) args = { info:"saving file complete"+rep };
 			else if (message =='overwrite' ) args = { info:"overwrite file complete"+rep };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new FileSaverEvent( FileSaverEvent.ONSAVECOMLETE, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 
-		private function saveError( evt:IOErrorEvent ):void {
+		private function saveError( evt:IOErrorEvent ):void 
+		{
 			var args:Object;
 			
 			loader.removeEventListener(Event.COMPLETE, saveComplete );
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, saveError );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			if ( message == '' ) args = { info:"save error" + evt.toString() };
 			else if (message =='overwrite' ) args = { info:"overWrite error" + evt.toString() };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new FileSaverEvent( FileSaverEvent.ONSAVEIOERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		} 	
-		
 	}	
 }

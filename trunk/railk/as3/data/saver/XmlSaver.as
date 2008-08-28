@@ -2,7 +2,6 @@
 * 
 * edit and save xml files
 * 
-* 
 * @author Richard Rodney.
 * @version 0.2
 * 
@@ -10,7 +9,6 @@
 *  créer un objet avec type/requester/content { root:"rss", type:"image", attribute:{ nom:String(upload.fileName), url:"../images"+String(upload.fileName)}=null, content:*={type:"", content:""}string,null }
 *  le premeier objet de content doit définir de façon unique l'objet.
 *  les apellations dans content sont libres.
-* 
 */
 
 package railk.as3.data.saver {
@@ -84,13 +82,11 @@ package railk.as3.data.saver {
 		 * @param	file
 		 * @param	nodes
 		 */
-		public function create( file:String, nodes:Array, update:Boolean=false, zip:Boolean=false ):void {
-			//--vars
+		public function create( file:String, nodes:Array, update:Boolean = false, zip:Boolean = false ):void 
+		{
 			_file = file;
 			_nodes = nodes;
 			_zip = zip;
-			
-			
 			//--check file if it exist
 			if (update) {
 				checkFile();
@@ -101,11 +97,11 @@ package railk.as3.data.saver {
 		}
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   CHECK IF FILE EXIST
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function checkFile():void {
+		private function checkFile():void 
+		{
 			loader = new URLLoader();
 			req= new URLRequest( checkXmlUrl );
 			req.data = _file;
@@ -116,21 +112,17 @@ package railk.as3.data.saver {
 			loader.addEventListener(IOErrorEvent.IO_ERROR, checkError, false, 0, true );
 			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"checkingfile " + _file };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONCHECKBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 
-		private function checkComplete( evt:Event ):void {
-			
+		private function checkComplete( evt:Event ):void 
+		{	
 			rep = evt.currentTarget.data;
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"checkfilecomplete " + rep };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONCHECKBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -141,13 +133,12 @@ package railk.as3.data.saver {
 			else if( rep == "false" ){
 				createXmlFile();
 			}
-			
 			loader.removeEventListener(Event.COMPLETE, checkComplete );
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, checkError );
 		}
 
-		private function checkError( evt:IOErrorEvent ):void {
-			
+		private function checkError( evt:IOErrorEvent ):void 
+		{	
 			loader.removeEventListener(Event.COMPLETE, checkComplete );
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, checkError );
 			
@@ -161,74 +152,58 @@ package railk.as3.data.saver {
 		}
 		
 		
-		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				 LOAD EXISTING XMLFILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function loadXmlFile():void {
+		private function loadXmlFile():void 
+		{
 			loader = new URLLoader();
 			loader.addEventListener(Event.OPEN, loadBegin, false, 0, true );
 			loader.addEventListener(Event.COMPLETE, loadComplete, false, 0, true );
 			loader.addEventListener(ProgressEvent.PROGRESS, loadProgress, false, 0, true );
 			loader.load(new URLRequest( _file ));
-			
 		}
 		
-		
-		
-		private function loadBegin( evt:Event ):void {
-			
+		private function loadBegin( evt:Event ):void 
+		{	
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"chargement commence" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONLOADBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 		
-		private function loadProgress( evt:ProgressEvent ):void {
-			//calcul du pourcentage d'avancement
+		private function loadProgress( evt:ProgressEvent ):void 
+		{
 			var percent:Number = Math.floor(evt.bytesLoaded * 100 / evt.bytesTotal);
-				
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:percent };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONLOADPROGRESS, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 		
-		private function loadComplete( evt:Event ):void {
-			
-			//recupération du fichier xml
+		private function loadComplete( evt:Event ):void 
+		{
 			xmlFile = new XML( loader.data );
-			//on lance l'update
 			updateXmlFile();
 		
 			loader.removeEventListener(Event.OPEN, loadBegin );
 			loader.removeEventListener(Event.COMPLETE, loadComplete );
 			loader.removeEventListener(ProgressEvent.PROGRESS, loadProgress );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"transfert complete" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONLOADPROGRESS, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 		
 		
-		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				        UPDATE XMLFILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function updateXmlFile():void {
-			//--init
+		private function updateXmlFile():void 
+		{
 			var header:XML;
 			var tmpStr:String;
 			var tmpXml:XML;
@@ -243,7 +218,6 @@ package railk.as3.data.saver {
 			var updated:Boolean = false;
 			var firstEntry:int;
 			var appendList:Array = new Array();
-			
 			
 			//--small parsing
 			if ( _nodes[0].root == 'rss' ) {
@@ -290,7 +264,7 @@ package railk.as3.data.saver {
 			}
 			
 			
-			//indexList + firstEntry
+			//--indexList + firstEntry
 			var done:Boolean = false;
 			for ( var l:int=0; l < xmlFileList.length(); l ++ ) {
 				indexList[ xmlFileList[l].toXMLString() ] = l;
@@ -340,7 +314,6 @@ package railk.as3.data.saver {
 				//--String to XML object
 				tmpXml = new XML( tmpStr );
 				
-				
 				//update de noeud preexistant ?
 				var appended:Boolean = false;
 				update:for ( var k:int=0; k <= idList.length(); k++ ) {
@@ -360,7 +333,6 @@ package railk.as3.data.saver {
 									//on remet la bonne date pour effceuer l'update et replace l'enfant updater en debut de liste
 									found.xml.replace( dateElement, oldDate);
 									appendList.push( found.xml );
-									
 									////////////////////////////////
 									appended = true;
 									updated = true;
@@ -383,7 +355,6 @@ package railk.as3.data.saver {
 				}	
 			}
 			
-			
 			//--fichier final
 			if ( _nodes[0].root == 'rss' ) {
 				header.children()[0].appendChild( xmlFileList );
@@ -399,30 +370,22 @@ package railk.as3.data.saver {
 			}
 			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"update xmlfile begin" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONUPDATE, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-
-			//lancement de la sauvegarde si updater oui ou non
+			
 			if( updated ){
 				saveXmlFile( header );
 			}	
-			
-			
 		}
-		
-		
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						CREATE XMLFILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createXmlFile():void {
-			//
+		private function createXmlFile():void 
+		{
 			var subtype:String;
 			var tmpStr:String;
 			
@@ -440,7 +403,6 @@ package railk.as3.data.saver {
 				tmpStr = "<" + _nodes[0].root + "></" + _nodes[0].root + ">";
 				xmlFile = new XML( tmpStr );
 			}
-			
 			
 			//--noeuds
 			for ( var i:int=0; i<_nodes.length; i++ ) {
@@ -479,31 +441,23 @@ package railk.as3.data.saver {
 				}
 				
 				if ( _nodes[0].root == 'rss' ) { xmlFile.children()[0].appendChild( tmpStr ); }
-				else { xmlFile.appendChild( tmpStr ); }
-								
+				else { xmlFile.appendChild( tmpStr ); }	
 			}
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"create xml file begin " + xmlFile};
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONCREATE, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 			
-			//lancement de la sauvegarde
 			saveXmlFile( xmlFile );
 		}
-
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	  SAVE THE CREATED OR UPDATED FILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function saveXmlFile( xml:XML ):void {
-			
-			//--prepare zip id needed
+		private function saveXmlFile( xml:XML ):void 
+		{
 			if (_zip)
 			{
 				zipFile = new ZipOutput();
@@ -539,40 +493,32 @@ package railk.as3.data.saver {
 			}	
 			
 			/////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"saving xml file begin" };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONSAVEBEGIN, args );
 			dispatchEvent( eEvent );
 			/////////////////////////////////////////////////////////////
-		
 		}
-
-
-		private function saveComplete( evt:Event ):void {
+		
+		private function saveComplete( evt:Event ):void 
+		{
 			var rep = evt.currentTarget.data;
 			
 			loader.removeEventListener(Event.COMPLETE, saveComplete );
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, saveError );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"saving xml file complete "+rep };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONSAVECOMLETE, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
 
-		private function saveError( evt:IOErrorEvent ):void {
+		private function saveError( evt:IOErrorEvent ):void 
+		{
 			
 			loader.removeEventListener(Event.COMPLETE, saveComplete );
 			loader.removeEventListener(IOErrorEvent.IO_ERROR, saveError );
-			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"error " + evt.toString() };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new XmlSaverEvent( XmlSaverEvent.ONSAVEIOERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -586,7 +532,6 @@ package railk.as3.data.saver {
 			var result:XML;
 			var xmlnsPattern:RegExp = new RegExp('xmlns[ a-zA-Z0-9é._%-/:"=]{1,}', '');
 			result = new XML( child.replace(xmlnsPattern, '') );
-			
 			return result;
 		}
 		
@@ -594,9 +539,9 @@ package railk.as3.data.saver {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					HAS SUB CHILDRENS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function hasSubChildrens( child:XML, element:String ):Object {
+		private static function hasSubChildrens( child:XML, element:String ):Object 
+		{
 			var result:Object;
-			
 			if ( child.name() == element ) { 
 			
 				var nbChildrens:int = child.children().length();
@@ -614,7 +559,6 @@ package railk.as3.data.saver {
 					}	
 				}
 			}
-				
 			return result;
 		}
 		
@@ -622,9 +566,9 @@ package railk.as3.data.saver {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					GET SUB CHILDRENS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getSubChildrens( elementName:String, elementValue:String, child:XML ):Object {
+		private function getSubChildrens( elementName:String, elementValue:String, child:XML ):Object 
+		{
 			var result:Object={};
-			
 			if ( child.child(elementName) == elementValue ) {
 				result.bool = true;
 				result.xml = child;
@@ -633,10 +577,7 @@ package railk.as3.data.saver {
 				result.bool = false;
 				result.xml = child;
 			}
-			
 			return result;
 		}
-				
-		
 	}	
 }

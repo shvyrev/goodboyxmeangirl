@@ -19,8 +19,8 @@ package railk.as3.display {
 	import railk.as3.utils.DynamicRegistration;
 	
 	
-	public class GraphicShape extends DynamicRegistration {
-	
+	public class GraphicShape extends DynamicRegistration 
+	{
 		/**
 		 * 
 		 * @param	...args   new point(x,y),.../ or an array of point
@@ -148,7 +148,6 @@ package railk.as3.display {
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	RECTANGLE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -189,8 +188,6 @@ package railk.as3.display {
 			this.graphics.lineTo( C.x, C.y );
 			this.graphics.endFill();
 		}
-		
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -236,7 +233,6 @@ package railk.as3.display {
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	CAMEMBERT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -252,14 +248,12 @@ package railk.as3.display {
 		* @param	type  null:plein, "L":ligne, "FL":ligne et plein
 		* @return
 		*/
-		public function camembert (color:uint, X:int, Y:int, radius:int, startAngle:int, endAngle:int, segments:int):void {
-			//angle
+		public function camembert (color:uint, X:int, Y:int, radius:int, startAngle:int, endAngle:int, segments:int):void 
+		{
 			var rad:Number = Math.PI/180;
 			var segm:Number = (endAngle-startAngle)/segments;
 			
-			//--erase existing
 			this.graphics.clear();
-			//camembert évolutif
 			this.graphics.beginFill(color,1);
 			this.graphics.moveTo(X,Y);
 			this.graphics.moveTo(X+radius*Math.cos(startAngle*rad), Y+radius*Math.sin(startAngle*rad));
@@ -288,13 +282,11 @@ package railk.as3.display {
 		* @param	arcAngle
 		* @param	steps
 		*/
-		public function arcCircle(epaisseur:int, color:uint, centerX:int, centerY:int, radius:int, startAngle:int, arcAngle:int, precision:int):void {
-			//--erase existing
+		public function arcCircle(epaisseur:int, color:uint, centerX:int, centerY:int, radius:int, startAngle:int, arcAngle:int, precision:int):void 
+		{
 			this.graphics.clear();
-			//
 			startAngle = startAngle/360;
 			arcAngle = arcAngle/360;
-			//--
 			var twoPI = 2 * Math.PI;
 			var angleStep = arcAngle/precision;
 			var X = centerX + Math.cos(startAngle * twoPI) * radius;
@@ -314,9 +306,8 @@ package railk.as3.display {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	   ARC RIBBON
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function arcRibbon( epaisseur:int, color:uint, radius:int, cornerRadius:int, arcAngle:int, precision:int):void {
-			
-			//--vars
+		public function arcRibbon( epaisseur:int, color:uint, radius:int, cornerRadius:int, arcAngle:int, precision:int):void 
+		{
 			var X:int;
 			var Y:int;
 			var controlY:int;
@@ -365,7 +356,6 @@ package railk.as3.display {
 				}
 				angle= angle + precision;
 			}
-			
 			
 			//--inner Shape
 			innerArcAngle = (arcAngle - outerCornerAngle * 2) % precision;
@@ -440,8 +430,6 @@ package railk.as3.display {
 		}
 		
 		
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	PIXEL SURFACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -454,15 +442,14 @@ package railk.as3.display {
 		* @param	espaceH  minimum = 1
 		* @param	pair
 		*/
-		public function pixel( color:uint, W:int, H:int, espaceW:int, espaceH:int, pair:Boolean=false ):void { 	
-			//initialisation
+		public function pixel( color:uint, W:int, H:int, espaceW:int, espaceH:int, pair:Boolean = false ):void 
+		{ 	
 			var flagPair:int=0;
 			var X:int = 0;
 			var Y:int = 0;
 			var bmp:Bitmap = new Bitmap( new BitmapData( W, H, true, 0x00FFFFFF ) );
 			bmp.name = 'bmp';
 			
-			//pair
 			if (flagPair == 0){ X=0; if(!pair){ flagPair = 1; } }
 			else if (flagPair == 1) { X=1; flagPair = 0; }
 
@@ -497,8 +484,6 @@ package railk.as3.display {
 		}
 		
 		
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	PIXEL PATTERN
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -512,9 +497,8 @@ package railk.as3.display {
 		* @param	patternW	taille du pattern en largeur
 		* @return
 		*/
-		public function pattern( W:int, H:int, color:Object, pattern:Object, patternH:int, patternW:int ):void {
-			
-			//initialisation
+		public function pattern( W:int, H:int, color:Object, pattern:Object, patternH:int, patternW:int ):void 
+		{
 			var X:int = 0;
 			var Y:int = 0;
 			var bmp:Bitmap = new Bitmap( new BitmapData( W, H, true, 0x00FFFFFF ) );
@@ -522,7 +506,6 @@ package railk.as3.display {
 			//nombre de lignes/col de pattern
 			var nbLigne = Math.ceil( H/patternH );
 			var nbCol = Math.ceil( W/patternW );
-			
 			
 			var m:Boolean = true;
 			var xLoop:int = 0;
@@ -545,7 +528,6 @@ package railk.as3.display {
 					X-=patternW;
 				}
 				
-				
 				X = patternW * nx;
 				Y-=patternH;
 				
@@ -559,7 +541,6 @@ package railk.as3.display {
 			
 			this.addChild( bmp );
 		}
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

@@ -45,7 +45,6 @@ package railk.as3.stage {
 		
 		// _______________________________________________________________________________ VARIABLE EVENEMENT
 		private static var eEvent                      :StageManagerEvent;
-
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -77,14 +76,14 @@ package railk.as3.stage {
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, ctMenu=false, frameRate:int=40, align:String='TL', quality:String="high" ):void{
-			//trace
+		public static function init( stage:Stage, ctMenu = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void
+		{
 			trace("                                   Stage initialise");
 			trace("---------------------------------------------------------------------------------------");
 						
-			
 			//initialisation variable mouse idle .2*60*1000 = 30 seconds
 			timeOut = .2*15*1000;
+			_stage = stage;
 			
 			//initialisation de la surface 
 			stage.align = align;
@@ -101,12 +100,7 @@ package railk.as3.stage {
 			//taille de la surface
 			H = stage.stageHeight;
 			W = stage.stageWidth;
-			
-			//--
-			_stage = stage;
-			
 		}
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -118,9 +112,7 @@ package railk.as3.stage {
 		* @return
 		*/
 		public static function checkMouseOn( t:Number=0 ):void{
-			if( t != 0 ){
-				timeOut =  t;
-			}
+			if( t != 0 ){ timeOut =  t; }
 			isIdle = 0;
 			isActive = 0;
 			_stage.addEventListener(Event.ENTER_FRAME, idled ,false,0,true );
@@ -134,51 +126,36 @@ package railk.as3.stage {
 			_stage.removeEventListener(MouseEvent.MOUSE_MOVE, moved );
 		}
 		
-		//
-		private static function moved( evt:MouseEvent ):void {
-			//lorsque que l'on bouge on dispose du temps courant
-			lastMove = getTimer();
-		}
+		private static function moved( evt:MouseEvent ):void { lastMove = getTimer(); }
 		
-		private static function idled ( evt:Event ):void {
-			//init
+		private static function idled ( evt:Event ):void 
+		{
 			var args:Object = new Object();
-			//si le temps courant est inferieur au temps de mouvement de la souris + le time out
 			if ( (lastMove+timeOut) < getTimer() ) {
 				if( isIdle == 0 ){
-					//on passe isactive a 0 pour pouvoir envoyer un message
 					isActive = 0;
-					
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"mouse Idle"};
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new StageManagerEvent( StageManagerEvent.ONMOUSEIDLE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
-					
 				}
 				//on incremente isIdle pour n'envoyer le message q'une seule fois
 				isIdle += 1;
-				
-			//si la souris rebouge	
-			} else if ( _stage.mouseX || _stage.mouseY == true ) {
+			} 
+			else if ( _stage.mouseX || _stage.mouseY == true ) 
+			{
 				if( isActive == 0 ){
 					//on passe isactive a 0 pour pouvoir envoyer un message
 					isIdle = 0;	
-					
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"mouse Active"};
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new StageManagerEvent( StageManagerEvent.ONMOUSEACTIVE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
-					
 				}
 				//on incremente isActive pour n'envoyer le message q'une seule fois
 				isActive += 1;
-				
 			}
 		}
 		
@@ -186,19 +163,16 @@ package railk.as3.stage {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:Event ):void {
+		private static function manageEvent( evt:Event ):void 
+		{
 			var args:Object;
-			switch( evt.type ) {
-		
+			switch( evt.type ) 
+			{
 				case Event.RESIZE :
-					//taille de la surface
 					H = _stage.stageHeight;
 					W = _stage.stageWidth;
-					
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"surface modifiee "+H+" "+W };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new StageManagerEvent( StageManagerEvent.ONSTAGERESIZE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
@@ -206,17 +180,12 @@ package railk.as3.stage {
 				
 				case Event.MOUSE_LEAVE :
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"la souris a quitte la surface" };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new StageManagerEvent( StageManagerEvent.ONMOUSELEAVE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
 					break;
 			}
-			
 		}
-		
-		
 	}
 }
