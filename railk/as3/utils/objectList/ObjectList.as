@@ -17,7 +17,6 @@ package railk.as3.utils.objectList
 		private var node                                    :ObjectNode;
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -130,12 +129,11 @@ package railk.as3.utils.objectList
 					o.next.prev = o.prev;
 				}
 			}
-			else
-			{
-				_tail = _head = null;
+			else 
+			{ 
+				_tail = _head = null; 
 			}
 			o.dispose();
-			
 			_length -= 1;
 			rebuildID();
 		}
@@ -164,14 +162,12 @@ package railk.as3.utils.objectList
 			var next:ObjectNode;
 			var current:ObjectNode = _head;
 			_head = null;
-			
 			while ( current )
 			{
 				next = current.next;
 				current.next = current.prev = null;
 				current = next;
 			}
-			
 			_tail = null;
 			_length = 0;
 		}
@@ -180,11 +176,6 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   GET OBJECT BY NAME
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 * @return
-		 */
 		public function getObjectByName( name:String ):ObjectNode
 		{
 			var result:*;
@@ -202,11 +193,6 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   	 GET OBJECT BY ID
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	id
-		 * @return
-		 */
 		public function getObjectByID( id:int ):ObjectNode
 		{
 			var result:ObjectNode;
@@ -224,11 +210,6 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  GET OBJECT BY GROUP
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 * @return
-		 */
 		public function getObjectByGroup( name:String ):Array
 		{
 			var result:Array = new Array();
@@ -270,7 +251,6 @@ package railk.as3.utils.objectList
 				result.push( current.data );
 				current = current.next;
 			}
-			
 			return result;
 		}
 		
@@ -283,5 +263,4 @@ package railk.as3.utils.objectList
 		
 		public function get length():int { return _length; }
 	}
-	
 }

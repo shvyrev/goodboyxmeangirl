@@ -45,11 +45,9 @@ package railk.as3.utils.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			  ADD TAG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function add( name:String, displayObjectName:String ):void {
-			
-			if ( getTag(name) ) {
-				getTag(name).addFile( displayObjectName );
-			}
+		public static function add( name:String, displayObjectName:String ):void 
+		{	
+			if ( getTag(name) ) { getTag(name).addFile( displayObjectName ); }
 			else {
 				tag = new Tag( name, displayObjectName );
 				tagList.add( [name,tag] );
@@ -57,13 +55,12 @@ package railk.as3.utils.tag {
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   MANAGE TAG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function remove( name:String ):Boolean {
+		public static function remove( name:String ):Boolean 
+		{
 			var result:Boolean;
-			
 			var t:ObjectNode = tagList.getObjectByName( name );
 			if ( t )
 			{
@@ -72,7 +69,6 @@ package railk.as3.utils.tag {
 				result = true;
 			}
 			else result = false;
-			
 			return result;
 		}
 		
@@ -109,8 +105,8 @@ package railk.as3.utils.tag {
 		 * @param	debugContainer
 		 * @return
 		 */
-		public static function tagCloud( fontClassName:String, H:Number, W:Number, gridPrecision:int=5, upperCase:Boolean=true, debug:Boolean=false, debugContainer:*=null ):Array {
-			
+		public static function tagCloud( fontClassName:String, H:Number, W:Number, gridPrecision:int = 5, upperCase:Boolean = true, debug:Boolean = false, debugContainer:*= null ):Array 
+		{
 			var i:int = 0;
 			var j:int = 0;
 			var result:Array = new Array();
@@ -120,7 +116,6 @@ package railk.as3.utils.tag {
 			var format:TextFormat;
 			var txt:TextField;
 			var blocs:Array = new Array();
-			
 			var tagSortList:ObjectList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, ObjectListSort.DESC, 'value' );
 			var grid:Grid = new Grid( "tag", H, W, minH, minW, 0, debug, debugContainer );
 			var multiplier:Number = computeSpace( grid, minH, minW, tagSortList, blocs, fontClassName );
@@ -148,10 +143,8 @@ package railk.as3.utils.tag {
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				blocs.push( { h:toCellLength(tagHeight, gridPrecision), w:toCellLength(tagWidth, gridPrecision), extra:{texte:texte, size:walker.data.value*multiplier} } );
 				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 				walker = walker.next;
 			}
-			
 			result = grid.getBlocsPlace( blocs );			
 			return result;
 		}
@@ -159,7 +152,8 @@ package railk.as3.utils.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						COMPUTE SPACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function computeSpace( grid:Grid,  cellH:int, cellW:int, list:ObjectList, blocs:Array, fontClassName:String ):Number {
+		private static function computeSpace( grid:Grid,  cellH:int, cellW:int, list:ObjectList, blocs:Array, fontClassName:String ):Number 
+		{
 			var result:Number = 1;
 			var nbCells:int = 0;
 			var tagWidth:Number;
@@ -169,7 +163,6 @@ package railk.as3.utils.tag {
 			var largest:int=0;
 			var highest:int=0;
 				
-			
 			walker = list.head;
 			while ( walker ) {
 				format = new TextFormat();
@@ -203,12 +196,7 @@ package railk.as3.utils.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   TO CELL LENGTH
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function toCellLength(size:int,cellSize:int):int {
-			var result:int = Math.ceil(size / 5) * cellSize;
-			return result;
-		}
-		
-		
+		private static function toCellLength(size:int,cellSize:int):int { return Math.ceil(size / 5) * cellSize; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -221,7 +209,8 @@ package railk.as3.utils.tag {
 		 * @param	sortType   'desc' | 'asc'
 		 * @return
 		 */
-		public static function tagListArray( file:String='', sorted:Boolean=false, sortMode:String='desc' ):Array {
+		public static function tagListArray( file:String = '', sorted:Boolean = false, sortMode:String = 'desc' ):Array 
+		{
 			var result:Array = new Array();
 			var tagSortList:ObjectList;
 			
@@ -231,9 +220,7 @@ package railk.as3.utils.tag {
 					tagSortList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, sortMode, 'value' );
 					result = tagSortList.toArray();
 				}
-				else {
-					result = tagList.toArray();
-				}
+				else { result = tagList.toArray(); }
 			}	
 			else 
 			{
@@ -241,20 +228,14 @@ package railk.as3.utils.tag {
 					tagSortList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, sortMode, 'value' );
 					walker = tagSortList.head;
 				}
-				else {
-					walker = tagList.head
-				}
+				else { walker = tagList.head }
 				
 				loop:while ( walker ) {
 					if ( walker.data.file( file ) ) result.push( walker.data.name );
 					walker = walker.next;
 				}
 			}
-			
 			return result;
 		}
-		
-		
 	}
-	
 }

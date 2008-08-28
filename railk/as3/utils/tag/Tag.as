@@ -1,19 +1,15 @@
-﻿	
-/**
+﻿/**
 * 
 *  TAG
 * 
 * @author Richard Rodney
 * @version 0.2
-* 
 */
 
 package railk.as3.utils.tag {
 	
-	// ___________________________________________________________________________________ IMPORT LINKED LIST
+	// ___________________________________________________________________________________ IMPORT OBJECT LIST
 	import railk.as3.utils.objectList.*;
-	
-	
 	
 
 	public class Tag {
@@ -33,7 +29,6 @@ package railk.as3.utils.tag {
 		public function Tag( name:String, displayObjectName:String ):void {
 			occurences +=  1;
 			_name = name;
-			
 			fileAssociated = new ObjectList();
 			fileAssociated.add( [displayObjectName,displayObjectName] );
 		}
@@ -49,12 +44,9 @@ package railk.as3.utils.tag {
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		GETTER/SETTER
+		// 																				  		  REMOVE FILE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function removeFile( file:String ):Boolean {
-			return fileAssociated.remove( file );
-		}
-		
+		public function removeFile( file:String ):Boolean { return fileAssociated.remove( file ); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -69,9 +61,7 @@ package railk.as3.utils.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get name():String {
-			return _name;
-		}
+		public function get name():String { return _name; }
 		
 		public function file( file:String ):Boolean {
 			var result:Boolean;
@@ -80,9 +70,6 @@ package railk.as3.utils.tag {
 			return result;
 		}
 		
-		public function get value():Number {
-			return occurences;
-		}
+		public function get value():Number { return occurences; }
 	}
-	
 }

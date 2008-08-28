@@ -34,7 +34,6 @@ package railk.as3.network.amfphp
 		private static var eEvent                                   :AmfphpClientEvent;
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   GESTION DES LISTENERS DE CLASS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -82,19 +81,16 @@ package railk.as3.network.amfphp
 		 * @param	service 	name of the service to call -> service.method
 		 * @param	...args		arguments to be past in the service call
 		 */
-		public static function call( service:* ):void {
-			service.exec( connexion, responder );
-		}
+		public static function call( service:* ):void { service.exec( connexion, responder ); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   RESULT OF THE SERVICE CALL
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onResult( response:Object ):void {
+		private static function onResult( response:Object ):void 
+		{
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"service call success", data:response };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_RESULT, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -103,17 +99,12 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   			   ERROR HANDLING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onError( response:Object ):void {
+		private static function onError( response:Object ):void 
+		{
 			var result:String = '';
-			for ( var prop in response )
-			{
-				result += String( prop )+'\n';
-			}
-			
+			for ( var prop in response ) { result += String( prop )+'\n'; }			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"service call error", data:result };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_ERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -123,15 +114,13 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   			   ERROR HANDLING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onNetStatus( evt:NetStatusEvent ):void {
+		private static function onNetStatus( evt:NetStatusEvent ):void 
+		{
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"connexion error\n"+ ObjectDumper.dump(evt.info) };
-			//envoie de l'evenement pour les listeners de uploader
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_CONNEXION_ERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 		}
-		
 	}
 }	

@@ -32,7 +32,6 @@ package railk.as3.data.uploader {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function UpLoaderEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;
-				//on récupère les variables passées en paramètres
 				for(var name:String in data) {
 					this[name] = data[name];
 				}	

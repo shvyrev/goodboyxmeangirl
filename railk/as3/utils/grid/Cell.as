@@ -2,10 +2,8 @@
 * 
 *  Cell GRID
 * 
-* 
 * @author Richard Rodney
 * @version 0.2
-* 
 */
 
 package railk.as3.utils.grid {
@@ -23,10 +21,8 @@ package railk.as3.utils.grid {
 	import caurina.transitions.properties.TextShortcuts;
 	
 	
-	
-	public class Cell {
-		
-		
+	public class Cell 
+	{	
 		//____________________________________________________________________________________ VARIABLES CELL
 		private var _id                                      :String;
 		private var _contiguous                              :Object={};
@@ -41,7 +37,6 @@ package railk.as3.utils.grid {
 		private var _debug                                   :Boolean;
 		private var used                                     :Boolean = false;
 		private var gCell                                    :GraphicShape;
-
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -52,12 +47,17 @@ package railk.as3.utils.grid {
 		 * @param	id
 		 * @param	X
 		 * @param	Y
+		 * @param	centerX
+		 * @param	centerY
 		 * @param	H
 		 * @param	W
+		 * @param	ligne
+		 * @param	colonne
+		 * @param	debug
+		 * @param	debugContainer
 		 */
-		public function Cell( id:String, X:Number,Y:Number, centerX:Number, centerY:Number, H:Number, W:Number, ligne:Number, colonne:Number, debug:Boolean=false, debugContainer:*=null ):void {
-			
-			//--Tweener
+		public function Cell( id:String, X:Number, Y:Number, centerX:Number, centerY:Number, H:Number, W:Number, ligne:Number, colonne:Number, debug:Boolean = false, debugContainer:*= null ):void 
+		{
 			ColorShortcuts.init();
 			DisplayShortcuts.init();
 			TextShortcuts.init();
@@ -78,66 +78,38 @@ package railk.as3.utils.grid {
 				gCell.rectangle( 0x000000, X, Y, W, H);
 				debugContainer.addChild( gCell );
 			}
-			
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  	    GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get isUsed():Boolean {
-			return used;
-		}
+		public function get isUsed():Boolean { return used; }
 		
 		public function set isUsed( state:Boolean ):void {
 			used = state;
-			if ( _debug && used ) {
-				Tweener.addTween( gCell, { _color:0xFF0000, time:.3 } );
-			}
-			else if ( _debug && !used ) {
-				Tweener.addTween( gCell, { _color:0x000000, time:.3 } );
-			}
+			if ( _debug && used ) { Tweener.addTween( gCell, { _color:0xFF0000, time:.3 } ); }
+			else if ( _debug && !used ) { Tweener.addTween( gCell, { _color:0x000000, time:.3 } ); }
 		}
 		
-		public function get id():String{ 
-			return _id;
-		}
+		public function get id():String { return _id; }
 		
-		public function get contiguous():Object { 
-			return _contiguous;
-		}
+		public function get contiguous():Object { return _contiguous; }
 		
-		public function get x():Number {
-			return _X;
-		}
+		public function get x():Number { return _X; }
 		
-		public function get y():Number {
-			return _Y;
-		}
+		public function get y():Number { return _Y; }
 		
-		public function get centerX():Number {
-			return _centerX;
-		}
+		public function get centerX():Number { return _centerX; }
 		
-		public function get centerY():Number {
-			return _centerY;
-		}
+		public function get centerY():Number { return _centerY; }
 		
-		public function get h():Number {
-			return _H;
-		}
+		public function get h():Number { return _H; }
 		
-		public function get w():Number {
-			return _W;
-		}
+		public function get w():Number { return _W; }
 		
-		public function get colonne():Number {
-			return _colonne;
-		}
+		public function get colonne():Number { return _colonne; }
 		
-		public function get ligne():Number {
-			return _ligne;
-		}
-		
+		public function get ligne():Number { return _ligne; }
 	}
 }

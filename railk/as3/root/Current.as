@@ -1,5 +1,4 @@
-﻿	
-/**
+﻿/**
 * Current toot and stage manager
 * @author Richard Rodney
 */

@@ -55,7 +55,6 @@ package railk.as3.data.loader.loaderItems {
 		public static const WAITING                  :String = "waiting";
 		public static const FAILED                   :String = "failed";
 		
-		
 		// ____________________________________________________________________________________ VARIABLES ITEMS
 		private var item                             :MultiLoaderItem; 
 		private var itemURL                          :URLRequest;
@@ -75,7 +74,6 @@ package railk.as3.data.loader.loaderItems {
 		private var itemBytesPlayed                  :Number;
 		private var itemResponseTime                 :Number;
 		private var itemBufferSize                   :int;
-		
 		private var maxTries                         :int = 3;
 		private var numTries                         :int = 0;	
 		
@@ -110,7 +108,6 @@ package railk.as3.data.loader.loaderItems {
 		
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -129,7 +126,6 @@ package railk.as3.data.loader.loaderItems {
 			itemSaveState = saveState;
 			itemMode = mode;
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -180,7 +176,6 @@ package railk.as3.data.loader.loaderItems {
 				loader.togglePause();
 			}
 		}
-		
 		
 		public function stop():void { loader.close(); }
 		
@@ -268,15 +263,11 @@ package railk.as3.data.loader.loaderItems {
 				//////////////////////////////////////////////
 			}
 			
-			if ( Math.round(loader.time) == Math.round(streamMetadata.duration) ) {
-				////////////////////////////////////////////
+			if ( Math.round(loader.time) == Math.round(streamMetadata.duration) ) 
+			{
 				streamTriggerEvent.removeEventListener( Event.ENTER_FRAME, onStreamEvent );
-				////////////////////////////////////////////
-				
 				///////////////////////////////////////////////////////////////
-				//arguments du messages
 				var args:Object = { info:"stream playing finished", item:this };
-				//envoie de l'evenement pour les listeners de uploader
 				var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMPLAYED, args );
 				dispatchEvent( eEvent );
 				///////////////////////////////////////////////////////////////
@@ -295,9 +286,7 @@ package railk.as3.data.loader.loaderItems {
 			{	
 				streamReady = true;
 				///////////////////////////////////////////////////////////////
-				//arguments du messages
 				var args:Object = { info:"stream ready to be played", item:this };
-				//envoie de l'evenement pour les listeners de uploader
 				var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMREADY, args );
 				dispatchEvent( eEvent );
 				///////////////////////////////////////////////////////////////
@@ -310,9 +299,7 @@ package railk.as3.data.loader.loaderItems {
 			{	
 				streamReady = false;	
 				///////////////////////////////////////////////////////////////
-				//arguments du messages
 				var args:Object = { info:"stream paused for buffering", item:this };
-				//envoie de l'evenement pour les listeners de uploader
 				var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMBUFFERING, args );
 				dispatchEvent( eEvent );
 				///////////////////////////////////////////////////////////////
@@ -322,16 +309,12 @@ package railk.as3.data.loader.loaderItems {
 		private function onSoundComplete( evt:Event ):void 
 		{			
 			///////////////////////////////////////////////////////////////
-			//arguments du messages
 			var args:Object = { info:"stream playing finished", item:this };
-			//envoie de l'evenement pour les listeners de uploader
 			var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMPLAYED, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
 			ch.removeEventListener( Event.SOUND_COMPLETE, onSoundComplete );
 		}
-		
-		
 		
 		private function onloadBegin( evt:Event ):void 
 		{	
@@ -377,7 +360,6 @@ package railk.as3.data.loader.loaderItems {
 				///////////////////////////////////////////////////////////////////////////////////////////////
 				if ( itemBufferSize == 0 ) 
 				{
-					//temps a télécharger ce qui reste moindre que le nombre de seconde de données restantes
 					if ( remainingBuffer > downloadTimeLeft && itemBytesLoaded > 8 ) { onStreamReady(); }
 				}
 				else 
@@ -397,9 +379,7 @@ package railk.as3.data.loader.loaderItems {
 				previousBytesLoaded = itemBytesLoaded;
 				previousBytesPLayed = itemBytesPlayed;
 			}
-			//////////////////////////////////////////////
 			dispatchEvent( evt );
-			//////////////////////////////////////////////
 		}
 		
 		private function onloadComplete( evt:Event ):void 
@@ -444,17 +424,10 @@ package railk.as3.data.loader.loaderItems {
 		{	
 			if ( numTries < maxTries ) { load(); numTries += 1; }
 			else { itemState = MultiLoaderItem.FAILED; }
-			//////////////////////////////////////////////
 			dispatchEvent( evt );
-			//////////////////////////////////////////////
 		}
 		
-		private function onloadHttpStatus( evt:HTTPStatusEvent ):void 
-		{	
-			//////////////////////////////////////////////
-			dispatchEvent( evt );
-			//////////////////////////////////////////////
-		}
+		private function onloadHttpStatus( evt:HTTPStatusEvent ):void { dispatchEvent( evt ); }
 		
 		private function onloadNetStatus( evt:NetStatusEvent ):void 
 		{
@@ -467,17 +440,11 @@ package railk.as3.data.loader.loaderItems {
 					//////////////////////////////////////////////
 					break;
 			}
-			//////////////////////////////////////////////
 			dispatchEvent( evt );
-			//////////////////////////////////////////////
 		}
 		
-		private function onloadID3( evt:Event ):void 
-		{
-			//////////////////////////////////////////////
-			dispatchEvent( evt );
-			//////////////////////////////////////////////
-		}
+		private function onloadID3( evt:Event ):void { dispatchEvent( evt ); }
+		
 		
 		//TODO
 		private  function onVideoMetaData( metaData:Object ):void { streamMetadata = metaData; }

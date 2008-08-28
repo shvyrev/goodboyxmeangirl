@@ -74,10 +74,7 @@ package railk.as3.utils
 		public function show( name:String ):void
 		{
 			var chosenItem:ContextMenuItem = getItemByName( name );
-			if ( chosenItem )
-			{
-				chosenItem.visible = true;
-			}
+			if ( chosenItem ) chosenItem.visible = true;
 		}
 		
 		
@@ -87,10 +84,7 @@ package railk.as3.utils
 		public function hide( name:String ):void
 		{
 			var chosenItem:ContextMenuItem = getItemByName( name );
-			if ( chosenItem )
-			{
-				chosenItem.visible = false;
-			}
+			if ( chosenItem ) chosenItem.visible = false;
 		}
 		
 		
@@ -154,7 +148,5 @@ package railk.as3.utils
 					break;
 			}
 		}
-		
 	}
-	
 }

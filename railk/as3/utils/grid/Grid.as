@@ -6,7 +6,6 @@
 * @version 0.2
 * 
 * TODO > GET RANDOMS BLOC
-* 
 */
 
 package railk.as3.utils.grid {
@@ -19,11 +18,8 @@ package railk.as3.utils.grid {
 	import railk.as3.utils.ObjectDumper;
 	
 	
-	
-	
-	public class Grid {
-		
-		
+	public class Grid 
+	{	
 		//_______________________________________________________________________________ VARIABLES STATIQUES
 		public static var gridList                           :Object={};
 		
@@ -61,9 +57,8 @@ package railk.as3.utils.grid {
 		 * @param	cellW
 		 * @param	espace
 		 */
-		public function Grid( name:String, gridW:Number, gridH:Number, cellW:Number, cellH:Number, espace:Number, debug:Boolean=false, debugContainer:*=null ):void {
-			
-			//--
+		public function Grid( name:String, gridW:Number, gridH:Number, cellW:Number, cellH:Number, espace:Number, debug:Boolean = false, debugContainer:*= null ):void 
+		{
 			gridList[name] = this;
 			_height = gridH;
 			_width = gridW;
@@ -82,7 +77,6 @@ package railk.as3.utils.grid {
 			cellList = new ObjectList();
 			blocList = new ObjectList();
 			
-			//
 			while (true) {
 				pos = m ? i++ : --i;
 				cell = new Cell( String(count), X, Y, X + (cellW/2), Y+(cellH/2), cellH, cellW, pos, j, debug, debugContainer );
@@ -101,11 +95,11 @@ package railk.as3.utils.grid {
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		   CONTIGUOUS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function contiguous( x:int, y:int, h:int, w:int, r:int = 1 ):void {
+		private function contiguous( x:int, y:int, h:int, w:int, r:int = 1 ):void 
+		{
 			var vx:int = x + r;
 			var vy:int = y + r;
 			var count:int = 0;
@@ -172,16 +166,15 @@ package railk.as3.utils.grid {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		  REMOVE GRID
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function remove( name:String ) {
+		public function remove( name:String ) 
+		{
 			var grid = gridList[name];
-			
 			walker = cellList.head;
 			while ( walker ) {
 				walker.data = null;
 				walker = walker.next;
 			}
 			cellList.clear();
-			
 			grid = null;
 		}
 		
@@ -194,7 +187,8 @@ package railk.as3.utils.grid {
 		 * @param	type   "coord" | "center" | "place"    |
 		 * @param	data    {x,y}  |  {x,y}   | {ligne,col} | 
 		 */
-		public function getCellByType( type:String, data:Object ):Cell {
+		public function getCellByType( type:String, data:Object ):Cell 
+		{
 			var result:Cell;
 			walker = cellList.head;
 			while ( walker ) {
@@ -219,28 +213,27 @@ package railk.as3.utils.grid {
 				}
 				walker = walker.next;
 			}
-			
 			return result;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				      GET RANDOM CELL
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getRandomCell():Cell {
+		public function getRandomCell():Cell 
+		{
 			var result:Cell;
 			var l = Utils.randRange( 0, ligne-1);
 			var c = Utils.randRange( 0, col-1);
 			result = getCellByType( 'place', { ligne:l, col:c } );
-			
 			return result;
 		}
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				 	  GET BLOCS PLACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getBlocsPlace( blocs:Array ):Array {
+		public function getBlocsPlace( blocs:Array ):Array 
+		{
 			var result:Array = new Array();
 			var currentWidth:Number = 0;
 			var currentNode:ObjectNode;
@@ -264,7 +257,6 @@ package railk.as3.utils.grid {
 				currentWidth = blocs[i].w;
 			}
 			
-			
 			///////////////////////////////
 			initBlocs();
 			///////////////////////////////
@@ -279,7 +271,6 @@ package railk.as3.utils.grid {
 				////////////////////////////////////////////////////////////
 				currentNode = currentNode.next;
 			}
-			
 			return result;
 		}
 		
@@ -295,12 +286,11 @@ package railk.as3.utils.grid {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				    	 MANAGE BLOCS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageBlocs( w:int, h:int ):Object {
+		private function manageBlocs( w:int, h:int ):Object 
+		{
 			var result:Object;
 			var b:Bloc;
 			walker = blocList.head;
-			
-			//-- recupération de l'emplacement du bloc
 			while (walker) {
 				if ( walker.data.width >= w && walker.data.height >= h && !walker.data.isUsed ) {
 					b = walker.data;
@@ -354,7 +344,6 @@ package railk.as3.utils.grid {
 			else if ( b.width == w && b.height == h ) {
 				b.isUsed = true;
 			}
-			
 			return result;
 		}
 		
@@ -368,83 +357,56 @@ package railk.as3.utils.grid {
 		}
 		
 		
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				 	  GET BLOCS PLACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function getRandomBlocsPlace( height:int, width:int, value:int, minSize:int, maxSize:int ):Array {
 			var result:Array = new Array();
-			
-			//TODO
-			
 			return result;
 		}
-		
-		
-		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————	
-		public function get blocsToString():String 
-		{
-			return blocList.toString();
-		}
+		public function get blocsToString():String { return blocList.toString(); }
 		
 		public function get coord():Array {
 			var result:Array = new Array();
-			
 			walker = cellList.head;
 			while ( walker ){
 				result.push( { x:walker.data.x, y:walker.data.y } );
 				walker = walker.next;
 			}
-			
 			return result;
 		}
 		
-		public function get ligne():Number{
-			return nbLigne;
-		}
+		public function get ligne():Number{ return nbLigne; }
 		
-		public function get col():Number{
-			return nbCol;
-		}
+		public function get col():Number{ return nbCol; }
 		
-		public function get width():Number{
-			return _width;
-		}
+		public function get width():Number{ return _width; }
 		
-		public function get height():Number{
-			return _height;
-		}
+		public function get height():Number{ return _height; }
 		
 		public function get usedCells():int {
 			var result:int = 0;
-			
 			walker = cellList.head
 			while ( walker ) {
 				if (walker.data.isUsed) { result += 1; }
 				walker = walker.next
 			}
-			
 			return result;
 		}
 		
 		public function get freeCells():int {
 			var result:int = 0;
-			
 			walker = cellList.head
 			while ( walker ) {
 				if (!walker.data.isUsed) { result += 1; }
 				walker = walker.next
 			}
-			
 			return result;
 		}
-		
-		
 	}
 }

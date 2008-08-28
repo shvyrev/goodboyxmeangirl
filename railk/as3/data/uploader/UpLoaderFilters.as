@@ -12,7 +12,6 @@ package railk.as3.data.uploader {
 	import flash.net.FileFilter;
 	
 	
-	
 	public class UpLoaderFilters {
 		
 		// _______________________________________________________________________________ VARIABLES FILTERS
@@ -21,7 +20,6 @@ package railk.as3.data.uploader {
 		public static const SWFFILE                  :String ="SWFFile";
 		public static const XMLFILE                  :String ="XMLFile";
 		public static const FLVFILE                  :String = "FLVFile";
-		
 		private static var filter                    :FileFilter;
 		
 		
@@ -54,11 +52,7 @@ package railk.as3.data.uploader {
 				default :
 					break;
 			}
-			
 			return filter;
-			
 		}
-		
 	}
-	
 }

@@ -23,9 +23,6 @@ package railk.as3.utils.link {
 	import com.asual.swfaddress.SWFAddressEvent;
 	
 	
-	
-	
-	
 	public class LinkManager {
 		
 		// ______________________________________________________________________________ VARIABLES PROTEGEES
@@ -48,8 +45,6 @@ package railk.as3.utils.link {
 		
 		
 		
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   LISTENERS DE CLASS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -69,8 +64,6 @@ package railk.as3.utils.link {
       	}
 		
 		
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -80,9 +73,9 @@ package railk.as3.utils.link {
 				siteTitre = titre;
 				swfAdress = swfAdressEnable
 			}
-			
 			linkList = new ObjectList();
 		}
+		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			 ADD LINK
@@ -96,80 +89,56 @@ package railk.as3.utils.link {
 		 * @param	onClick                Function(type:String("hover"|"out"),o:*)=null
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 */
-		public static function add( name:String, displayObject:*, displayObjectContent:Object, type:String='mouse', onClick:Function = null, swfAdressEnable:Boolean = false ):void {
+		public static function add( name:String, displayObject:*, displayObjectContent:Object, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false ):void 
+		{
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) { enable = true; }
 			else if( swfAdress && !swfAdressEnable ) { enable = false; }
 			else if( !swfAdress && swfAdressEnable ) { enable = false; }
 			else if( !swfAdress && !swfAdressEnable ) { enable = false; }
-			
 			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable );
 			linkList.add( [name,link] );
 		}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE LINKS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function remove( name:String ):Boolean 
-		{
-			return linkList.remove( name );
-		}
+		public static function remove( name:String ):Boolean { return linkList.remove( name ); }
 		
+		public static function getLink( name:String ):Link { return linkList.getObjectByName( name ).data; }
 		
-		public static function getLink( name:String ):Link 
-		{
-			return linkList.getObjectByName( name ).data;
-		}
-		
-		
-		public static function getLinkContent( name:String ):* {
-			return getLink( name ).object;
-		}
+		public static function getLinkContent( name:String ):* { return getLink( name ).object; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  SWFADRESS UTILITIES
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function replace(str, find, replace) {
-			return str.split(find).join(replace);
-		}
+		private static function replace(str, find, replace) { return str.split(find).join(replace); }
 		
-		private static function toTitleCase(str) {
-			return str.substr(0,1).toUpperCase() + str.substr(1);
-		}
+		private static function toTitleCase(str) { return str.substr(0,1).toUpperCase() + str.substr(1); }
 		
-		private static function formatTitle(title) {
-			return siteTitre + (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : '');
-		}
-		
+		private static function formatTitle(title) { return siteTitre + (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : ''); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:SWFAddressEvent ) {
-			
-			//--vars
+		private static function manageEvent( evt:SWFAddressEvent ):void 
+		{
 			var args:Object;
 			var prop:String;
-			
 			try {
 				if ( evt.value == '/' ) {
 					walker = linkList.head;
 					while ( walker ) {
-						if ( walker.data.isActive() ) {
-							walker.data.undoAction();
-						}
+						if ( walker.data.isActive() ) { walker.data.undoAction(); }
 						walker = walker.next;
 					}
 					
 					state = "home";
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"changed state", state:state };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
@@ -177,37 +146,28 @@ package railk.as3.utils.link {
 				else {
 					walker = linkList.head;
 					while ( walker ) {
-						if ( walker.data.isActive() ) {
-							walker.data.undoAction();
-						}
+						if ( walker.data.isActive() ) { walker.data.undoAction(); }
 						walker = walker.next;
 					}
 					getLink( evt.value ).doAction();
 					
 					state = evt.value;
 					///////////////////////////////////////////////////////////////
-					//arguments du messages
 					args = { info:"changed state", state:state };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
 				}
-				
 				SWFAddress.setTitle(formatTitle(evt.value));
 				
 			} catch (err) {
 				state = "erreur 404";
 				///////////////////////////////////////////////////////////////
-				//arguments du messages
 				args = { info:"error state", state:state };
-				//envoie de l'evenement pour les listeners de uploader
 				eEvent = new LinkManagerEvent( LinkManagerEvent.ONERRORSTATE, args );
 				dispatchEvent( eEvent );
 				///////////////////////////////////////////////////////////////
 			}
 		}
-		
 	}
-	
 }

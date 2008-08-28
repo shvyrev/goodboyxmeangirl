@@ -18,7 +18,6 @@ package railk.as3.analytics.php {
 	import flash.events.ProgressEvent;
 	import flash.events.IOErrorEvent;
 	
-	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.analytics.php.GoogleAnalyticsEvent;
 	
@@ -26,17 +25,14 @@ package railk.as3.analytics.php {
 
 	public class GoogleAnalytics extends Sprite {
 		
-		
 		// ________________________________________________________________________________ VARIABLES LOADER
 		private var loader                               :URLLoader;
 		private var request                              :URLRequest;
 		private var vars                                 :URLVariables;
 		private var xmlReport                            :XML;
 		
-		
 		// ________________________________________________________________________________ VARIABLES EVENT
 		private var eEvent                               :GoogleAnalyticsEvent;
-		
 		
 		
 		
@@ -71,9 +67,9 @@ package railk.as3.analytics.php {
 			loader = new URLLoader();
 			initListeners();
 			
-			
 			loader.load( request );
 		}
+		
 		
 		// —————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																			   CORRECTION DE LA DATE
@@ -97,10 +93,8 @@ package railk.as3.analytics.php {
 					result = String(date);
 				}
 			}
-			
 			return result;
 		}
-		
 		
 		
 		// —————————————————————————————————————————————————————————————————————————————————————————————————
@@ -121,13 +115,10 @@ package railk.as3.analytics.php {
 		}
 		
 		
-		
 		// —————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																			   	       GETTER/SETTER
 		// —————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get report():XML {
-			return xmlReport;
-		}
+		public function get report():XML { return xmlReport; }
 		
 		
 		// —————————————————————————————————————————————————————————————————————————————————————————————————
@@ -142,39 +133,31 @@ package railk.as3.analytics.php {
 		// —————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																			   	  GESTION DES EVENTS
 		// —————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:*):void {
-			
+		private function manageEvent( evt:*):void 
+		{	
 			var args:Object;
-			
 			switch( evt.type ) {
 				case Event.OPEN :
 					///////////////////////////////////////////////////////////////////
 					args = { info:"GoogleAnalytics screen scraping beginned" };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new GoogleAnalyticsEvent( GoogleAnalyticsEvent.ONBEGIN, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////////
 					break;
 					
 				case ProgressEvent.PROGRESS :
-					
 					var percent:Number = Math.floor(evt.bytesLoaded * 100 / evt.bytesTotal);
-					
 					///////////////////////////////////////////////////////////////////
 					args = { info:"GoogleAnalytics screen scraping on progress", percent:percent };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new GoogleAnalyticsEvent( GoogleAnalyticsEvent.ONPROGRESS, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////////
 					break;
 					
 				case Event.COMPLETE :
-				
 					xmlReport = new XML( loader.data );
-			
 					///////////////////////////////////////////////////////////////////
 					args = { info:"GoogleAnalytics screen scraping finished and report gained" };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new GoogleAnalyticsEvent( GoogleAnalyticsEvent.ONCOMPLETE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////////
@@ -183,13 +166,11 @@ package railk.as3.analytics.php {
 				case IOErrorEvent.IO_ERROR :
 					///////////////////////////////////////////////////////////////////
 					args = { info:"GoogleAnalytics screen scraping error" };
-					//envoie de l'evenement pour les listeners de uploader
 					eEvent = new GoogleAnalyticsEvent( GoogleAnalyticsEvent.ONIOERROR, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////////
 					break;	
 			}
 		}
-		
 	}
 }

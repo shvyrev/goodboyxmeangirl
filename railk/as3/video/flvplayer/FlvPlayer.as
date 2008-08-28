@@ -228,7 +228,6 @@ package railk.as3.video.flvplayer {
 			_playListContent = playListContent;
 			
 			
-			
 			//--Sharing the player + the exact .flv
 			var path:String = ExternalInterface.call("window.location.href.toString");
 			share = '<object width="'+width+'" height="'+height+'">';
@@ -391,8 +390,8 @@ package railk.as3.video.flvplayer {
 		 * @param	insert   'before:name' | 'after:name'
 		 * @param	action
 		 */
-		public function addInterfaceItem( name:String, item:*, insert:String, group:String='', action:Function=null ):void {
-			//--vars
+		public function addInterfaceItem( name:String, item:*, insert:String, group:String = '', action:Function = null ):void 
+		{
 			var insertMode = insert.split(':')[0];
 			var insertPoint = insert.split(':')[1];
 			item.name = name;
@@ -410,19 +409,17 @@ package railk.as3.video.flvplayer {
 		}
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   SORT ZINDEX
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function sortZindex( zindex:Object ):void {}
 		
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				     	  IMAGE SAVER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function screenshot( name:String ):void {
-			//--vars
+		private function screenshot( name:String ):void 
+		{
 			var toSave:ByteArray;
 			var bmp:BitmapData = new BitmapData( _videoWidth, _videoHeight );
 			var saveImg:FileSaver = new FileSaver( name );
@@ -436,17 +433,11 @@ package railk.as3.video.flvplayer {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					     	 METADATAS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private  function onVideoMetaData( metaData:Object ):void {
-			streamMetadata = metaData;
-		}
+		private  function onVideoMetaData( metaData:Object ):void { streamMetadata = metaData; }
 		
-		private  function onVideoCuePoint( evt:* ):void {
-			//return evt;
-		}
+		private  function onVideoCuePoint( evt:* ):void { /*return evt;*/ }
 		
-		private  function onVideoPlayStatus( evt:* ):void {
-			//return evt;
-		}
+		private  function onVideoPlayStatus( evt:* ):void { /*return evt;*/ }
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -618,12 +609,10 @@ package railk.as3.video.flvplayer {
 						case 'screenshotButton':
 							if( _enableScreenshot ) screenshot( time );
 							break;
-							
 					}
 					break;
 			}
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -631,17 +620,11 @@ package railk.as3.video.flvplayer {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public override function get name():String { return _name; }
 		
-		public override function set name(value:String):void 
-		{
-			_name = value;
-		}
+		public override function set name(value:String):void { _name = value; }
 		
 		public function get url():String { return _url; }
 		
-		public function set url(value:String):void 
-		{
-			_url = value;
-		}
+		public function set url(value:String):void { _url = value; }
 		
 		public override function get width():Number { return _width; }
 		
@@ -694,10 +677,7 @@ package railk.as3.video.flvplayer {
 		
 		public function get enableResize():Boolean { return _enableResize; }
 		
-		public function set enableResize(value:Boolean):void 
-		{
-			_enableResize = value;
-		}
+		public function set enableResize(value:Boolean):void { _enableResize = value; }
 		
 		public function get enableX2():Boolean { return _enableX2; }
 		
@@ -717,17 +697,11 @@ package railk.as3.video.flvplayer {
 		
 		public function get enableMask():Boolean { return _enableMask; }
 		
-		public function set enableMask(value:Boolean):void 
-		{
-			_enableMask = value;
-		}
+		public function set enableMask(value:Boolean):void { _enableMask = value; }
 		
 		public function get playListContent():Array { return _playListContent; }
 		
-		public function set playListContent(value:Array):void 
-		{
-			_playListContent = value;
-		}
+		public function set playListContent(value:Array):void { _playListContent = value; }
 		
 		public function get interfaceZindexList():ObjectList { return _interfaceZindexList; }
 		
@@ -736,6 +710,5 @@ package railk.as3.video.flvplayer {
 			_interfaceZindexList = value;
 			sortZindex( _interfaceZindexList );
 		}
-		
 	}	
 }

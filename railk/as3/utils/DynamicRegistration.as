@@ -3,7 +3,6 @@
 * 
 * @author Richard Rodney
 * @version 0.2
-* 
 */
 
 package railk.as3.utils {
@@ -27,9 +26,7 @@ package railk.as3.utils {
 		private var _extra                   :Object;
 		
 		
-		//constructeur
 		public function DynamicRegistration( xtra:Object=null ) {
-			//on initialise le clip
 			_x2 = 0;
 			_y2 = 0;
 			_scaleX2 = 1;

@@ -1,42 +1,39 @@
-/////////////////////////////////////////////////////////////////
-//*************************************************************//
-//*                      Bitmap convertor                     *//
-//*************************************************************//
-/////////////////////////////////////////////////////////////////
+/**
+* 
+* Bitmap Converor
+* 
+* @author Richard Rodney
+* @version 0.1
+*/
+
 package railk.as3.utils {
 	
-	// ___________________________________________________________________ import flash
+	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	public class BitmapConvertor {
-		
-		// ___________________________________________________________________ variables
+	public class BitmapConvertor 
+	{	
+		// _______________________________________________________________________________________ VARIABLES
 		private var bmpTemp                    :BitmapData;
 		private var bmp                        :Bitmap;
 		private var matrix                     :Matrix;
-		private var used                       :Boolean=false;
+		private var used                       :Boolean = false;
 		
 		
-		// ___________________________________________________________________ constructeur
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 CONSTRUCTEUR
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function BitmapConvertor() {}
 		
-		public function BitmapConvertor() {
-		}
-		
-		// ___________________________________________________________________ fonction de conversion
-		/**
-		* 
-		* @param	img
-		* @param	scale
-		* @param	rect
-		* @return
-		*/
-		public function convert(img, scale:Number=1 ,rect:Rectangle=null):Bitmap {
-			
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	  CONVERT
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function convert( img:*, scale:Number=1 , rect:Rectangle=null ):Bitmap 
+		{
 			used=true;
-			
 			matrix = new Matrix();
 		    matrix.identity();
 			matrix.scale(scale,scale);
@@ -50,22 +47,20 @@ package railk.as3.utils {
 			bmpTemp = new BitmapData( W, H, true, 0x00FFFFFF );
 			bmpTemp.draw(img,matrix,null,null,rect,true);
 			bmp = new Bitmap(bmpTemp,"auto",true);
-			
 			return bmp;
 		}
 		
-		// ___________________________________________________________________ suppression du bitmapdata
-		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							  DISPOSE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void {
 			bmpTemp.dispose();
 			bmpTemp = null;
 		}
 		
-		// ___________________________________________________________________ convert utilisé ?
-		
-		public function isUsed():Boolean {
-			return used;
-		}
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 		 USED
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function isUsed():Boolean { return used; }
 	}
-	
 }

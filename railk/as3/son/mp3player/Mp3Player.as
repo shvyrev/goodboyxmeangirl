@@ -7,7 +7,6 @@
 * TODO:
 *   _External config parsing 
 * 	_sort new Zindex
-* 
 */
 
 package railk.as3.son.mp3player {
@@ -96,7 +95,6 @@ package railk.as3.son.mp3player {
 																	
 		// _________________________________________________________________________________ VARIABLES PLAYER															
 		private var share                               :String
-		
 		
 		
 		
@@ -213,7 +211,6 @@ package railk.as3.son.mp3player {
 				container.addChild( currentNode.data );
 				currentNode = currentNode.next;
 			}
-			
 			if ( _enableMask ) container.mask = containerMask;	
 		}
 		
@@ -260,8 +257,8 @@ package railk.as3.son.mp3player {
 		 * @param	insert   'before:name' | 'after:name'
 		 * @param	action
 		 */
-		public function addInterfaceItem( name:String, item:*, insert:String, group:String='', action:Function=null ):void {
-			//--vars
+		public function addInterfaceItem( name:String, item:*, insert:String, group:String = '', action:Function = null ):void 
+		{
 			var insertMode = insert.split(':')[0];
 			var insertPoint = insert.split(':')[1];
 			item.name = name;
@@ -276,16 +273,13 @@ package railk.as3.son.mp3player {
 				}
 				currentNode = currentNode.next;
 			}
-			
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   SORT ZINDEX
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function sortZindex( zindex:Array ):void {}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -298,11 +292,11 @@ package railk.as3.son.mp3player {
 		}
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					      MANAGE EVENT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ):void {
+		private function manageEvent( evt:* ):void 
+		{
 			switch( evt.type )
 			{
 				case Event.SOUND_COMPLETE :
@@ -390,12 +384,10 @@ package railk.as3.son.mp3player {
 						case 'downloadbutton':
 							navigateToURL( _streamPath, '_blank' );
 							break;
-							
 					}
 					break;
 			}
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -403,31 +395,19 @@ package railk.as3.son.mp3player {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function get name():String { return _name; }
 		
-		public function set name(value:String):void 
-		{
-			_name = value;
-		}
+		public function set name(value:String):void { _name = value; }
 		
 		public function get sound():Sound { return _stream; }
 		
-		public function set sound(value:Sound):void 
-		{
-			_sound = value;
-		}
+		public function set sound(value:Sound):void { _sound = value;}
 		
 		public function get soundPath():String { return _streamPath; }
 		
-		public function set streamPath(value:String):void 
-		{
-			_soundPath = value;
-		}
+		public function set streamPath(value:String):void { _soundPath = value; }
 		
 		public function get duration():Number { return _duration; }
 		
-		public function set duration(value:Number):void 
-		{
-			_duration = value;
-		}
+		public function set duration(value:Number):void { _duration = value; }
 				
 		public function get enableShare():Boolean { return _enableShare; }
 		
@@ -456,10 +436,7 @@ package railk.as3.son.mp3player {
 		
 		public function get playListContent():Array { return _playListContent; }
 		
-		public function set playListContent(value:Array):void 
-		{
-			_playListContent = value;
-		}
+		public function set playListContent(value:Array):void { _playListContent = value; }
 		
 		public function get interfaceZindexList():Object { return _interfaceZindexList; }
 		
@@ -469,7 +446,6 @@ package railk.as3.son.mp3player {
 			sortZindex( _interfaceZindexList );
 		}
 		
-		
 		public function get config():Array { return _config; }
 		
 		public function set config(value:Array):void 
@@ -477,7 +453,5 @@ package railk.as3.son.mp3player {
 			_config = value;
 			parseConfig( _config );
 		}
-		
-		
 	}	
 }

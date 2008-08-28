@@ -14,9 +14,8 @@ package railk.as3.data.parser {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						    XMLPARSER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function XMLItem( xmlFile:XML ):Array {
-			
-			//--vars
+		public static function XMLItem( xmlFile:XML ):Array 
+		{
 			var result:Array = new Array();
 			var nbNodes:Number = getNbChildrens( xmlFile );
 			
@@ -76,7 +75,6 @@ package railk.as3.data.parser {
 					result = null;
 				}	
 			}
-			
 			return result;
 		}
 		
@@ -100,7 +98,6 @@ package railk.as3.data.parser {
 					else { result = 1; }
 				}	
 			}
-			
 			return result;
 		}	
 				
@@ -149,13 +146,11 @@ package railk.as3.data.parser {
 		}
 		
 		
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 GA_XMLPARSER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function GA_XMLItem( xml:XML, type:String='GeoMap' ):Array {
-			//--vars
+		public static function GA_XMLItem( xml:XML, type:String = 'GeoMap' ):Array 
+		{
 			var nodes:Array = new Array();
 			var nb_nodes:Number = xml.children()[0].children().length();
 			var count:Number = 0;
@@ -179,7 +174,5 @@ package railk.as3.data.parser {
 			}
 			return nodes;
 		}
-		
 	}
 }
-

@@ -17,7 +17,6 @@
 			
 			var t:Transformation = new Transformation(18874.771335015033, -73337.98998796544, 41991.10559178539,
 											  -26.926262348670072, -578.9143032903524, 1041.8651977259656);
-			
 			__projection = new MercatorProjection(11, t);
 			
 		}	
