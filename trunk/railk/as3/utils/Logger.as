@@ -2,12 +2,13 @@
 * Logger
 * 
 * @author Richard Rodney
+* @version 0.1
 */
 
 package railk.as3.utils {
 	
 	
-	public class Logger extends Object {
+	public class Logger {
 	
 		
 		//________________________________________________________________________________________ CONSTANTES

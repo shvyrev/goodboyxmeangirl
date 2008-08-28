@@ -3,17 +3,13 @@
 * MultiLoader class
 * 
 * @author richard rodney
-* @version 0.1
-* 
-* todo
-* 
-* 
+* @version 0.2
 */
 
 package railk.as3.data.loader {
 	
 	// __________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
+	import flash.events.EventDispatcher;
 	import flash.net.URLRequest;
 	import flash.net.URLRequestMethod;
 	import flash.utils.Dictionary;
@@ -29,15 +25,10 @@ package railk.as3.data.loader {
 	// __________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.loader.MultiLoaderEvent;
 	import railk.as3.data.loader.loaderItems.MultiLoaderItem;
-	
-	// _____________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
-	
+	import railk.as3.utils.objectList.*;
 	
 
-	public class MultiLoader extends Sprite {
+	public class MultiLoader extends EventDispatcher {
 		
 		// ________________________________________________________________________________ VARIABLES STATIQUES
 		public static var MLoaderList                        :Object={};
@@ -51,12 +42,9 @@ package railk.as3.data.loader {
 		private var _takenSlots                              :int = 0;
 		private var _state                                   :String = "stop";
 		
-		
 		// _________________________________________________________________________________ ITEMLIST VARIABLES
-		private var itemsList                                :DLinkedList;
-		private var walker                                   :DListNode;
-		private var itr                                      :DListIterator;
-
+		private var itemsList                                :ObjectList;
+		private var walker                                   :ObjectNode;
 		
 		// _____________________________________________________________________________________ ITEM VRAIABLES
 		private var item                                     :MultiLoaderItem;
@@ -73,7 +61,6 @@ package railk.as3.data.loader {
 		private var itemContent                              :*;
 		private var itemNumber                               :int = 0;
 		
-		
 		// ____________________________________________________________________________________ TYPES VARIABLES
 		private var types                                    :Object = {
             ".jpg":"imgfile", ".jpeg":"imgfile", ".png":"imgfile", ".gif":"imgfile",
@@ -84,7 +71,6 @@ package railk.as3.data.loader {
             ".flv":"flvfile", ".f4v":"flvfile", ".mp4":"flvfile", ".m4a":"flvfile", ".mov":"flvfile", ".mp4v":"flvfile", ".3gp":"flvfile", ".3g2":"flvfile",
             ".mp3":"soundfile", ".f4a":"soundfile", ".f4b":"soundfile"
         }
-		
 		
 		// ___________________________________________________________________________________ EVENT VARIABLES
 		private var eEvent                                   :MultiLoaderEvent;		
@@ -108,7 +94,7 @@ package railk.as3.data.loader {
 			MloaderName = name;
 			MloaderRole = role;
 			//--
-			itemsList = new DLinkedList();
+			itemsList = new ObjectList();
 		}
 		
 		
@@ -120,27 +106,20 @@ package railk.as3.data.loader {
 		 * @param	nbSlot | maximum recommended slots is 7
 		 */
 		public function start( nbSlot:int = 7 ):void {
-			//initSlots
 			_maxSlots = nbSlot;
-			//on bouge les fichier a telecharger de la waiting list a la loading list et on les actives
 			walker = itemsList.head;
-			//--
-			while ( _takenSlots < _maxSlots && walker ) {
-				//--
+			while ( _takenSlots < _maxSlots && walker ) 
+			{
 				if( walker.data.state == MultiLoaderItem.WAITING ){
-					//on lance le téléchargement
 					var file:MultiLoaderItem = walker.data;
 					walker.data.state = MultiLoaderItem.LOADING;
 					file.load();
-					//on incrémenté les slots pris
 					_takenSlots += 1;
 				}	
 				walker = walker.next;
 			}
 			
-			//mise en place du lsitener pour retourner le pourcentage total de téléchargé
 			initMLoaderListener();
-			//state
 			_state = "start";
 			
 			///////////////////////////////////////////////////////////////
@@ -150,26 +129,20 @@ package railk.as3.data.loader {
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONMULTILOADERBEGIN, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-			
 		}
 		
 		
 		public function stop():void {
 			walker = itemsList.head;
-			//--
 			while ( walker ) {
-				//--
-				//on lance le téléchargement
 				var file:MultiLoaderItem = walker.data;
 				if ( file.state == MultiLoaderItem.LOADING ) {
 					file.stop();
 					file.state = MultiLoaderItem.WAITING;
 				}
-				//incrementation
 				walker = walker.next;
 			}
 			
-			//state
 			_state = "stop";
 			
 			///////////////////////////////////////////////////////////////
@@ -184,25 +157,19 @@ package railk.as3.data.loader {
 		
 		
 		public function destroy():void {
-			//arrete l'ensemble des download dela loading list et autre liste et supprime l'instace de multiloader
 			stop();
 			delMLoaderListener();
-			//on supprime les listeners de l'ensemble des items mise dans la listes de téléchargement ainsi que les items elles même
 			walker = itemsList.head;
-			//--
-			while ( walker ) {
-				//--
+			while ( walker ) 
+			{
 				var file:MultiLoaderItem = walker.data;
 				delItemListeners( file );
 				file.dispose();
 				file = null;
-				//incrementation
 				walker = walker.next;
 			}
-			
 			MLoaderList[MloaderName] = null;
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -217,8 +184,8 @@ package railk.as3.data.loader {
 		 * @param	bufferSize  | 0=loading the whole before playing / XX=the number of second to buffer before playing
 		 * @param	saveAs  | allow the file to be saved by the user
 		 */
-		public function add( url:String, name:String=  "", args:Object=null, priority:int = 0, mode:String='sameDomain', preventCache:Boolean = false, bufferSize:int = 0, saveAs:Boolean = false ):void {
-			//récupération du type de fichier ajouté
+		public function add( url:String, name:String =  "", args:Object = null, priority:int = 0, mode:String = 'sameDomain', preventCache:Boolean = false, bufferSize:int = 0, saveAs:Boolean = false ):void 
+		{
 			itemURL = new URLRequest( url );
 			if ( name == "" ) { itemName = url; } else { itemName = name; } 
 			itemArgs = args;
@@ -230,7 +197,7 @@ package railk.as3.data.loader {
 			itemBufferSize = bufferSize;
 			itemSaveState = saveAs;
 			itemNumber += 1;
-			//creéation de l'item
+			//--
 			item = new MultiLoaderItem( itemURL, itemName, itemArgs, itemType, itemPriority, itemState, itemPreventCache, itemBufferSize, itemSaveState, itemMode );
 			initItemListeners( item );
 			
@@ -251,8 +218,8 @@ package railk.as3.data.loader {
 		 * @param	bufferSize
 		 * @param	saveAs
 		 */
-		public function forceLoad( url:String, name:String=  "", args:Object=null, mode:String='sameDomain', preventCache:Boolean=false, bufferSize:int=100, saveAs:Boolean=false ):void {
-			//récupération du type de fichier ajouté
+		public function forceLoad( url:String, name:String =  "", args:Object = null, mode:String = 'sameDomain', preventCache:Boolean = false, bufferSize:int = 100, saveAs:Boolean = false ):void 
+		{
 			itemURL = new URLRequest( url );
 			if ( name == "" ) { itemName = url; } else { itemName = name; } 
 			if ( args == null) itemArgs = { };
@@ -263,14 +230,13 @@ package railk.as3.data.loader {
 			itemPreventCache = preventCache
 			itemBufferSize = bufferSize;
 			itemSaveState = saveAs;
-			//creéation de l'item
+			//--
 			item = new MultiLoaderItem( itemURL, itemName, itemArgs, itemType, itemPriority, itemState, itemPreventCache, itemBufferSize, itemSaveState, itemMode );
 			initItemListeners( item );
 			
 			/////////////////////////////////////////////////////////////////
 			item.load();
 			/////////////////////////////////////////////////////////////////
-			
 		}
 		
 		
@@ -281,27 +247,17 @@ package railk.as3.data.loader {
 		 */
 		public function removeByName( name:String ):Boolean {
 			var result:Boolean;
-			walker = itemsList.head;
-			//--
-			while ( walker ) {
-				//--
-				var file:MultiLoaderItem = walker.data ;
-				if ( file.name == name ) {
-					delItemListeners( file );
-					file.dispose();
-					file = null;
-					//suppression du node
-					itr = new DListIterator(itemsList, walker);
-					itr.remove();
-					
-					result = true;
-				}
-				else {
-					result = false;
-				}
-				//incrementation
-				walker = walker.next;
+			var t:ObjectNode = itemsList.getObjectByName( name );
+			if ( t )
+			{
+				var file:MultiLoaderItem = t.data;
+				delItemListeners( file );
+				file.dispose();
+				file = null;
+				itemsList.removeObjectNode( t );
+				result = true;
 			}
+			else result = false;
 			
 			return result;
 		}
@@ -315,77 +271,62 @@ package railk.as3.data.loader {
 		public function removeByUrl( url:String ):Boolean {
 			var result:Boolean;
 			walker = itemsList.head;
-			//--
-			while ( walker ) {
-				//--
+			loop:while ( walker ) 
+			{
 				var file:MultiLoaderItem = walker.data ;
 				if ( file.url == url ) {
 					delItemListeners( file );
 					file.dispose();
 					file = null;
-					//suppression du node
-					itr = new DListIterator(itemsList, walker);
-					itr.remove();
-					
+					itemsList.removeObjectNode( walker );
 					result = true;
+					break loop;
 				}
 				else {
 					result = false;
 				}
-				//incrementation
 				walker = walker.next;
 			}
 			
 			return result;
 		}
 		
-		/**
-		 * 
-		 * @param	item
-		 */
+		
 		public function removeAll():void {
 			walker = itemsList.head;
-			
 			while ( walker ) {
-				//--
 				var file:MultiLoaderItem = walker.data ;
 				delItemListeners( file );
 				file.dispose();
 				file = null;
-				//suppression du node
-				itr = new DListIterator(itemsList, walker);
-				itr.remove();
-				//incrementation
+				//--
+				var currentNode:ObjectNode = walker;
 				walker = walker.next;
+				itemsList.removeObjectNode( currentNode );
 			}
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   ITEM PROPERTIES
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getItemType( url:String ):String {
-			//recupération de l'extension
+		private function getItemType( url:String ):String 
+		{
 			var tmpString:String = url;
 			var urlParse:Array = tmpString.split("/");
 			tmpString = urlParse[urlParse.length - 1];
 			var sep:int = tmpString.indexOf('.');
 			var ext:String = tmpString.substring( sep );
 			
-			//recupération dy type en fonction de l'extension
-			var type:String = types[ext.toLowerCase()];
-			
-			return type;
+			return types[ext.toLowerCase()];
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					LOADING MANAGEMENT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function loadNext():void {
-
+		private function loadNext():void 
+		{
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:"******load next files******" };
@@ -395,9 +336,8 @@ package railk.as3.data.loader {
 			///////////////////////////////////////////////////////////////	
 
 			walker = itemsList.head;
-			
-			while ( walker ) {
-				//choix des prochains fichiers à télécharger en fonction de la priorité et du nombre d'emplacement libre.
+			while ( walker ) 
+			{
 				if ( walker.data.state == MultiLoaderItem.WAITING ) {
 					walker.data.load();
 					walker.data.state = MultiLoaderItem.LOADING;
@@ -409,17 +349,16 @@ package railk.as3.data.loader {
 				}	
 				walker = walker.next;
 			}
-
 		}
 		
-		
-		private function checkFile():void {
-			//init
+		private function checkFile():void 
+		{
 			var waiting:Boolean = false;
 			var loading:Boolean = false;
-			walker = itemsList.tail;
 			
-			while ( walker ) {
+			walker = itemsList.tail;
+			while ( walker ) 
+			{
 				if ( walker.data.state == MultiLoaderItem.WAITING ) {
 					waiting = true;
 					break;
@@ -431,16 +370,11 @@ package railk.as3.data.loader {
 				walker = walker.prev;
 			}
 			
-			
 			//loadNext ?
-			if ( waiting == true ) {
-				loadNext();
-			}
+			if ( waiting == true ) { loadNext(); }
 			else {
 				if( loading == false && _state != 'stop' ) {
 					delMLoaderListener();
-					
-					//state
 					_state = "stop";
 					
 					///////////////////////////////////////////////////////////////
@@ -452,19 +386,16 @@ package railk.as3.data.loader {
 					///////////////////////////////////////////////////////////////	
 				}	
 			}
-			
 		}
 		
-		
-		private function sortList( itm:MultiLoaderItem ):void {
-			//--
+		private function sortList( itm:MultiLoaderItem ):void 
+		{
 			var inserted:Boolean = false;
-			walker = itemsList.head;
 			
+			walker = itemsList.head;
 			while ( walker ) {
 				if( itm.priority > walker.data.priority ){
-					itr = new DListIterator(itemsList, walker);
-					itemsList.insertBefore( itr, itm );
+					itemsList.insertBefore( walker, itm.name, itm );
 					inserted = true;
 					break;
 				}
@@ -472,12 +403,11 @@ package railk.as3.data.loader {
 			}
 			
 			if ( inserted == false ) {
-				itemsList.append( itm )
+				itemsList.add( [itm.name,itm] )
 			}
 			
 			walker = itemsList.head;
 		}
-		
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -507,8 +437,6 @@ package railk.as3.data.loader {
 			item.removeEventListener( MultiLoaderEvent.ONSTREAMPLAYED, onStreamPlayed );
 		}
 		
-		
-		
 		private function initMLoaderListener():void {
 			this.addEventListener( Event.ENTER_FRAME, onMLoaderProgress );
 		}
@@ -518,13 +446,11 @@ package railk.as3.data.loader {
 		}
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   LISTENERS FUNCTIONS 
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function onItemBegin( evt:Event ):void {
-			
-			
+		private function onItemBegin( evt:Event ):void 
+		{
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:"item "+evt.currentTarget.url+" is loading", item:evt.currentTarget };
@@ -534,8 +460,8 @@ package railk.as3.data.loader {
 			///////////////////////////////////////////////////////////////
 		}
 		
-		private function onItemProgress( evt:ProgressEvent ):void {
-			
+		private function onItemProgress( evt:ProgressEvent ):void 
+		{	
 			var percent = evt.currentTarget.percentLoaded;
 			
 			///////////////////////////////////////////////////////////////
@@ -547,8 +473,8 @@ package railk.as3.data.loader {
 			///////////////////////////////////////////////////////////////
 		}
 		
-		private function onItemComplete( evt:Event ):void {
-			
+		private function onItemComplete( evt:Event ):void 
+		{
 			evt.currentTarget.state = MultiLoaderItem.LOADED;
 			_takenSlots -= 1;
 			
@@ -564,8 +490,8 @@ package railk.as3.data.loader {
 			checkFile();
 		}
 		
-		private function onItemIOerror( evt:IOErrorEvent ):void {
-			
+		private function onItemIOerror( evt:IOErrorEvent ):void 
+		{	
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:"item "+evt.currentTarget.url+" have failed" };
@@ -575,8 +501,8 @@ package railk.as3.data.loader {
 			///////////////////////////////////////////////////////////////
 		}
 		
-		private function onItemHttpStatus( evt:HTTPStatusEvent ):void {
-			
+		private function onItemHttpStatus( evt:HTTPStatusEvent ):void 
+		{	
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:"error" + evt };
@@ -586,10 +512,9 @@ package railk.as3.data.loader {
 			///////////////////////////////////////////////////////////////
 		}
 		
-		private function onItemNetStatus( evt:NetStatusEvent ):void {
-			
+		private function onItemNetStatus( evt:NetStatusEvent ):void 
+		{	
 			var message:String;
-			
 			switch (evt.info.code) {
 				case "NetStream.Play.StreamNotFound" :
 				    message = "stream error";
@@ -615,12 +540,11 @@ package railk.as3.data.loader {
 			///////////////////////////////////////////////////////////////
 		}
 		
-		
-		
-		private function onMLoaderProgress( evt:Event ):void {
+		private function onMLoaderProgress( evt:Event ):void 
+		{
 			var percent:Number = 0;
-			walker = itemsList.head;
 			
+			walker = itemsList.head;
 			while ( walker ) {
                 percent += walker.data.percentLoaded;
 				walker = walker.next;
@@ -637,8 +561,8 @@ package railk.as3.data.loader {
 			///////////////////////////////////////////////////////////////
 		}
 		
-		private function onStreamReady( evt:MultiLoaderEvent ):void {
-			
+		private function onStreamReady( evt:MultiLoaderEvent ):void 
+		{	
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:evt.info, item:evt.item };
@@ -646,11 +570,10 @@ package railk.as3.data.loader {
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMREADY, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-			
 		}
 		
-		private function onStreamBuffering( evt:MultiLoaderEvent ):void {
-			
+		private function onStreamBuffering( evt:MultiLoaderEvent ):void 
+		{	
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:evt.info, item:evt.item };
@@ -658,11 +581,10 @@ package railk.as3.data.loader {
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMBUFFERING, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-			
 		}
 		
-		private function onStreamPlayed( evt:MultiLoaderEvent ):void {
-			
+		private function onStreamPlayed( evt:MultiLoaderEvent ):void 
+		{	
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:evt.info, item:evt.item };
@@ -670,57 +592,36 @@ package railk.as3.data.loader {
 			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMPLAYED, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-			
 		}
 		
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					   		 TO STRING 
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		override public function toString():String { return itemsList.toString(); }
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   GETTERS/SETTERS 
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get maxSlot():int {
-			return _maxSlots;
-		}
+		public function get maxSlot():int { return _maxSlots; }
 		
-		public function set maxSlot( maxSlots:int ):void {
-			_maxSlots = maxSlots;
-		}
+		public function set maxSlot( maxSlots:int ):void { _maxSlots = maxSlots;}
 		
-		public function get availableSlot():int {
-			return _maxSlots-_takenSlots;
-		}
+		public function get availableSlot():int { return _maxSlots-_takenSlots; }
 		
-		public function get state():String {
-			return _state;
-		}
+		public function get state():String { return _state; }
 		
-		public function get role():String {
-			return MloaderRole;
-		}
+		public function get role():String { return MloaderRole; }
 		
-		public function set role( role:String ):void {
-			MloaderRole = role;
-		}
+		public function set role( role:String ):void { MloaderRole = role; }
 		
-		public function getItemByName( name:String ):MultiLoaderItem {
-			walker = itemsList.head;
-			
-			while ( walker ) {
-				//--
-				if ( walker.data.name == name ) {
-					var result = walker.data;
-				}
-				walker = walker.next;
-			}
-			
-			return result;
-		}
+		public function getItemByName( name:String ):MultiLoaderItem { return itemsList.getObjectByName( name ).data; }
 		
 		public function getItemByArgs( type:String, name:String ):MultiLoaderItem {
 			walker = itemsList.head;
-			while ( walker ) {
-				//--
+			while ( walker ) 
+			{
 				if ( walker.data.args != null && walker.data.args[ type ] != undefined ) {
 					if ( walker.data.args[ type ] == name ) {
 						var result = walker.data;
@@ -728,36 +629,15 @@ package railk.as3.data.loader {
 				}	
 				walker = walker.next;
 			}
-			
 			return result;
 		}
 		
-		public function getItems():Array {
-			//--
-			var result:Array = new Array();
-			var count:int = 0;
-			//--
-			walker = itemsList.head;
-			
-			while ( walker ) {
-			//--
-				if ( walker.data.name == name ) {
-					result[count] = walker.data;
-				}
-				walker = walker.next;
-				count += 1;
-			}
-			
-			return result;
-		}
+		public function getItems():Array { return itemsList.toArray(); }
 		
 		public function getItemContent( name:String, byArgs:Boolean=false, argsType:String="" ):* {
 			if(byArgs){ itemContent = getItemByArgs( argsType,name ).content; }
 			else { itemContent = getItemByName( name ).content; }
 			return itemContent;
 		}
-		
-		
 	}
-	
 }

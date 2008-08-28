@@ -10,13 +10,8 @@
 package railk.as3.utils.link.linkItem {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
-	
-	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.display.GraphicShape;
-	import railk.as3.utils.DynamicRegistration;
 	
 	// ______________________________________________________________________________________ IMPORT TWEENER
 	import caurina.transitions.Tweener;
@@ -26,7 +21,7 @@ package railk.as3.utils.link.linkItem {
 	
 	
 	
-	public class Link extends DynamicRegistration  {
+	public class Link  {
 		
 		//________________________________________________________________________________________ VARIABLES		
 		private var _name                                       :String;
@@ -138,7 +133,7 @@ package railk.as3.utils.link.linkItem {
 			return active;
 		}
 		
-		public override function get name():String {
+		public function get name():String {
 			return _name;
 		}
 		

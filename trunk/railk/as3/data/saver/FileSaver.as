@@ -12,8 +12,8 @@
 package railk.as3.data.saver {
 	
 	// _______________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.net.URLLoader;
@@ -30,7 +30,7 @@ package railk.as3.data.saver {
 	
 	
 
-	public class FileSaver extends Sprite {
+	public class FileSaver extends EventDispatcher {
 		
 		
 		//____________________________________________________________________________________ VARIABLES STATIQUES

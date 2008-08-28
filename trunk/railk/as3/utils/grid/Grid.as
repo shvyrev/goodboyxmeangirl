@@ -2,7 +2,6 @@
 * 
 *  Grid
 * 
-* 
 * @author Richard Rodney
 * @version 0.2
 * 
@@ -16,20 +15,17 @@ package railk.as3.utils.grid {
 	import railk.as3.utils.grid.Cell;
 	import railk.as3.utils.grid.Bloc;
 	import railk.as3.utils.Utils;
-	
-	// __________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
+	import railk.as3.utils.objectList.*;
+	import railk.as3.utils.ObjectDumper;
 	
 	
 	
 	
-	public class Grid extends Object {
+	public class Grid {
 		
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
-		public static var gridList                          :Object={};
+		public static var gridList                           :Object={};
 		
 		//____________________________________________________________________________________ VARIABLES GRID
 		private var nbCol                                    :Number;
@@ -38,19 +34,18 @@ package railk.as3.utils.grid {
 		private var _height                                  :int;
 		private var _width                                   :int;
 		private var count                                    :int = 0;
-		private var sortedBloc                               :DLinkedList;
+		private var sortedBloc                               :ObjectList;                                 
 		
 		//____________________________________________________________________________________ VARIABLES CELL
 		private var cell                                     :Cell;
 		private var cellWidth                                :int;
 		private var cellHeight                               :int;
-		private var cellList                                 :DLinkedList;
-		private var walker                                   :DListNode;
-		private var itr                                      :DListIterator;
+		private var cellList                                 :ObjectList;
+		private var walker                                   :ObjectNode;
 		
 		//____________________________________________________________________________________ VARIABLES BLOC
 		private var bloc                                     :Bloc;
-		private var blocList                                 :DLinkedList;
+		private var blocList                                 :ObjectList;
 		
 		
 		
@@ -84,15 +79,15 @@ package railk.as3.utils.grid {
 			var j:int = 0;
 			var m:Boolean = true;
 			var pos:int;
-			cellList = new DLinkedList();
-			blocList = new DLinkedList();
+			cellList = new ObjectList();
+			blocList = new ObjectList();
 			
 			//
 			while (true) {
 				pos = m ? i++ : --i;
 				cell = new Cell( String(count), X, Y, X + (cellW/2), Y+(cellH/2), cellH, cellW, pos, j, debug, debugContainer );
 				contiguous( j, pos, nbCol-1, nbLigne-1 );
-				cellList.append( cell );
+				cellList.add( [String(count),cell] );
 				X+= cellW+espace;
 				count++;
 				
@@ -179,12 +174,13 @@ package railk.as3.utils.grid {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function remove( name:String ) {
 			var grid = gridList[name];
-			walker = cellList.head;
 			
+			walker = cellList.head;
 			while ( walker ) {
 				walker.data = null;
 				walker = walker.next;
 			}
+			cellList.clear();
 			
 			grid = null;
 		}
@@ -246,29 +242,26 @@ package railk.as3.utils.grid {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function getBlocsPlace( blocs:Array ):Array {
 			var result:Array = new Array();
-			var currentW:Number = 0;
-			var w:DListNode;
-			sortedBloc = new DLinkedList();
+			var currentWidth:Number = 0;
+			var currentNode:ObjectNode;
+			sortedBloc = new ObjectList();
 			
 			//--sort the bloc by width
 			var i:int = blocs.length;
 			while (i--) {
-				if ( sortedBloc.size == 0 ) {
-					sortedBloc.append( blocs[i] );
-					w = sortedBloc.head;
-					itr = new DListIterator( sortedBloc, w );
+				if ( sortedBloc.length == 0 ) {
+					sortedBloc.add( [String(i),blocs[i]] );
+					currentNode = sortedBloc.head;
 				}
-				else if ( blocs[i].w <= currentW ) {
-					itr = new DListIterator( sortedBloc, w );
-					sortedBloc.insertAfter( itr, blocs[i] );
-					w = w.next;
+				else if ( blocs[i].w <= currentWidth ) {
+					sortedBloc.insertAfter( currentNode,String(i), blocs[i] );
+					currentNode = currentNode.next;
 				}
 				else {
-					itr = new DListIterator( sortedBloc, w );
-					sortedBloc.insertBefore( itr, blocs[i] );
-					w = w.prev;
+					sortedBloc.insertBefore( currentNode,String(i), blocs[i] );
+					currentNode = currentNode.prev;
 				}
-				currentW = blocs[i].w;
+				currentWidth = blocs[i].w;
 			}
 			
 			
@@ -277,19 +270,16 @@ package railk.as3.utils.grid {
 			///////////////////////////////
 			
 			//--place the blocs by greatest width from left to right and top to bottom on the grid
-			w = sortedBloc.head;
-			
-			while ( w ) {
-				
+			currentNode = sortedBloc.head;
+			while ( currentNode ) {
 				////////////////////////////////////////////////////////////
-				var o:Object = manageBlocs( w.data.w, w.data.h );
-				o.extra = w.data.extra;
+				var o:Object = manageBlocs( currentNode.data.w, currentNode.data.h );
+				o.extra = currentNode.data.extra;
 				result.push( o );
 				////////////////////////////////////////////////////////////
-				
-				w = w.next;
+				currentNode = currentNode.next;
 			}
-			//trace( blocsToString );
+			
 			return result;
 		}
 		
@@ -298,7 +288,7 @@ package railk.as3.utils.grid {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function initBlocs():void {
 			bloc = new Bloc( String(1), 0, 0, _width, _height, _width, _height );
-			blocList.append( bloc );
+			blocList.add( [String(1),bloc] );
 		}
 		
 		
@@ -310,8 +300,6 @@ package railk.as3.utils.grid {
 			var b:Bloc;
 			walker = blocList.head;
 			
-			
-			
 			//-- recupération de l'emplacement du bloc
 			while (walker) {
 				if ( walker.data.width >= w && walker.data.height >= h && !walker.data.isUsed ) {
@@ -321,8 +309,6 @@ package railk.as3.utils.grid {
 				}
 				walker = walker.next;
 			}
-			
-			//trace( b );
 			
 			//--Cell > used
 			var c:Cell;
@@ -341,8 +327,8 @@ package railk.as3.utils.grid {
 			
 			//-- redecoupage du bloc si necéssaire
 			if ( b.width > w && b.height > h) {
-				/*bloc1*/addBloc( blocList.size+1, b.beginX, h-cellHeight, b.width, b.height-cellHeight, b.width, b.height-h );
-				/*bloc2*/addBloc( blocList.size+1, w+cellWidth, b.beginY, b.width, h, b.width-w, h  );
+				/*bloc1*/addBloc( blocList.length+1, b.beginX, h-cellHeight, b.width, b.height-cellHeight, b.width, b.height-h );
+				/*bloc2*/addBloc( blocList.length+1, w+cellWidth, b.beginY, b.width, h, b.width-w, h  );
 				b.width = w;
 				b.height = h-cellHeight;
 				b.endX = w;
@@ -350,7 +336,7 @@ package railk.as3.utils.grid {
 				b.isUsed = true;
 			}
 			else if ( b.width > w && b.height == h ) {
-				/*bloc1*/addBloc( blocList.size+1, w+cellWidth, b.beginY, b.width+cellWidth, b.height, b.width-w, b.height   );
+				/*bloc1*/addBloc( blocList.length+1, w+cellWidth, b.beginY, b.width+cellWidth, b.height, b.width-w, b.height   );
 				b.width = w;
 				b.height = h-cellHeight;
 				b.endX = w;
@@ -358,7 +344,7 @@ package railk.as3.utils.grid {
 				b.isUsed = true;
 			}
 			else if ( b.width == w && b.height > h ) {
-				/*bloc1*/addBloc( blocList.size+1, b.beginX, h-cellHeight, b.width, b.height-cellHeight, b.width, b.height-h  );
+				/*bloc1*/addBloc( blocList.length+1, b.beginX, h-cellHeight, b.width, b.height-cellHeight, b.width, b.height-h  );
 				b.width = w;
 				b.height = h-cellHeight;
 				b.endX = w;
@@ -378,7 +364,7 @@ package railk.as3.utils.grid {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function addBloc( id:int, beginX:int, beginY:int, endX:int , endY:int,  h:int, w:int ):void {
 			bloc = new Bloc(String(id), beginX, beginY, endX , endY, w, h);
-			blocList.append( bloc );
+			blocList.add( [String(id),bloc] );
 		}
 		
 		
@@ -402,22 +388,15 @@ package railk.as3.utils.grid {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————	
-		public function get blocsToString():String {
-			var result:String ="";
-			walker = blocList.head;
-			while ( walker ) {
-				
-				result += walker.data.toString()+"\n";
-				
-				walker = walker.next;
-			}
-			return result;
+		public function get blocsToString():String 
+		{
+			return blocList.toString();
 		}
 		
 		public function get coord():Array {
 			var result:Array = new Array();
-			walker = cellList.head;
 			
+			walker = cellList.head;
 			while ( walker ){
 				result.push( { x:walker.data.x, y:walker.data.y } );
 				walker = walker.next;
@@ -443,9 +422,9 @@ package railk.as3.utils.grid {
 		}
 		
 		public function get usedCells():int {
-			var result:int=0;
-			walker = cellList.head
+			var result:int = 0;
 			
+			walker = cellList.head
 			while ( walker ) {
 				if (walker.data.isUsed) { result += 1; }
 				walker = walker.next
@@ -455,9 +434,9 @@ package railk.as3.utils.grid {
 		}
 		
 		public function get freeCells():int {
-			var result:int=0;
-			walker = cellList.head
+			var result:int = 0;
 			
+			walker = cellList.head
 			while ( walker ) {
 				if (!walker.data.isUsed) { result += 1; }
 				walker = walker.next

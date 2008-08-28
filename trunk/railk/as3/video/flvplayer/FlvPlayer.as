@@ -117,6 +117,7 @@ package railk.as3.video.flvplayer {
 		private var containerMask                       :DynamicRegistration;
 		
 		private var component                           :DynamicRegistration = new DynamicRegistration();
+		protected var currentNode                       :ObjectNode;
 		protected var interfaceItemList                 :ObjectList = new ObjectList(
 																	['bg', component],
 																	['bgImage',component],
@@ -305,19 +306,22 @@ package railk.as3.video.flvplayer {
 		// 																					  INTERFACE LAYOUT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createLayout():void {
-			for ( var i:int=0; i < interfaceItemList.length; i++ )
+			currentNode = interfaceItemList.head;
+			loop:while ( currentNode ) 
 			{
-				var node:ObjectNode = interfaceItemList.iterate(i);
-				if ( node.data.extra.x != undefined ) node.data.x =  node.data.extra.x;
-				else if ( node.data.extra.x2 != undefined ) node.data.x =  node.data.extra.x2;
-				if ( node.data.extra.y != undefined ) node.data.y =  node.data.extra.y;
-				else if ( node.data.extra.y2 != undefined ) node.data.y2 =  node.data.extra.y2;
-				if ( node.data.extra.alpha != undefined ) node.data.alpha =  node.data.extra.alpha;
+				if ( currentNode.data.extra.x != undefined ) currentNode.data.x =  currentNode.data.extra.x;
+				else if ( currentNode.data.extra.x2 != undefined ) currentNode.data.x =  currentNode.data.extra.x2;
+				if ( currentNode.data.extra.y != undefined ) currentNode.data.y =  currentNode.data.extra.y;
+				else if ( currentNode.data.extra.y2 != undefined ) currentNode.data.y2 =  currentNode.data.extra.y2;
+				if ( currentNode.data.extra.alpha != undefined ) currentNode.data.alpha =  currentNode.data.extra.alpha;
 				
-				//ResizeManager.add( prop, node.data, node.data.extra.resize );
-				node.data.name = node.name;
-				container.addChild( node.data );
+				//ResizeManager.add( prop, currentNode.data, currentNode.data.extra.resize );
+				currentNode.data.name = currentNode.name;
+				container.addChild( currentNode.data );
+				
+				currentNode = currentNode.next;
 			}
+			
 			if ( _enableMask ) container.mask = containerMask;	
 			if ( _standalone && _enablefullscreen ) FullScreenMode.Activate( interfaceItemList.getObjectByName('fullscreenButton').data, Current.stage );
 		}
@@ -394,15 +398,15 @@ package railk.as3.video.flvplayer {
 			item.name = name;
 			
 			//--add
-			for ( var i:int=0; i < interfaceItemList.length; i++ ){
-				var node:ObjectNode = interfaceItemList.iterate(i);
-				if( insertPoint == node.data.name ){
-					if ( insertMode == 'before') interfaceItemList.insertBefore( node, name, item, group, action );
-					else if ( insertMode == 'after') interfaceItemList.insertAfter( node, name, item, group, action  );
-					break;
+			currentNode = interfaceItemList.head;
+			loop:while ( currentNode ) {
+				if( insertPoint == currentNode.data.name ){
+					if ( insertMode == 'before') interfaceItemList.insertBefore( currentNode, name, item, group, action );
+					else if ( insertMode == 'after') interfaceItemList.insertAfter( currentNode, name, item, group, action  );
+					break loop;
 				}
+				currentNode = currentNode.next;
 			}
-			
 		}
 		
 		

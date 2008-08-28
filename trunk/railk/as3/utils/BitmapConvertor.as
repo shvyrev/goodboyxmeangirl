@@ -6,13 +6,12 @@
 package railk.as3.utils {
 	
 	// ___________________________________________________________________ import flash
-	import flash.display.Sprite;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	
-	public class BitmapConvertor extends Sprite {
+	public class BitmapConvertor {
 		
 		// ___________________________________________________________________ variables
 		private var bmpTemp                    :BitmapData;

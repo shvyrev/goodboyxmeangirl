@@ -6,7 +6,8 @@
 */
 
 package railk.as3.data.uploader {
-	
+
+	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
 	import flash.net.FileFilter;
 	import flash.net.FileReference;
@@ -15,16 +16,18 @@ package railk.as3.data.uploader {
 	import flash.net.URLVariables;
 	import flash.events.*;
 	
+	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.uploader.UpLoaderEvent;
 	import railk.as3.data.uploader.UpLoaderFilters;
+	
+	
 
-	public class UpLoader extends Sprite {
+	public class UpLoader extends EventDispatcher {
 		
 		//________________________________________________________________________________ VARIABLES STATIQUES
 		static private const uploadPHPFile :String = "php/upload.php";
 		
-		
-		//________________________________________________________________________________ VARIABLES UPLOAD
+		//___________________________________________________________________________________ VARIABLES UPLOAD
 		private var uploadURL              :URLRequest;
 		private var uploadVAR              :URLVariables;
 		private var fileRef                :FileReference;
@@ -36,14 +39,6 @@ package railk.as3.data.uploader {
 		private var eEvent                 :UpLoaderEvent;
 		
 		
-		/*----------------------------------------------------------------------------------------------------
-		*
-		*                                 II  NN    NN  II  TTTTTT
-		*                                 II  NNNN  NN  II    TT
-		*                                 II  NN  NNNN  II    TT
-		*                                 II  NN    NN  II    TT
-		* 
-		*----------------------------------------------------------------------------------------------------*/
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
@@ -177,17 +172,6 @@ package railk.as3.data.uploader {
 		}
 		
 		
-		
-		
-		/*----------------------------------------------------------------------------------------------------
-		*
-		*                      CCCCCC  RRRRRR  EEEEEE  AAAAAA  TTTTTT  EEEEEE      
-		*                      CC      RR  RR  EE      AA  AA    TT    EE
-		*                      CC      RRRR    EEEE    AAAAAA    TT    EEEE
-		*                      CCCCCC  RR   R  EEEEEE  AA  AA    TT    EEEEEE
-		* 
-		*----------------------------------------------------------------------------------------------------*/
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						        CREATE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -236,16 +220,6 @@ package railk.as3.data.uploader {
 			delListenersFile( fileRef );
 		}
 		
-		
-		
-		/*----------------------------------------------------------------------------------------------------
-		*
-		*                      GGGGGG  EEEEEE  TTTTTT  TTTTTT  EEEEEE  RRRRRR       
-		*                      GG      EE        TT      TT    EE      RR  RR  
-		*                      GG  GG  EEEE      TT      TT    EEEE    RRRR    
-		*                      GGGGGG  EEEEEE    TT      TT    EEEEEE  RR   R  
-		* 
-		*----------------------------------------------------------------------------------------------------*/
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   GETTER FILENAME

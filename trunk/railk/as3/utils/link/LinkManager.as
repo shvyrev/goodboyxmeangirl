@@ -10,18 +10,13 @@
 package railk.as3.utils.link {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.link.LinkManagerEvent;
 	import railk.as3.utils.link.linkItem.Link;
-	
-	// __________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
+	import railk.as3.utils.objectList.*;
 	
 	// ____________________________________________________________________________________ IMPORT SWFADRESS
 	import com.asual.swfaddress.SWFAddress;
@@ -31,15 +26,14 @@ package railk.as3.utils.link {
 	
 	
 	
-	public class LinkManager extends Sprite {
+	public class LinkManager {
 		
 		// ______________________________________________________________________________ VARIABLES PROTEGEES
 		protected static var disp                             :EventDispatcher;
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var linkList                           :DLinkedList;
-		private static var walker                             :DListNode;
-		private static var itr                                :DListIterator;
+		private static var linkList                           :ObjectList;
+		private static var walker                             :ObjectNode;
 		
 		//_____________________________________________________________________________ VARIABLES LINKMANAGER
 		private static var siteTitre                          :String;
@@ -87,7 +81,7 @@ package railk.as3.utils.link {
 				swfAdress = swfAdressEnable
 			}
 			
-			 linkList = new DLinkedList();
+			linkList = new ObjectList();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -110,7 +104,7 @@ package railk.as3.utils.link {
 			else if( !swfAdress && !swfAdressEnable ) { enable = false; }
 			
 			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable );
-			linkList.append( link );
+			linkList.add( [name,link] );
 		}
 		
 		
@@ -118,58 +112,20 @@ package railk.as3.utils.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE LINKS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function remove( name:String ):Boolean {
-			var result:Boolean;
-			
-			walker = linkList.head;
-			//--
-			while ( walker ) {
-				//--
-				var l:Link = walker.data ;
-				if ( l.name == name ) {
-					l.dispose();
-					//suppression du node
-					itr = new DListIterator(linkList, walker);
-					itr.remove();
-					
-					result = true;
-				}
-				else {
-					result = false;
-				}
-				//incrementation
-				walker = walker.next;
-			}
-			
-			return result;
+		public static function remove( name:String ):Boolean 
+		{
+			return linkList.remove( name );
 		}
 		
 		
-		public static function getLink( name:String ):Link {
-			walker = linkList.head;
-			
-			while ( walker ) {
-				//--
-				if ( walker.data.name == name ) {
-					var result = walker.data;
-				}
-				walker = walker.next;
-			}
-			return result;
+		public static function getLink( name:String ):Link 
+		{
+			return linkList.getObjectByName( name ).data;
 		}
 		
 		
 		public static function getLinkContent( name:String ):* {
-			walker = linkList.head;
-			
-			while ( walker ) {
-				//--
-				if ( walker.data.name == name ) {
-					var result = walker.data.object;
-				}
-				walker = walker.next;
-			}
-			return result;
+			return getLink( name ).object;
 		}
 		
 		

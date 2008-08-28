@@ -14,9 +14,7 @@ package railk.as3.utils.accordion.accordionItem {
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.accordion.AccordionEvent;
-	
-	// __________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DListNode;
+	import railk.as3.utils.objectList.ObjectNode;
 	
 	
 	public class AccordionItem extends DisplayObject {
@@ -24,7 +22,7 @@ package railk.as3.utils.accordion.accordionItem {
 		
 		// _________________________________________________________________________ VARIABLES ACCORDION ITEM
 		private var _name                              :String;
-		private var _place                             :DListNode;
+		private var _place                             :ObjectNode;
 		private var _content                           :*;
 		private var _active                            :Boolean;
 		private var _dragable                          :Boolean;
@@ -84,11 +82,11 @@ package railk.as3.utils.accordion.accordionItem {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function set place( o:DListNode ):void {
+		public function set place( o:ObjectNode ):void {
 			_place = o;
 		}
 		
-		public function get place():DListNode {
+		public function get place():ObjectNode {
 			return _place;
 		}
 		

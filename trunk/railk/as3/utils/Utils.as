@@ -5,11 +5,10 @@
 /////////////////////////////////////////////////////////////////
 package railk.as3.utils {
 		
-	import flash.display.Sprite;
 	import flash.display.Bitmap;
 
 	
-	public class Utils extends Sprite {
+	public class Utils {
 		
 		/**
 		 * 

@@ -11,7 +11,6 @@
 package railk.as3.utils.grid {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
@@ -25,7 +24,7 @@ package railk.as3.utils.grid {
 	
 	
 	
-	public class Cell extends Sprite {
+	public class Cell {
 		
 		
 		//____________________________________________________________________________________ VARIABLES CELL
@@ -108,11 +107,11 @@ package railk.as3.utils.grid {
 			return _contiguous;
 		}
 		
-		public override function get x():Number {
+		public function get x():Number {
 			return _X;
 		}
 		
-		public override function get y():Number {
+		public function get y():Number {
 			return _Y;
 		}
 		

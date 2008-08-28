@@ -75,6 +75,7 @@ package railk.as3.son.mp3player {
 		private var mask                                :DynamicRegistration;
 		
 		private var components                          :DynamicRegistration;
+		private var currentNode                         :ObjectNode;
 		private var interfaceItemList                   :ObjectList = {
 																	['bg', component],
 																	['playList',component],
@@ -200,18 +201,19 @@ package railk.as3.son.mp3player {
 		// 																						 	 	LAYOUT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createLayout():void {
-			for ( var i:int=0; i < interfaceItemList.length; i++ )
-			{
-				var node:ObjectNode = interfaceItemList.iterate(i);
-				if ( node.data.extra.x != undefined ) node.data.x =  node.data.extra.x;
-				else if ( node.data.extra.x2 != undefined ) node.data.x =  node.data.extra.x2;
-				if ( node.data.extra.y != undefined ) node.data.y =  node.data.extra.y;
-				else if ( node.data.extra.y2 != undefined ) node.data.y2 =  node.data.extra.y2;
-				if ( node.data.extra.alpha != undefined ) node.data.alpha =  node.data.extra.alpha;
+			currentNode = interfaceItemList.head;
+			loop:while ( currentNode ) {
+				if ( currentNode.data.extra.x != undefined ) currentNode.data.x =  currentNode.data.extra.x;
+				else if ( currentNode.data.extra.x2 != undefined ) currentNode.data.x =  currentNode.data.extra.x2;
+				if ( currentNode.data.extra.y != undefined ) currentNode.data.y =  currentNode.data.extra.y;
+				else if ( currentNode.data.extra.y2 != undefined ) currentNode.data.y2 =  currentNode.data.extra.y2;
+				if ( currentNode.data.extra.alpha != undefined ) currentNode.data.alpha =  currentNode.data.extra.alpha;
 				
-				node.data.name = node.name;
-				container.addChild( node.data );
+				currentNode.data.name = currentNode.name;
+				container.addChild( currentNode.data );
+				currentNode = currentNode.next;
 			}
+			
 			if ( _enableMask ) container.mask = containerMask;	
 		}
 		
@@ -265,13 +267,14 @@ package railk.as3.son.mp3player {
 			item.name = name;
 			
 			//--add
-			for ( var i:int=0; i < interfaceItemList.length; i++ ){
-				var node:ObjectNode = interfaceItemList.iterate(i);
-				if( insertPoint == node.data.name ){
-					if ( insertMode == 'before') interfaceItemList.insertBefore( node, name, item, group, action );
-					else if ( insertMode == 'after') interfaceItemList.insertAfter( node, name, item, group, action  );
-					break;
+			currentNode = list.head;
+			loop:while ( currentNode ) {
+				if( insertPoint == currentNode.data.name ){
+					if ( insertMode == 'before') interfaceItemList.insertBefore( currentNode, name, item, group, action );
+					else if ( insertMode == 'after') interfaceItemList.insertAfter( currentNode, name, item, group, action  );
+					break loop;
 				}
+				currentNode = currentNode.next;
 			}
 			
 		}

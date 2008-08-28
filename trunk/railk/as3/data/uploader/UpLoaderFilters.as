@@ -8,15 +8,14 @@
 
 package railk.as3.data.uploader {
 
-	// __________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
+	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.net.FileFilter;
 	
 	
 	
-	public class UpLoaderFilters extends Sprite {
+	public class UpLoaderFilters {
 		
-		// _______________________________________________________________________________________ VARIABLES FILTERS
+		// _______________________________________________________________________________ VARIABLES FILTERS
 		public static const IMGFILE                  :String ="IMGFile";
 		public static const TXTFILE                  :String ="TXTFile";
 		public static const SWFFILE                  :String ="SWFFile";
@@ -24,13 +23,6 @@ package railk.as3.data.uploader {
 		public static const FLVFILE                  :String = "FLVFile";
 		
 		private static var filter                    :FileFilter;
-		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function UpLoaderFilters():void {
-		}
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
