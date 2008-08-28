@@ -486,6 +486,13 @@ package railk.as3.data.loader.loaderItems {
 		
 		private  function onVideoPlayStatus( evt:* ):void { /*return evt;*/ }
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				   			 TO STRING
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		override public function toString():String 
+		{ 
+			return '[ MultiLoader Item ' + itemName.toUpperCase() + ', ( URL = ' + itemURL.url +' ),  ( STATE = ' + itemState +' ),  ( PRIORITY = ' + itemPriority + ' ) ]';
+		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   DISPOSE OF THE ITEM
