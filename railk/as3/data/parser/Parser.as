@@ -8,11 +8,8 @@
 
 package railk.as3.data.parser {
 	
-	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	
-	
-	public class Parser extends Sprite {
+	public class Parser {
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						    XMLPARSER

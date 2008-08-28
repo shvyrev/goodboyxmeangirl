@@ -16,12 +16,13 @@ package railk.as3.utils {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function dump( o:Object ):String 
 		{
-			var result:String =''
+			var result:String = '';
 			for( var name in o ) 
 			{
 				result += '['+ name +' => '+ o[name] +' ]\n';
 			}
 			
+			if ( !result ) result = '[ empty ]';
 			return result;
 		}
 	}

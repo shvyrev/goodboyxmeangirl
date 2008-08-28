@@ -4,6 +4,10 @@
 * 
 * @author Richard Rodney
 * @version 0.1
+* 
+* TODO
+* 	rethink the whole class
+* 
 */
 
 
@@ -17,15 +21,11 @@ package railk.as3.utils.accordion
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.accordion.AccordionEvent;
 	import railk.as3.utils.accordion.accordionItem.AccordionItem;
-	
-	// __________________________________________________________________________________ IMPORT LINKED LIST
-	import de.polygonal.ds.DLinkedList;
-	import de.polygonal.ds.DListIterator;
-	import de.polygonal.ds.DListNode;
+	import railk.as3.utils.objectList.*;
 	
 	
 	
-	public class  Accordion extends DisplayObject{
+	public class  Accordion extends DisplayObject {
 		
 		// ______________________________________________________________________________ VARIABLES ACCORDION
 		private var _X                                      :int;
@@ -42,12 +42,10 @@ package railk.as3.utils.accordion
 		private var acItemheight                            :int;
 		
 		// _________________________________________________________________________________ VARIABLES LISTES
-		private static var itemList                         :DLinkedList;
-		private static var containerList                    :DLinkedList;
-		private var place                                   :DListNode;
-		private var walker                                  :DListNode;
-		private var itr                                     :DListIterator;
-		
+		private static var itemList                         :ObjectList;
+		private static var containerList                    :ObjectList;
+		private var place                                   :ObjectNode;
+		private var walker                                  :ObjectNode;		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -55,8 +53,8 @@ package railk.as3.utils.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function Accordion( X:int, Y:int, W:int, H:int, itemsWidth:int, itemsHeight:int, dragableItem:Boolean=false ):void {
 			//--list
-			itemList = new DLinkedList();
-			containerList = new DLinkedList();
+			itemList = new ObjectList();
+			containerList = new ObjectList();
 			
 			//--vars
 			_X = X;
@@ -98,10 +96,10 @@ package railk.as3.utils.accordion
 			acItem = new AccordionItem( name, content, active, dragable, dragRect );
 			
 			//--add
-			itemList.append( acItem );
+			itemList.add( [name,acItem] );
 			
 			//--give place
-			if ( itemList.size == 1 ){
+			if ( itemList.length == 1 ){
 				place = itemList.head;
 			}
 			else {
@@ -115,87 +113,28 @@ package railk.as3.utils.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   REMOVE AN ITEM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function remove( name:String ):Boolean {
-			
-			walker = itemList.head;
-			while ( walker ) {
-				if ( walker.data.name == name ) {
-					itr = new DListIterator(itemList, walker);
-					itr.remove();
-					result = true;
-				}
-				else {
-					result = false;
-				}
-				walker = walker.next;
-			}
-			return result;
+		public function remove( name:String ):Boolean 
+		{		
+			return itemList.remove( name );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					        TO ACTION
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function forAction( place:DListNode ):Object {
-			var result:Object;
-			var prevArray:Array = new Array();
-			var nextArray:Array = new Array();
-			
-			//--the Object
-			itr = new DListIterator(itemList, place);
-			result.object = itr.data.content;
-			
-			//--previous Object
-			itr = new DListIterator(itemList, place);
-			while (itr.valid()){
-				prevArray.push( itr.data.content )
-				itr.back();
-			}
-			result.prev = prevArray;
-			
-			//--next object
-			itr = new DListIterator(itemList, place);
-			while (itr.valid()){
-				prevArray.push( itr.data.content )
-				itr.forth();
-			}
-			result.next = nextArray;
-			
-			return result;
-		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   		  DESTROY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose():void {
-			
-			walker = itemList.head;
-			while ( walker ) {
-				walker.data.dispose();
-				itr = new DListIterator(itemList, walker);
-				itr.remove();
-				walker = walker.next;
-			}
+		public function dispose():void 
+		{	
+			itemList.clear()
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get item( name:String ):* {
-			
-			walker = itemList.head;
-			while ( walker ) {
-				if ( walker.data.name == name ) {
-					result = walker.data.content;
-				}
-				else {
-					result = null;
-				}
-				walker = walker.next;
-			}
-			return result;
+		public function get item( name:String ):* 
+		{
+			return itemList.getObjectByName( name ).data.content;
 		}
 		
 		
@@ -206,23 +145,18 @@ package railk.as3.utils.accordion
 		private function manageEvent( evt:* ):void {
 			switch( evt.type ){
 				case AccordionEvent.ONITEM_OVER :
-					action( "over", forAction( evt.item.place ) );
 					break;
 				
 				case AccordionEvent.ONITEM_OUT :
-					action( "out", forAction( evt.item.place ) );
 					break;
 					
 				case AccordionEvent.ONITEM_ClICK :
-					action( "click", forAction( evt.item.place ) );
 					break;
 				
 				case AccordionEvent.ONSTARTDRAGITEM :
-					action( "startdrag", forAction( evt.item.place ) );
 					break;
 				
 				case AccordionEvent.ONSTOPDRAGITEM :
-					action( "stopdrag", forAction( evt.item.place ) );
 					break;	
 			}
 		}

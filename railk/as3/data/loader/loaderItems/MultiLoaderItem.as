@@ -114,8 +114,8 @@ package railk.as3.data.loader.loaderItems {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function MultiLoaderItem( url:URLRequest, name:String, args:Object, type:String, priority:int, state:String, preventCache:Boolean, bufferSize:int, saveState:Boolean, mode:String ):void {
-			//--
+		public function MultiLoaderItem( url:URLRequest, name:String, args:Object, type:String, priority:int, state:String, preventCache:Boolean, bufferSize:int, saveState:Boolean, mode:String ):void 
+		{
 			item = this;
 			itemURL = url;
 			itemName = name;
@@ -135,8 +135,8 @@ package railk.as3.data.loader.loaderItems {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					  LOADER MANAGMENT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function load():void {
-			//--
+		public function load():void 
+		{
 			if ( itemPreventCache == true ) {
 				itemURL.url += "?dontCacheMe=" + int( Math.random()  * 100000 * getTimer() + getTimer() );
 			}
@@ -152,7 +152,6 @@ package railk.as3.data.loader.loaderItems {
 				loader = new loaderClass();
 			}	
 			initListeners( loader );
-			
 			
 			//--
 			if ( loader is Loader ) {
@@ -183,16 +182,14 @@ package railk.as3.data.loader.loaderItems {
 		}
 		
 		
-		public function stop():void {
-			loader.close();
-		}
+		public function stop():void { loader.close(); }
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					  LOADER LISTENERS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function initListeners( loaderType:* ):void {
-			//--
+		private function initListeners( loaderType:* ):void 
+		{
 			if( loaderType is Loader ){
 				loader.contentLoaderInfo.addEventListener( Event.COMPLETE, onloadComplete, false, 0, true );
 				loader.contentLoaderInfo.addEventListener( ProgressEvent.PROGRESS, onloadProgress, false, 0, true );
@@ -220,8 +217,8 @@ package railk.as3.data.loader.loaderItems {
 			}
 		}
 		
-		private function delListeners( loaderType:* ):void {
-			//--
+		private function delListeners( loaderType:* ):void 
+		{
 			if( loaderType is Loader ){
 				loader.contentLoaderInfo.removeEventListener( Event.COMPLETE, onloadComplete );
 				loader.contentLoaderInfo.removeEventListener( ProgressEvent.PROGRESS, onloadProgress );
@@ -250,14 +247,12 @@ package railk.as3.data.loader.loaderItems {
 		}
 		
 		
-		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   LISTENERS FONCTIONS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function onStreamEvent( evt:Event ):void {
-			//init
+		private function onStreamEvent( evt:Event ):void 
+		{
 			var event:*;
-			//--
 			if ( loader.bytesLoaded == 0 ) {
 				loader.pause();
 				//////////////////////////////////////////////
@@ -294,12 +289,11 @@ package railk.as3.data.loader.loaderItems {
 			}
 		}
 		
-		private function onStreamReady():void {
-			//--
-			if ( streamReady == false ) {
-				
+		private function onStreamReady():void 
+		{
+			if ( streamReady == false ) 
+			{	
 				streamReady = true;
-				
 				///////////////////////////////////////////////////////////////
 				//arguments du messages
 				var args:Object = { info:"stream ready to be played", item:this };
@@ -307,16 +301,14 @@ package railk.as3.data.loader.loaderItems {
 				var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMREADY, args );
 				dispatchEvent( eEvent );
 				///////////////////////////////////////////////////////////////
-				
 			}	
 		}
 		
-		private function onStreamBuffering():void {
-			//--
-			if ( streamReady == true ) {
-				
-				streamReady = false;
-				
+		private function onStreamBuffering():void 
+		{
+			if ( streamReady == true ) 
+			{	
+				streamReady = false;	
 				///////////////////////////////////////////////////////////////
 				//arguments du messages
 				var args:Object = { info:"stream paused for buffering", item:this };
@@ -324,11 +316,11 @@ package railk.as3.data.loader.loaderItems {
 				var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMBUFFERING, args );
 				dispatchEvent( eEvent );
 				///////////////////////////////////////////////////////////////
-				
 			}	
 		}
 		
-		private function onSoundComplete( evt:Event ):void {			
+		private function onSoundComplete( evt:Event ):void 
+		{			
 			///////////////////////////////////////////////////////////////
 			//arguments du messages
 			var args:Object = { info:"stream playing finished", item:this };
@@ -336,36 +328,34 @@ package railk.as3.data.loader.loaderItems {
 			var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONSTREAMPLAYED, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
-			
 			ch.removeEventListener( Event.SOUND_COMPLETE, onSoundComplete );
 		}
 		
 		
 		
-		private function onloadBegin( evt:Event ):void {
-			
+		private function onloadBegin( evt:Event ):void 
+		{	
 			itemResponseTime = getTimer();
-			
 			if ( loader is Sound ) {
 				itemContent = loader;
 				ch = loader.play();
 				ch.stop();
 			}
-			
 			//////////////////////////////////////////////
 			itemState = MultiLoaderItem.LOADING;
 			dispatchEvent( evt );
 			//////////////////////////////////////////////
 		}
 		
-		private function onloadProgress( evt:ProgressEvent ):void {
-			
+		private function onloadProgress( evt:ProgressEvent ):void 
+		{	
 			itemPercentLoaded = Math.round((evt.bytesLoaded * 100) / evt.bytesTotal);
 			itemBytesLoaded = evt.bytesLoaded;
 			itemBytesTotal = evt.bytesTotal;
 			itemBytesLeft = itemBytesTotal - itemBytesLoaded;
 			
-			if ( loader is Sound ) {
+			if ( loader is Sound ) 
+			{
 				if ( loader.isBuffering == true ) {
 					onStreamBuffering();
 				}
@@ -373,10 +363,8 @@ package railk.as3.data.loader.loaderItems {
 					onStreamReady();
 				}
 			}
-			
-			
-			else if ( loader is NetStream ) {
-				
+			else if ( loader is NetStream ) 
+			{
 				var timeElapsed:Number = getTimer() - itemResponseTime;
                 var currentSpeed:Number = itemBytesLoaded / (timeElapsed/1000);
                 var downloadTimeLeft:Number = itemBytesLeft / (currentSpeed * 0.8);
@@ -384,58 +372,44 @@ package railk.as3.data.loader.loaderItems {
 				var buffer = ( itemBufferSize * itemBytesTotal ) / streamMetadata.duration;
 				itemBytesPlayed = Math.round(( Math.round(loader.time) * itemBytesTotal )/Math.round(streamMetadata.duration));
 				
-				
 				///////////////////////////////////////////////////////////////////////////////////////////////
 				//                                   gestion du buffer                                       //
 				///////////////////////////////////////////////////////////////////////////////////////////////
-				if ( itemBufferSize == 0 ) {
+				if ( itemBufferSize == 0 ) 
+				{
 					//temps a télécharger ce qui reste moindre que le nombre de seconde de données restantes
-					if ( remainingBuffer > downloadTimeLeft && itemBytesLoaded > 8 ) {
-						onStreamReady();
-					}
+					if ( remainingBuffer > downloadTimeLeft && itemBytesLoaded > 8 ) { onStreamReady(); }
 				}
-				else {
-					if ( streamReady == false ) {
-						if ( streamBufferState <= buffer ) {
-							streamBufferState += itemBytesLoaded - previousBytesLoaded;
-						}
-						else {
-							onStreamReady();
-						}
+				else 
+				{
+					if ( streamReady == false ) 
+					{
+						if ( streamBufferState <= buffer ) { streamBufferState += itemBytesLoaded - previousBytesLoaded; }
+						else { onStreamReady(); }
 					}
-					else if ( streamReady == true ) {
-						if ( streamBufferState > buffer*.02 && (itemBytesLoaded - itemBytesPlayed) >= loader.bufferLength ){
-							streamBufferState = streamBufferState - ( itemBytesPlayed - previousBytesPLayed );
-						}
-						else {
-							onStreamBuffering();
-						}
+					else if ( streamReady == true ) 
+					{
+						if ( streamBufferState > buffer*.02 && (itemBytesLoaded - itemBytesPlayed) >= loader.bufferLength ){ streamBufferState = streamBufferState - ( itemBytesPlayed - previousBytesPLayed ); }
+						else { onStreamBuffering(); }
 					}
 				}	
 				//////////////////////////////////////////////////////////////////////////////////////////////
-				//                                                                                          //
-				//////////////////////////////////////////////////////////////////////////////////////////////
-				
-				
 				previousBytesLoaded = itemBytesLoaded;
 				previousBytesPLayed = itemBytesPlayed;
-				
 			}
-			
 			//////////////////////////////////////////////
 			dispatchEvent( evt );
 			//////////////////////////////////////////////
 		}
 		
-		private function onloadComplete( evt:Event ):void {
-			
+		private function onloadComplete( evt:Event ):void 
+		{	
 			if ( loader is Loader ) {
 				itemContent = loader.content;
 				delListeners( loader );
 				loader.unload();
 				loader = null;
 			}
-			//--
 			else if (loader is URLLoader ) {
 				if ( itemType == MultiLoaderItem.XMLFILE ) {
 					itemContent = new XML(loader.data);
@@ -449,19 +423,16 @@ package railk.as3.data.loader.loaderItems {
 				delListeners( loader );
 				loader = null;
 			}
-			//--
 			else if ( loader is NetStream ) {
 				itemContent = loader;
 				delListeners( loader );
 				//loader = null;
 			}
-			//--
 			else if (loader is Sound ) {
 				itemContent = loader;
 				delListeners( loader );
 				//loader = null;
 			}
-			
 			//////////////////////////////////////////////
 			itemPercentLoaded = 100;
 			itemState = MultiLoaderItem.LOADED;
@@ -469,140 +440,95 @@ package railk.as3.data.loader.loaderItems {
 			//////////////////////////////////////////////
 		}
 		
-		private function onloadIOerror( evt:IOErrorEvent ):void {
-			
+		private function onloadIOerror( evt:IOErrorEvent ):void 
+		{	
 			if ( numTries < maxTries ) { load(); numTries += 1; }
 			else { itemState = MultiLoaderItem.FAILED; }
-			
 			//////////////////////////////////////////////
 			dispatchEvent( evt );
 			//////////////////////////////////////////////
 		}
 		
-		private function onloadHttpStatus( evt:HTTPStatusEvent ):void {
-			
+		private function onloadHttpStatus( evt:HTTPStatusEvent ):void 
+		{	
 			//////////////////////////////////////////////
 			dispatchEvent( evt );
 			//////////////////////////////////////////////
 		}
 		
-		private function onloadNetStatus( evt:NetStatusEvent ):void {
+		private function onloadNetStatus( evt:NetStatusEvent ):void 
+		{
 			switch( evt.info.code ) {
 				case "NetStream.Play.Start" :
 					itemContent = loader;
-					
 					//////////////////////////////////////////////
 					var event:Event = new Event( Event.OPEN );
 					onloadBegin( event );
 					//////////////////////////////////////////////
 					break;
 			}
-				
-				
 			//////////////////////////////////////////////
 			dispatchEvent( evt );
 			//////////////////////////////////////////////
 		}
 		
-		private function onloadID3( evt:Event ):void {
+		private function onloadID3( evt:Event ):void 
+		{
 			//////////////////////////////////////////////
 			dispatchEvent( evt );
 			//////////////////////////////////////////////
 		}
-		
-		
 		
 		//TODO
-		private  function onVideoMetaData( metaData:Object ):void {
-			streamMetadata = metaData;
-		}
+		private  function onVideoMetaData( metaData:Object ):void { streamMetadata = metaData; }
 		
-		private  function onVideoCuePoint( evt:* ):void {
-			//return evt;
-		}
+		private  function onVideoCuePoint( evt:* ):void { /*return evt;*/ }
 		
-		private  function onVideoPlayStatus( evt:* ):void {
-			//return evt;
-		}
+		private  function onVideoPlayStatus( evt:* ):void { /*return evt;*/ }
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   DISPOSE OF THE ITEM
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose():void {
-			itemContent = null;
-		}
-		
-		
+		public function dispose():void { itemContent = null; }
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				         GETTER/SETTER
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get content():*{
-			return itemContent;
-		}
+		public function get content():*{ return itemContent; }
 		
-		public function get name():String {
-			return itemName;
-		}
+		public function get name():String { return itemName; }
 		
-		public function get args():Object {
-			return itemArgs;
-		}
+		public function get args():Object { return itemArgs; }
 		
-		public function get url():String {
-			return itemURL.url;
-		}
+		public function get url():String { return itemURL.url; }
 		
-		public function get saveState():Boolean{
-			return itemSaveState;
-		}
+		public function get saveState():Boolean{ return itemSaveState; }
 		
-		public function get state():String {
-			return itemState
-		}
+		public function get state():String { return itemState; }
 		
-		public function set state( state:String ):void {
-			itemState = state;
-		}
+		public function set state( state:String ):void { itemState = state; }
 		
-		public function get priority():int {
-			return itemPriority;
-		}
+		public function get priority():int { return itemPriority; }
 		
-		public function set priority( priority:int ):void {
-			itemPriority = priority;
-		}
+		public function set priority( priority:int ):void { itemPriority = priority; }
 		
-		public function get percentLoaded():Number {
-			return itemPercentLoaded;
-		}
+		public function get percentLoaded():Number { return itemPercentLoaded; }
 		
-		public function get bytesLoaded():Number {
-			return itemBytesLoaded;
-		}
+		public function get bytesLoaded():Number { return itemBytesLoaded; }
 				
-		public function get bytesTotal():Number {
-			return itemBytesTotal;
-		}
+		public function get bytesTotal():Number { return itemBytesTotal; }
 		
-		public function flvDuration():Number {
-			return streamMetadata.duration;
-		}
+		public function flvDuration():Number { return streamMetadata.duration; }
 		
-		public function get bytesPlayed():Number {
-			return itemBytesPlayed;
-		}
+		public function get bytesPlayed():Number { return itemBytesPlayed; }
 		
-		public function get channel():SoundChannel {
-			return ch;
-		}
+		public function get channel():SoundChannel { return ch; }
 		
 		public function set channel( chan:SoundChannel ):void {
 			ch = chan;
 			ch.addEventListener( Event.SOUND_COMPLETE, onSoundComplete, false, 0, true );
 		}
-
 	}
 }

@@ -11,7 +11,7 @@
 package railk.as3.utils.grid {
 	
 	
-	public class Bloc extends Object {
+	public class Bloc {
 		
 		
 		//____________________________________________________________________________________ VARIABLES CELL
