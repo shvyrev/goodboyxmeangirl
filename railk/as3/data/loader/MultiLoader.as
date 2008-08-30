@@ -175,7 +175,7 @@ package railk.as3.data.loader {
 		 * 
 		 * @param	url  | the path of the file to download
 		 * @param	priority  | -1=non-prioritaire / 0=normal / 1=prioritaire
-		 * @param	mode            'sameDomain' | 'externalDomain';
+		 * @param	mode            'sameDomain' | 'externalDomain' only for SWF file;
 		 * @param	preventCache |  true / if you want to avoide the broswer cache for the files
 		 * @param	bufferSize  | 0=loading the whole before playing / XX=the number of second to buffer before playing
 		 * @param	saveAs  | allow the file to be saved by the user
