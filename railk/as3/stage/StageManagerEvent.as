@@ -8,11 +8,7 @@
 
 package railk.as3.stage {
 
-	// _______________________________________________________________________________________ IMPORT FLASH
 	import flash.events.Event;
-
-	// _______________________________________________________________________________________ CLASS
-	
 	public dynamic class StageManagerEvent extends Event{
 			
 		// ___________________________________________________________________________________ VARIABLES STATIQUES
@@ -20,7 +16,6 @@ package railk.as3.stage {
 		static public const ONMOUSEACTIVE                    :String = "onMouseActive";
 		static public const ONMOUSEIDLE                      :String = "onMouseIdle";
 		static public const ONMOUSELEAVE                     :String = "onMouseLeave";
-		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR

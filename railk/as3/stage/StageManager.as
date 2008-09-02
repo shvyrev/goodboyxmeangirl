@@ -35,7 +35,7 @@ package railk.as3.stage {
 		public static var W                            :Number;
 		
 		// ____________________________________________________________________________________________ STAGE
-		public static var _stage                      :Stage;	
+		public static var _stage                       :Stage;	
 		
 		// ______________________________________________________________________________ VARAIBLE MOUSE IDLE
 		private static var lastMove                    :Number;
@@ -65,7 +65,6 @@ package railk.as3.stage {
       			disp.dispatchEvent(p_event);
       	}
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  		 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -80,7 +79,7 @@ package railk.as3.stage {
 		{
 			trace("                                   Stage initialise");
 			trace("---------------------------------------------------------------------------------------");
-						
+			
 			//initialisation variable mouse idle .2*60*1000 = 30 seconds
 			timeOut = .2*15*1000;
 			_stage = stage;
@@ -102,15 +101,9 @@ package railk.as3.stage {
 			W = stage.stageWidth;
 		}
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		GESTION ACTIVITE DE LA SOURIS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		* 
-		* @param	t
-		* @return
-		*/
 		public static function checkMouseOn( t:Number=0 ):void{
 			if( t != 0 ){ timeOut =  t; }
 			isIdle = 0;
@@ -158,7 +151,6 @@ package railk.as3.stage {
 				isActive += 1;
 			}
 		}
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
