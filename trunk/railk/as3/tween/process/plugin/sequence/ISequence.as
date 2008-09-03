@@ -1,7 +1,7 @@
 ﻿package railk.as3.tween.process.plugin.sequence
 {
 	import railk.as3.tween.process.Process;
-	public interface  ISequence
+	public interface ISequence
 	{
 		function add( name:String, tween:Process, group:String = '', action:Function = null ):void;
 		function insertBefore( who:String, name:String, tween:Process, group:String = '', action:Function = null ):void; 
