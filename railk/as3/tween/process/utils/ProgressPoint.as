@@ -2,7 +2,7 @@
 {
 	public class ProgressPoint {
 		public var position:Number;
-		public var data:String;
+		public var data:*;
 		
 		public function ProgressPoint(position:Number, data:*):void {
 			this.position = position;
