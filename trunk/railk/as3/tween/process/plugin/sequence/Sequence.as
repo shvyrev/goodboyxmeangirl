@@ -15,7 +15,7 @@ package railk.as3.tween.process.plugin.sequence
 		private var itemList:ObjectList;
 		
 		public function Sequence():void { itemList = new ObjectList(); }
-		
+		public function getType():String { return 'sequence'; }
 		public function add( name:String, tween:Process, group:String = '', action:Function=null ):void 
 		{
 			itemList.add( [name, tween, group, action] );

@@ -3,10 +3,10 @@
 	import flash.events.Event;
 	import flash.display.Shape;
 	import flash.utils.getTimer;
-	public class HybridTicker extends EventDispatcher implements ITicker {
+	public class Ticker extends EventDispatcher {
 		
 		protected var shape:Shape;
-		public function HybridTicker():void {
+		public function Ticker():void {
 			shape = new Shape()
 			shape.addEventListener(Event.ENTER_FRAME,tick);
 		}
