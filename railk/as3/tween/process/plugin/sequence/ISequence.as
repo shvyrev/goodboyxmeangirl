@@ -3,6 +3,7 @@
 	import railk.as3.tween.process.Process;
 	public interface ISequence
 	{
+		function getType():String;
 		function add( name:String, tween:Process, group:String = '', action:Function = null ):void;
 		function insertBefore( who:String, name:String, tween:Process, group:String = '', action:Function = null ):void; 
 		function insertAfter( who:String, name:String, tween:Process, group:String = '', action:Function = null ):void;

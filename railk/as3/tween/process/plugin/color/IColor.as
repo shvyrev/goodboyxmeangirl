@@ -1,11 +1,11 @@
 ﻿package railk.as3.tween.process.plugin.color {
 	public interface IColor {
 		function getType():String;
-		function setBrightness(n:Number):void;
-		function setContrast(n:Number):void;
-		function setHue(n:Number):void;
-		function setSaturation(n:Number):void;
-		function setThreshold(n:Number):void;
-		function setColorize(color:uint, amount:Number = 1):void;
+		function setBrightness(n:Number):Array;
+		function setContrast(n:Number):Array
+		function setHue(n:Number):Array;
+		function setSaturation(n:Number):Array;
+		function setThreshold(n:Number):Array;
+		function setColor(color:uint, amount:Number=1):Array;
 	}
 }
