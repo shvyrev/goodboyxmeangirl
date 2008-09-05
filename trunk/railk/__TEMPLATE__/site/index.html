@@ -12,9 +12,18 @@
 		<link rel="icon" type="image/x-ico" href="favicon.ico" />
 		<link rel="alternate" type="application/rss+xml" href="rss.xml" title="" />
 		<link rel="alternate" type="application/atom+xml" href="atom.xml" title="" />
-		<script type="text/javascript" src="reboot/js/swfobject.js"></script>
-		<script type="text/javascript" src="reboot/js/swfaddress.js"></script>
-		<script type="text/javascript" src="reboot/js/swfmacmousewheel2.js"></script>
+		<style type="text/css">
+			/* hide from ie on mac \*/
+			html { height: 100%; }
+			#content { height: 100%; font-family:arial; font-size:12px; color: #FFFFFF; }
+			/* end hide */
+			#content a { color: #000000; background-color: #FFFFFF;}
+			#content a:hover { color: #000000; background-color: #00FFCC; }
+			body { height: 100%; margin: 0; padding: 0; }
+		</style>
+		<script type="text/javascript" src="js/swfobject.js"></script>
+		<script type="text/javascript" src="js/swfaddress.js"></script>
+		<script type="text/javascript" src="js/swfmacmousewheel2.js"></script>
 		<script type="text/javascript">
 			var flashvars = {};
 			flashvars.browser = Browser.name;
@@ -25,18 +34,13 @@
 			params.allowfullscreen = "true";
 			var attributes = {};
 			attributes.id = "content";
-			swfobject.embedSWF("flash/name.swf", "content", "100%", "100%", "9.0.115", "flash/expressInstall.swf", flashvars, params, attributes);
-			swfmacmousewheel.registerObject(attributes.id);
+			swfobject.embedSWF("flash/name.swf", "content", "100%", "100%", "9.0.124", "flash/expressInstall.swf", flashvars, params, attributes);
+			//--css + mousewheel
+			if (swfobject.hasFlashPlayerVersion("9.0.124")) {
+			  swfobject.createCSS("body", "height: 100%; margin: 0; padding: 0; overflow: hidden;");
+			  swfmacmousewheel.registerObject(attributes.id);
+			}
 		</script>
-		<style type="text/css">
-			/* hide from ie on mac \*/
-			html { height: 100%; overflow: hidden; }
-			#content { height: 100%; font-family:arial; font-size:12px; color: #FFFFFF; }
-			/* end hide */
-			#content a { color: #000000; background-color: #FFFFFF;}
-			#content a:hover { color: #000000; background-color: #00FFCC; }
-			body { height: 100%; margin: 0; padding: 0; background-color: #000000; }
-		</style>
 		<script type="text/javascript">
 		var gaJsHost = (("https:" == document.location.protocol) ?
 		"https://ssl." : "http://www.");
@@ -54,7 +58,6 @@
 			<br/>
 			<br/>
 			<p align="center">alternative</p>
-			<br/>
 			<p align="center">You need the latest flash player to view my website</p>
 			<p align="center">*<a href="http://www.adobe.com/go/getflashplayer">Get latest flash player</a>*</p>
 		</div>
