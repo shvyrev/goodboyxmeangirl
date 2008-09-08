@@ -2,11 +2,10 @@
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.geom.ColorTransform;
-	public class TextPlugin implements IText
-	{
+	public class TextPlugin implements IText {
 		public function TextPlugin():void { }
 		public function getType():String { return 'text' };
-		public function changeColor( target:Object, color:uint, n:Number ):void {
+		public function changeColor( target:Object, color:uint, n:Number ):void{
 			var start:ColorTransform = target.transform.colorTransform;
 			var end:ColorTransform = new ColorTransform();
 			end.color = color;
@@ -19,10 +18,12 @@
 			result.greenOffset = start.greenOffset + (end.greenOffset - start.greenOffset)*n;
 			result.blueOffset = start.blueOffset + (end.blueOffset - start.blueOffset)*n;
 			result.alphaOffset = start.alphaOffset + (end.alphaOffset - start.alphaOffset) * n;
-			target.transform.colorTransform = result
+			target.transform.colorTransform = result;
 		}
-		public function changeText( target:Object, value:Object, progress:Number ):void {
-			
+		public function changeText( target:Object, value:String, progress:Number ):void {
+			var currentTextLength;
+			var nextLetters:Array = new Array();
+			for (var i:int = 0; i < value.length; i++) { nextLetters.push( value.charAt(i) ); }
 		}
 	}
 }
