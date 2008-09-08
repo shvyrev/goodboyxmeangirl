@@ -5,7 +5,7 @@
 		public function getType():String { return 'sound'; }
 		public function volume( target:Object, value:Number ):void {
 			value = 1 - value;
-			target.soundTransform = new SoundTransform(value,target.soundTransform.pan);
+			target.soundTransform = new SoundTransform(value, target.soundTransform.pan);
 		}
 		public function pan( target:Object, value:Number ):void {
 			target.soundTransform = new SoundTransform(target.soundTransform.volume, value);

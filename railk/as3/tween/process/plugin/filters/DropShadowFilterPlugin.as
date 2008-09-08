@@ -5,8 +5,9 @@ package railk.as3.tween.process.plugin.filters {
 	public class DropShadowFilterPlugin implements IFilters {
 		
 		public function DropShadowFilterPlugin() { }
-		public function getType():String { return 'dropShadow'; }
-		public function create( target:Object, vars:Object, progress:Number ):void {
+		public function getType():String { return 'filters'; }
+		public function getSubType():String { return 'dropShadow'; }
+		public function apply( target:Object, vars:Object, progress:Number ):void {
 			var prevFilter:DropShadowFilter; 
 			var targetFilters:Array = target.filters;
 			for ( var i:int = 0; i < targetFilters.length; i++ ) {
@@ -20,7 +21,6 @@ package railk.as3.tween.process.plugin.filters {
 			else  targetFilters.push( makeFilter( new DropShadowFilter(4,4,0x000000, 1, 4, 4, 1, 1, false, false,false), vars, progress ) );
 			target.filters = targetFilters;
 		}
-		
 		private function makeFilter( initProps:DropShadowFilter, endProps:Object, value:Number ):DropShadowFilter {
 			return new DropShadowFilter( 	initProps.distance + ((endProps.distance || 0) - initProps.distance) *value,
 											initProps.angle + ( ((endProps.angle == null) ? 45 : endProps.angle)- initProps.angle) *value,

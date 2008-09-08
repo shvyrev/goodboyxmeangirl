@@ -1,6 +1,7 @@
 ﻿package railk.as3.tween.process.plugin {
 	public interface IPlugin {
-		function enable( plugins:Array ):void;
-		function update( target:Object, propName:String, prop:*, value:Number ):void;
+		function setTarget(target:Object):void;
+		function init(tweens:Array,prop:Object,alpha:Number,reverse:Boolean):Array;
+		function update( factor:Number):void;
 	}
 }

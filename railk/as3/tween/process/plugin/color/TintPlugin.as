@@ -4,7 +4,7 @@
 	public class  TintPlugin implements ITint {
 		public function TintPlugin():void { };
 		public function getType():String { return 'tint'; }
-		public function setTint( target:Object, color:uint, n:Number ):void {
+		public function apply( target:Object, color:uint, n:Number ):void {
 			var start:ColorTransform = target.transform.colorTransform;
 			var end:ColorTransform = new ColorTransform();
 			end.color = color;
@@ -19,6 +19,13 @@
 			result.alphaOffset = start.alphaOffset + (end.alphaOffset - start.alphaOffset) * n;
 			target.transform.colorTransform = result;
 		}
-	}
-	
+		
+		public function remove( target:Object, propsAlpha:Number=-1 ):void {
+			var start:ColorTransform = target.transform.colorTransform;
+			var end:ColorTransform = new ColorTransform();
+			if (propsAlpha != -1) end.alphaMultiplier = propsAlpha;
+			else end.alphaMultiplier = target.alpha;
+			target.transform.colorTransform = end;
+		}
+	}	
 }

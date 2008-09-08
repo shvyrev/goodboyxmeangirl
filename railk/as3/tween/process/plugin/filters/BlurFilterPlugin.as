@@ -4,8 +4,9 @@ package railk.as3.tween.process.plugin.filters {
 	public class BlurFilterPlugin implements IFilters {
 		
 		public function BlurFilterPlugin() { }
-		public function getType():String { return 'blur'; } 
-		public function create( target:Object, vars:Object, progress:Number ):void {
+		public function getType():String { return 'filters'; } 
+		public function getSubType():String { return 'blur'; } 
+		public function apply( target:Object, vars:Object, progress:Number ):void {
 			var prevFilter:BlurFilter; 
 			var targetFilters:Array = target.filters;
 			for ( var i:int = 0; i < targetFilters.length; i++ ) {

@@ -6,8 +6,9 @@ package railk.as3.tween.process.plugin.filters {
 	public class GlowFilterPlugin implements IFilters {
 		
 		public function GlowFilterPlugin() { }
-		public function getType():String { return 'glow'; } 
-		public function create( target:Object, vars:Object, progress:Number ):void {
+		public function getType():String { return 'filters'; } 
+		public function getSubType():String { return 'glow'; } 
+		public function apply( target:Object, vars:Object, progress:Number ):void {
 			var prevFilter:GlowFilter; 
 			var targetFilters:Array = target.filters;
 			for ( var i:int = 0; i < targetFilters.length; i++ ) {

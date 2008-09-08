@@ -1,12 +1,11 @@
 package railk.as3.tween.process.plugin.filters {
-	
 	import flash.filters.BevelFilter;
 	public class BevelFilterPlugin implements IFilters {
-		
 		public function BevelFilterPlugin() { }
-		public function getType():String { return 'bevel'; } 
-		public function create( target:Object, vars:Object, progress:Number ):void {
-			var prevFilter:BevelFilter; 
+		public function getType():String { return 'filters'; } 
+		public function getSubType():String { return 'bevel'; } 
+		public function apply( target:Object, vars:Object, progress:Number ):void {
+			var defaultFilter:BevelFilter = new BevelFilter(); 
 			var targetFilters:Array = target.filters;
 			for ( var i:int = 0; i < targetFilters.length; i++ ) {
 				if ( targetFilters[i] is BevelFilter ) { 
@@ -19,7 +18,6 @@ package railk.as3.tween.process.plugin.filters {
 			else  targetFilters.push( makeFilter( new BevelFilter(4,45,0xFFFFFF,1,0x000000,1,4,4,1,1,'inner',false), vars, progress ) );
 			target.filters = targetFilters;
 		}
-		
 		private function makeFilter( initProps:BevelFilter, endProps:Object, value:Number ):BevelFilter {
 			return new BevelFilter( 	initProps.distance + ((endProps.distance || 0) - initProps.distance) *value,
 										initProps.angle + (((endProps.angle == null) ? 45 : endProps.angle) - initProps.angle) *value,
