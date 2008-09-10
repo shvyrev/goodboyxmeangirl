@@ -103,6 +103,14 @@ package railk.as3.text
 			super.setTextFormat( format );
 		}
 		
+		override public function get textColor():uint { return format.color as uint; }
+		
+		override public function set textColor(value:uint):void 
+		{
+			format.color = value;
+			super.setTextFormat( format );
+		}
+		
 		public function get font():String { return format.font; }
 		
 		public function set font(value:String):void 
