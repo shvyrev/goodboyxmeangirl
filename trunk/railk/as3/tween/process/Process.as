@@ -20,7 +20,8 @@
 		private static var _listening:Boolean;
 		private static var _shape:Shape = new Shape();
 		private static var _sequence:ISequence;
-		private static var _plcl:Class;
+		private static var _pluginClass:Class;
+		private static var _pluginMode:String;
 	
 		public var duration:Number;
 		public var props:Object;
@@ -41,7 +42,7 @@
 		public var onComplete:Function;
 		
 		protected var _active:Boolean;
-		protected var _items:ProcessItems;
+		protected var _items:Array=[];
 		protected var _PP:Array;
 		protected var _lastPP:ProgressPoint;
 		protected var _proxy:TargetProxy;
@@ -69,8 +70,7 @@
 			_isDO = (target is DisplayObject);
 			_PP = [];
 			_propsSet = false;
-			_plugins = new _plcl();
-			_items = new ProcessItems();
+			if(_pluginClass) _plugins = new _pluginClass();
 			getTicker();
 			setOptions(options);
 			if (!_listening && !_active) {
@@ -83,13 +83,13 @@
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							  OPTIONS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function enablePlugin( p:Class ):void { _plcl = p; }
+		public static function enablePlugin(pm:Class):void { _pluginClass = pm; }
 		public static function set sequence( s:ISequence ):void { _sequence = s; }
 		
 		public function setOptions( options:Object ):void {
 			if (!options) return;
 			for (var n:String in options) {
-				if ( n == 'onUpdate') _hasUp = true
+				if ( n == 'onUpdate') _hasUp = true;
 				if ( n == 'autoHide') {  
 					if (!isNaN(Number(options[n]))) {
 						options[n] = Number(options[n]);
@@ -113,9 +113,9 @@
 					if (props[p] is Number) {
 						if ( smartRotation && ( p == 'rotation' || p == 'rotation2') ) props[p] = rotation( p );
 						if ( rounded ) props[p] = int(props[p]);
-						_items.add( { o:target, p:p, s:target[p], c:props[p] - target[p]} );
+						_items[_items.length] = { target:target, prop:p, init:target[p], change:props[p] - target[p]};
 					}
-					else _items.add( { o:target, p:p, s:target[p], c:Number(props[p])} );
+					else _items[_items.length] = { target:target, prop:p, init:target[p], change:Number(props[p])};
 				} else {	
 					if ( cmProps.hasOwnProperty(p) ) {  cmProps[p] = props[p]; sProps.colorMatrix = cmProps; }
 					if ( sProps.hasOwnProperty(p) ) sProps[p] = props[p];
@@ -143,7 +143,7 @@
 		public function setProp(n:String, v:*):void {
 			for ( var i:int = 0; i < _items.length; i++ ) {
 				if (_items[i].p == n ) _items[i].c = v;
-				else _items.add( { o:target, p:n, s:target[n], c:v } );
+				else _items[_items.length] = { target:target, prop:n, init:target[n], change:v };
 			}
 			props[n] = v;
 		}
@@ -168,7 +168,7 @@
 		}
 		
 		public function update(t:uint):void {
-			var time:Number = (t - startTime) / 1000, factor:Number, prop:Object, i:int;
+			var time:Number = (t - startTime) / 1000, factor:Number, item:Object, i:int;
 			if (time >= duration) {
 				time = duration;
 				factor = 1;
@@ -178,8 +178,8 @@
 				factor = f(time, 0, 1, duration);
 			}
 			for (i = _items.length - 1; i > -1; i--) {
-				prop = _items[i];
-				prop.o[prop.p] = prop.s + (factor * prop.c);
+				item = _items[i];
+				item.target[item.prop] = item.init + (factor * item.change);
 			}
 			if( _hpl) _plugins.update(factor);
 			checkProgressPoint(t);
@@ -190,10 +190,10 @@
 		public static function tick(e:Event = null):void {
 			var t:uint = _curTime = getTimer();
 			if (_listening) {
-				var a:Dictionary = _tweens, p:Object, tw:Object;
+				var a:Dictionary = _tweens, p:Object, tween:Object;
 				for each (p in a) {
-					for (tw in p) {
-						if (p[tw] != undefined && p[tw].active) p[tw].update(t); 
+					for (tween in p) {
+						if (p[tween] != undefined && p[tween].active) p[tween].update(t); 
 					} 
 				}
 			}
@@ -230,8 +230,8 @@
 				_timer.removeEventListener("timer", killGarbage);
 				_timer.stop();
 				_listening = false;
-				//_tickerOn = false;
-				//_shape.removeEventListener( Event.ENTER_FRAME, tick);
+				_tickerOn = false;
+				_shape.removeEventListener( Event.ENTER_FRAME, tick);
 			}
 		}
 		
