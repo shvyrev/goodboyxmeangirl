@@ -19,20 +19,17 @@ package railk.as3.utils {
 		//_______________________________________________________________________________ VARIABLES STATIQUES
 		private static var loggerType                             :String;
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function init( type:String ):void { loggerType = type; }
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				TRACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function print( info:String, type:String ):void {
-			if ( loggerType == type || loggerType == Logger.ALL ) trace( info );
+		public static function print( info:String, type:String, caller:String=null ):void {
+			if ( loggerType == type || loggerType == Logger.ALL ) trace( '[ LOG FROM ' + (caller) ? caller.toUpperCase : 'NONAME' +' => '+ info + ' ]');
 		}
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER

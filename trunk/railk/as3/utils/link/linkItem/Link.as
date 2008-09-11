@@ -13,8 +13,8 @@ package railk.as3.utils.link.linkItem {
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
-	// ______________________________________________________________________________________ IMPORT TWEENER
-	import caurina.transitions.Tweener;
+	// ________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.tween.process.*;
 	
 	// ____________________________________________________________________________________ IMPORT SWFADRESS
 	import com.asual.swfaddress.SWFAddress;
@@ -30,8 +30,8 @@ package railk.as3.utils.link.linkItem {
 		private var _type                                       :String;
 		
 		//___________________________________________________________________________________ VARIABLES ETATS
-		private var swfAdress                                  :Boolean;     
-		private var active                                     :Boolean = false;
+		private var swfAdress                                   :Boolean;     
+		private var active                                      :Boolean = false;
 		
 		
 		
@@ -148,8 +148,8 @@ package railk.as3.utils.link.linkItem {
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
-							if ( type == "text" ) { Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.hover, time:.2, transition:"linear" } ); }
-							else if ( type == "sprite" ) { Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.hover, time:.2, transition:"linear" } ); }
+							if ( type == "text" ) { Process.to( _content[prop].objet, .2, {text_color:_content[prop].colors.hover } ); }
+							else if ( type == "sprite" ) { Process.to( _content[prop].objet, .2, { color:_content[prop].colors.hover} ); }
 						}	
 						if ( _content[prop].action != null ) { _content[prop].action("hover", _content[prop].objet); }
 					}
@@ -161,8 +161,8 @@ package railk.as3.utils.link.linkItem {
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
-							if( type == "text" ){ Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.out, time:.2, transition:"linear" } ); }
-							else if ( type == "sprite" ) { Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.out, time:.2, transition:"linear" } ); }
+							if( type == "text" ){ Process.to( _content[prop].objet, .2, { text_color:_content[prop].colors.out } ); }
+							else if ( type == "sprite" ) { Process.to( _content[prop].objet, .2, { color:_content[prop].colors.out } ); }
 						}
 						if ( _content[prop].action != null ) { _content[prop].action("out", _content[prop].objet); }
 					}	
@@ -177,8 +177,8 @@ package railk.as3.utils.link.linkItem {
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
-							if( type == "text" ){ Tweener.addTween( _content[prop].objet, { _text_color:_content[prop].colors.click, time:.2, transition:"linear" } ); }
-							else if ( type == "sprite" ) { Tweener.addTween( _content[prop].objet, { _color:_content[prop].colors.click, time:.2, transition:"linear" } ); }
+							if( type == "text" ){ Process.to( _content[prop].objet, .2, { text_color:_content[prop].colors.click } ); }
+							else if ( type == "sprite" ) { Process.to( _content[prop].objet, .2, { color:_content[prop].colors.click } ); }
 						}	
 					}	
 					break;

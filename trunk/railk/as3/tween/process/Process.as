@@ -38,6 +38,7 @@
 		public var smartRotation:Boolean = false;
 		public var rounded:Boolean = false;
 		public var timeScale:Number = 1;
+		public var onStart:Function;
 		public var onUpdate:Function;
 		public var onComplete:Function;
 		
@@ -183,7 +184,7 @@
 			}
 			if( _hpl) _plugins.update(factor);
 			checkProgressPoint(t);
-			if (_hasUp) props.onUpdate.apply(null);
+			if (_hasUp) onUpdate.apply(null);
 			if (time == duration) complete();
 		}
 		
@@ -282,6 +283,7 @@
 				_active = true;
 				if (!_propsSet) setProps();
 				else if (props.visible != undefined && _isDO) target.visible = true;
+				if (onStart != null)onStart.apply(null);
 				if (duration == 0.001) startTime -= 1;
 				return true;
 			} 

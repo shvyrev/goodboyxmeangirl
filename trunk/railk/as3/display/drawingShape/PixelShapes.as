@@ -6,7 +6,7 @@
 * @version 0.1
 */
 
-package railk.as3.display
+package railk.as3.display.drawingShape
 {
 	import flash.geom.Point;
 	

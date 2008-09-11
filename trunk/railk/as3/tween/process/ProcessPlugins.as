@@ -225,7 +225,7 @@
 			if (!isNaN(o.info.alpha)) endClr.alphaMultiplier = o.info.alpha;
 			else endClr.alphaMultiplier = o.info.target.alpha;
 			if ((o.info.color != null && o.info.color != "") || o.info.color == 0) endClr.color = o.info.color;
-			var n:Number = o.target.progress, r:Number = 1 - n, sc:Object = clr, ec:Object = o.info.endColor;
+			var n:Number = o.target.progress, r:Number = 1 - n, sc:Object = clr, ec:Object = endClr;
 			o.info.target.transform.colorTransform = new ColorTransform(sc.redMultiplier * r + ec.redMultiplier * n,
 																		  sc.greenMultiplier * r + ec.greenMultiplier * n,
 																		  sc.blueMultiplier * r + ec.blueMultiplier * n,

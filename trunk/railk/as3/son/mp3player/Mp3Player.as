@@ -37,9 +37,6 @@ package railk.as3.son.mp3player {
 	import railk.as3.utils.Utils;
 	import railk.as3.utils.objectList.*;
 	
-	// _______________________________________________________________________________________ IMPORT TWEENER
-	import caurina.transitions.Tweener;
-	
 	
 	
 	public class Mp3Player extends DynamicRegistration  

@@ -13,12 +13,7 @@ package railk.as3.utils.grid {
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
-	
-	// ______________________________________________________________________________________ IMPORT TWEENER
-	import caurina.transitions.Tweener;
-	import caurina.transitions.properties.ColorShortcuts;
-	import caurina.transitions.properties.DisplayShortcuts;
-	import caurina.transitions.properties.TextShortcuts;
+	import railk.as3.tween.process.*;
 	
 	
 	public class Cell 
@@ -57,11 +52,7 @@ package railk.as3.utils.grid {
 		 * @param	debugContainer
 		 */
 		public function Cell( id:String, X:Number, Y:Number, centerX:Number, centerY:Number, H:Number, W:Number, ligne:Number, colonne:Number, debug:Boolean = false, debugContainer:*= null ):void 
-		{
-			ColorShortcuts.init();
-			DisplayShortcuts.init();
-			TextShortcuts.init();
-			
+		{	
 			_id = id;
 			_X = X;
 			_Y = Y;
@@ -88,8 +79,8 @@ package railk.as3.utils.grid {
 		
 		public function set isUsed( state:Boolean ):void {
 			used = state;
-			if ( _debug && used ) { Tweener.addTween( gCell, { _color:0xFF0000, time:.3 } ); }
-			else if ( _debug && !used ) { Tweener.addTween( gCell, { _color:0x000000, time:.3 } ); }
+			if ( _debug && used ) { Process.to( gCell, .3, { color:0xFF0000 } ); }
+			else if ( _debug && !used ) { Process.to( gCell, .3, { color:0x000000 } ); }
 		}
 		
 		public function get id():String { return _id; }
