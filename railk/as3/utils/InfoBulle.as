@@ -19,9 +19,7 @@ package railk.as3.utils
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
 	import railk.as3.utils.DynamicRegistration;
-	
-	// _______________________________________________________________________________________ IMPORT TWEENER
-	import caurina.transitions.Tweener;
+	import railk.as3.tween.process.*;
 	
 	
 	public class InfoBulle extends DynamicRegistration
@@ -230,19 +228,19 @@ package railk.as3.utils
 		
 		public function set texte( value:String ):void {
 			txt.appendText( '' );
-			Tweener.addTween( txt, { _text:value, time:.3, onUpdate:function()
+			Process.to( txt, .3, { text:value }, { onUpdate:function()
 			{ 
 				var add:int=0;
 				if ( txt.textWidth >= 20 ) 
 				{
 					add = 20;
-					Tweener.addTween( triangle, { alpha:1 } );
+					Process.to( triangle, 0, { alpha:1 } );
 					engaged = false;
 				}	
 				else
 				{
 					if(_tri && !engaged )
-						Tweener.addTween( triangle, { alpha:0, time:.2 } );
+						Process.to( triangle, .2, { alpha:0 } );
 						engaged = true;
 				}		
 						

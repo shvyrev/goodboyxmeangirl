@@ -19,9 +19,7 @@ package railk.as3.utils {
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
 	import railk.as3.utils.Utils;
-	
-	// ______________________________________________________________________________________ IMPORT TWEENER
-	import caurina.transitions.Tweener;
+	import railk.as3.tween.process.*;
 	
 	
 	
@@ -215,7 +213,7 @@ package railk.as3.utils {
 					}	
 				}	
 				else {
-					Tweener.addTween( slider, { y:0, time:.4, onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+					Process.to( slider, .4, { y:0 }, { onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 					showHide(0, false);
 					////////////////////////////////////
 					delListeners();
@@ -244,7 +242,7 @@ package railk.as3.utils {
 					}	
 				}	
 				else {
-					Tweener.addTween( slider, { x:0 , time:.4, onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+					Process.to( slider, .4, { x:0 } , { onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 					showHide(0, false);
 					////////////////////////////////////
 					delListeners();
@@ -262,8 +260,8 @@ package railk.as3.utils {
 		 * @param	alpha
 		 */
 		public function showHide( alpha:Number, visibility:Boolean ):void {
-			if(alpha){ Tweener.addTween( scrollContainer, { alpha:alpha, time:.4, onStart:function() { scrollContainer.visible = visibility; } } ); }
-			else { Tweener.addTween( scrollContainer, { alpha:alpha, time:.4, onComplete:function() { scrollContainer.visible = visibility; } } ); }
+			if(alpha) Process.to( scrollContainer, .4, { alpha:alpha }, { onStart:function() { scrollContainer.visible = visibility; } } );
+			else Process.to( scrollContainer, .4, { alpha:alpha}, { onComplete:function() { scrollContainer.visible = visibility; } } );
 		}	
 		
 		
@@ -299,30 +297,30 @@ package railk.as3.utils {
 						if ( mouseY >= rect.height ) { value = rect.height; }
 						else if ( mouseY <= slider.height ) { value = 0; }
 						else { value = mouseY - slider.height / 2; }
-						Tweener.addTween( slider, { y:value, time:.4 } );
-						Tweener.addTween( content, { y: -(value * multiplier), rounded:true, time:.6 } );
+						Process.to( slider, .4, { y:value} );
+						Process.to( content, .6, { y: -(value * multiplier)},{rounded:true} );
 					}
 					else if ( way == "H" ) {
 						if ( mouseX >= rect.width ) { value = rect.width; }
 						else if ( mouseX <= slider.width ) { value = 0; }
 						else { value = mouseX - slider.width / 2; }
-						Tweener.addTween( slider, { x:value, time:.4 } ); 
-						Tweener.addTween( content, { x: -(value * multiplier), rounded:true, time:.6 } );
+						Process.to( slider, .4, { x:value} );
+						Process.to( content, .6, { x: -(value * multiplier)},{rounded:true} );
 					}
 					evt.updateAfterEvent();
 					break;
 				
 				case MouseEvent.ROLL_OVER :
-					Tweener.addTween( scrollBG, { _color:scrollColor.fondOver, time:.6 } );
+					Process.to( scrollBG, .6, { color:scrollColor.fondOver } );
 					if( !customSlider ){
-						Tweener.addTween( slider, { _color:scrollColor.sliderOver, time:.6 } );
+						Process.to( slider, .6, { color:scrollColor.sliderOver} );
 					}	
 					break;
 					
 				case MouseEvent.ROLL_OUT :
-					Tweener.addTween( scrollBG, { _color:scrollColor.fond, time:.6 } );
+					Process.to( scrollBG, .6, { color:scrollColor.fond} );
 					if( !customSlider ){
-						Tweener.addTween( slider, { _color:scrollColor.slider, time:.6 } );
+						Process.to( slider, .6, { color:scrollColor.slider} );
 					}	
 					break;
 					
@@ -358,21 +356,21 @@ package railk.as3.utils {
 							if ( mouseY >= rect.height ) { value = rect.height; }
 							else if ( mouseY <= slider.height ) { value = 0; }
 							else { value = mouseY - slider.height / 2; }
-							Tweener.addTween( slider, { y:value , time:1, onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, 1, { y:value},{ onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 						}
 						else if ( way == "H" ) {
 							if ( mouseX >= rect.width ) { value = rect.width; }
 							else if ( mouseX <= slider.width ) { value = 0; }
 							else { value = mouseX - slider.width / 2; }
-							Tweener.addTween( slider, { x:value , time:1, onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, 1, { x:value},{onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 						}
 					}
 					else {
 						if( way == "V" ) {
-							Tweener.addTween( content, { y: -(slider.y * multiplier), rounded:true, time:.3 } );
+							Process.to( content,.3, { y: -(slider.y * multiplier) }, {rounded:true} );
 						}
 						else if( way == "H" ) {
-							Tweener.addTween( content, { x: -(slider.x * multiplier), rounded:true, time:.3 } );
+							Process.to( content,.3, { x: -(slider.x * multiplier)}, {rounded:true } );
 						}
 					}
 					break;
@@ -381,24 +379,24 @@ package railk.as3.utils {
 					
 					if ( way == "V" ) {
 						if ( slider.y >= 0 + evt.delta*14  && slider.y <= rect.height+ evt.delta*14  ) {
-							Tweener.addTween( slider, { y: slider.y - (evt.delta * 14), time:.4 , onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, .4, { y: slider.y - (evt.delta * 14)} , { onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 						}
 						else if( slider.y < 0 + evt.delta*14 ) {
-							Tweener.addTween( slider, { y: 0 , time:.4, onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, .4, { y: 0}, {onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 						}
 						else if ( slider.y > rect.height + evt.delta*14 ) {
-							Tweener.addTween( slider, { y:rect.height , time:.4, onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, .4, { y:rect.height }, {onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 						}
 					}
 					else if ( way == "H" ) {
 						if ( slider.x >= 0 + evt.delta*14 && slider.x <= rect.width + evt.delta*14 ) {
-							Tweener.addTween( slider, { x: slider.x - (evt.delta * 14), time:.4 , onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, .4, { x: slider.x - (evt.delta * 14)} , {onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 						}
 						else if( slider.x < 0 + evt.delta*14 ) {
-							Tweener.addTween( slider, { x: 0 , time:.4, onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, .4, { x: 0 }, {onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 						}
 						else if ( slider.x > rect.height+evt.delta*14 ) {
-							Tweener.addTween( slider, { x:rect.width, time:.4, onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, .4, { x:rect.width }, { onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 						}
 					}
 					break;

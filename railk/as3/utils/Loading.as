@@ -20,11 +20,7 @@ package railk.as3.utils {
 	import railk.as3.utils.DynamicRegistration;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.utils.BitmapConvertor;
-	
-	// ___________________________________________________________________ import Tweener
-	import caurina.transitions.Tweener;
-	import caurina.transitions.properties.ColorShortcuts;
-	
+	import railk.as3.tween.process.*;
 	
 	
 	public dynamic class Loading extends DynamicRegistration {	
@@ -55,7 +51,7 @@ package railk.as3.utils {
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function Loading():void {
-			ColorShortcuts.init();
+			Process.enablePlugin( ProcessPlugins );
 		}
 		
 		
@@ -239,7 +235,7 @@ package railk.as3.utils {
 		}
 		
 		public function set barColor( value:uint ):void {
-			Tweener.addTween( bar, { _color:value } );
+			Process.to( bar, { color:value } );
 		}
 		
 		public function get barFond():Number {
