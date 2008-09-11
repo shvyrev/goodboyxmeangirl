@@ -57,8 +57,8 @@
 			}
 			
 			if (prop.color != null) addPlugin("tint", tint, { progress:0 }, { progress:1 }, { target:_target, alpha:alpha, color:prop.color } );
-			if (prop.volume != null) addPlugin("volume", volume, {progress:0}, {volume:prop.volume}, {target:_target});
-			if (prop.pan != null) addPlugin("pan", pan, {progress:0}, {progress:1}, {target:_target});
+			if (prop.volume != null) addPlugin("volume", volume, {progress:0}, {progress:1}, {target:_target,volume:prop.volume});
+			if (prop.pan != null) addPlugin("pan", pan, {progress:0}, {progress:1}, {target:_target, pan:prop.pan});
 			if (prop.text != null) addPlugin("text", changeText, {progress:0}, {progress:1}, {target:_target, text:prop.text});
 			if (prop.text_color != null) addPlugin("text_color", changeColor, {progress:0}, {progress:1}, {target:_target, color:prop.text_color});
 			if (reverse) {
@@ -207,12 +207,13 @@
 		// 																					   SOUND FUNCTION
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function volume( o:Object ):void {
-			var value:Number = o.target.progress;
+			var value:Number = o.info.volume - ( 1 - o.target.progress );
 			o.info.target.soundTransform = new SoundTransform(value, o.info.target.soundTransform.pan);
 		}
 		
 		private function pan( o:Object ):void {
-			o.info.target.soundTransform = new SoundTransform(o.info.target.soundTransform.volume, o.target.progress);
+			var value:Number = o.info.pan - ( 1 - o.target.progress );
+			o.info.target.soundTransform = new SoundTransform(o.info.target.soundTransform.volume,value);
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
