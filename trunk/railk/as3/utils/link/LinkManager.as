@@ -71,7 +71,8 @@ package railk.as3.utils.link {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
-				swfAdress = swfAdressEnable
+				SWFAddress.setTitle( siteTitre );
+				swfAdress = swfAdressEnable;
 			}
 			linkList = new ObjectList();
 		}
@@ -169,5 +170,16 @@ package railk.as3.utils.link {
 				///////////////////////////////////////////////////////////////
 			}
 		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  		GETTER/SETTER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function get titre():String { return siteTitre; }
+		
+		public static function set titre( value:String ):void { 
+			siteTitre = value;
+			SWFAddress.setTitle( siteTitre );
+		}
+		
 	}
 }

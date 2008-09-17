@@ -235,7 +235,7 @@ package railk.as3.utils {
 		}
 		
 		public function set barColor( value:uint ):void {
-			Process.to( bar, { color:value } );
+			Process.to( bar, 0, { color:value } );
 		}
 		
 		public function get barFond():Number {
