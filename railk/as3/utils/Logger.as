@@ -27,8 +27,9 @@ package railk.as3.utils {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				TRACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function print( info:String, type:String, caller:String=null ):void {
-			if ( loggerType == type || loggerType == Logger.ALL ) trace( '[ LOG FROM ' + (caller) ? caller.toUpperCase : 'NONAME' +' => '+ info + ' ]');
+		public static function print( info:String, type:String, caller:String = null ):void {
+			var _caller:String = (caller != null ) ? caller.toUpperCase() : 'NONAME'
+			if ( loggerType == type || loggerType == Logger.ALL ) trace( '[ LOG FROM ' + _caller +' => '+ info + ' ]');
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

@@ -1,4 +1,14 @@
-﻿package railk.as3.tween.process {
+﻿/**
+* 
+* Process Tween engine, modification of tweenlite engine
+* http://blog.greensock.com/tweenliteas3/
+* Next Revision will not be based on Tweenlite
+* 
+* @author RICHARD RODNEY
+* @version 0.1
+*/
+
+package railk.as3.tween.process {
 	
 	import flash.display.DisplayObject;
 	import flash.display.Shape;
