@@ -36,7 +36,7 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	...args    ['name',displayObject:*,'group'=null,function=null],...
+		 * @param	...args ['name',displayObject:*,'group'=null,function=null],...
 		 */
 		public function add( ...args ):void
 		{

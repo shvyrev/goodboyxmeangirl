@@ -3,7 +3,7 @@
 * Static class LinkManager
 * 
 * @author Richard Rodney
-* @version 0.1
+* @version 0.2
 */
 
 
@@ -17,6 +17,7 @@ package railk.as3.utils.link {
 	import railk.as3.utils.link.LinkManagerEvent;
 	import railk.as3.utils.link.linkItem.Link;
 	import railk.as3.utils.objectList.*;
+	import railk.as3.utils.tree.TreeNode;
 	
 	// ____________________________________________________________________________________ IMPORT SWFADRESS
 	import com.asual.swfaddress.SWFAddress;
@@ -31,10 +32,12 @@ package railk.as3.utils.link {
 		//_______________________________________________________________________________ VARIABLES STATIQUES
 		private static var linkList                           :ObjectList;
 		private static var walker                             :ObjectNode;
+		private static var treeRoot                           :TreeNode
 		
 		//_____________________________________________________________________________ VARIABLES LINKMANAGER
 		private static var siteTitre                          :String;
-		private static var swfAdress                          :Boolean=false;
+		private static var swfAdress                          :Boolean = false;
+		private static var tree                               :Boolean = false;
 		private static var state                              :String;
 		
 		//____________________________________________________________________________________ VARIABLES LINK
@@ -67,14 +70,30 @@ package railk.as3.utils.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( titre:String, swfAdressEnable:Boolean=false ):void {
+		public static function init( titre:String, swfAdressEnable:Boolean=false, treeEnable:Boolean=false ):void {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
 				SWFAddress.setTitle( siteTitre );
 				swfAdress = swfAdressEnable;
 			}
+			if (treeEnable) {
+				initTree();
+				tree = treeEnable;
+			}
 			linkList = new ObjectList();
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  			LINK TREE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function initTree(obj:*=null):void {
+			treeRoot = new TreeNode('root');
+		}
+		
+		public static function addToTree(name:String, parent:String, obj:*=null):void {
+			(new TreeNode(name, obj, treeRoot.getTreeNodeByName( parent ) ) );
 		}
 		
 		
@@ -120,6 +139,14 @@ package railk.as3.utils.link {
 		private static function toTitleCase(str) { return str.substr(0,1).toUpperCase() + str.substr(1); }
 		
 		private static function formatTitle(title) { return siteTitre + (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : ''); }
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  		    TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function toString():String {
+			return treeRoot.treeToString();
+		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
