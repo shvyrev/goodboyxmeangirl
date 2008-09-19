@@ -28,6 +28,8 @@ package railk.as3.utils.link.linkItem {
 		private var _content                                    :Object;
 		private var _onClick                                    :Function;
 		private var _type                                       :String;
+		private var _parent                                     :String;
+		private var _dummy                                      :Boolean;
 		
 		//___________________________________________________________________________________ VARIABLES ETATS
 		private var swfAddress                                  :Boolean;     
@@ -45,13 +47,15 @@ package railk.as3.utils.link.linkItem {
 		 * @param	onClick
 		 * @param	swfAddressEnable
 		 */
-		public function Link(  name:String, displayObject:Object, content:Object=null, type:String='mouse', onClick:Function = null, swfAddressEnable:Boolean = false, parent:String='root' ):void 
+		public function Link(  name:String, displayObject:Object, content:Object=null, type:String='mouse', onClick:Function = null, swfAddressEnable:Boolean = false, parent:String='root', dummy:Boolean=false ):void 
 		{
 			_name = name;
 			_displayObject = displayObject;
 			_content = content;
 			_onClick = onClick;
 			_type = type;
+			_parent = parent;
+			_dummy = dummy;
 			
 			//--swfaddress ?
 			swfAddress = swfAddressEnable;
@@ -125,6 +129,8 @@ package railk.as3.utils.link.linkItem {
 		public function isActive():Boolean { return active; }
 		
 		public function isSwfAddress():Boolean { return swfAddress; }
+		
+		public function isDummy():Boolean { return _dummy; }
 		
 		public function get name():String { return _name; }
 		
