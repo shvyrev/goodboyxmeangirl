@@ -33,7 +33,7 @@ package railk.as3.display {
 		public function gradient(colors:Array, W:int, H:int, rotation:int, type:String, alphas:Array, ratios:Array, hide:Boolean=false):void {
 			var matrix:Matrix = new Matrix();
 			matrix.createGradientBox(W, H, rotation, 0, 0);
-
+			
 			this.graphics.clear();
 			this.graphics.beginGradientFill(type, colors, alphas, ratios, matrix, "pad","RGB"); 
 			this.graphics.lineTo(W, 0);
