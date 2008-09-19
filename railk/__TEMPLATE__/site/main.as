@@ -16,21 +16,17 @@ package {
 	import railk.as3.stage.StageManagerEvent;
 	import railk.as3.stage.FullScreenMode;
 	import railk.as3.utils.Logger;
+	import railk.as3.utils.link.LinkManager;
+	import railk.as3.tween.process.*;
 	
 	// _________________________________________________________________________________ IMPORT MACMOUSEWHEEL
 	import com.pixelbreaker.ui.osx.MacMouseWheel;
-	
-	// _______________________________________________________________________________________ IMPORT TWEENER
-	import caurina.transitions.properties.ColorShortcuts;
-	import caurina.transitions.properties.DisplayShortcuts
-	import caurina.transitions.properties.TextShortcuts
-	
 	
 	
 	public class main extends Sprite {
 		
 		// _______________________________________________________________________________________ CONSTANTES
-		private static var __PATH__            :String = "";
+		private static var __PATH__            :String;
 
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -40,7 +36,7 @@ package {
 			
 			//--flashVars
 			__PATH__ = Current.root.loaderInfo.parameters.path;
-			if ( __PATH__ == null ) __PATH__ = "";
+			__PATH__ = ( __PATH__ ) ? __PATH__ : '';
 			
 			//--stage
 			StageManager.init( Current.stage );
@@ -48,7 +44,7 @@ package {
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSELEAVE, manageEvent, false, 0, true );
-			StageManager.GlobalVars.title = "Site Web Title";
+			StageManager.GlobalVars.title = 'title';
 			
 			//--fullscreenMode
 			FullScreenMode.init( Current.stage );
@@ -56,14 +52,14 @@ package {
 			//--Mac Mouse Wheel
 			MacMouseWheel.setup( Current.stage );
 			
-			//--Tweener
-			ColorShortcuts.init();
-			DisplayShortcuts.init();
-			TextShortcuts.init();
+			//--Process
+			Process.enablePlugin( ProcessPlugins );
 			
 			//--logger
 			Logger.init( Logger.MESSAGE );
-
+			
+			//--LinkManager
+			LinkManager.init('title');
 		}
 		
 		
