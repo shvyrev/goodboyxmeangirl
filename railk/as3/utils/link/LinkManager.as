@@ -37,7 +37,6 @@ package railk.as3.utils.link {
 		//_____________________________________________________________________________ VARIABLES LINKMANAGER
 		private static var siteTitre                          :String;
 		private static var swfAdress                          :Boolean = false;
-		private static var tree                               :Boolean = false;
 		private static var updateTitle                        :Boolean = false;
 		private static var state                              :String;
 		
@@ -71,16 +70,13 @@ package railk.as3.utils.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( titre:String, swfAdressEnable:Boolean=false, treeEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
+		public static function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
 				SWFAddress.setTitle( siteTitre );
 				swfAdress = swfAdressEnable;
-			}
-			if (treeEnable) {
 				initTree();
-				tree = treeEnable;
 			}
 			updateTitle = updateTitleEnabled;
 			linkList = new ObjectList();
@@ -99,28 +95,29 @@ package railk.as3.utils.link {
 		 * @param	onClick                Function(type:String("hover"|"out"),o:*)=null
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 */
-		public static function add( name:String, displayObject:Object, displayObjectContent:Object=null, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false, parent:String='root' ):void 
-		{
+		public static function add( name:String, displayObject:Object, displayObjectContent:Object=null, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false, parent:String='root', dummy:Boolean=false ):void 
+		{	
 			var enable:Boolean;
-			if ( swfAdress && swfAdressEnable ) { enable = true; }
-			else if( swfAdress && !swfAdressEnable ) { enable = false; }
-			else if( !swfAdress && swfAdressEnable ) { enable = false; }
-			else if ( !swfAdress && !swfAdressEnable ) { enable = false; }
-			if (tree) addToTree( name, parent, displayObject );
-			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable, parent );
-			linkList.add( [name,link] );
+			if ( swfAdress && swfAdressEnable ) enable = true;
+			else if( swfAdress && !swfAdressEnable ) enable = false;
+			else if( !swfAdress && swfAdressEnable ) enable = false;
+			else if ( !swfAdress && !swfAdressEnable ) enable = false;
+			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable, parent, dummy );
+			if ( !linkList.getObjectByName( name ) || dummy || linkList.getObjectByName( name ).data.isDummy() ) linkList.add( [name, link] );
+			else linkList.update( name, link )
+			if(enable) addToTree( name, parent, link );
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			LINK TREE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function initTree(obj:*=null):void {
+		private static function initTree():void {
 			treeRoot = new TreeNode('root');
 		}
 		
 		public static function addToTree(name:String, parent:String, obj:*=null):void {
-			(new TreeNode(name, obj, treeRoot.getTreeNodeByName( parent ) ) );
+			if( !treeRoot.getTreeNodeByName(name) )(new TreeNode(name, obj, treeRoot.getTreeNodeByName( parent ) ) );
 		}
 		
 		
@@ -162,7 +159,7 @@ package railk.as3.utils.link {
 		// 																				  		    TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function toString():String {
-			return treeRoot.treeToString();
+			return treeRoot.treeToString()+'\n'+linkList.toString();
 		}
 		
 		
@@ -175,12 +172,14 @@ package railk.as3.utils.link {
 			var prop:String;
 			try {
 				if ( evt.value == '/' ) {
-					walker = linkList.head;
-					while ( walker ) {
-						if ( walker.data.isActive() && walker.data.isSwfAddress() ) { walker.data.undoAction(); }
-						walker = walker.next;
-					}
-					
+					try{
+						walker = treeRoot.getTreeNodeByName('root').childs.head;
+						while ( walker ) {
+							if ( walker.data.data.isActive() && walker.data.data.isSwfAddress() ) { walker.data.data.undoAction(); }
+							walker = walker.next;
+						}
+					}catch (err) { }
+										
 					state = "home";
 					///////////////////////////////////////////////////////////////
 					args = { info:"changed state", state:state };
@@ -189,12 +188,13 @@ package railk.as3.utils.link {
 					///////////////////////////////////////////////////////////////
 				}
 				else {
-					//undo manage with the tree for better handling, but debugging not easy -> TODO LATER
-					walker = linkList.head;//treeRoot.getTreeNodeByName(evt.value).childs.head;
-					while ( walker ) {
-						if ( walker.data.isActive() && walker.data.isSwfAddress() ) { walker.data.undoAction(); }
-						walker = walker.next;
-					}
+					try{
+						walker = treeRoot.getTreeNodeByName(evt.value).childs.head;
+						while ( walker ) {
+							if ( walker.data.data.isActive() && walker.data.data.isSwfAddress() ) { walker.data.data.undoAction(); }
+							walker = walker.next;
+						}
+					}catch (err) {}
 					
 					//do
 					var parsed:Array = parseAddress( evt.value );
