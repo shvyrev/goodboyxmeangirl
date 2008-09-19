@@ -16,7 +16,7 @@ package railk.as3.utils.link.linkItem {
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.tween.process.*;
 	
-	// ____________________________________________________________________________________ IMPORT SWFADRESS
+	// ___________________________________________________________________________________ IMPORT SWFADDRESS
 	import com.asual.swfaddress.SWFAddress;
 	
 	
@@ -24,13 +24,13 @@ package railk.as3.utils.link.linkItem {
 	{	
 		//________________________________________________________________________________________ VARIABLES		
 		private var _name                                       :String;
-		private var _displayObject                              :*;
+		private var _displayObject                              :Object;
 		private var _content                                    :Object;
 		private var _onClick                                    :Function;
 		private var _type                                       :String;
 		
 		//___________________________________________________________________________________ VARIABLES ETATS
-		private var swfAdress                                   :Boolean;     
+		private var swfAddress                                  :Boolean;     
 		private var active                                      :Boolean = false;
 		
 		
@@ -43,9 +43,9 @@ package railk.as3.utils.link.linkItem {
 		 * @param	displayObject
 		 * @param	displayObjectContent
 		 * @param	onClick
-		 * @param	swfAdressEnable
+		 * @param	swfAddressEnable
 		 */
-		public function Link(  name:String, displayObject:*, content:Object, type:String, onClick:Function = null, swfAdressEnable:Boolean = false ):void 
+		public function Link(  name:String, displayObject:Object, content:Object=null, type:String='mouse', onClick:Function = null, swfAddressEnable:Boolean = false, parent:String='root' ):void 
 		{
 			_name = name;
 			_displayObject = displayObject;
@@ -53,16 +53,18 @@ package railk.as3.utils.link.linkItem {
 			_onClick = onClick;
 			_type = type;
 			
-			//--swfadress ?
-			swfAdress = swfAdressEnable;
+			//--swfaddress ?
+			swfAddress = swfAddressEnable;
 				
 			//--Container
 			_displayObject.buttonMode = true;
 
 			//--setup
-			for ( var prop in content ) { 
-				content[prop].objet.mouseEnabled = false; 
-			}
+			if(content){
+				for ( var prop in content ) { 
+					content[prop].objet.mouseEnabled = false; 
+				}
+			}	
 			
 			/////////////////////////////
 			initListeners();
@@ -122,6 +124,8 @@ package railk.as3.utils.link.linkItem {
 		
 		public function isActive():Boolean { return active; }
 		
+		public function isSwfAddress():Boolean { return swfAddress; }
+		
 		public function get name():String { return _name; }
 		
 		public function get object():*{ return _displayObject; }
@@ -144,7 +148,7 @@ package railk.as3.utils.link.linkItem {
 			{
 				case MouseEvent.MOUSE_OVER :
 				case MouseEvent.ROLL_OVER :
-					if ( swfAdress ) { SWFAddress.setStatus(_name);}
+					if ( swfAddress ) { SWFAddress.setStatus(_name);}
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
@@ -157,7 +161,7 @@ package railk.as3.utils.link.linkItem {
 					
 				case MouseEvent.MOUSE_OUT :
 				case MouseEvent.ROLL_OUT :
-					if ( swfAdress ) { SWFAddress.resetStatus(); }
+					if ( swfAddress ) { SWFAddress.resetStatus(); }
 					for ( prop in _content ) {
 						type = getType( _content[prop].objet );
 						if( _content[prop].colors != null ) {
@@ -169,7 +173,7 @@ package railk.as3.utils.link.linkItem {
 					break;
 					
 				case MouseEvent.CLICK :
-					if ( swfAdress ) { SWFAddress.setValue(_name); }
+					if ( swfAddress ) { SWFAddress.setValue(_name); }
 					else {
 						if (active) { active = false; if( _onClick != null ){ _onClick("undo", _displayObject); } }
 						else{ active = true; if( _onClick != null ){ _onClick("do", _displayObject); } }

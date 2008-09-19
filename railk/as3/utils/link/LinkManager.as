@@ -38,6 +38,7 @@ package railk.as3.utils.link {
 		private static var siteTitre                          :String;
 		private static var swfAdress                          :Boolean = false;
 		private static var tree                               :Boolean = false;
+		private static var updateTitle                        :Boolean = false;
 		private static var state                              :String;
 		
 		//____________________________________________________________________________________ VARIABLES LINK
@@ -70,7 +71,7 @@ package railk.as3.utils.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( titre:String, swfAdressEnable:Boolean=false, treeEnable:Boolean=false ):void {
+		public static function init( titre:String, swfAdressEnable:Boolean=false, treeEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
@@ -81,19 +82,8 @@ package railk.as3.utils.link {
 				initTree();
 				tree = treeEnable;
 			}
+			updateTitle = updateTitleEnabled;
 			linkList = new ObjectList();
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  			LINK TREE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function initTree(obj:*=null):void {
-			treeRoot = new TreeNode('root');
-		}
-		
-		public static function addToTree(name:String, parent:String, obj:*=null):void {
-			(new TreeNode(name, obj, treeRoot.getTreeNodeByName( parent ) ) );
 		}
 		
 		
@@ -109,15 +99,28 @@ package railk.as3.utils.link {
 		 * @param	onClick                Function(type:String("hover"|"out"),o:*)=null
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 */
-		public static function add( name:String, displayObject:*, displayObjectContent:Object, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false ):void 
+		public static function add( name:String, displayObject:Object, displayObjectContent:Object=null, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false, parent:String='root' ):void 
 		{
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) { enable = true; }
 			else if( swfAdress && !swfAdressEnable ) { enable = false; }
 			else if( !swfAdress && swfAdressEnable ) { enable = false; }
-			else if( !swfAdress && !swfAdressEnable ) { enable = false; }
-			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable );
+			else if ( !swfAdress && !swfAdressEnable ) { enable = false; }
+			if (tree) addToTree( name, parent, displayObject );
+			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable, parent );
 			linkList.add( [name,link] );
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  			LINK TREE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function initTree(obj:*=null):void {
+			treeRoot = new TreeNode('root');
+		}
+		
+		public static function addToTree(name:String, parent:String, obj:*=null):void {
+			(new TreeNode(name, obj, treeRoot.getTreeNodeByName( parent ) ) );
 		}
 		
 		
@@ -142,6 +145,20 @@ package railk.as3.utils.link {
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  		PARSE ADDRESS
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function parseAddress( value:String ):Array {
+			var result:Array = new Array();
+			var tmp:Array = value.split('/');
+			for (var i:int = 0; i < tmp.length; i++) 
+			{
+				if ( tmp[i] != '' ) result.push( tmp[i]+'/' );
+			}
+			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		    TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function toString():String {
@@ -160,7 +177,7 @@ package railk.as3.utils.link {
 				if ( evt.value == '/' ) {
 					walker = linkList.head;
 					while ( walker ) {
-						if ( walker.data.isActive() ) { walker.data.undoAction(); }
+						if ( walker.data.isActive() && walker.data.isSwfAddress() ) { walker.data.undoAction(); }
 						walker = walker.next;
 					}
 					
@@ -172,12 +189,23 @@ package railk.as3.utils.link {
 					///////////////////////////////////////////////////////////////
 				}
 				else {
-					walker = linkList.head;
+					//undo manage with the tree for better handling, but debugging not easy -> TODO LATER
+					walker = linkList.head;//treeRoot.getTreeNodeByName(evt.value).childs.head;
 					while ( walker ) {
-						if ( walker.data.isActive() ) { walker.data.undoAction(); }
+						if ( walker.data.isActive() && walker.data.isSwfAddress() ) { walker.data.undoAction(); }
 						walker = walker.next;
 					}
-					getLink( evt.value ).doAction();
+					
+					//do
+					var parsed:Array = parseAddress( evt.value );
+					var nextLink:String = '/';
+					for (var i:int = 0; i < parsed.length ; i++) 
+					{
+						if (!getLink( nextLink + parsed[i] ).isActive()) {
+							getLink( nextLink + parsed[i] ).doAction();
+						}
+						nextLink = nextLink + parsed[i];
+					}
 					
 					state = evt.value;
 					///////////////////////////////////////////////////////////////
@@ -186,7 +214,7 @@ package railk.as3.utils.link {
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
 				}
-				SWFAddress.setTitle(formatTitle(evt.value));
+				if(updateTitle) SWFAddress.setTitle(formatTitle(evt.value));
 				
 			} catch (err) {
 				state = "erreur 404";
