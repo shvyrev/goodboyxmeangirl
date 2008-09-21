@@ -10,6 +10,7 @@
 package railk.as3.utils.link.linkItem {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
+	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
@@ -47,10 +48,10 @@ package railk.as3.utils.link.linkItem {
 		 * @param	onClick
 		 * @param	swfAddressEnable
 		 */
-		public function Link(  name:String, displayObject:Object, content:Object=null, type:String='mouse', onClick:Function = null, swfAddressEnable:Boolean = false, parent:String='root', dummy:Boolean=false ):void 
+		public function Link(  name:String, displayObject:Object=null, content:Object=null, type:String='mouse', onClick:Function = null, swfAddressEnable:Boolean = false, parent:String='root', dummy:Boolean=false ):void 
 		{
 			_name = name;
-			_displayObject = displayObject;
+			_displayObject = ( dummy ) ?  new Sprite() : displayObject;
 			_content = content;
 			_onClick = onClick;
 			_type = type;

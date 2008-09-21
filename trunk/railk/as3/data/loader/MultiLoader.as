@@ -602,6 +602,17 @@ package railk.as3.data.loader {
 		
 		public function getItems():Array { return itemsList.toArray(); }
 		
+		public function getItemsContent():Array {
+			var result:Array = new Array();
+			walker = itemsList.head;
+			while ( walker ) 
+			{
+				result.push( walker.data.content );
+				walker = walker.next;
+			}
+			return result;
+		}
+		
 		public function getItemContent( name:String, byArgs:Boolean=false, argsType:String="" ):* {
 			if(byArgs){ itemContent = getItemByArgs( argsType,name ).content; }
 			else { itemContent = getItemByName( name ).content; }
