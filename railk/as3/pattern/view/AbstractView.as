@@ -7,16 +7,16 @@
 
 package railk.as3.pattern.view
 {
-	import flash.display.Sprite;
-	import railk.as3.pattern.model.AbstractModel;
+	import railk.as3.pattern.model.IModel;
 	import railk.as3.pattern.controller.IController;	
 	import railk.as3.pattern.view.IView;
+	import railk.as3.utils.DynamicRegistration;
 	
 	
-	public class AbstractView extends Sprite implements IView
+	public class AbstractView extends DynamicRegistration implements IView
 	{
-		private var model:AbstractModel;
-		private var controller:IController;
+		private var _model:IModel;
+		private var _controller:IController;
 		
 		/**
 		 * Create the view for the mvc system.
@@ -24,10 +24,10 @@ package railk.as3.pattern.view
 		 * @param model				the model to associate with this view.
 		 * @param controller		[Optional] the already created controller to associate with this view.
 		 */
-		public function AbstractView( model:AbstractModel, controller:IController = null )
+		public function AbstractView( model:IModel, controller:IController = null )
 		{
-			this.model = model;
-			if( this.ontroller != null ) this.controller = controller;
+			_model = model;
+			if( _controller != null ) _controller = controller;
 		}
 	
 		/**
@@ -47,9 +47,9 @@ package railk.as3.pattern.view
 		 * 
 		 * @param model		the model object.
 		 */
-		public function set model( model:AbstractModel ):void
+		public function set model( model:IModel ):void
 		{
-			this.model = model;
+			_model = model;
 		}
 		
 		/**
@@ -57,9 +57,9 @@ package railk.as3.pattern.view
 		 * 
 		 * @return Model.
 		 */
-		public function get model():AbstractModel
+		public function get model():IModel
 		{
-			return model;
+			return _model;
 		}
 		
 		/**
@@ -69,7 +69,7 @@ package railk.as3.pattern.view
 		 */
 		public function set controller( controller:IController ):void
 		{
-			this.controller = controller;
+			_controller = controller;
 		}
 		
 		/**
@@ -79,7 +79,7 @@ package railk.as3.pattern.view
 		 */
 		public function get controller():IController
 		{
-			return controller;
+			return _controller;
 		}
 	}	
 }

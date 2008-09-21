@@ -18,18 +18,20 @@ package railk.as3.utils {
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
 		private static var loggerType                             :String;
+		private static var loggerChannel                          :String;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( type:String ):void { loggerType = type; }
+		public static function init( type:String, channel:String = '' ):void { loggerType = type; loggerChannel = channel; }
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				TRACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function print( info:String, type:String, caller:String = null ):void {
 			var _caller:String = (caller != null ) ? caller.toUpperCase() : 'NONAME'
-			if ( loggerType == type || loggerType == Logger.ALL ) trace( '[ LOG FROM ' + _caller +' => '+ info + ' ]');
+			if ( loggerChannel == '' && (loggerType == type || loggerType == Logger.ALL) ) trace( '[ LOG FROM ' + _caller +' => ' + info + ' ]');
+			else if( loggerChannel == caller && (loggerType == type || loggerType == Logger.ALL) ) trace( '[ LOG FROM ' + _caller +' => ' + info + ' ]');
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

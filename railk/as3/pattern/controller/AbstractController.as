@@ -7,13 +7,13 @@
 
 package railk.as3.pattern.controller
 {
-	import railk.as3.pattern.model.AbstractModel;
+	import railk.as3.pattern.model.IModel;
 	import railk.as3.pattern.view.IView;	
 	
 	public class AbstractController implements IController
 	{
-		private var model:AbstractModel;
-		private var view:IView;
+		private var _model:IModel;
+		private var _view:IView;
 	
 		/**
 		 * Create the controller for the mvc system.
@@ -21,10 +21,10 @@ package railk.as3.pattern.controller
 		 * @param	model		the model to associate with this view/controller pair.
 		 * @param	view		the view for this controller.
 		 */
-		public function AbstractController( model:AbstractModel, view:IView )
+		public function AbstractController( model:IModel, view:IView )
 		{
-			this.model = model;
-			this.view = view;
+			_model = model;
+			_view = view;
 		}
 		
 		/**
@@ -32,9 +32,9 @@ package railk.as3.pattern.controller
 		 * 
 		 * @param model		the model object.
 		 */
-		public function set model( model:AbstractModel ):void
+		public function set model( model:IModel ):void
 		{
-			this.model = model;
+			_model = model;
 		}
 		
 		/**
@@ -42,9 +42,9 @@ package railk.as3.pattern.controller
 		 * 
 		 * @return Model.
 		 */
-		public function get model():AbstractModel
+		public function get model():IModel
 		{
-			return model;
+			return _model;
 		}
 		
 		/**
@@ -54,7 +54,7 @@ package railk.as3.pattern.controller
 		 */
 		public function set view( view:IView ):void
 		{
-			this.view = view;
+			_view = view;
 		}
 		
 		/**
@@ -64,7 +64,7 @@ package railk.as3.pattern.controller
 		 */
 		public function get view():IView
 		{
-			return view;
+			return _view;
 		}
 	}
 }

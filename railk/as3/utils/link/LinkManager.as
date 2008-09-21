@@ -95,13 +95,15 @@ package railk.as3.utils.link {
 		 * @param	onClick                Function(type:String("hover"|"out"),o:*)=null
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 */
-		public static function add( name:String, displayObject:Object, displayObjectContent:Object=null, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false, parent:String='root', dummy:Boolean=false ):void 
+		public static function add( name:String, displayObject:Object=null, displayObjectContent:Object=null, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false, parent:String='root'):void 
 		{	
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
 			else if( swfAdress && !swfAdressEnable ) enable = false;
 			else if( !swfAdress && swfAdressEnable ) enable = false;
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
+			
+			var dummy:Boolean = (displayObject)? false : true;
 			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable, parent, dummy );
 			if ( !linkList.getObjectByName( name ) || dummy || linkList.getObjectByName( name ).data.isDummy() ) linkList.add( [name, link] );
 			else linkList.update( name, link )
@@ -179,6 +181,8 @@ package railk.as3.utils.link {
 							walker = walker.next;
 						}
 					}catch (err) { }
+					
+					if ( getLink(evt.value) ) getLink(evt.value).doAction();
 										
 					state = "home";
 					///////////////////////////////////////////////////////////////
