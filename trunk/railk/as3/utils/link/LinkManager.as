@@ -14,8 +14,6 @@ package railk.as3.utils.link {
 	import flash.events.EventDispatcher;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.utils.link.LinkManagerEvent;
-	import railk.as3.utils.link.linkItem.Link;
 	import railk.as3.utils.objectList.*;
 	import railk.as3.utils.tree.TreeNode;
 	
@@ -90,12 +88,13 @@ package railk.as3.utils.link {
 		 * 
 		 * @param	name                   nom du lien de type /.../.../...
 		 * @param	displayObject		   displayObject clickable
-		 * @param	displayObjectContent   Object de { nom:{ objet:dislplayObject , colors:{click:uint,out:uint,hover:uint}=null, action:Function(type:String("hover"|"out"),o:*)=null } }
 		 * @param   type                   'mouse' | 'roll'
-		 * @param	onClick                Function(type:String("hover"|"out"),o:*)=null
+		 * @param	actions                Function(type:String("hover"|"out"|"do"|"undo"),requester:*)=null
+		 * @param	colors                 Object {hover:,out:,click:}
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
+		 * @param	parent       		   si swfadress on indique le parent dans la structure
 		 */
-		public static function add( name:String, displayObject:Object=null, displayObjectContent:Object=null, type:String = 'mouse', onClick:Function = null, swfAdressEnable:Boolean = false, parent:String='root'):void 
+		public static function add( name:String, displayObject:Object=null, type:String='mouse', actions:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, parent:String='root'):Link 
 		{	
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
@@ -104,10 +103,12 @@ package railk.as3.utils.link {
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
 			var dummy:Boolean = (displayObject)? false : true;
-			link = new Link( name, displayObject, displayObjectContent, type, onClick, enable, parent, dummy );
+			link = new Link( name, displayObject, type, actions, colors, enable, parent, dummy );
 			if ( !linkList.getObjectByName( name ) || dummy || linkList.getObjectByName( name ).data.isDummy() ) linkList.add( [name, link] );
 			else linkList.update( name, link )
-			if(enable) addToTree( name, parent, link );
+			if (enable) addToTree( name, parent, link );
+			
+			return link;
 		}
 		
 		
@@ -118,7 +119,7 @@ package railk.as3.utils.link {
 			treeRoot = new TreeNode('root');
 		}
 		
-		public static function addToTree(name:String, parent:String, obj:*=null):void {
+		private static function addToTree(name:String, parent:String, obj:*=null):void {
 			if( !treeRoot.getTreeNodeByName(name) )(new TreeNode(name, obj, treeRoot.getTreeNodeByName( parent ) ) );
 		}
 		
