@@ -1,1 +1,0 @@
-/*** *  Icontroller* * @author Richard Rodney* @version 0.1*/package railk.as3.pattern.controller {	import railk.as3.pattern.model.IModel;		import railk.as3.pattern.view.IView;	public interface IController 	{		function set model( model:IModel ):void;		function get model():IModel;		function set view( view:IView ):void;		function get view():IView;	}}
