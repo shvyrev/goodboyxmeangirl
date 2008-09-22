@@ -75,7 +75,7 @@ package railk.as3.utils.link {
 		
 		public function addContent(name:String, displayObject:Object = null, actions:Function = null, colors:Object = null, inside:Boolean = false):void 
 		{
-			if ( inside ) displayObject.mouseEnable = false;
+			if ( inside ) displayObject.mouseEnabled = false;
 			_content[name] = { object:displayObject, type:getType(displayObject), colors:colors, actions:actions };
 			
 		}
