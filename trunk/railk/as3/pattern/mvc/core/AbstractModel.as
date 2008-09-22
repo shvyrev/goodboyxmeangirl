@@ -31,8 +31,8 @@ package railk.as3.pattern.mvc.core
 			data = null;
 		}
 		
-		public function launch():void{}
-		public function function getData( type:String, ...args ):*{}
+		public function start():void{}
+		public function getData( type:String, ...args ):*{}
 		
 	}
 }
