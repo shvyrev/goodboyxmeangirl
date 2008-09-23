@@ -47,7 +47,13 @@ package
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		override protected function createMask():DynamicRegistration
 		{
-			return new DynamicRegistration();
+			var s:DynamicRegistration= new DynamicRegistration();
+			
+				var m:GraphicShape = new GraphicShape();
+				m.rectangle( 0xFF0000, 0, 0, 220, 2 );
+				s.addChild( m );
+			
+			return s;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
