@@ -11,7 +11,8 @@ package railk.as3.pattern.mvc.interfaces
 	public interface IModel extends IEventDispatcher
 	{
 		function start():void;
-		function getData( type:String, ...args ):*
+		function load( type:String, ...args ):*
+		function getData( name:String ):*
 		function updateView(type:String):void;
 		function clearData():void;
 	}

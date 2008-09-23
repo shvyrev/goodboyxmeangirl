@@ -32,7 +32,8 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function start():void{}
-		public function getData( type:String, ...args ):*{}
+		public function load( type:String, ...args ):void{}
+		public function getData( name:String ):void{}
 		
 	}
 }
