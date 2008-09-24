@@ -33,14 +33,18 @@ package railk.as3.pattern.mvc.core
 			return null;
 		}
 		
-		public function show() : void
+		public function show():void
 		{
 			this.visible = true;
 		}
 
-		public function hide() : void
+		public function hide():void
 		{
 			this.visible = false;
+		}
+		
+		public function resize():void {
+			
 		}
 	
 		public function set model( model:IModel ):void

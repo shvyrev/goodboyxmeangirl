@@ -11,9 +11,10 @@ package railk.as3.pattern.mvc.interfaces
 	public interface IModel extends IEventDispatcher
 	{
 		function start():void;
-		function load( type:String, ...args ):*
-		function getData( name:String ):*
+		function execute( requester:String, type:String, ...args ):void;
+		function getData( name:String ):*;
 		function updateView(type:String):void;
 		function clearData():void;
+		function dispose():void;
 	}
 }

@@ -63,7 +63,7 @@ package railk.as3.utils {
 		 * @param	orientation 		"V" | "H"
 		 * @param	toScroll            the object to scroll
 		 * @param	colors 				Object  { fond:uint, fondOver:uint, slider:uint, sliderOver:uint }
-		 * @param	size 				Object  { fH:Number, fW:Number, sH:Number, sW:Number };
+		 * @param	sizes 				Object  { fH:Number, fW:Number, sH:Number, sW:Number }
 		 * @param	alphas   			Object  { fond:alpha, slider:alpha }
 		 * @param	wheel				To activate the wheel or not
 		 * @param	sliderClass         To use a personnal shape instead of the rectangular basic one
@@ -115,7 +115,7 @@ package railk.as3.utils {
 			
 			//--Autocheck if scroll bar is needed or must be resized if content size is modified
 			if ( autoCheckEnable ) {
-				contentCheck = { height:content.height, width:content.width }
+				contentCheck = { height:content.height, width:content.width };
 				this.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 			}
 			
@@ -126,11 +126,11 @@ package railk.as3.utils {
 				
 			//--Scroll setup
 			if ( orientation == "V" ) {
+				way = orientation;
 				if ( content.height > StageManager.H ) {
 					showHide(1,true);
 					distance = content.height - StageManager.H;
 					multiplier = distance / ( sizes.fH - sizes.sH );
-					way = orientation;
 					rect = new Rectangle(0, 0, 0, sizes.fH - sizes.sH);
 					////////////////////////////////////
 					initListeners();
@@ -140,11 +140,11 @@ package railk.as3.utils {
 				else { showHide(0,false); }
 			}
 			else if ( orientation == "H" ) {
+				way = orientation;
 				if ( content.width > StageManager.W ) {
 					showHide(1,true);
 					distance = content.width - StageManager.W;
 					multiplier = distance / ( sizes.fW - sizes.sW );
-					way = orientation;
 					rect = new Rectangle(0, 0, sizes.fW - sizes.sW, 0);
 					////////////////////////////////////
 					initListeners();
@@ -194,6 +194,7 @@ package railk.as3.utils {
 		{
 			if ( way == "V" ) {
 				if ( content.height > StageManager.H ) {
+					scrollContainer.visible = true;
 					showHide(1, true);
 					if ( slider.y >= oldStageH - slider.height ) { slider.y = StageManager.H - slider.height; }
 					else { slider.y = ( slider.y * StageManager.H ) / oldStageH; }
