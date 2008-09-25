@@ -15,8 +15,8 @@ package railk.as3.utils.flux {
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.flux.FluxEvent;
-	import railk.as3.data.saver.XmlSaver;
-	import railk.as3.data.saver.XmlSaverEvent;	
+	import railk.as3.data.saver.xml.XmlSaver;
+	import railk.as3.data.saver.xml.XmlSaverEvent;	
 	
 	
 	public class Flux extends EventDispatcher  

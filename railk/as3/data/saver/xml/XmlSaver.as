@@ -11,7 +11,7 @@
 *  les apellations dans content sont libres.
 */
 
-package railk.as3.data.saver {
+package railk.as3.data.saver.xml {
 	
 	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.events.Event;
@@ -100,7 +100,7 @@ package railk.as3.data.saver {
 				createXmlFile();
 			}
 		}
-		
+				
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   CHECK IF FILE EXIST
