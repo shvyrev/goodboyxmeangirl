@@ -77,8 +77,8 @@ package railk.as3.tween.process {
 			this.props = props;
 			this.duration = duration ? duration : 0.001;
 			this.delay = options.delay ? options.delay : 0;
-			_active = (duration == 0 && delay == 0);
-			_isDO = (target is DisplayObject);
+			_active = (duration == 0 && delay == 0) ? true : false;
+			_isDO = (target is DisplayObject) ? true : false;
 			_PP = [];
 			_propsSet = false;
 			if(_pluginClass) _plugins = new _pluginClass();
