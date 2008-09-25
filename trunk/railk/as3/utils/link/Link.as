@@ -16,6 +16,7 @@ package railk.as3.utils.link {
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.tween.process.*;
+	import railk.as3.utils.Singleton;
 	
 	// ___________________________________________________________________________________ IMPORT SWFADDRESS
 	import com.asual.swfaddress.SWFAddress;
@@ -23,6 +24,9 @@ package railk.as3.utils.link {
 	
 	public class Link  
 	{	
+		//_________________________________________________________________________________________ INSTANCE
+		private static var inst:Link;
+
 		//________________________________________________________________________________________ VARIABLES		
 		private var _name                                       :String;
 		private var _displayObject                              :Object;
@@ -32,15 +36,29 @@ package railk.as3.utils.link {
 		private var _type                                       :String;
 		private var _parent                                     :String;
 		private var _dummy                                      :Boolean;
+		private var _data                                       :*;
 		
 		//___________________________________________________________________________________ VARIABLES ETATS
 		private var swfAddress                                  :Boolean;     
 		private var active                                      :Boolean = false;
 		
 		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 GET INSTANCE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function getInstance():Link 
+		{
+			if(!inst) inst = Singleton.getInstance(Link);
+			return inst;
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
+		// 																						 	SINGLETON
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function Link() { Singleton.assertSingle(Link); }
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	   CREATE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
@@ -53,7 +71,7 @@ package railk.as3.utils.link {
 		 * @param	parent
 		 * @param	dummy
 		 */
-		public function Link(  name:String, displayObject:Object=null, type:String='mouse', actions:Function=null, colors:Object=null, swfAddressEnable:Boolean = false, parent:String='root', dummy:Boolean=false ):void 
+		public function create( name:String, displayObject:Object = null, type:String = 'mouse', actions:Function = null, colors:Object = null, swfAddressEnable:Boolean = false, parent:String = 'root', dummy:Boolean = false, data:*=null ):Link
 		{
 			_content = new Object();
 			_name = name;
@@ -63,6 +81,7 @@ package railk.as3.utils.link {
 			_type = type;
 			_parent = parent;
 			_dummy = dummy;
+			_data = data;
 			
 			//--swfaddress ?
 			swfAddress = swfAddressEnable;
@@ -71,12 +90,14 @@ package railk.as3.utils.link {
 			_displayObject.buttonMode = true;
 			initListeners();
 			/////////////////////////////
+			
+			return this;
 		}
 		
-		public function addContent(name:String, displayObject:Object = null, actions:Function = null, colors:Object = null, inside:Boolean = false):void 
+		public function addContent( name:String, displayObject:Object = null, actions:Function = null, colors:Object = null, inside:Boolean = false, data:*=null):void 
 		{
 			if ( inside ) displayObject.mouseEnabled = false;
-			_content[name] = { object:displayObject, type:getType(displayObject), colors:colors, actions:actions };
+			_content[name] = { object:displayObject, type:getType(displayObject), colors:colors, actions:actions, data:data };
 			
 		}
 		
@@ -124,6 +145,14 @@ package railk.as3.utils.link {
 			_displayObject.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  			TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function toString():String 
+		{
+			return '[ LINK > ' + this._name + ', ( parent:' + this._parent + ' ) ]';
+		}
+		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
@@ -134,9 +163,9 @@ package railk.as3.utils.link {
 			if ( _actions != null ) 
 			{ 
 				active = true; 
-				_actions("do", _displayObject);
+				_actions("do", _displayObject, _data);
 				for ( prop in _content ) {
-					if ( _content[prop].actions != null ) _content[prop].actions("do", _content[prop].object);
+					if ( _content[prop].actions != null ) _content[prop].actions("do", _content[prop].object, _content[prop].data );
 				}
 			} 
 		}
@@ -147,9 +176,9 @@ package railk.as3.utils.link {
 			if ( _actions != null )
 			{ 
 				active = false; 
-				_actions("undo", _displayObject);
+				_actions("undo", _displayObject, _data);
 				for ( prop in _content ) {
-					if ( _content[prop].actions != null ) _content[prop].actions("undo", _content[prop].object);
+					if ( _content[prop].actions != null ) _content[prop].actions("undo", _content[prop].object, _content[prop].data );
 				}
 			} 
 		}
@@ -191,14 +220,14 @@ package railk.as3.utils.link {
 						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.hover } );
 						else if( type == 'sprite') Process.to( _displayObject, .2, { color:_colors.hover} );
 					}
-					if ( _actions != null ) _actions( 'hover', _displayObject );
+					if ( _actions != null ) _actions( 'hover', _displayObject, _data );
 					//--content
 					for ( prop in _content ) {
 						if( _content[prop].colors != null ) {
 							if ( _content[prop].type == "text" ) Process.to( _content[prop].object, .2, {text_color:_content[prop].colors.hover } );
 							else if ( _content[prop].type == "sprite" ) Process.to( _content[prop].object, .2, { color:_content[prop].colors.hover} );
 						}	
-						if ( _content[prop].actions != null ) _content[prop].actions("hover", _content[prop].object);
+						if ( _content[prop].actions != null ) _content[prop].actions("hover", _content[prop].object, _content[prop].data);
 					}
 					break;
 					
@@ -209,22 +238,22 @@ package railk.as3.utils.link {
 						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.out } );
 						else if( type == 'sprite') Process.to( _displayObject, .2, { color:_colors.out} );
 					}
-					if ( _actions != null ) _actions( 'out', _displayObject );
+					if ( _actions != null ) _actions( 'out', _displayObject, _data );
 					//--content
 					for ( prop in _content ) {
 						if( _content[prop].colors != null ) {
 							if( _content[prop].type == "text" ) Process.to( _content[prop].object, .2, { text_color:_content[prop].colors.out } );
 							else if ( _content[prop].type == "sprite" ) Process.to( _content[prop].object, .2, { color:_content[prop].colors.out } );
 						}
-						if ( _content[prop].actions != null ) _content[prop].actions("out", _content[prop].object);
+						if ( _content[prop].actions != null ) _content[prop].actions("out", _content[prop].object, _content[prop].data );
 					}	
 					break;
 					
 				case MouseEvent.CLICK :
 					if ( swfAddress ) SWFAddress.setValue(_name);
 					else {
-						if (active) { active = false; if( _actions != null ){ _actions("undo", _displayObject); } }
-						else{ active = true; if( _actions != null ){ _actions("do", _displayObject); } }
+						if (active) { active = false; if( _actions != null ){ _actions("undo", _displayObject, _data); } }
+						else{ active = true; if( _actions != null ){ _actions("do", _displayObject, _data); } }
 					}
 					if ( _colors ) {
 						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.click } );
@@ -238,8 +267,8 @@ package railk.as3.utils.link {
 						}
 						if ( _content[prop].actions != null  ) 
 						{ 
-							if( !isActive() ) _content[prop].actions("do", _content[prop].object);
-							else _content[prop].actions("undo", _content[prop].object);
+							if( !isActive() ) _content[prop].actions("do", _content[prop].object, _content[prop].data );
+							else _content[prop].actions("undo", _content[prop].object, _content[prop].data );
 						}
 					}	
 					break;

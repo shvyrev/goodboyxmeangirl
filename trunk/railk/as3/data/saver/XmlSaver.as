@@ -13,7 +13,7 @@
 
 package railk.as3.data.saver {
 	
-	// _______________________________________________________________________________________ IMPORT FLASH
+	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
@@ -26,42 +26,47 @@ package railk.as3.data.saver {
 	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
 	
-	// __________________________________________________________________________________________ IMPORT ZIP
+	// ___________________________________________________________________________________________ IMPORT ZIP
 	import nochump.util.zip.*;
 	
-	// _______________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.saver.XmlSaverEvent;	
+	// _________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.data.saver.XmlSaverEvent;
+	import railk.as3.network.amfphp.AmfphpClient;
+	import railk.as3.network.amfphp.AmfphpClientEvent;
 	
 	
 
 	public class XmlSaver extends EventDispatcher {
 		
 		
-		//____________________________________________________________________________________ VARIABLES STATIQUES
+		//________________________________________________________________________________ VARIABLES STATIQUES
 		static private const saveXmlURL                   :String = "php/saveXML.php";
 		static private const saveZipURL                   :String = "php/saveFileServer.php";
 		static private const checkXmlUrl                  :String = "php/fileCheck.php";
 		
-		//____________________________________________________________________________________ VARIABLES RECUPERE
+		//_________________________________________________________________________________ VARIABLES RECUPERE
 		private var _name                                 :String;
 		private var _nodes                                :Array;
 		private var _file                                 :String;
 		private var _zip                                  :Boolean;
 		
-		//____________________________________________________________________________________ VARIABLES XML
+		//___________________________________________________________________________________ VARIABLES AMFPHP
+		
+		
+		//______________________________________________________________________________________ VARIABLES XML
 		private var xmlFile                               :XML;
 		
-		//____________________________________________________________________________________ VARIABLES ZIP
+		//______________________________________________________________________________________ VARIABLES ZIP
 		private var zipFile                               :ZipOutput;
 		
-		//____________________________________________________________________________________ VARIABLES LOADER
+		//___________________________________________________________________________________ VARIABLES LOADER
 		private var loader                                :URLLoader;
 		private var req                                   :URLRequest;
 		private var header                                :URLRequestHeader;
 		private var rep                                   :String;
 		private var vars                                  :URLVariables;
 		
-		//____________________________________________________________________________________ VARIABLES EVENEMENT
+		//_______________________________________________________________________________  VARIABLES EVENEMENT
 		private var eEvent                                :XmlSaverEvent;
 		
 		

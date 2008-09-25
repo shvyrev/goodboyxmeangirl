@@ -94,7 +94,7 @@ package railk.as3.utils.link {
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 * @param	parent       		   si swfadress on indique le parent dans la structure
 		 */
-		public static function add( name:String, displayObject:Object=null, type:String='mouse', actions:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, parent:String='root'):Link 
+		public static function add( name:String, displayObject:Object=null, type:String='mouse', actions:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, parent:String='root', data:*=null):Link 
 		{	
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
@@ -103,7 +103,7 @@ package railk.as3.utils.link {
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
 			var dummy:Boolean = (displayObject)? false : true;
-			link = new Link( name, displayObject, type, actions, colors, enable, parent, dummy );
+			link = Link.getInstance().create( name, displayObject, type, actions, colors, enable, parent, dummy, data );
 			if ( !linkList.getObjectByName( name ) || dummy || linkList.getObjectByName( name ).data.isDummy() ) linkList.add( [name, link] );
 			else linkList.update( name, link )
 			if (enable) addToTree( name, parent, link );
