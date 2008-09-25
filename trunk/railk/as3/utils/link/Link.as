@@ -48,8 +48,7 @@ package railk.as3.utils.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function getInstance():Link 
 		{
-			if(!inst) inst = Singleton.getInstance(Link);
-			return inst;
+			return Singleton.getInstance(Link);
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

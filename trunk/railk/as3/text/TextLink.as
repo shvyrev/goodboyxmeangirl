@@ -111,7 +111,9 @@ package railk.as3.text
 				texte.selectable = selectable;
 				if ( autoSize )
 				{
-					texte.autoSize = autoSizeType;				
+					texte.autoSize = autoSizeType;
+					if( width != 0) texte.width = width;
+					if( height != 0) texte.height = height;
 				}
 				else
 				{
@@ -123,6 +125,13 @@ package railk.as3.text
 				textLink.addChild( texte );
 			
 			addChild( textLink );	
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  	   		TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		override public function toString():String {
+			return '[ TEXTLINK > ' + this._name + ' ]';
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
