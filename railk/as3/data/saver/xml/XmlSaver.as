@@ -30,7 +30,7 @@ package railk.as3.data.saver.xml {
 	import nochump.util.zip.*;
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.saver.XmlSaverEvent;
+	import railk.as3.data.saver.xml.XmlSaverEvent;
 	import railk.as3.network.amfphp.AmfphpClient;
 	import railk.as3.network.amfphp.AmfphpClientEvent;
 	
