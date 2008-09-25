@@ -128,10 +128,11 @@ package railk.as3.utils {
 			if ( orientation == "V" ) {
 				way = orientation;
 				if ( content.height > StageManager.H ) {
-					showHide(1,true);
+					showHide(1, true);
 					distance = content.height - StageManager.H;
-					multiplier = distance / ( sizes.fH - sizes.sH );
-					rect = new Rectangle(0, 0, 0, sizes.fH - sizes.sH);
+					slider.height = ( (StageManager.H - distance) > sizes.sH ) ? StageManager.H - distance : sizes.sH;
+					multiplier = distance / ( sizes.fH - slider.height );
+					rect = new Rectangle(0, 0, 0, sizes.fH - slider.height);
 					////////////////////////////////////
 					initListeners();
 					listeners = true;
@@ -144,8 +145,9 @@ package railk.as3.utils {
 				if ( content.width > StageManager.W ) {
 					showHide(1,true);
 					distance = content.width - StageManager.W;
-					multiplier = distance / ( sizes.fW - sizes.sW );
-					rect = new Rectangle(0, 0, sizes.fW - sizes.sW, 0);
+					slider.width = ( (StageManager.W - distance) > sizes.sW ) ? StageManager.W - distance : sizes.sW;
+					multiplier = distance / ( sizes.fW - slider.width );
+					rect = new Rectangle(0, 0, sizes.fW - slider.width, 0);
 					////////////////////////////////////
 					initListeners();
 					listeners = true;
@@ -200,9 +202,10 @@ package railk.as3.utils {
 					else { slider.y = ( slider.y * StageManager.H ) / oldStageH; }
 					
 					scrollBG.height = ( scrollSize.fH * StageManager.H ) / oldStageH;
-					rect = new Rectangle(0, 0, 0, scrollBG.height - scrollSize.sH);
 					distance = content.height - StageManager.H;
-					multiplier = distance / ( scrollBG.height - scrollSize.sH );
+					slider.height = ( (StageManager.H - distance) > scrollSize.sH ) ? StageManager.H - distance : scrollSize.sH;
+					multiplier = distance / ( scrollBG.height - slider.height );
+					rect = new Rectangle(0, 0, 0, scrollBG.height - slider.height );
 					oldStageH = StageManager.H;
 					scrollSize.fH = scrollBG.height;
 					
@@ -229,9 +232,10 @@ package railk.as3.utils {
 					else { slider.x = ( slider.x * StageManager.W ) / oldStageW; }
 					
 					scrollBG.width = ( scrollSize.fW * StageManager.W ) / oldStageW; 
-					rect = new Rectangle(0, 0, scrollBG.width - scrollSize.sW, 0);
-					distance = content.height - StageManager.H;
-					multiplier = distance / ( scrollBG.width - scrollSize.sW );
+					distance = content.height - StageManager.W;
+					slider.width = ( (StageManager.W - distance) > scrollSize.sW ) ? StageManager.W - distance : scrollSize.sW;
+					multiplier = distance / ( scrollBG.width - slider.width  );
+					rect = new Rectangle(0, 0, scrollBG.width - slider.width, 0);
 					oldStageW = StageManager.W;
 					scrollSize.fW = scrollBG.width;
 					
@@ -379,24 +383,24 @@ package railk.as3.utils {
 				case MouseEvent.MOUSE_WHEEL :
 					
 					if ( way == "V" ) {
-						if ( slider.y >= 0 + evt.delta*14  && slider.y <= rect.height+ evt.delta*14  ) {
-							Process.to( slider, .4, { y: slider.y - (evt.delta * 14)} , { onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+						if ( slider.y >= 0 + evt.delta*18  && slider.y <= rect.height+ evt.delta*18  ) {
+							Process.to( slider, .4, { y: slider.y - (evt.delta * 18)} , { onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 						}
-						else if( slider.y < 0 + evt.delta*14 ) {
+						else if( slider.y < 0 + evt.delta*18 ) {
 							Process.to( slider, .4, { y: 0}, {onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 						}
-						else if ( slider.y > rect.height + evt.delta*14 ) {
+						else if ( slider.y > rect.height + evt.delta*18 ) {
 							Process.to( slider, .4, { y:rect.height }, {onUpdate: function() { content.y = -(slider.y * multiplier); } } );
 						}
 					}
 					else if ( way == "H" ) {
-						if ( slider.x >= 0 + evt.delta*14 && slider.x <= rect.width + evt.delta*14 ) {
-							Process.to( slider, .4, { x: slider.x - (evt.delta * 14)} , {onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+						if ( slider.x >= 0 + evt.delta*18 && slider.x <= rect.width + evt.delta*18 ) {
+							Process.to( slider, .4, { x: slider.x - (evt.delta * 18)} , {onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 						}
-						else if( slider.x < 0 + evt.delta*14 ) {
+						else if( slider.x < 0 + evt.delta*18 ) {
 							Process.to( slider, .4, { x: 0 }, {onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 						}
-						else if ( slider.x > rect.height+evt.delta*14 ) {
+						else if ( slider.x > rect.height+evt.delta*18 ) {
 							Process.to( slider, .4, { x:rect.width }, { onUpdate: function() { content.x = -(slider.x * multiplier); } } );
 						}
 					}
