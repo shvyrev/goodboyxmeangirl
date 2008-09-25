@@ -14,6 +14,7 @@ package railk.as3.network.amfphp.service
 	public interface IService  
 	{
 		function exec( connexion:NetConnection, responder:Responder ):void;
+		function get name():String;
 	}
 	
 }

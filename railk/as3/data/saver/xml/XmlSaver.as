@@ -18,12 +18,6 @@ package railk.as3.data.saver.xml {
 	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
-	import flash.net.URLLoader;
-	import flash.net.URLLoaderDataFormat;
-	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;
-	import flash.net.URLRequestHeader;
-	import flash.net.URLVariables;
 	import flash.utils.ByteArray;
 	
 	// ___________________________________________________________________________________________ IMPORT ZIP
@@ -33,16 +27,15 @@ package railk.as3.data.saver.xml {
 	import railk.as3.data.saver.xml.XmlSaverEvent;
 	import railk.as3.network.amfphp.AmfphpClient;
 	import railk.as3.network.amfphp.AmfphpClientEvent;
+	import railk.as3.network.amfphp.service.FileService; 
 	
 	
 
 	public class XmlSaver extends EventDispatcher {
 		
 		
-		//________________________________________________________________________________ VARIABLES STATIQUES
-		static private const saveXmlURL                   :String = "php/saveXML.php";
-		static private const saveZipURL                   :String = "php/saveFileServer.php";
-		static private const checkXmlUrl                  :String = "php/fileCheck.php";
+		//__________________________________________________________________________________ VARIABLES SERVICE
+		private var service                               :FileService;
 		
 		//_________________________________________________________________________________ VARIABLES RECUPERE
 		private var _name                                 :String;
@@ -50,21 +43,11 @@ package railk.as3.data.saver.xml {
 		private var _file                                 :String;
 		private var _zip                                  :Boolean;
 		
-		//___________________________________________________________________________________ VARIABLES AMFPHP
-		
-		
 		//______________________________________________________________________________________ VARIABLES XML
 		private var xmlFile                               :XML;
 		
 		//______________________________________________________________________________________ VARIABLES ZIP
 		private var zipFile                               :ZipOutput;
-		
-		//___________________________________________________________________________________ VARIABLES LOADER
-		private var loader                                :URLLoader;
-		private var req                                   :URLRequest;
-		private var header                                :URLRequestHeader;
-		private var rep                                   :String;
-		private var vars                                  :URLVariables;
 		
 		//_______________________________________________________________________________  VARIABLES EVENEMENT
 		private var eEvent                                :XmlSaverEvent;
@@ -73,9 +56,12 @@ package railk.as3.data.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function XmlSaver( name:String="undefined" ):void {
+		public function XmlSaver( name:String="undefined", server:String='', path:String='' ):void {
 			trace( "xmlSaver for " + name +" file launch" );
 			_name = name;
+			if ( !AmfphpClient.state ) AmfphpClient.init( server, path );
+			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, checkComplete, false, 0, true );
+			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, checkError, false, 0, true );
 		}
 		
 		
@@ -107,53 +93,17 @@ package railk.as3.data.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function checkFile():void 
 		{
-			loader = new URLLoader();
-			req= new URLRequest( checkXmlUrl );
-			req.data = _file;
-			req.method = URLRequestMethod.POST;
-			req.contentType = "text";
-			loader.load(req);
-			loader.addEventListener(Event.COMPLETE, checkComplete, false, 0, true );
-			loader.addEventListener(IOErrorEvent.IO_ERROR, checkError, false, 0, true );
-			
-			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"checkingfile " + _file };
-			eEvent = new XmlSaverEvent( XmlSaverEvent.ONCHECKBEGIN, args );
-			dispatchEvent( eEvent );
-			///////////////////////////////////////////////////////////////
+			AmfphpClient.call( new FileService().check( _file ) );
 		}
 
-		private function checkComplete( evt:Event ):void 
+		private function checkComplete( evt:AmfphpClientEvent ):void 
 		{	
-			rep = evt.currentTarget.data;
-			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"checkfilecomplete " + rep };
-			eEvent = new XmlSaverEvent( XmlSaverEvent.ONCHECKBEGIN, args );
-			dispatchEvent( eEvent );
-			///////////////////////////////////////////////////////////////
 			
-			if( rep == "true" ){
-				loadXmlFile();
-			}
-			else if( rep == "false" ){
-				createXmlFile();
-			}
-			loader.removeEventListener(Event.COMPLETE, checkComplete );
-			loader.removeEventListener(IOErrorEvent.IO_ERROR, checkError );
 		}
 
-		private function checkError( evt:IOErrorEvent ):void 
+		private function checkError( evt:AmfphpClientEvent ):void 
 		{	
-			loader.removeEventListener(Event.COMPLETE, checkComplete );
-			loader.removeEventListener(IOErrorEvent.IO_ERROR, checkError );
 			
-			///////////////////////////////////////////////////////////////
-			//arguments du messages
-			var args:Object = { info:evt };
-			//envoie de l'evenement pour les listeners de uploader
-			eEvent = new XmlSaverEvent( XmlSaverEvent.ONCHECKIOERROR, args );
-			dispatchEvent( eEvent );
-			///////////////////////////////////////////////////////////////
 		}
 		
 		

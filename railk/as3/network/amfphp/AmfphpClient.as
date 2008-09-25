@@ -27,6 +27,8 @@ package railk.as3.network.amfphp
 		protected static var disp                      				:EventDispatcher;
 		
 		// ______________________________________________________________________________ VARIABLES CONNEXION
+		public static var currentServive                            :String;
+		private static var connected                                :Boolean = false;
 		private static var connexion                                :NetConnection;
 		private static var responder                                :Responder;
 		
@@ -61,15 +63,18 @@ package railk.as3.network.amfphp
 		 * @param	server 'http://'SERVER'/'PATH'/gateway.php'
 		 */
 		public static function init( server:String, path:String ):void 
-		{
-			//trace
-			trace("                                Amfphp Client initialise");
-			trace("---------------------------------------------------------------------------------------");
-			
-			connexion = new NetConnection();
-			connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
-			connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
-			responder = new Responder( onResult, onError );
+		{	
+			if ( connected == false ) {
+				//trace
+				trace("                                Amfphp Client initialise");
+				trace("---------------------------------------------------------------------------------------");
+				
+				connexion = new NetConnection();
+				connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
+				connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
+				responder = new Responder( onResult, onError );
+				connected = true;
+			}	
 		}
 		
 		
@@ -81,7 +86,11 @@ package railk.as3.network.amfphp
 		 * @param	service 	name of the service to call -> service.method
 		 * @param	...args		arguments to be past in the service call
 		 */
-		public static function call( service:* ):void { service.exec( connexion, responder ); }
+		public static function call( service:* ):void 
+		{ 
+			service.exec( connexion, responder );
+			currentServive = service.name
+		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -90,7 +99,7 @@ package railk.as3.network.amfphp
 		private static function onResult( response:Object ):void 
 		{
 			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"service call success", data:response };
+			var args:Object = { info:"service call success", service:currentServive, data:response };
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_RESULT, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -104,7 +113,7 @@ package railk.as3.network.amfphp
 			var result:String = '';
 			for ( var prop in response ) { result += String( prop )+'\n'; }			
 			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"service call error", data:result };
+			var args:Object = { info:"service call error", service:currentServive, data:result };
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_ERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -121,6 +130,19 @@ package railk.as3.network.amfphp
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_CONNEXION_ERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																		   			    GETTER/SETTER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function get state():Boolean { return connected; }
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																		   			   		TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function toString():String
+		{
+			return '[ AMFPHP CLIENT > '+(connected)? 'connected' :'non_connected'+' ]'
 		}
 	}
 }	

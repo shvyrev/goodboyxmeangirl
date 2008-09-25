@@ -11,16 +11,21 @@ package railk.as3.data.saver.xml
 	
 	public class XmlSaverNodes
 	{
-		private static var _nodes:Dictionary = new Dictionary();
+		private var _nodes:Dictionary;
 		
-		public static function add( name:String, root:String, type:String, attributes:Object = null, content:*= null):XmlSaverNode 
+		public function XmlSaverNodes() 
 		{
-			var node:XmlSaverNode = new XmlSaverNode( root, type, attributes, content );
+			_nodes  = new Dictionary();
+		}
+		
+		public function add( name:String, root:String, type:String, attributes:Object = null, content:*= null):XmlSaverNode 
+		{
+			var node:XmlSaverNode = new XmlSaverNode( name, root, type, attributes, content );
 			_nodes[name] = node;
 			return node;
 		}
 		
-		public static function nodes():Array 
+		public function get nodes():Array 
 		{
 			var a:Array = new Array();
 			for each (var value:Object in _nodes)
@@ -30,12 +35,22 @@ package railk.as3.data.saver.xml
 			return a;
 		}
 		
-		public static function empty():void 
+		public function empty():void 
 		{
 			for each (var value:Object in _nodes)
 			{
 				value = null;
 			}
+		}
+		
+		public function toString():String 
+		{
+			var result:String ='';
+			for each (var value:Object in _nodes)
+			{
+				result += value + '\n';
+			}
+			return result;
 		}
 	}	
 }
