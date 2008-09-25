@@ -20,43 +20,50 @@ package railk.as3.network.amfphp.service
 		
 		public function FileService():void { }
 		
-		public function check( filename:String ):void
+		public function check( filename:String ):FileService
 		{
 			_type = 'check';
 			_filename = filename;
+			return this;
 		}
-		public function dir( path:String ):void
+		public function dir( path:String ):FileService
 		{
 			_type = 'dir';
 			_path = path;
+			return this;
 		}
-		public function upload( filename:String, path:String ):void
+		public function upload( filename:String, path:String ):FileService
 		{
 			_type = 'upload';
 			_filename = filename;
 			_path = path;
+			return this;
 		}
-		public function saveXml( filename:String, data:XML ):void
+		public function saveXml( filename:String, data:XML ):FileService
 		{
 			_type = 'saveXml';
 			_filename = filename;
 			_data = data;
+			return this;
 		}
-		public function saveLocal( filename:String, filetype:String, data:* ):void
+		public function saveLocal( filename:String, filetype:String, data:* ):FileService
 		{
 			_type = 'saveLocal';
 			_filename = filename;
 			_filetype = filetype;
 			_data = data;
+			return this;
 		}
-		public function saveServer( filename:String, data:* ):void
+		public function saveServer( filename:String, data:* ):FileService
 		{
 			_type = 'saveServer';
 			_filename = filename;
 			_data = data;
+			return this;
 		}
 		
-		public function exec( connexion:NetConnection, responder:Responder ):void {
+		public function exec( connexion:NetConnection, responder:Responder ):void 
+		{
 			switch( _type )
 			{
 				case 'dir' :
@@ -79,6 +86,8 @@ package railk.as3.network.amfphp.service
 					break;	
 			}	
 		}
+		
+		public function get name():String { return _type; }
 	}
 	
 }

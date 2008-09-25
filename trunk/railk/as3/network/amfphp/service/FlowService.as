@@ -23,6 +23,8 @@ package railk.as3.network.amfphp.service
 		public function exec( connexion:NetConnection, responder:Responder ):void {
 			connexion.call( 'Flow.execute', responder, _method, _vars );
 		}
+		
+		public function get name():String { return 'flow'; }
 	}
 	
 }
