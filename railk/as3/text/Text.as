@@ -75,7 +75,9 @@ package railk.as3.text
 			super.selectable = selectable;
 			if ( hasAutoSize )
 			{
-				super.autoSize = autoSize;				
+				super.autoSize = autoSize;
+				if( width != 0) super.width = width;
+				if( height != 0) super.height = height;
 			}
 			else
 			{
@@ -84,6 +86,13 @@ package railk.as3.text
 			}
 			super.wordWrap = wordwrap;
 			super.mouseEnabled = selectable;
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  	   		TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		override public function toString():String {
+			return '[ TEXT > ' + super.name + ' ]';
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
