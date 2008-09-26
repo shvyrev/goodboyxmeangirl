@@ -16,7 +16,7 @@ package railk.as3.utils.flux {
 	public dynamic class FluxEvent extends Event{
 			
 		// ______________________________________________________________________________ VARIABLES STATIQUES
-		static public const ONFLUXPUBLISHERROR                 :String = "onFluxPublishError";
+		static public const ON_FLUX_PUBLISH_ERROR                 :String = "onFluxPublishError";
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR

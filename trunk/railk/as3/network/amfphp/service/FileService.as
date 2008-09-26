@@ -13,6 +13,7 @@ package railk.as3.network.amfphp.service
 	public class FileService implements IService
 	{
 		private var _filename                       :String;
+		private var _loadType                       :String;
 		private var _filetype                       :String;
 		private var _path                           :String;
 		private var _data                           :*;
@@ -24,6 +25,13 @@ package railk.as3.network.amfphp.service
 		{
 			_type = 'check';
 			_filename = filename;
+			return this;
+		}
+		public function load( filename:String, loadType:String ):FileService
+		{
+			_type = 'load';
+			_filename = filename;
+			_loadType = loadType;
 			return this;
 		}
 		public function dir( path:String ):FileService
@@ -71,6 +79,9 @@ package railk.as3.network.amfphp.service
 					break;
 				case 'check' :
 					connexion.call( 'File.'+_type, responder, _filename );
+					break;
+				case 'load' :
+					connexion.call( 'File.'+_type, responder, _filename, _loadType );
 					break;
 				case 'upload' :
 					connexion.call( 'File.'+_type, responder, _filename, _path );

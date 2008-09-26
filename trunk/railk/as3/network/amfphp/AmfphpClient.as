@@ -27,7 +27,8 @@ package railk.as3.network.amfphp
 		protected static var disp                      				:EventDispatcher;
 		
 		// ______________________________________________________________________________ VARIABLES CONNEXION
-		public static var currentServive                            :String;
+		public static var currentService                            :String;
+		public static var currentRequester                          :String;
 		private static var connected                                :Boolean = false;
 		private static var connexion                                :NetConnection;
 		private static var responder                                :Responder;
@@ -83,13 +84,14 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	service 	name of the service to call -> service.method
-		 * @param	...args		arguments to be past in the service call
+		 * @param	service 	service to be used
+		 * @param	requester   requester of the call
 		 */
-		public static function call( service:* ):void 
+		public static function call( service:*, requester:String='' ):void 
 		{ 
+			currentRequester = requester;
+			currentService = service.name;
 			service.exec( connexion, responder );
-			currentServive = service.name
 		}
 		
 		
@@ -99,7 +101,7 @@ package railk.as3.network.amfphp
 		private static function onResult( response:Object ):void 
 		{
 			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"service call success", service:currentServive, data:response };
+			var args:Object = { info:"service call success", requester:currentRequester, service:currentService, data:response };
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_RESULT, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
@@ -113,7 +115,7 @@ package railk.as3.network.amfphp
 			var result:String = '';
 			for ( var prop in response ) { result += String( prop )+'\n'; }			
 			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"service call error", service:currentServive, data:result };
+			var args:Object = { info:"service call error", requester:currentRequester, service:currentService, data:result };
 			eEvent = new AmfphpClientEvent( AmfphpClientEvent.ON_ERROR, args );
 			dispatchEvent( eEvent );
 			///////////////////////////////////////////////////////////////
