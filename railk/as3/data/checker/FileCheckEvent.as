@@ -8,20 +8,14 @@
 
 package railk.as3.data.checker {
 
-	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.events.Event;
-
 	
 	public dynamic class FileCheckEvent extends Event{
 			
-		// _______________________________________________________________________________VARIABLES STATIQUES
-		static public const ONFILECHECKRESPONSE                  :String = "onFileCheckResponse";
-		static public const ONFILECHECKERROR                     :String = "onFileCheckError";
+		static public const ON_FILE_CHECK_COMPLETE                  :String = "onFileCheckComplete";
+		static public const ON_FILE_CHECK_ERROR                     :String = "onFileCheckError";
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+
 		public function  FileCheckEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;
 				for(var name:String in data) {
