@@ -240,10 +240,10 @@ package railk.as3.utils.flux {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function manageEvent( evt:XmlSaverEvent ) {
 			switch( evt.type ) {
-				case XmlSaverEvent.ONSAVEIOERROR:
+				case XmlSaverEvent.ON_ERROR:
 					///////////////////////////////////////////////////////////////
 					var args:Object = { info:"flux error " };
-					eEvent = new FluxEvent( FluxEvent.ONFLUXPUBLISHERROR, args );
+					eEvent = new FluxEvent( FluxEvent.ON_FLUX_PUBLISH_ERROR, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
 					break;
