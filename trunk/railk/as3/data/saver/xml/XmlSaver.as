@@ -67,12 +67,12 @@ package railk.as3.data.saver.xml {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function initListeners():void {
+		private function initListeners():void {
 			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
 			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
-		private static function delListeners():void {
+		private function delListeners():void {
 			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
 			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
@@ -131,12 +131,12 @@ package railk.as3.data.saver.xml {
 				zipFile.closeEntry();
 				zipFile.finish();	
 				
-				AmfphpClient.call( new FileService().saveFile( _file, zipFile.byteArray );
+				AmfphpClient.call( new FileService().saveFile( _file, zipFile.byteArray ));
 				
 			}
 			else 
 			{
-				AmfphpClient.call( new FileService().saveXml( _file, xml.toXMLString() );
+				AmfphpClient.call( new FileService().saveXml( _file, xml.toXMLString() ));
 			}	
 		}
 		
@@ -148,7 +148,7 @@ package railk.as3.data.saver.xml {
 			var zipFile:ZipFile = new ZipFile(loadedData);
 			var entry:ZipEntry = zipFile.entries[0];
 			var data:ByteArray = zipFile.getInput(entry);
-			return data.toString());
+			return data.toString();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -201,7 +201,7 @@ package railk.as3.data.saver.xml {
 						
 					case AmfphpClientEvent.ON_ERROR :
 						///////////////////////////////////////////////////////////////
-						argst = { info:"problem with "+ evt.service +" file" };
+						args = { info:"problem with "+ evt.service +" file" };
 						eEvent = new XmlSaverEvent( XmlSaverEvent.ON_ERROR, args );
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////
