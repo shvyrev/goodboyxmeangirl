@@ -8,28 +8,21 @@
 
 package railk.as3.data.uploader {
 
-	// _______________________________________________________________________________________ IMPORT FLASH
 	import flash.events.Event;
-
-	// _______________________________________________________________________________________ CONSTRUCTEUR
 	
 	public dynamic class UpLoaderEvent extends Event{
 			
-		// ___________________________________________________________________________________ VARIABLES STATIQUES
-		static public const ONCANCEL                        :String = "onCancel";
-		static public const ONSELECT                        :String = "onSelect";
-		static public const ONBEGIN                         :String = "onBegin";
-		static public const ONPROGRESS                      :String = "onProgress";
-		static public const ONCOMPLETE                      :String = "onComplete";
-		static public const ONHTTPSTATUS                    :String = "onHttpStatus";
-		static public const ONDATAUPLOADED                  :String = "onDataUploaded";
-		static public const ONIOERROR                       :String = "onIoError";
-		static public const ONSECURITYERROR                 :String = "onSecurityError";
+		static public const ON_CANCEL                        :String = "onCancel";
+		static public const ON_SELECT                        :String = "onSelect";
+		static public const ON_BEGIN                         :String = "onBegin";
+		static public const ON_PROGRESS                      :String = "onProgress";
+		static public const ON_COMPLETE                      :String = "onComplete";
+		static public const ON_HTTP_STATUS                   :String = "onHttpStatus";
+		static public const ON_DATA_UPLOADED                 :String = "onDataUploaded";
+		static public const ON_IOERROR                       :String = "onIoError";
+		static public const ON_SECURITY_ERROR                :String = "onSecurityError";
 		
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function UpLoaderEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;
 				for(var name:String in data) {

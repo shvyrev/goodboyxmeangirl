@@ -53,12 +53,28 @@ package railk.as3.data.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function XmlSaver( name:String="undefined", server:String='', path:String='' ):void {
-			Logger.print( "xmlSaver for " + name +" file launch", Logger.MESSAGE, 'XMLSAVER' );
+		public function XmlSaver( name:String = "undefined", server:String = '', path:String = '' ):void 
+		{
 			_name = name;
-			if ( !AmfphpClient.state ) AmfphpClient.init( server, path );
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, checkComplete );
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, checkError );
+			Logger.print( "xmlSaver for " + name +" file launch", Logger.MESSAGE, 'XMLSAVER' );
+			AmfphpClient.init( server, path );
+			
+			////////////////////////////////////
+			initListeners()
+			////////////////////////////////////
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				GESTION DES LISTENERS
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function initListeners():void {
+			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+		}
+		
+		private static function delListeners():void {
+			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		
@@ -115,7 +131,7 @@ package railk.as3.data.saver.xml {
 				zipFile.closeEntry();
 				zipFile.finish();	
 				
-				AmfphpClient.call( new FileService().saveServer( _file, zipFile.byteArray );
+				AmfphpClient.call( new FileService().saveFile( _file, zipFile.byteArray );
 				
 			}
 			else 
@@ -140,6 +156,7 @@ package railk.as3.data.saver.xml {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent(evt:AmfphpClientEvent ):void 
 		{
+			var args:Object;
 			if ( evt.requester == requester)
 			{
 				switch( evt.type )
@@ -150,7 +167,7 @@ package railk.as3.data.saver.xml {
 							case 'check' :
 								loadFile();
 								///////////////////////////////////////////////////////////////
-								var args:Object = { info:"problem checking file", data:evt.data };
+								args = { info:"problem checking file", data:evt.data };
 								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_CHECK_COMLETE, args );
 								dispatchEvent( eEvent );
 								///////////////////////////////////////////////////////////////
@@ -162,32 +179,43 @@ package railk.as3.data.saver.xml {
 								
 								updateXmlFile();
 								///////////////////////////////////////////////////////////////
-								var args:Object = { info:"load complete" };
+								args = { info:"load complete" };
 								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_LOAD_COMPLETE, args );
 								dispatchEvent( eEvent );
 								///////////////////////////////////////////////////////////////
 								break;
 							
 							case 'saveXml' :
-							case 'saveServer' :
+							case 'saveFile' :
 								///////////////////////////////////////////////////////////////
-								var args:Object = { info:"saving file complete "+evt.data };
+								args = { info:"saving file complete "+evt.data };
 								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_SAVE_COMLETE, args );
 								dispatchEvent( eEvent );
 								///////////////////////////////////////////////////////////////
 								break;
 						}
+						///////////////////////////
+						dispose();
+						//////////////////////////
 						break;
 						
 					case AmfphpClientEvent.ON_ERROR :
 						///////////////////////////////////////////////////////////////
-						var args:Object = { info:"problem with "+ evt.service +" file" };
+						argst = { info:"problem with "+ evt.service +" file" };
 						eEvent = new XmlSaverEvent( XmlSaverEvent.ON_ERROR, args );
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////
 						break;
 				}
 			}	
+		}
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				        	   DISPOSE
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private function dispose():void 
+		{
+			delListeners()
 		}
 		
 		

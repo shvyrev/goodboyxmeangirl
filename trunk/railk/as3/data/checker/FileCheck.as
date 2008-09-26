@@ -8,36 +8,22 @@
 package railk.as3.data.checker {
 	
 	// _________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	import flash.events.EventDispatcher;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
-	import flash.net.URLRequestMethod;
-	import flash.events.Event;
-	import flash.events.IOErrorEvent;
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.checker.FileCheckEvent;
+	import railk.as3.network.amfphp.*;
+	import railk.as3.network.amfphp.service.FileService;
 	
 	
 	
 	public class FileCheck extends EventDispatcher {
 		
-		// _______________________________________________________________________________ VARIABLES PROTEGEES
+		// _______________________________________________________________________________VARIABLES PROTEGEES
 		protected static var disp                               :EventDispatcher;
-		
-		// _______________________________________________________________________________________ CONSTANTES
-		private static const checkUrl                     		:String = "php/fileCheck.php";
-		
-		// _________________________________________________________________________________ VARIABLES LOADER
-		private static var loader                         		:URLLoader;
-		private static var req                            		:URLRequest;
-		private static var rep                            		:String;
-		private static var file                           		:String;
-		
-		// __________________________________________________________________________________ VARIABLES EVENT
 		private static var eEvent                               :FileCheckEvent;
-		
+		private static var _file                                :String;
+		private static var requester                            :String = 'fileCheck';
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -66,18 +52,14 @@ package railk.as3.data.checker {
 		 * 
 		 * @param	__file__    the file to check if it exist
 		 */
-		public static function check( __file__:String ):void 
+		public static function check( file:String, server:String='', path:String='' ):void 
 		{	
-			file = __file__;
-			loader = new URLLoader();
-			req= new URLRequest( checkUrl );
-			req.data = __file__;
-			req.method = URLRequestMethod.POST;
-			req.contentType = "text";
-			loader.load( req );
+			AmfphpClient.init( server, path );
+			_file = file;
 			
 			////////////////////////////////////
 			initListeners()
+			AmfphpClient.call( new FileService().check( _file ), requester );
 			////////////////////////////////////
 		}
 		
@@ -86,13 +68,13 @@ package railk.as3.data.checker {
 		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function initListeners():void {
-			loader.addEventListener(Event.COMPLETE, manageEvent);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, manageEvent);
+			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		private static function delListeners():void {
-			loader.addEventListener(Event.COMPLETE, manageEvent);
-			loader.addEventListener(IOErrorEvent.IO_ERROR, manageEvent);
+			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		
@@ -101,39 +83,39 @@ package railk.as3.data.checker {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function dispose():void {
 			delListeners();
-			loader = null;
-			req = null;
-			rep = null;
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:* ):void 
+		private static function manageEvent( evt:AmfphpClientEvent ):void 
 		{
-			var args:Object;
-			switch( evt.type ) 
-			{	
-				case Event.COMPLETE :
-					rep = evt.currentTarget.data;
-					///////////////////////////////////////////////////////////////
-					args = { info:"fichier "+ file +" present", rep:rep };
-					eEvent = new FileCheckEvent( FileCheckEvent.ONFILECHECKRESPONSE, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
-					dispose();
-					break;
-					
-				case IOErrorEvent.IO_ERROR :
-					///////////////////////////////////////////////////////////////
-					args = { info:"IOerror" };
-					eEvent = new FileCheckEvent( FileCheckEvent.ONFILECHECKERROR, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
-					dispose();
-					break;
-			}
+			if ( evt.requester == requester )
+			{
+				var args:Object;
+				switch( evt.type ) 
+				{	
+					case AmfphpClientEvent.ON_RESULT :
+						rep = evt.currentTarget.data;
+						///////////////////////////////////////////////////////////////
+						args = { info:"fichier "+ _file +" present", data:evt.data };
+						eEvent = new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_COMPLETE, args );
+						dispatchEvent( eEvent );
+						///////////////////////////////////////////////////////////////
+						dispose();
+						break;
+						
+					case AmfphpClientEvent.ON_ERROR :
+						///////////////////////////////////////////////////////////////
+						args = { info:"check error" };
+						eEvent = new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_ERROR, args );
+						dispatchEvent( eEvent );
+						///////////////////////////////////////////////////////////////
+						dispose();
+						break;
+				}
+			}	
 		}
 	}
 	

@@ -23,9 +23,6 @@ package railk.as3.data.uploader {
 
 	public class UpLoader extends EventDispatcher {
 		
-		//________________________________________________________________________________ VARIABLES STATIQUES
-		static private const uploadPHPFile :String = "php/upload.php";
-		
 		//___________________________________________________________________________________ VARIABLES UPLOAD
 		private var uploadURL              :URLRequest;
 		private var uploadVAR              :URLVariables;
@@ -41,9 +38,9 @@ package railk.as3.data.uploader {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function UpLoader():void 
+		public function UpLoader( uploadFilePath:String )
 		{
-			uploadURL = new URLRequest( uploadPHPFile );
+			uploadURL = new URLRequest( uploadFilePath );
 			uploadURL.method = URLRequestMethod.POST;
 			uploadVAR = new URLVariables();
 			
@@ -86,7 +83,7 @@ package railk.as3.data.uploader {
 		private function onCancel( evt:Event ):void 
 		{
 			var args:Object = { info:"upload annule" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONCANCEL, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_CANCEL, args );
 			dispatchEvent( eEvent );
 		}
 		
@@ -95,14 +92,14 @@ package railk.as3.data.uploader {
             fileRef.upload( uploadURL );
 			
 			var args:Object = { info: fileRef.name };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONSELECT, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_SELECT, args );
 			dispatchEvent( eEvent );
 		}
 		
 		private function onBegin( evt:Event ):void 
 		{
 			var args:Object = { info:"debut du transfert" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONBEGIN, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_BEGIN, args );
 			dispatchEvent( eEvent );
 		}
 		
@@ -112,7 +109,7 @@ package railk.as3.data.uploader {
 			{
 				var percent:Number = Math.floor(evt.bytesLoaded * 100 / evt.bytesTotal);
 				var args:Object = { info:percent };
-				eEvent = new UpLoaderEvent( UpLoaderEvent.ONPROGRESS, args );
+				eEvent = new UpLoaderEvent( UpLoaderEvent.ON_PROGRESS, args );
 				dispatchEvent( eEvent );
 				
 			} catch(e:Error)
@@ -125,35 +122,35 @@ package railk.as3.data.uploader {
 		private function onComplete( evt:Event ):void 
 		{
 			var args:Object = { info:"transfert termine" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONCOMPLETE, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_COMPLETE, args );
 			dispatchEvent( eEvent );
 		}
 		
 		private function onDataUploaded( evt:DataEvent ):void 
 		{
 			var args:Object = { info:"data uploaded" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONDATAUPLOADED, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_DATA_UPLOADED, args );
 			dispatchEvent( eEvent );
 		}
 		
 		private function onHttpStatus( evt:HTTPStatusEvent ):void 
 		{
 			var args:Object = { info:evt };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONHTTPSTATUS, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_HTTP_STATUS, args );
 			dispatchEvent( eEvent );
 		}
 		
 		private function onIOError( evt:IOErrorEvent ):void 
 		{
 			var args:Object = { info:evt };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONIOERROR, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_IOERROR, args );
 			dispatchEvent( eEvent );
 		}
 		
 		private function onSecurityError( evt:SecurityErrorEvent ):void 
 		{
 			var args:Object = { info:evt };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ONSECURITYERROR, args );
+			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_SECURITY_ERROR, args );
 			dispatchEvent( eEvent );
 		}
 		

@@ -62,7 +62,7 @@ package railk.as3.network.amfphp.service
 			_data = data;
 			return this;
 		}
-		public function saveServer( filename:String, data:* ):FileService
+		public function saveFile( filename:String, data:* ):FileService
 		{
 			_type = 'saveServer';
 			_filename = filename;
@@ -89,10 +89,7 @@ package railk.as3.network.amfphp.service
 				case 'saveXml' :
 					connexion.call( 'File.'+_type, responder, _filename, _data);
 					break;
-				case 'saveLocal' :
-					connexion.call( 'File.'+_type, responder, _filename, _filetype, _data );
-					break;
-				case 'saveServer' :
+				case 'saveFile' :
 					connexion.call( 'File.'+_type, responder, _filename, _data );
 					break;	
 			}	
