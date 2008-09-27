@@ -10,7 +10,7 @@ package railk.as3.root
 	
 	public class  Current
 	{
-			public static var root                       :DisplayObject;
-			public static var stage                      :Stage;
+		public static var root                       :DisplayObject;
+		public static var stage                      :Stage;
 	}
 }

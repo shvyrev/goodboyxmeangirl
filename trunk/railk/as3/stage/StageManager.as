@@ -35,7 +35,8 @@ package railk.as3.stage {
 		public static var W                            :Number;
 		
 		// ____________________________________________________________________________________________ STAGE
-		public static var _stage                       :Stage;	
+		public static var _stage                       :Stage;
+		public static var folder                       :String;
 		
 		// ______________________________________________________________________________ VARAIBLE MOUSE IDLE
 		private static var lastMove                    :Number;
@@ -99,6 +100,27 @@ package railk.as3.stage {
 			//taille de la surface
 			H = stage.stageHeight;
 			W = stage.stageWidth;
+			
+			//folder
+			folder = getAppFolder( stage.loaderInfo.loaderURL );
+			
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																		  GET THE APPFOLDER FROM ROOT
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function getAppFolder( value:String ):String 
+		{
+			var regLocal:RegExp = new RegExp("file:///[A-Z][|]/", "");
+			var regLocalExtended:RegExp = new RegExp("file:///[A-Z][|]/[0-9A-Za-z%_./]*/www/", "");
+			var regServer:RegExp = new RegExp("http://[A-Za-z0-9.]*/", "");
+			folder = unescape( value );
+			
+			if ( folder.search(regLocal) != -1) folder = folder.replace( regLocalExtended, '');
+			else if ( folder.search(regServer) != -1) folder = folder.replace( regServer, '');
+			folder = folder.replace(folder.split('/')[folder.split('/').length - 1], "");
+			
+			return folder;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

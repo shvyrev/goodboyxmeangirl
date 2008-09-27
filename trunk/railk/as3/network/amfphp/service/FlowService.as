@@ -15,7 +15,8 @@ package railk.as3.network.amfphp.service
 		private var _method                          :String;
 		private var _vars                            :Array;
 		
-		public function FlowService( method:String, ...args ):void {
+		public function FlowService( method:String, ...args ) 
+		{
 			_vars = args;
 			_method = method;
 		}
