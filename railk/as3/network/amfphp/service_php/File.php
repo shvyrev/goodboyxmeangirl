@@ -1,10 +1,19 @@
 <?php
 class File {
 
-	function check( $filename ) 
+	function check( $filename,$url ) 
 	{
-		if( file_exists( $filename ) ) return true;
-		else return false;
+		if ($url)
+		{
+			$hdrs = @get_headers($filename);
+			return is_array($hdrs) ? (boolean)preg_match('/^HTTP\\/\\d+\\.\\d+\\s+2\\d\\d\\s+.*$/',$hdrs[0]) : false; 
+		}
+		else
+		{
+			if( file_exists($filename) ) return true;
+			else return false;
+		}
+		
 	}
 	
 	function saveXml($filename,$raw_xml)

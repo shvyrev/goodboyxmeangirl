@@ -19,6 +19,7 @@ package railk.as3.network.amfphp
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.network.amfphp.AmfphpClientEvent;
 	import railk.as3.utils.ObjectDumper;
+	import railk.as3.stage.StageManager;
 	
 	
 	public class  AmfphpClient
@@ -27,6 +28,7 @@ package railk.as3.network.amfphp
 		protected static var disp                      				:EventDispatcher;
 		
 		// ______________________________________________________________________________ VARIABLES CONNEXION
+		public static var rootPath                                  :String;
 		public static var currentService                            :String;
 		public static var currentRequester                          :String;
 		private static var connected                                :Boolean = false;
@@ -63,7 +65,7 @@ package railk.as3.network.amfphp
 		 * 
 		 * @param	server 'http://'SERVER'/'PATH'/gateway.php'
 		 */
-		public static function init( server:String, path:String ):void 
+		public static function init( server:String, path:String, servicePath:String='../' ):void 
 		{	
 			if ( connected == false ) {
 				//trace
@@ -75,6 +77,15 @@ package railk.as3.network.amfphp
 				connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
 				responder = new Responder( onResult, onError );
 				connected = true;
+				
+				//--rootPath
+				rootPath = servicePath;
+				var a:Array = path.split('/');
+				for (var i:int = 0; i <a.length ; i++) 
+				{
+					rootPath += '../';
+				}
+				rootPath += StageManager.folder;
 			}	
 		}
 		
@@ -97,7 +108,7 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  	 CLOSE CONNECTION
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function close():void
+		public static function close():void
 		{
 			connexion.close();
 		}
