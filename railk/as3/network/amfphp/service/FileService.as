@@ -34,7 +34,7 @@ package railk.as3.network.amfphp.service
 				_filename = unescape(filename);
 				_url = true;
 			}
-			else _filename = path+filename;
+			else _filename = path + filename;
 			return this;
 		}
 		public function load( filename:String, loadType:String ):FileService
@@ -52,7 +52,7 @@ package railk.as3.network.amfphp.service
 			else _path = this.path+path;
 			return this;
 		}
-		public function saveXml( filename:String, data:XML ):FileService
+		public function saveXml( filename:String, data:String ):FileService
 		{
 			_type = 'saveXml';
 			if (isUrl(filename)) _filename = unescape(filename);
@@ -62,7 +62,7 @@ package railk.as3.network.amfphp.service
 		}
 		public function saveFile( filename:String, data:* ):FileService
 		{
-			_type = 'saveServer';
+			_type = 'saveFile';
 			if (isUrl(filename)) _filename = unescape(filename);
 			else _filename = path+filename
 			_data = data;
