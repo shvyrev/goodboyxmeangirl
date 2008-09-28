@@ -15,10 +15,8 @@ package railk.as3.data.saver.file {
 	import flash.net.URLRequest;
 	
 	// _______________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.saver.FileSaverEvent;
 	import railk.as3.network.amfphp.*;
 	import railk.as3.network.amfphp.service.FileService;
-	import railk.as3.utils.Logger;
 	
 	
 	public class FileSaver extends EventDispatcher {
@@ -45,7 +43,6 @@ package railk.as3.data.saver.file {
 		public function FileSaver( name:String = 'undefined', server:String = '', path:String = '' )
 		{
 			_name = name;
-			Logger.print( "FileSaver for " + name +" file launch", Logger.MESSAGE, 'FILESAVER' );
 			AmfphpClient.init( server, path );
 			downloader = new FileReference();
 			
@@ -57,12 +54,12 @@ package railk.as3.data.saver.file {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function initListeners():void {
+		private function initListeners():void {
 			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
 			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
-		private static function delListeners():void {
+		private function delListeners():void {
 			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
 			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
@@ -98,7 +95,7 @@ package railk.as3.data.saver.file {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function saveFile():void 
 		{	
-			AmfphpClient.call( new FileService().saveFile( _path + "/" + _nom + "." + _fileType, _data );
+			AmfphpClient.call( new FileService().saveFile( _path + "/" + _fileName + "." + _fileType, _data ) );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -106,7 +103,7 @@ package railk.as3.data.saver.file {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function downloadFile():void 
 		{	
-			downloader.download( new URLRequest ( _path + "/" + _nom + "." + _fileType ) );
+			downloader.download( new URLRequest ( _path + "/" + _fileName + "." + _fileType ) );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -129,7 +126,7 @@ package railk.as3.data.saver.file {
 				{
 					case AmfphpClientEvent.ON_RESULT :
 						///////////////////////////////////////////////////////////////
-						args = { info:"file "+ _nom +"saved" };
+						args = { info:"file "+ _fileName +"saved" };
 						eEvent = new FileSaverEvent( FileSaverEvent.ON_SAVE_COMLETE, args );
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////
@@ -138,7 +135,7 @@ package railk.as3.data.saver.file {
 						
 					case AmfphpClientEvent.ON_ERROR :
 						///////////////////////////////////////////////////////////////
-						args = { info:"problem with "+ _nom +" file" };
+						args = { info:"problem with "+ _fileName +" file" };
 						eEvent = new FileSaverEvent( FileSaverEvent.ON_ERROR, args );
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////

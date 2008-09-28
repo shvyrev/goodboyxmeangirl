@@ -29,7 +29,7 @@ class File {
 	function saveFile($filename,$bytearray)
 	{
 		$flux = $bytearray->data; 
-		$flux = gzuncompress($flux); 
+		//$flux = gzuncompress($flux); 
 		return ( $success = file_put_contents($filename, $flux) ) ? $filename : $success;
 	}
 	

@@ -9,6 +9,7 @@ package railk.as3.data.checker {
 	
 	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.events.EventDispatcher;
+	import flash.events.Event;
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.checker.FileCheckEvent;
@@ -21,9 +22,11 @@ package railk.as3.data.checker {
 		
 		// _______________________________________________________________________________VARIABLES PROTEGEES
 		protected static var disp                               :EventDispatcher;
-		private static var eEvent                               :FileCheckEvent;
+	
 		private static var _file                                :String;
 		private static var requester                            :String = 'fileCheck';
+		
+		private static var eEvent                               :FileCheckEvent;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -50,7 +53,7 @@ package railk.as3.data.checker {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	__file__    the file to check if it exist
+		 * @param	file    the file to check if it exist
 		 */
 		public static function check( file:String, server:String='', path:String='' ):void 
 		{	
@@ -58,7 +61,7 @@ package railk.as3.data.checker {
 			_file = file;
 			
 			////////////////////////////////////
-			initListeners()
+			initListeners();
 			AmfphpClient.call( new FileService().check( _file ), requester );
 			////////////////////////////////////
 		}
@@ -97,7 +100,6 @@ package railk.as3.data.checker {
 				switch( evt.type ) 
 				{	
 					case AmfphpClientEvent.ON_RESULT :
-						rep = evt.currentTarget.data;
 						///////////////////////////////////////////////////////////////
 						args = { info:"fichier "+ _file +" present", data:evt.data };
 						eEvent = new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_COMPLETE, args );

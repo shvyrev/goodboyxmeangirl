@@ -18,9 +18,6 @@ package railk.as3.data.parser {
 		{
 			var result:Array = new Array();
 			var nbNodes:Number = getNbChildrens( xmlFile );
-			
-			//xmlFile = removeXmlNamespace( xmlFile );
-			
 			for ( var i:int = 0; i<nbNodes; i++ ) {
 				result[i] = getChildrens( xmlFile.children()[i] );
 			}
@@ -42,32 +39,41 @@ package railk.as3.data.parser {
 		// 																						GET CHILDRENS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function getChildrens( child:XML ):Object {
-			var result:Object = {};
+			var result:Object = { };
 			var name:String;
 			
 			var attributes:Object = getAttributes( child ) ;
 			var nbChildrens:int = getNbChildrens( child );
-			if ( nbChildrens != 0) {
-				for ( var i:int = 0; i < nbChildrens; i++ ) {
+			if ( nbChildrens != 0) 
+			{
+				for ( var i:int = 0; i < nbChildrens; i++ ) 
+				{
 					var hasChildren:int = getSubChildrens( child.children()[i] );
-					if ( hasChildren == 2 ) {
+					if ( hasChildren == 2 ) 
+					{
 						name = String( child.children()[i].name() );
 						result[name] = getChildrens( child.children()[i] );
 					}
-					else if ( hasChildren == 1 ) {
+					else if ( hasChildren == 1 ) 
+					{
 						name = String( child.children()[i].name() );
-						result[name] = child.children()[i];
-						result[name+"Att"] = getAttributes( child.children()[i] );
+						if( result[name] ) result[name] += ','+child.children()[i];
+						else result[name] = child.children()[i];
+						var subAttributes:Object = getAttributes( child.children()[i] );
+						if ( subAttributes ) result[name + "_attributes"] = subAttributes;
 					}
-					else if ( hasChildren == 0 ) {
-						name = String( child.name() );
-						result[name] = child;
+					else if ( hasChildren == 0 ) 
+					{
+						name = String( child.children()[i].name() );
+						result[name] = getAttributes( child.children()[i] );
 					}
 				}
-				result["attributes"] = attributes;
+				if(attributes) result["attributes"] = attributes;
 			}
-			else {
-				if ( attributes != null) {
+			else 
+			{
+				if ( attributes != null) 
+				{
 					name = String( child.name() );
 					result[name] = attributes;
 				}
@@ -144,6 +150,7 @@ package railk.as3.data.parser {
 			
 			return result;
 		}
+		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

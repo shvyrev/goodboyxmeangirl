@@ -26,8 +26,8 @@ package railk.as3.data.saver.xml {
 	import railk.as3.network.amfphp.AmfphpClient;
 	import railk.as3.network.amfphp.AmfphpClientEvent;
 	import railk.as3.network.amfphp.service.FileService;
-	import railk.as3.utils.Logger;
-	
+	import railk.as3.utils.ObjectDumper;
+	import railk.as3.data.parser.Parser;
 	
 
 	public class XmlSaver extends EventDispatcher {
@@ -56,7 +56,6 @@ package railk.as3.data.saver.xml {
 		public function XmlSaver( name:String = "undefined", server:String = '', path:String = '' ):void 
 		{
 			_name = name;
-			Logger.print( "xmlSaver for " + name +" file launch", Logger.MESSAGE, 'XMLSAVER' );
 			AmfphpClient.init( server, path );
 			
 			////////////////////////////////////
@@ -123,7 +122,7 @@ package railk.as3.data.saver.xml {
 			if (_zip)
 			{
 				zipFile = new ZipOutput();
-				var ze:ZipEntry = new ZipEntry( "essai.xml" );
+				var ze:ZipEntry = new ZipEntry( _file );
 				zipFile.putNextEntry(ze);
 				var fileData:ByteArray = new ByteArray();
 				fileData.writeUTFBytes( "<?xml version='1.0' encoding='utf-8' ?>\n"+xml.toXMLString() );
@@ -131,12 +130,12 @@ package railk.as3.data.saver.xml {
 				zipFile.closeEntry();
 				zipFile.finish();	
 				
-				AmfphpClient.call( new FileService().saveFile( _file, zipFile.byteArray ));
-				
+				var zipName = _file.split('.')[0];
+				AmfphpClient.call( new FileService().saveFile( zipName+'.zip', zipFile.byteArray ), requester);
 			}
 			else 
 			{
-				AmfphpClient.call( new FileService().saveXml( _file, xml.toXMLString() ));
+				AmfphpClient.call( new FileService().saveXml( _file, xml.toXMLString() ), requester);
 			}	
 		}
 		
@@ -194,9 +193,6 @@ package railk.as3.data.saver.xml {
 								///////////////////////////////////////////////////////////////
 								break;
 						}
-						///////////////////////////
-						dispose();
-						//////////////////////////
 						break;
 						
 					case AmfphpClientEvent.ON_ERROR :
@@ -213,9 +209,78 @@ package railk.as3.data.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				        	   DISPOSE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function dispose():void 
+		public function dispose():void 
 		{
 			delListeners()
+		}
+		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						CREATE XMLFILE
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private function createXmlFile():void 
+		{
+			var subtype:String;
+			var tmpStr:String;
+			XML.ignoreProcessingInstructions = false;
+			
+			//--root du fichier
+			if ( _nodes[0].root == "rss" ) {
+				tmpStr = "<rss version='2.0'></rss>";
+				xmlFile = new XML( tmpStr );
+				xmlFile.appendChild( "<channel></channel>" );
+			}
+			else if ( _nodes[0].root == "atom" ) {
+				tmpStr = "<feed xmlns='http://www.w3.org/2005/Atom'></feed>";
+				xmlFile = new XML( tmpStr );
+			}
+			else{
+				tmpStr = "<" + _nodes[0].root + "></" + _nodes[0].root + ">";
+				xmlFile = new XML( tmpStr );
+			}
+			
+			
+			//--noeuds
+			for ( var i:int=0; i<_nodes.length; i++ ) {
+				
+				tmpStr = "<"+_nodes[i].type;
+				
+				if( _nodes[i].attribute != null ){
+					for ( subtype in _nodes[i].attribute ) {
+						tmpStr += " " + subtype + "='" + _nodes[i].attribute[subtype] + "' ";
+					}
+				}	
+				
+				
+				if ( _nodes[i].content != null && _nodes[i].content is String ) {
+					tmpStr += ">" + _nodes[i].content +"</" + _nodes[i].type +">";
+				}
+				else if ( _nodes[i].content != null && _nodes[i].content is Array ) {
+										
+					tmpStr += ">";
+					for ( var j:int = 0; j <= _nodes[i].content.length-1; j++ ){
+						tmpStr += "<"+_nodes[i].content[j].type;
+						
+						if ( _nodes[i].content[j].attribute != null ) {
+							for ( subtype in _nodes[i].content[j].attribute ) {
+								tmpStr += " " + subtype + "='" + _nodes[i].content[j].attribute[subtype] + "' ";
+							}
+						}
+						
+						tmpStr += ">"+_nodes[i].content[j].content+"</"+_nodes[i].content[j].type+">";
+					}	
+					tmpStr += "</" + _nodes[i].type +">";
+					
+				}
+				else {
+					tmpStr += "/>";
+				}
+				
+				if ( _nodes[0].root == 'rss' ) { xmlFile.children()[0].appendChild( new XML(tmpStr) ); }
+				else { xmlFile.appendChild( new XML(tmpStr) ); }	
+			}
+			
+			saveFile( xmlFile );
 		}
 		
 		
@@ -273,245 +338,188 @@ package railk.as3.data.saver.xml {
 				tmpStr = "<" + _nodes[0].root + "></" + _nodes[0].root + ">";
 				header = new XML( tmpStr );
 				
-				var entry:String = _nodes[0].root;
+				
+				/*var entry:String = _nodes[0].root;
 				xmlFileList = xmlFile.children();
 				idList = xmlFile.child(entry).child("id");
 				dateList = xmlFile.child(entry).child("date");
 				
 				idElement = 'id';
 				dateElement = "date";
-				element = _nodes[0].root;
+				element = _nodes[0].root;*/
 			}
 			
-			
-			//--indexList + firstEntry
-			var done:Boolean = false;
-			for ( var l:int=0; l < xmlFileList.length(); l ++ ) {
-				indexList[ xmlFileList[l].toXMLString() ] = l;
-				if ( xmlFileList[l].name() == element && !done ){
-					done = true;
-					firstEntry = l-1;
-					if ( firstEntry < 0 ) firstEntry = 0;
-				}
+			var actualXml:Array = parseToNode( xmlFile );
+			for (var i:int = 0; i < actualXml.length; i++) 
+			{
+				trace( ObjectDumper.dump( actualXml[i] ) );
 			}
-			
-			//-- création du nouveau noeud
-			for ( var i:Number = 0; i < _nodes.length; i++ ) {
-			
-				tmpStr = "<"+_nodes[i].type;
-				
-				if( _nodes[i].attribute != null ){
-					for ( subtype in _nodes[i].attribute ) {
-						tmpStr += " " + subtype + "='" + _nodes[i].attribute[subtype] + "' ";
-					}
-				}	
-				
-				
-				if ( _nodes[i].content != null && _nodes[i].content is String ) {
-					tmpStr += ">" + _nodes[i].content +"</" + _nodes[i].type +">";
-				}
-				else if ( _nodes[i].content != null && _nodes[i].content is Array ) {
-										
-					tmpStr += ">";
-					for ( var j:int = 0; j <= _nodes[i].content.length-1; j++ ){
-						tmpStr += "<"+_nodes[i].content[j].type;
-						
-						if ( _nodes[i].content[j].attribute != null ) {
-							for ( subtype in _nodes[i].content[j].attribute ) {
-								tmpStr += " " + subtype + "='" + _nodes[i].content[j].attribute[subtype] + "' ";
-							}
-						}
-						
-						tmpStr += ">"+_nodes[i].content[j].content+"</"+_nodes[i].content[j].type+">";
-					}	
-					tmpStr += "</" + _nodes[i].type +">";
-					
-				}
-				else {
-					tmpStr += "/>";
-				}
-				
-				//--String to XML object
-				tmpXml = new XML( tmpStr );
-				
-				//update de noeud preexistant ?
-				var appended:Boolean = false;
-				update:for ( var k:int=0; k <= idList.length(); k++ ) {
-					var result:Object = hasSubChildrens( tmpXml, element );
-					var oldDate:XMLList;
-					
-					if ( result != null ) {
-						if ( result.children == 2 ) {
-							var found:Object = getSubChildrens( idElement, idList[k], result.xml );
-							if ( found.bool ) {
-								if ( found.xml.child(dateElement) != dateList[k] ) {
-									//on remplace la date pour retrouver l'index corespondant afin de supprimer l'enfant
-									oldDate = found.xml.child(dateElement);
-									found.xml.replace( dateElement, dateList[k]);
-									delete xmlFileList[ indexList[ found.xml.toXMLString() ] ];
-									
-									//on remet la bonne date pour effceuer l'update et replace l'enfant updater en debut de liste
-									found.xml.replace( dateElement, oldDate);
-									appendList.push( found.xml );
-									////////////////////////////////
-									appended = true;
-									updated = true;
-									////////////////////////////////
-									break update;
-								}
-							}	
+			/*for (var j:int = 0; j < _nodes.length; j++) 
+			{
+				for (var i:int = 0; i < actualXml.length; i++) 
+				{
+					for ( var prop in actualXml[i] )
+					{
+						for (var k:int = 0; k < _nodes[i].content.length; k++) 
+						{
+							if ( _nodes[j].content[k].type == prop ) trace( prop );
 						}
 					}
 				}
-				
-				//--si il n'y pas pas d'entrée deja existante on ajoute l'engtré a l'appendList
-				if (result != null ){
-					if ( result.children == 2 && !appended ) {
-						appendList.push( found.xml );
-						////////////////////////////////
-						updated = true;
-						////////////////////////////////
-					}
-				}	
-			}
+			}*/
 			
-			//--fichier final
-			if ( _nodes[0].root == 'rss' ) {
-				header.children()[0].appendChild( xmlFileList );
-				for ( l = 0; l < appendList.length; l++ ) {
-					header.children()[0].insertChildAfter( header.children()[0].children()[firstEntry], appendList[l] );
-				}
-			}
-			else {
-				header.appendChild( xmlFileList );
-				for ( l = 0; l < appendList.length; l++ ) {
-					header.insertChildAfter( header.children()[firstEntry], appendList[l] );
-				}
-			}
-			
-			if( updated ) saveFile( header );
+			if( updated ) createXmlFile();
 		}
 		
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						CREATE XMLFILE
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createXmlFile():void 
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					 	PARSE TO NODE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function parseToNode( xmlFile:XML ):Array
 		{
-			var subtype:String;
-			var tmpStr:String;
+			var result:Array = new Array();
+			var nbNodes:Number = getNbChildrens( xmlFile );			
+			for ( var i:int = 0; i<nbNodes; i++ ) {
+				result[i] = getChildrens( xmlFile.children()[i] );
+			}
+			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																		   GET NB CHILDREN OF A CHILD
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function getNbChildrens( child:XML ):int {
+			var result:int;
+			result = child.children().length();
+			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						GET CHILDRENS
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function getChildrens( child:XML, sub:Boolean=false ):Object {
+			var result:Object = { };
+			var subResult:Object;
+			var content:Array = new Array();
 			
-			//--root du fichier
-			if ( _nodes[0].root == "rss" ) {
-				tmpStr = "<rss version='2.0'></rss>";
-				xmlFile = new XML( tmpStr );
-				xmlFile.appendChild( "<channel></channel>" );
-			}
-			else if ( _nodes[0].root == "atom" ) {
-				tmpStr = "<feed xmlns='http://www.w3.org/2005/Atom'></feed>";
-				xmlFile = new XML( tmpStr );
-			}
-			else{
-				tmpStr = "<" + _nodes[0].root + "></" + _nodes[0].root + ">";
-				xmlFile = new XML( tmpStr );
-			}
+			if(!sub) result.root = child.name()+'s';
+			result.type = String( child.name() );
+			var attributes:Object = getAttributes( child ) ; 
+			result.attribute = attributes;
 			
-			//--noeuds
-			for ( var i:int=0; i<_nodes.length; i++ ) {
-				
-				tmpStr = "<"+_nodes[i].type;
-				
-				if( _nodes[i].attribute != null ){
-					for ( subtype in _nodes[i].attribute ) {
-						tmpStr += " " + subtype + "='" + _nodes[i].attribute[subtype] + "' ";
-					}
-				}	
-				
-				
-				if ( _nodes[i].content != null && _nodes[i].content is String ) {
-					tmpStr += ">" + _nodes[i].content +"</" + _nodes[i].type +">";
-				}
-				else if ( _nodes[i].content != null && _nodes[i].content is Array ) {
-										
-					tmpStr += ">";
-					for ( var j:int = 0; j <= _nodes[i].content.length-1; j++ ){
-						tmpStr += "<"+_nodes[i].content[j].type;
-						
-						if ( _nodes[i].content[j].attribute != null ) {
-							for ( subtype in _nodes[i].content[j].attribute ) {
-								tmpStr += " " + subtype + "='" + _nodes[i].content[j].attribute[subtype] + "' ";
-							}
+			if ( child.children()[0] && (child.children()[0].nodeKind() == 'text' && !sub) )
+			{
+				result.content = String( child.children()[0] );
+			}
+			else
+			{
+				var nbChildrens:int = getNbChildrens( child );
+				if ( nbChildrens != 0) {
+					for ( var i:int = 0; i < nbChildrens; i++ ) 
+					{
+						var hasChildren:int = getSubChildrens( child.children()[i] );
+						if ( hasChildren == 2 ) 
+						{
+							content.push( getChildrens( child.children()[i], true ) );
+							result.content = content;
 						}
-						
-						tmpStr += ">"+_nodes[i].content[j].content+"</"+_nodes[i].content[j].type+">";
-					}	
-					tmpStr += "</" + _nodes[i].type +">";
-					
+						else if ( hasChildren == 1 ) 
+						{
+							subResult = new Object();
+							subResult.type = String( child.children()[i].name() );
+							subResult.content = String( child.children()[i] );
+							subResult.attribute = getAttributes( child.children()[i] );
+							content.push( subResult );
+							if (nbChildrens > 1) result.content = content;
+							else result.content = subResult;
+						}
+						else if ( hasChildren == 0 ) 
+						{
+							subResult = new Object();
+							subResult.type = String( child.children()[i].name() );
+							subResult.content = null;
+							subResult.attribute = getAttributes( child.children()[i] );
+							content.push( subResult );
+							if (nbChildrens > 1) result.content = content;
+							else result.content = subResult;
+						}
+					}
+				}
+				else 
+				{
+					result.content = null;
+				}
+			}	
+			
+			return result;
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					GET SUB CHILDRENS
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function getSubChildrens( child:XML ):int {
+			var result:int;
+			
+			var nbChildrens:int = getNbChildrens( child );
+			if ( nbChildrens > 1) {
+				result = 2;
+			}
+			else {
+				if ( nbChildrens == 0 ) {
+					result = 0;
 				}
 				else {
-					tmpStr += "/>";
-				}
+					var childKind:String  = child.children()[0].nodeKind();
+					if ( childKind == "element" ) { result = 2; }
+					else { result = 1; }
+				}	
+			}
+			return result;
+		}	
 				
-				if ( _nodes[0].root == 'rss' ) { xmlFile.children()[0].appendChild( tmpStr ); }
-				else { xmlFile.appendChild( tmpStr ); }	
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				    GET NB ATTRIBUTES
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function getNbAttributes( child:XML ):int {
+			var result:int;
+			result = child.@*.length();
+			return result;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  	   GET ATTRIBUTES
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function getAttributes( child:XML ):Object {
+			var result:Object = {};
+			var name:String;
+			
+			var nbAttributes:int = getNbAttributes( child ); 
+			if ( nbAttributes != 0 ) {
+				for( var i:int=0; i<nbAttributes; i++ ){
+					name= String(child.attributes()[i].name());
+					result[name] = child.attributes()[i];
+				}
+			}
+			else {
+				result = null;
 			}
 			
-			saveFile( xmlFile );
+			return result;
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 REMOVE NAMESPACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function removeXmlNamespace( child:String ):XML {
+		private static function removeXmlNamespace( child:XML ):XML {
 			var result:XML;
 			var xmlnsPattern:RegExp = new RegExp('xmlns[ a-zA-Z0-9é._%-/:"=]{1,}', '');
-			result = new XML( child.replace(xmlnsPattern, '') );
-			return result;
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					HAS SUB CHILDRENS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function hasSubChildrens( child:XML, element:String ):Object 
-		{
-			var result:Object;
-			if ( child.name() == element ) { 
+			result = child.replace(xmlnsPattern, '');
 			
-				var nbChildrens:int = child.children().length();
-				if ( nbChildrens > 1) {
-					result = { children:2, xml:child };
-				}
-				else {
-					if ( nbChildrens == 0 ) {
-						result = { children:0, xml:child };
-					}
-					else {
-						var childKind:String  = child.children()[0].nodeKind();
-						if ( childKind == "element" ) { result = { children:2, xml:child }; }
-						else { result = { children:1, xml:child }; }
-					}	
-				}
-			}
-			return result;
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					GET SUB CHILDRENS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getSubChildrens( elementName:String, elementValue:String, child:XML ):Object 
-		{
-			var result:Object={};
-			if ( child.child(elementName) == elementValue ) {
-				result.bool = true;
-				result.xml = child;
-			}
-			else {
-				result.bool = false;
-				result.xml = child;
-			}
 			return result;
 		}
 		
