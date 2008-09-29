@@ -240,6 +240,7 @@ package railk.as3.data.saver.xml {
 								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_SAVE_COMLETE, args );
 								dispatchEvent( eEvent );
 								///////////////////////////////////////////////////////////////
+								dispose();
 								break;
 						}
 						break;
@@ -250,6 +251,7 @@ package railk.as3.data.saver.xml {
 						eEvent = new XmlSaverEvent( XmlSaverEvent.ON_ERROR, args );
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////
+						dispose();
 						break;
 				}
 			}	
@@ -423,7 +425,8 @@ package railk.as3.data.saver.xml {
 					break;	
 			}
 			
-			if( updated ) createXmlFile();
+			if ( updated ) createXmlFile();
+			else dispose();
 		}
 		
 		

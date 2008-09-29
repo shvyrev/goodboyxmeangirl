@@ -8,7 +8,6 @@
 package railk.as3.data.uploader {
 
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	import flash.net.FileFilter;
 	import flash.net.FileReference;
 	import flash.net.URLRequest;
@@ -29,7 +28,7 @@ package railk.as3.data.uploader {
 		private var fileRef                :FileReference;
 		private var fileType               :String;
 		
-		private var uploadBT               :Sprite;
+		private var uploadBT               :Object;
 		
 		//________________________________________________________________________________ VARIABLES EVENEMENT
 		private var eEvent                 :UpLoaderEvent;
@@ -164,7 +163,7 @@ package railk.as3.data.uploader {
 		 * @param	type UpLoaderFilters.IMGFILE/TXTFILE/SWFFILE/XMLFILE/
 		 * @param	url the folder where to save the file
 		 */
-		public function create( button:Sprite, type:String, urlFolder:String ):void 
+		public function create( button:Object, type:String, urlFolder:String ):void 
 		{
 			fileType = type;
 			uploadBT = button;
@@ -176,12 +175,12 @@ package railk.as3.data.uploader {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					  BUTTON LISTENERS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function configListernersButton( button:Sprite ):void {
+		private function configListernersButton( button:Object ):void {
 			button.buttonMode = true;
 			button.addEventListener( MouseEvent.CLICK, browse, false, 0, true );
 		}
 		
-		private function delListenersButton( button:Sprite ):void {
+		private function delListenersButton( button:Object ):void {
 			button.buttonMode = false;
 			button.removeEventListener( MouseEvent.CLICK, browse );
 		}
