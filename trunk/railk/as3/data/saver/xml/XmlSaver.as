@@ -3,12 +3,15 @@
 * edit and save xml files
 * 
 * @author Richard Rodney.
-* @version 0.2
+* @version 0.3
 * 
 * usage : 
 *  créer un objet avec type/requester/content { root:"rss", type:"image", attribute:{ nom:String(upload.fileName), url:"../images"+String(upload.fileName)}=null, content:*={type:"", content:""}string,null }
 *  le premeier objet de content doit définir de façon unique l'objet.
 *  les apellations dans content sont libres.
+* 
+* TODO: UPDATEXMLFILE > make a better remove and modify fonction allowing more complex checking base on the whole node data.
+* 
 */
 
 package railk.as3.data.saver.xml {
@@ -41,6 +44,7 @@ package railk.as3.data.saver.xml {
 		private var _nodes                                :Array;
 		private var _file                                 :String;
 		private var _zip                                  :Boolean;
+		private var _updateType                           :String;
 		
 		//_____________________________________________________________________________________ VARIABLES FILE
 		private var xmlFile                               :XML;
@@ -78,23 +82,68 @@ package railk.as3.data.saver.xml {
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						        CREATE
+		// 																						     	MANAGE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * create a whole new xml file replacing the old one if it exist
 		 * 
 		 * @param	file
 		 * @param	nodes
-		 * @param	update
 		 * @param	zip
 		 */
-		public function create( file:String, nodes:Array, update:Boolean = false, zip:Boolean = false ):void 
+		public function create( file:String, nodes:Array, zip:Boolean = false ):void 
 		{
 			_file = file;
 			_nodes = nodes;
 			_zip = zip;
-			
-			if (update) checkFile();
-			else createXmlFile();
+			createXmlFile();
+		}
+		
+		/**
+		 * 
+		 * @param	file
+		 * @param	nodes
+		 * @param	zip
+		 */
+		public function add( file:String, nodes:Array, zip:Boolean = false ):void 
+		{
+			_file = file;
+			_nodes = nodes;
+			_zip = zip;
+			_updateType = 'add';
+			checkFile();
+		}
+		
+		/**
+		 * remove based on id/content
+		 * 
+		 * @param	file
+		 * @param	nodes
+		 * @param	zip
+		 */
+		public function remove( file:String, nodes:Array, zip:Boolean = false ):void 
+		{
+			_file = file;
+			_nodes = nodes;
+			_zip = zip;
+			_updateType = 'remove';
+			checkFile();
+		}
+		
+		/**
+		 * update comparison based on the id/date of each root node
+		 * 
+		 * @param	file
+		 * @param	nodes
+		 * @param	zip
+		 */
+		public function update( file:String, nodes:Array, zip:Boolean = false ):void 
+		{
+			_file = file;
+			_nodes = nodes;
+			_zip = zip;
+			_updateType = 'modify';
+			checkFile();
 		}
 		
 		
@@ -258,7 +307,7 @@ package railk.as3.data.saver.xml {
 				else if ( _nodes[i].content != null && _nodes[i].content is Array ) {
 										
 					tmpStr += ">";
-					for ( var j:int = 0; j <= _nodes[i].content.length-1; j++ ){
+					for ( var j:int = 0; j < _nodes[i].content.length; j++ ){
 						tmpStr += "<"+_nodes[i].content[j].type;
 						
 						if ( _nodes[i].content[j].attribute != null ) {
@@ -267,7 +316,7 @@ package railk.as3.data.saver.xml {
 							}
 						}
 						
-						tmpStr += ">"+_nodes[i].content[j].content+"</"+_nodes[i].content[j].type+">";
+						tmpStr += subNode(_nodes[i].content[j].content, _nodes[i].content[j].type);
 					}	
 					tmpStr += "</" + _nodes[i].type +">";
 					
@@ -283,90 +332,96 @@ package railk.as3.data.saver.xml {
 			saveFile( xmlFile );
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				CREATE XMLFILE SUBNODE
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private function subNode(node:*, type:String):String
+		{
+			var subtype:String;
+			var tmpStr:String;
+			
+			if ( node != null && node is String ) {
+					tmpStr = ">" + node +"</" + type +">";
+			}
+			else if ( node != null && node is Array ) {
+									
+				tmpStr = ">";
+				for ( var i:int = 0; i < node.length; i++ ){
+					tmpStr += "<"+node[i].type;
+					
+					if ( node[i].attribute != null ) {
+						for ( subtype in node[i].attribute ) {
+							tmpStr += " " + subtype + "='" + node[i].attribute[subtype] + "' ";
+						}
+					}
+					
+					tmpStr += subNode(node[i].content, node[i].type);
+				}	
+				tmpStr += "</" + type +">";
+				
+			}
+			else {
+				tmpStr = "/>";
+			}
+			
+			return tmpStr;
+		}
+		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				        UPDATE XMLFILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function updateXmlFile():void 
 		{
-			var header:XML;
-			var tmpStr:String;
-			var tmpXml:XML;
-			var subtype:String;
-			var xmlFileList:XMLList;
-			var idList:XMLList;
-			var dateList:XMLList;
-			var indexList:Object = {};
-			var dateElement:String;
-			var idElement:String;
-			var element:String;
 			var updated:Boolean = false;
-			var firstEntry:int;
-			var appendList:Array = new Array();
+			if ( _nodes[0].root == 'atom' ) xmlFile = removeXmlNamespace( xmlFile.toXMLString() );
 			
-			//--small parsing
-			if ( _nodes[0].root == 'rss' ) {
-				tmpStr = "<rss version='2.0'></rss>";
-				header = new XML( tmpStr );
-				header.appendChild( "<channel></channel>" );
-				
-				xmlFileList = xmlFile.children().children();
-				idList = xmlFile.children().child('item').child('guid');
-				dateList = xmlFile.children().child('item').child('pubDate');
-				
-				idElement = 'guid';
-				dateElement = "pubDate";
-				element = 'item';
-			}
-			else if ( _nodes[0].root == 'atom' ) {
-				tmpStr = "<feed xmlns='http://www.w3.org/2005/Atom'></feed>";
-				header = new XML( tmpStr );
-				
-				//remove namespace
-				xmlFile = removeXmlNamespace( xmlFile.toXMLString() );
-				
-				xmlFileList = xmlFile.children();
-				idList = xmlFile.child('entry').child('id');
-				dateList = xmlFile.child('entry').child('updated');
-				
-				idElement = 'id';
-				dateElement = "updated";
-				element = 'entry';
-				
-			}
-			else {
-				tmpStr = "<" + _nodes[0].root + "></" + _nodes[0].root + ">";
-				header = new XML( tmpStr );
-				
-				
-				/*var entry:String = _nodes[0].root;
-				xmlFileList = xmlFile.children();
-				idList = xmlFile.child(entry).child("id");
-				dateList = xmlFile.child(entry).child("date");
-				
-				idElement = 'id';
-				dateElement = "date";
-				element = _nodes[0].root;*/
-			}
+			var actualXML:Array = parseToNode( xmlFile );
+			var newXML:Array = _nodes;
+			var i:int, j:int = 0;
 			
-			var actualXml:Array = parseToNode( xmlFile );
-			for (var i:int = 0; i < actualXml.length; i++) 
+			switch( _updateType )
 			{
-				trace( ObjectDumper.dump( actualXml[i] ) );
-			}
-			/*for (var j:int = 0; j < _nodes.length; j++) 
-			{
-				for (var i:int = 0; i < actualXml.length; i++) 
-				{
-					for ( var prop in actualXml[i] )
+				case 'add' :
+					var nextID = actualXML.length + 1;
+					for (i= 0; i < newXML.length; i++) 
 					{
-						for (var k:int = 0; k < _nodes[i].content.length; k++) 
+						actualXML.push( newXML[i] );
+					}
+					updated = true;
+					_nodes = actualXML;
+					break;
+				
+				case 'remove' :
+					for (i= 0; i < newXML.length; i++) 
+					{
+						for (j = 0; j < actualXML.length ; j++) 
 						{
-							if ( _nodes[j].content[k].type == prop ) trace( prop );
+							if ( newXML[i].content[0].content == actualXML[j].content[0].content )
+							{
+								actualXML.splice(j, 1);
+								updated = true;
+							}
 						}
 					}
-				}
-			}*/
+					_nodes = actualXML;
+					break;
+					
+				case 'modify' :
+					for (i= 0; i < newXML.length; i++) 
+					{
+						for (j = 0; j < actualXML.length ; j++) 
+						{
+							if ( newXML[i].content[0].content == actualXML[j].content[0].content )
+							{
+								actualXML[j] = newXML[i];
+								updated = true;
+							}
+						}
+					}
+					_nodes = actualXML;
+					break;	
+			}
 			
 			if( updated ) createXmlFile();
 		}
