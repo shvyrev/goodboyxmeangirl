@@ -26,6 +26,7 @@ package railk.as3.data.saver.file {
 		private var _data                                 :ByteArray;
 		private var _type                                 :String;
 		private var _path                                 :String;
+		private var _url                                  :String;
 		private var _fileName                             :String;
 		private var _fileType                             :String;
 		
@@ -77,8 +78,9 @@ package railk.as3.data.saver.file {
 		 * @param	data
 		 * @param	update
 		 */
-		public function create( path:String, fileName:String, fileType:String, data:ByteArray ):void 
+		public function save( url:String, path:String, fileName:String, fileType:String, data:ByteArray ):void 
 		{
+			_url = url;
 			_path = path
 			_fileName = fileName;
 			_fileType = fileType;
@@ -95,15 +97,18 @@ package railk.as3.data.saver.file {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function saveFile():void 
 		{	
-			AmfphpClient.call( new FileService().saveFile( _path + "/" + _fileName + "." + _fileType, _data ) );
+			AmfphpClient.call( new FileService().saveFile( _path + "/" + _fileName + "." + _fileType, _data ), requester );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	  						 SAVE FILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * only work with Http or Https protocol
+		 */
 		public function downloadFile():void 
 		{	
-			downloader.download( new URLRequest ( _path + "/" + _fileName + "." + _fileType ) );
+			downloader.download( new URLRequest ( _url+'/'+_path + "/" + _fileName + "." + _fileType ) );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -139,6 +144,7 @@ package railk.as3.data.saver.file {
 						eEvent = new FileSaverEvent( FileSaverEvent.ON_ERROR, args );
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////
+						dispose();
 						break;
 				}
 			}	

@@ -37,6 +37,7 @@ package railk.as3.stage {
 		// ____________________________________________________________________________________________ STAGE
 		public static var _stage                       :Stage;
 		public static var folder                       :String;
+		public static var url                          :String;
 		
 		// ______________________________________________________________________________ VARAIBLE MOUSE IDLE
 		private static var lastMove                    :Number;
@@ -103,6 +104,7 @@ package railk.as3.stage {
 			
 			//folder
 			folder = getAppFolder( stage.loaderInfo.loaderURL );
+			url = stage.loaderInfo.loaderURL.replace(stage.loaderInfo.loaderURL.split('/')[stage.loaderInfo.loaderURL.split('/').length - 1], "");
 			
 		}
 		
