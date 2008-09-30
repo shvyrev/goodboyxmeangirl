@@ -11,15 +11,11 @@ package railk.as3.stage {
 	import flash.events.Event;
 	public dynamic class StageManagerEvent extends Event{
 			
-		// ___________________________________________________________________________________ VARIABLES STATIQUES
 		static public const ONSTAGERESIZE                    :String = "onStageResize";
 		static public const ONMOUSEACTIVE                    :String = "onMouseActive";
 		static public const ONMOUSEIDLE                      :String = "onMouseIdle";
 		static public const ONMOUSELEAVE                     :String = "onMouseLeave";
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function StageManagerEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;
 				for(var name:String in data) {
