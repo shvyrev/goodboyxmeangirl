@@ -198,7 +198,7 @@ package railk.as3.tween.process {
 			if (time == duration) complete();
 		}
 		
-		public static function tick(e:Event = null):void {
+		private static function tick(e:Event = null):void {
 			var t:uint = _curTime = getTimer();
 			if (_listening) {
 				var a:Dictionary = _tweens, p:Object, tween:Object;
@@ -249,7 +249,7 @@ package railk.as3.tween.process {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	  UTILITY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return -c * (t /= d) * (t - 2) + b; }
+		private static function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return -c * (t /= d) * (t - 2) + b; }
 		
 		protected function rotation( prop:String ):Number {
 			var tr:Number = props[prop] %360;

@@ -16,11 +16,8 @@ package railk.as3.utils.accordion {
 	public dynamic class AccordionEvent extends Event{
 			
 		// ______________________________________________________________________________ VARIABLES STATIQUES
-		static public const ONITEM_OVER                 :String = "onItemOver";
-		static public const ONITEM_OUT                  :String = "onItemOut";
-		static public const ONITEM_ClICK                :String = "onItemClick";
-		static public const ONSTARTDRAGITEM             :String = "onStartDragItem";
-		static public const ONSTOPDRAGITEM              :String = "onStopDragItem";
+		static public const ON_WIDTH_CHANGE                :String = "onWidthChange";
+		static public const ON_HEIGHT_CHANGE               :String = "onHeightChange";
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
