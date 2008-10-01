@@ -5,79 +5,46 @@
 * @author Richard Rodney
 * @version 0.1
 * 
-* TODO
-* 	rethink the whole class
+* TODO: ENABLE MODIFICATION FROM THE CENTER OF THE ITEM OR NOT
 * 
 */
 
 
-package railk.as3.utils.accordion
-{
+package railk.as3.utils.accordion {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.DisplayObject;
+	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.accordion.AccordionEvent;
-	import railk.as3.utils.accordion.accordionItem.AccordionItem;
 	import railk.as3.utils.objectList.*;
+	import railk.as3.tween.process.*;
 	
 	
 	
-	public class  Accordion extends DisplayObject {
-		
-		// ______________________________________________________________________________ VARIABLES ACCORDION
-		private var _X                                      :int;
-		private var _Y                                      :int;
-		private var _W                                      :int;
-		private var _H                                      :int;
-		private var dragable                                :Boolean;
-		private var dragRect                                :Rectangle;
-		private var action                                  :Function;
+	public class  Accordion extends EventDispatcher {
 		
 		// _________________________________________________________________________ VARIABLES ACCORDION ITEM
+		private var _type                                   :String;
 		private var acItem                                  :AccordionItem;
-		private var acItemWidth                             :int;
-		private var acItemheight                            :int;
-		
-		// _________________________________________________________________________________ VARIABLES LISTES
-		private static var itemList                         :ObjectList;
-		private static var containerList                    :ObjectList;
-		private var place                                   :ObjectNode;
+		private var itemList                         		:ObjectList;
+		private var prev                                    :ObjectNode;
+		private var next                                    :ObjectNode;
 		private var walker                                  :ObjectNode;		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function Accordion( X:int, Y:int, W:int, H:int, itemsWidth:int, itemsHeight:int, dragableItem:Boolean=false ):void {
-			//--list
-			itemList = new ObjectList();
-			containerList = new ObjectList();
-			
-			//--vars
-			_X = X;
-			_Y = Y;
-			_W = W;
-			_H = H;
-			dragable = dragableItem;
-			if ( dragable ) dragRect = new Rectangle( X, Y, W, H );
-			else dragRect = null;
-				
-			
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					      SET ACTIONS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	f
+		 * @param	type	'V'|'H'
 		 */
-		public function setActions( f:Function ):void {
-			action = f;
+		public function Accordion( type:String ):void {
+			_type = type;
+			itemList = new ObjectList();
+			
 		}
 		
 		
@@ -90,23 +57,12 @@ package railk.as3.utils.accordion
 		 * @param	content
 		 * @return
 		 */
-		public function add( name:String, content:* ):Boolean {
-			
-			//--create
-			acItem = new AccordionItem( name, content, active, dragable, dragRect );
-			
-			//--add
+		public function add( name:String, content:Object ):Boolean 
+		{
+			acItem = new AccordionItem( name, _type, content );
+			acItem.addEventListener( AccordionEvent.ON_HEIGHT_CHANGE, manageEvent, false, 0, true );
+			acItem.addEventListener( AccordionEvent.ON_WIDTH_CHANGE, manageEvent, false, 0, true );
 			itemList.add( [name,acItem] );
-			
-			//--give place
-			if ( itemList.length == 1 ){
-				place = itemList.head;
-			}
-			else {
-				place = place.next;
-			}
-			acItem.place = place;
-			
 		}
 		
 		
@@ -118,13 +74,41 @@ package railk.as3.utils.accordion
 			return itemList.remove( name );
 		}
 		
-		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				PLACE ITEMS ON CHANGE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function placeItemFrom( itemName ):void
+		{
+			var item:ObjectNode = itemList.getObjectByName( itemName );
+			if ( item == itemList.head )
+			{
+				walker = itemList.head.next;
+				loop:while ( walker ) 
+				{
+					Process.to( walker.data.content, .3, {  walker.data.y:walker.prev.data.nextY } );
+					walker = walker.next;
+				}
+			}
+			else if (item != itemList.tail )
+			{
+				walker = item.next;
+				loop:while ( walker ) {
+					Process.to( walker.data.content, .3, {  walker.data.y:walker.prev.data.nextY } );
+					walker = walker.next;
+				}
+			}
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   		  DESTROY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void 
 		{	
+			walker = itemList.head;
+			loop:while ( walker ) {
+				walker.data.dispose();
+				walker = walker.next;
+			}
 			itemList.clear()
 		}
 		
@@ -144,20 +128,10 @@ package railk.as3.utils.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:* ):void {
 			switch( evt.type ){
-				case AccordionEvent.ONITEM_OVER :
+				case AccordionEvent.ON_WIDTH_CHANGE :
+				case AccordionEvent.ON_HEIGHT_CHANGE :
+					placeItemFrom(evt.data);
 					break;
-				
-				case AccordionEvent.ONITEM_OUT :
-					break;
-					
-				case AccordionEvent.ONITEM_ClICK :
-					break;
-				
-				case AccordionEvent.ONSTARTDRAGITEM :
-					break;
-				
-				case AccordionEvent.ONSTOPDRAGITEM :
-					break;	
 			}
 		}
 		
