@@ -11,6 +11,7 @@
 *  les apellations dans content sont libres.
 * 
 * TODO: UPDATEXMLFILE > make a better remove and modify fonction allowing more complex checking base on the whole node data.
+* 		FIND A WAY TO GET THE ZIPFILE RIGHT VIA AMFPHP LOAD FOR NOW IT DOESNT WORK SO I USE URLLOADER THATS MAKE MORE CODE ><
 * 
 */
 
@@ -20,6 +21,9 @@ package railk.as3.data.saver.xml {
 	import flash.events.EventDispatcher;
 	import flash.utils.ByteArray;
 	import flash.utils.IDataInput;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	import flash.events.Event;
 	
 	// ___________________________________________________________________________________________ IMPORT ZIP
 	import nochump.util.zip.*;
@@ -29,7 +33,6 @@ package railk.as3.data.saver.xml {
 	import railk.as3.network.amfphp.AmfphpClient;
 	import railk.as3.network.amfphp.AmfphpClientEvent;
 	import railk.as3.network.amfphp.service.FileService;
-	import railk.as3.utils.ObjectDumper;
 	import railk.as3.data.parser.Parser;
 	
 
@@ -38,6 +41,7 @@ package railk.as3.data.saver.xml {
 		//__________________________________________________________________________________ VARIABLES SERVICE
 		private var service                               :FileService;
 		private var requester                             :String = 'xmlSaver';
+		private var loader                                :URLLoader;
 		
 		//_________________________________________________________________________________ VARIABLES RECUPERE
 		private var _name                                 :String;
@@ -152,7 +156,10 @@ package railk.as3.data.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function checkFile():void 
 		{
-			AmfphpClient.call( new FileService().check( _file ), requester );
+			var toCheck:String
+			if ( _zip) toCheck = _file.split('.')[0] + '.zip';
+			else toCheck = _file;
+			AmfphpClient.call( new FileService().check( toCheck ), requester );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -160,7 +167,19 @@ package railk.as3.data.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function loadFile():void 
 		{
-			AmfphpClient.call( new FileService().load( _file, (_zip) ? 'binary' : 'xml' ), requester );
+			var toLoad:String
+			if ( _zip) {
+				toLoad = _file.split('.')[0] + '.zip';
+				loader= new URLLoader();
+				loader.addEventListener( Event.COMPLETE, loadEvent, false, 0, true );
+				loader.dataFormat = 'binary';
+				loader.load(new URLRequest( toLoad ));
+			}
+			else
+			{
+				toLoad = _file;
+				AmfphpClient.call( new FileService().load( toLoad, (_zip) ? 'binary' : 'xml' ), requester );
+			}
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -203,7 +222,7 @@ package railk.as3.data.saver.xml {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent(evt:AmfphpClientEvent ):void 
+		private function manageEvent(evt:* ):void 
 		{
 			var args:Object;
 			if ( evt.requester == requester)
@@ -214,7 +233,8 @@ package railk.as3.data.saver.xml {
 						switch( evt.service )
 						{
 							case 'check' :
-								loadFile();
+								if ( evt.data == true ) loadFile();
+								else create(_file, _nodes, _zip);
 								///////////////////////////////////////////////////////////////
 								args = { info:"problem checking file", data:evt.data };
 								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_CHECK_COMLETE, args );
@@ -223,7 +243,7 @@ package railk.as3.data.saver.xml {
 								break;
 								
 							case 'load' :
-								if ( _zip ) xmlFile = new XML( parseZip( evt.data ) );
+								if ( _zip ) xmlFile = new XML( parseZip( evt.data as ByteArray ) );
 								else xmlFile = new XML( evt.data );
 								
 								updateXmlFile();
@@ -256,6 +276,11 @@ package railk.as3.data.saver.xml {
 						break;
 				}
 			}	
+		}
+		
+		private function loadEvent( evt:Event ):void {
+			xmlFile = new XML( parseZip( loader.data ) );
+			updateXmlFile();
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
