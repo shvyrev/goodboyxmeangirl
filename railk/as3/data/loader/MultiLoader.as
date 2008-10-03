@@ -23,7 +23,6 @@ package railk.as3.data.loader {
 	import flash.net.NetStream;
 	
 	// __________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.loader.MultiLoaderEvent;
 	import railk.as3.data.loader.loaderItems.MultiLoaderItem;
 	import railk.as3.utils.objectList.*;
 	
@@ -73,7 +72,7 @@ package railk.as3.data.loader {
         }
 		
 		// ___________________________________________________________________________________ EVENT VARIABLES
-		private var eEvent                                   :MultiLoaderEvent;		
+		private var eEvent                                   :MultiLoaderEvent;	
 		
 		
 		
@@ -408,7 +407,7 @@ package railk.as3.data.loader {
 			item.addEventListener( Event.OPEN, onItemBegin, false, 0, true );
 			item.addEventListener( ProgressEvent.PROGRESS, onItemProgress, false, 0, true );
 			item.addEventListener( Event.COMPLETE, onItemComplete, false, 0, true );
-			item.addEventListener( IOErrorEvent.IO_ERROR, onItemIOerror, false, 0, true );
+			item.addEventListener( MultiLoaderEvent.ONERRORLOADINGITEM, onErrorLoadingItem, false, 0, true );
 			item.addEventListener( HTTPStatusEvent.HTTP_STATUS, onItemHttpStatus, false, 0, true );
 			item.addEventListener( NetStatusEvent.NET_STATUS, onItemNetStatus, false, 0, true );
 			item.addEventListener( MultiLoaderEvent.ONSTREAMREADY, onStreamReady, false, 0, true );
@@ -420,7 +419,7 @@ package railk.as3.data.loader {
 			item.removeEventListener( Event.OPEN, onItemBegin );
 			item.removeEventListener( ProgressEvent.PROGRESS, onItemProgress );
 			item.removeEventListener( Event.COMPLETE, onItemComplete );
-			item.removeEventListener( IOErrorEvent.IO_ERROR, onItemIOerror);
+			item.removeEventListener( MultiLoaderEvent.ONERRORLOADINGITEM, onErrorLoadingItem );
 			item.removeEventListener( HTTPStatusEvent.HTTP_STATUS, onItemHttpStatus);
 			item.removeEventListener( NetStatusEvent.NET_STATUS, onItemNetStatus );
 			item.removeEventListener( MultiLoaderEvent.ONSTREAMREADY, onStreamReady );
@@ -473,13 +472,13 @@ package railk.as3.data.loader {
 			checkFile();
 		}
 		
-		private function onItemIOerror( evt:IOErrorEvent ):void 
+		private function onErrorLoadingItem( evt:MultiLoaderEvent ):void 
 		{	
-			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"item "+evt.currentTarget.url+" have failed" };
-			eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONITEMIOERROR, args );
+			eEvent = new MultiLoaderEvent( evt.type, { info:evt.info, item:evt.item } );
 			dispatchEvent( eEvent );
-			///////////////////////////////////////////////////////////////
+			
+			//onload le suivant ou non 
+			checkFile();
 		}
 		
 		private function onItemHttpStatus( evt:HTTPStatusEvent ):void 

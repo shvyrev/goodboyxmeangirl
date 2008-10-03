@@ -170,8 +170,10 @@ package railk.as3.data.saver.xml {
 		{
 			if (_zip)
 			{
+				var entryName = _file.split('/')[_file.split('/').length - 1];
+				var zipName = _file.split('.')[0];
 				zipFile = new ZipOutput();
-				var ze:ZipEntry = new ZipEntry( _file );
+				var ze:ZipEntry = new ZipEntry( entryName );
 				zipFile.putNextEntry(ze);
 				var fileData:ByteArray = new ByteArray();
 				fileData.writeUTFBytes( "<?xml version='1.0' encoding='utf-8' ?>\n"+xml.toXMLString() );
@@ -179,7 +181,6 @@ package railk.as3.data.saver.xml {
 				zipFile.closeEntry();
 				zipFile.finish();	
 				
-				var zipName = _file.split('.')[0];
 				AmfphpClient.call( new FileService().saveFile( zipName+'.zip', zipFile.byteArray ), requester);
 			}
 			else 

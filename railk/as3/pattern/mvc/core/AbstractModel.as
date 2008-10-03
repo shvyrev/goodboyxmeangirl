@@ -15,17 +15,18 @@ package railk.as3.pattern.mvc.core
 	{
 		public var data:*;
 		public var info:String;
-		public var requester:String;
+		private var _owner:String;
 		
 		public function AbstractModel()
 		{
 			data = null;
 			info = '';
+			owner = '';
 		}
 		
 		public function updateView(type:String):void
 		{
-			dispatchEvent( new ModelEvent( type, {requester:requester, info:info, data:data} ) );
+			dispatchEvent( new ModelEvent( _owner+type, { info:info, data:data} ) );
 		}
 		
 		public function clearData():void {
@@ -33,10 +34,17 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function start():void{}
-		public function execute( requester:String, type:String, ...args ):void{}
+		public function execute( type:String, ...args ):void{}
 		public function getData( name:String ):*{}
-		public function dispose():void{}
+		public function dispose():void { }
 		
+		public function get owner():String {  return _owner }
+		
+		public function set owner(value:String):void 
+		{
+			_owner = value;
+		} 
+				
 	}
 }
 

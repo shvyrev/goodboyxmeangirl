@@ -38,7 +38,7 @@ package railk.as3.text
 		/**
 		 * 
 		 * @param	name
-		 * @param	type         'dynamic'
+		 * @param	type         'dynamic'|'input'
 		 * @param	text
 		 * @param	color
 		 * @param	font
@@ -51,7 +51,7 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function Text( name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, hasAutoSize:Boolean=false, autoSize:String='', width:Number=0, height:Number=0 ):void 
+		public function Text( name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, hasAutoSize:Boolean=false, autoSize:String='', width:Number=0, height:Number=0, backgroundColor:uint=0x00FFFFFF, borderColor:uint=0x00FFFFFF ):void 
 		{
 			_hasAutoSize = hasAutoSize;
 			
@@ -64,12 +64,12 @@ package railk.as3.text
 			super.type = type;
 			if ( !htmlText )
 			{
-				super.text = text;
+				super.text = (text) ? text : ' ';
 				super.setTextFormat( format ); 
 			}
 			else 
 			{ 
-				super.htmlText = text; 
+				super.htmlText = (text) ? text : ' '; 
 			}
 			super.embedFonts = embedFont;
 			super.selectable = selectable;
@@ -84,8 +84,19 @@ package railk.as3.text
 				if( width != 0) super.width = width;
 				if( height != 0) super.height = height;
 			}
+			if ( backgroundColor != 0x00FFFFFF )
+			{
+				super.background = true;
+				super.backgroundColor = backgroundColor;
+			}
+			if ( borderColor != 0x00FFFFFF )
+			{
+				super.border = true;
+				super.borderColor = borderColor;
+			}
 			super.wordWrap = wordwrap;
 			super.mouseEnabled = selectable;
+			super.multiline = true;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
