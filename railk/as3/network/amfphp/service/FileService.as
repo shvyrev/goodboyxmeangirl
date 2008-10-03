@@ -41,7 +41,7 @@ package railk.as3.network.amfphp.service
 		{
 			_type = 'load';
 			if (isUrl(filename)) _filename = unescape(filename);
-			else _filename = path+filename;
+			else _filename = path + filename;
 			_loadType = loadType;
 			return this;
 		}

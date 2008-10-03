@@ -162,9 +162,9 @@ package railk.as3.utils.link {
 			if ( _actions != null ) 
 			{ 
 				active = true; 
-				_actions("do", _displayObject, _data);
+				_actions("do", _displayObject, (_data is Function)? _data.call() : _data);
 				for ( prop in _content ) {
-					if ( _content[prop].actions != null ) _content[prop].actions("do", _content[prop].object, _content[prop].data );
+					if ( _content[prop].actions != null ) _content[prop].actions("do", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data );
 				}
 			} 
 		}
@@ -175,9 +175,9 @@ package railk.as3.utils.link {
 			if ( _actions != null )
 			{ 
 				active = false; 
-				_actions("undo", _displayObject, _data);
+				_actions("undo", _displayObject, (_data is Function)? _data.call() : _data);
 				for ( prop in _content ) {
-					if ( _content[prop].actions != null ) _content[prop].actions("undo", _content[prop].object, _content[prop].data );
+					if ( _content[prop].actions != null ) _content[prop].actions("undo", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data );
 				}
 			} 
 		}
@@ -219,14 +219,14 @@ package railk.as3.utils.link {
 						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.hover } );
 						else if( type == 'sprite') Process.to( _displayObject, .2, { color:_colors.hover} );
 					}
-					if ( _actions != null ) _actions( 'hover', _displayObject, _data );
+					if ( _actions != null ) _actions( 'hover', _displayObject, (_data is Function)? _data.call() : _data );
 					//--content
 					for ( prop in _content ) {
 						if( _content[prop].colors != null ) {
 							if ( _content[prop].type == "text" ) Process.to( _content[prop].object, .2, {text_color:_content[prop].colors.hover } );
 							else if ( _content[prop].type == "sprite" ) Process.to( _content[prop].object, .2, { color:_content[prop].colors.hover} );
 						}	
-						if ( _content[prop].actions != null ) _content[prop].actions("hover", _content[prop].object, _content[prop].data);
+						if ( _content[prop].actions != null ) _content[prop].actions("hover", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data );
 					}
 					break;
 					
@@ -237,22 +237,22 @@ package railk.as3.utils.link {
 						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.out } );
 						else if( type == 'sprite') Process.to( _displayObject, .2, { color:_colors.out} );
 					}
-					if ( _actions != null ) _actions( 'out', _displayObject, _data );
+					if ( _actions != null ) _actions( 'out', _displayObject, (_data is Function)? _data.call() : _data );
 					//--content
 					for ( prop in _content ) {
 						if( _content[prop].colors != null ) {
 							if( _content[prop].type == "text" ) Process.to( _content[prop].object, .2, { text_color:_content[prop].colors.out } );
 							else if ( _content[prop].type == "sprite" ) Process.to( _content[prop].object, .2, { color:_content[prop].colors.out } );
 						}
-						if ( _content[prop].actions != null ) _content[prop].actions("out", _content[prop].object, _content[prop].data );
+						if ( _content[prop].actions != null ) _content[prop].actions("out", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data );
 					}	
 					break;
 					
 				case MouseEvent.CLICK :
 					if ( swfAddress ) SWFAddress.setValue(_name);
 					else {
-						if (active) { active = false; if( _actions != null ){ _actions("undo", _displayObject, _data); } }
-						else{ active = true; if( _actions != null ){ _actions("do", _displayObject, _data); } }
+						if (active) { active = false; if( _actions != null ){ _actions("undo", _displayObject, (_data is Function)? _data.call() : _data ); } }
+						else{ active = true; if( _actions != null ){ _actions("do", _displayObject, (_data is Function)? _data.call() : _data); } }
 					}
 					if ( _colors ) {
 						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.click } );
@@ -266,8 +266,8 @@ package railk.as3.utils.link {
 						}
 						if ( _content[prop].actions != null  ) 
 						{ 
-							if( !isActive() ) _content[prop].actions("do", _content[prop].object, _content[prop].data );
-							else _content[prop].actions("undo", _content[prop].object, _content[prop].data );
+							if( !isActive() ) _content[prop].actions("do", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data );
+							else _content[prop].actions("undo", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data  );
 						}
 					}	
 					break;

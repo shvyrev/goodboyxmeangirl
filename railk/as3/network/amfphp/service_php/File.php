@@ -55,7 +55,7 @@ class File {
 				$a = file_get_contents($filename);
 				break;
 			case "binary" :
-				$a = new Bytearray( file_get_contents($filename) ); 
+				$a = new ByteArray(file_get_contents($filename));
 				break;
 		}
 		return $a;
