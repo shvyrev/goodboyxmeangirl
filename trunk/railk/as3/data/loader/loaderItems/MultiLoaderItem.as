@@ -35,7 +35,6 @@ package railk.as3.data.loader.loaderItems {
 	
 	// ____________________________________________________________________________________ IMPORT MULTILOADER
 	import railk.as3.data.loader.MultiLoaderEvent;
-
 	
 
 	public class  MultiLoaderItem extends EventDispatcher {
@@ -423,8 +422,15 @@ package railk.as3.data.loader.loaderItems {
 		private function onloadIOerror( evt:IOErrorEvent ):void 
 		{	
 			if ( numTries < maxTries ) { load(); numTries += 1; }
-			else { itemState = MultiLoaderItem.FAILED; }
-			dispatchEvent( evt );
+			else 
+			{ 
+				itemState = MultiLoaderItem.FAILED;
+				///////////////////////////////////////////////////////////////
+				var args:Object = { info:"item " + itemURL.url + " have failed", item:this };
+				var eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONERRORLOADINGITEM, args );
+				dispatchEvent( eEvent );
+				///////////////////////////////////////////////////////////////
+			}	
 		}
 		
 		private function onloadHttpStatus( evt:HTTPStatusEvent ):void { dispatchEvent( evt ); }

@@ -1,0 +1,1 @@
+a component is a mvc coding part with an extendable view and implements ICcomponentView/IComponentModel/IComponentController

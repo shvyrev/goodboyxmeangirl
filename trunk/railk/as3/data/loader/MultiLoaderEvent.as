@@ -8,14 +8,9 @@
 
 package railk.as3.data.loader {
 
-	// _______________________________________________________________________________________ IMPORT FLASH
 	import flash.events.Event;
-
-	// _______________________________________________________________________________________ CLASS
-	
 	public dynamic class MultiLoaderEvent extends Event{
 			
-		// ___________________________________________________________________________________ VARIABLES STATIQUES
 		static public const ONMULTILOADERBEGIN              :String = "onMultiLoaderBegin";
 		static public const ONMULTILOADERPROGRESS           :String = "onMultiLoaderProgress";
 		static public const ONMULTILOADERCOMPLETE           :String = "onMultiLoaderComplete";
@@ -25,7 +20,6 @@ package railk.as3.data.loader {
 		static public const ONITEMBEGIN                     :String = "onItemBegin";
 		static public const ONITEMPROGRESS                  :String = "onItemProgress";
 		static public const ONITEMCOMPLETE                  :String = "onItemComplete";
-		static public const ONITEMIOERROR                   :String = "onItemIOerror";
 		static public const ONITEMHTTPSTATUS                :String = "onItemHttpStatus";
 		static public const ONITEMNETSTATUS                 :String = "onItemNetStatus";
 		
@@ -33,10 +27,9 @@ package railk.as3.data.loader {
 		static public const ONSTREAMBUFFERING               :String = "onStreamBuffering";
 		static public const ONSTREAMPLAYED                  :String = "onStreamPlayed";
 		
+		static public const ONERRORLOADINGITEM           :String = "onErrorLoadingItem"
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		
 		public function MultiLoaderEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;
 				for(var name:String in data) {

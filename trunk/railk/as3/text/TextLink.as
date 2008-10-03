@@ -69,7 +69,7 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0 ):void 
+		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0, backgroundColor:uint=0x00FFFFFF, borderColor:uint=0x00FFFFFF ):void 
 		{
 			_name = name;
 			_type = type;
@@ -100,12 +100,12 @@ package railk.as3.text
 				texte.type = type;
 				if ( !htmlText )
 				{
-					texte.text = text;
+					texte.text = (text) ? text : ' ';
 					texte.setTextFormat( format ); 
 				}
 				else 
 				{ 
-					texte.htmlText = text; 
+					texte.htmlText = (text) ? text : ' '; 
 				}
 				texte.embedFonts = embedFont;
 				texte.selectable = selectable;
@@ -119,6 +119,16 @@ package railk.as3.text
 				{
 					if( width != 0) texte.width = width;
 					if( height != 0) texte.height = height;
+				}
+				if ( backgroundColor != 0x00FFFFFF )
+				{
+					texte.background = true;
+					texte.backgroundColor = backgroundColor;
+				}
+				if ( borderColor != 0x00FFFFFF )
+				{
+					texte.border = true;
+					texte.borderColor = borderColor;
 				}
 				texte.wordWrap = wordwrap;
 				texte.mouseEnabled = selectable;
