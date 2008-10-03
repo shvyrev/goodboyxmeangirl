@@ -75,7 +75,7 @@ package railk.as3.utils.resize {
 		 * @param	action
 		 * @param	group
 		 */
-		public static function add( name:String, displayObject:*, action:Function = null, group:String = 'main' ):void 
+		public static function add( name:String, displayObject:Object, action:Function = null, group:String = 'main' ):void 
 		{
 			itemList.add( [name,displayObject,group,action] );
 		}
