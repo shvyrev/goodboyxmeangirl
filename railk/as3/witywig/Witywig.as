@@ -22,20 +22,24 @@ package railk.as3.witywig
 	
 	public class  Witywig extends EventDispatcher
 	{
+		protected static var disp:EventDispatcher;
 		
-		public static const CTRL:String = 17;
-		public static const SPACE:String = 32;
-		public static const SHIFT:String = 16;
-		public static const TAB:String = 9;
+		public static const CTRL:String = '17';
+		public static const SPACEBAR:String = '32';
+		public static const SHIFT:String = '16';
+		public static const TAB:String = '9';
 		
+		private static var _activationKey:int;
 		private static var reservedActions:Object;
-		private static var activationKey:int;
 		private static var activated:Boolean = false;
 		private static var datas:Dictionary;
 		private static var termsRelation:Dictionary;
 		
 		private static var textfield:Text;
 		private static var underfield:Text;
+		private static var decorated:Boolean = false;
+		
+		private static var eEvent:WitywigEvent;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   GESTION DES LISTENERS DE CLASS
@@ -58,22 +62,29 @@ package railk.as3.witywig
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   							 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( stage:Stage, executeBox:*, activationKey:int=SPACE ):DynamicRegistration 
+		public static function init( stage:Stage, activationKey:String=SPACEBAR ):void 
 		{
-			this.activationKey = activationKey;
-			
+			_activationKey = int(activationKey);
+			stage.addEventListener( KeyboardEvent.KEY_DOWN, manageEvent, false, 0, true );
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	   			  DECORATE MOVIE CLIP
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function decorate( executeBox:Object ):void 
+		{
 			executeBox.alpha = 0;
 			executeBox.visible = false;
 			textfield = executeBox.getChildByName('text');
 			underfield = executeBox.getChildByName('undertext');
 			textfield.addEventListener( TextEvent.TEXT_INPUT, manageEvent, false, 0, true );
-			stage.addEventListener( KeyboardEvent.KEY_DOWN, manageEvent, false, 0, true );
+			decorated = true;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				    EXECUTE AN ACTION
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function execute( method:String:, ...args ):* {
+		public static function execute( method:String, ...args ):* {
 			var result:*;
 			loop:for ( var a in reservedActions )
 			{
@@ -119,7 +130,7 @@ package railk.as3.witywig
 			}
 		}
 		
-		private static function parseTerms( terms:String, content:* ):String {
+		private static function parseTerms( terms:String, content:* ):void {
 			var a:Array = terms.split(',');
 			for (var i:int = 0; i < a.length; i++) 
 			{
@@ -130,11 +141,11 @@ package railk.as3.witywig
 		private static function parseExecute( terms:Array ):Array 
 		{
 			var result:Array;
-			for (var i:int = 0; i < terms; i++) 
+			for (var i:int = 0; i < terms.length; i++) 
 			{
 				for (var t in termsRelation )
 				{
-					if ( t = terms[i] ) result.push( termsRelation[t] );
+					if ( t == terms[i] ) result.push( termsRelation[t] );
 				}
 			}
 			return result;
@@ -145,10 +156,11 @@ package railk.as3.witywig
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function manageEvent( evt:* )
 		{
+			var args:Object;
 			switch( evt.type )
 			{
 				case KeyboardEvent.KEY_DOWN :
-					if ( evt.keyCode == activationKey )
+					if ( evt.keyCode == _activationKey &&  decorated )
 					{
 						if (activated) {
 							activated = false;
