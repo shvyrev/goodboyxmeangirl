@@ -13,7 +13,7 @@ package railk.as3.pattern.mvc.interfaces
 		function start():void;
 		function execute( type:String, ...args ):void;
 		function getData( name:String ):*;
-		function updateView(type:String):void;
+		function updateView(info:String, type:String, extra:Object=null ):void;
 		function clearData():void;
 		function dispose():void;
 		function get owner():String;
