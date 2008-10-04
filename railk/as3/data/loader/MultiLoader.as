@@ -370,7 +370,7 @@ package railk.as3.data.loader {
 					delMLoaderListener();
 					_state = "stop";
 					///////////////////////////////////////////////////////////////
-					var args:Object = { info:"Multiloader "+MloaderName+" is finished" };
+					var args:Object = { info:"Multiloader "+MloaderName+" is finished", role:MloaderRole };
 					eEvent = new MultiLoaderEvent( MultiLoaderEvent.ONMULTILOADERCOMPLETE, args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////	

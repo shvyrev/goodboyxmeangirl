@@ -41,7 +41,7 @@ package railk.as3.utils.accordion {
 		 * 
 		 * @param	type	'V'|'H'
 		 */
-		public function Accordion( type:String ):void {
+		public function Accordion( type:String='V' ):void {
 			_type = type;
 			itemList = new ObjectList();
 			
@@ -57,7 +57,7 @@ package railk.as3.utils.accordion {
 		 * @param	content
 		 * @return
 		 */
-		public function add( name:String, content:Object ):Boolean 
+		public function add( name:String, content:Object ):void
 		{
 			acItem = new AccordionItem( name, _type, content );
 			acItem.addEventListener( AccordionEvent.ON_HEIGHT_CHANGE, manageEvent, false, 0, true );
@@ -83,17 +83,17 @@ package railk.as3.utils.accordion {
 			if ( item == itemList.head )
 			{
 				walker = itemList.head.next;
-				loop:while ( walker ) 
+				while ( walker ) 
 				{
-					Process.to( walker.data.content, .3, {  walker.data.y:walker.prev.data.nextY } );
+					Process.to( walker.data, .3, {  y:walker.prev.data.nextY } );
 					walker = walker.next;
 				}
 			}
 			else if (item != itemList.tail )
 			{
 				walker = item.next;
-				loop:while ( walker ) {
-					Process.to( walker.data.content, .3, {  walker.data.y:walker.prev.data.nextY } );
+				while ( walker ) {
+					Process.to( walker.data, .3, {  y:walker.prev.data.nextY } );
 					walker = walker.next;
 				}
 			}
@@ -116,10 +116,16 @@ package railk.as3.utils.accordion {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get item( name:String ):* 
+		public function getItem( name:String ):* 
 		{
 			return itemList.getObjectByName( name ).data.content;
 		}
+		
+		public function get items():Array 
+		{
+			return itemList.toArray();
+		}
+		
 		
 		
 		
