@@ -26,7 +26,7 @@ package railk.as3.pattern.mvc.core
 		
 		public function updateView(info:String, type:String, extra:Object=null):void
 		{
-			var args:Object;
+			var args:Object= {};
 			var e:String;
 			args.info = this.info = info;
 			args.data = this.data;
