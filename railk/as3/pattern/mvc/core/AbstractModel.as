@@ -24,9 +24,14 @@ package railk.as3.pattern.mvc.core
 			owner = '';
 		}
 		
-		public function updateView(type:String):void
+		public function updateView(info:String, type:String, extra:Object=null):void
 		{
-			dispatchEvent( new ModelEvent( _owner+type, { info:info, data:data} ) );
+			var args:Object;
+			var e:String;
+			args.info = this.info = info;
+			args.data = this.data;
+			if ( extra ) for ( e in extra) { args[e] = extra[e]; }
+			dispatchEvent( new ModelEvent( _owner+type, args ) );
 		}
 		
 		public function clearData():void {
