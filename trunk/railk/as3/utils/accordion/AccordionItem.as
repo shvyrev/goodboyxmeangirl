@@ -98,9 +98,10 @@ package railk.as3.utils.accordion {
 		private function manageEvent( evt:* ):void 
 		{
 			var args:Object;
+			var eEvent:AccordionEvent;
 			switch( evt.type ){
 				case Event.ENTER_FRAME :
-					if ( _content.width != _oldW && _type = 'H' )
+					if ( _content.width != _oldW && _type == 'H' )
 					{
 						_oldW = _content.width;
 						///////////////////////////////////////////////////////////////
@@ -109,7 +110,7 @@ package railk.as3.utils.accordion {
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////
 					}
-					else if ( _content.height != _oldH && _type = 'V' )
+					else if ( _content.height != _oldH && _type == 'V' )
 					{
 						///////////////////////////////////////////////////////////////
 						args = { info:name+' height change', data:name };
