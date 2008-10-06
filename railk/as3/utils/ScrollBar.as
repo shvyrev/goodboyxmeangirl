@@ -26,7 +26,8 @@ package railk.as3.utils {
 	public class ScrollBar extends DynamicRegistration  {
 		
 		//______________________________________________________________________________ VARIABLES STATIQUES
-		public static var scrollList           :Object={};
+		public static var scrollList           :Object = { };
+		private static var baseDelta           :Number = 14;
 		
 		//________________________________________________________________________________________ VARIABLES
 		private var scrollContainer            :Sprite;
@@ -42,7 +43,7 @@ package railk.as3.utils {
 		private var content                    :Object;
 		private var contentCheck               :Object={};
 		private var multiplier                 :Number;
-		private var delta                      :Number = 14;
+		private var delta                      :Number;
 		private var distance                   :Number;
 		private var way                        :String;
 		private var rect                       :Rectangle;
@@ -133,7 +134,7 @@ package railk.as3.utils {
 					distance = content.height - StageManager.H;
 					slider.height = ( (StageManager.H - distance) > sizes.sH ) ? StageManager.H - distance : sizes.sH;
 					multiplier = distance / ( sizes.fH - slider.height );
-					delta = delta / (multiplier >> 1);
+					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
 					rect = new Rectangle(0, 0, 0, sizes.fH - slider.height);
 					////////////////////////////////////
@@ -150,7 +151,7 @@ package railk.as3.utils {
 					distance = content.width - StageManager.W;
 					slider.width = ( (StageManager.W - distance) > sizes.sW ) ? StageManager.W - distance : sizes.sW;
 					multiplier = distance / ( sizes.fW - slider.width );
-					delta = delta / (multiplier >> 1);
+					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
 					rect = new Rectangle(0, 0, sizes.fW - slider.width, 0);
 					////////////////////////////////////
@@ -208,8 +209,9 @@ package railk.as3.utils {
 					distance = content.height - StageManager.H;
 					slider.height = ( (StageManager.H - distance) > scrollSize.sH ) ? StageManager.H - distance : scrollSize.sH;
 					multiplier = distance / ( scrollBG.height - slider.height );
-					delta = delta / (multiplier >> 1);
+					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
+					trace( multiplier+' / '+delta );
 					rect = new Rectangle(0, 0, 0, scrollBG.height - slider.height );
 					oldStageH = StageManager.H;
 					scrollSize.fH = scrollBG.height;
@@ -240,7 +242,7 @@ package railk.as3.utils {
 					distance = content.height - StageManager.W;
 					slider.width = ( (StageManager.W - distance) > scrollSize.sW ) ? StageManager.W - distance : scrollSize.sW;
 					multiplier = distance / ( scrollBG.width - slider.width  );
-					delta = delta / (multiplier >> 1);
+					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
 					rect = new Rectangle(0, 0, scrollBG.width - slider.width, 0);
 					oldStageW = StageManager.W;
