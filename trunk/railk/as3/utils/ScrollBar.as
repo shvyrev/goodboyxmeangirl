@@ -209,9 +209,8 @@ package railk.as3.utils {
 					distance = content.height - StageManager.H;
 					slider.height = ( (StageManager.H - distance) > scrollSize.sH ) ? StageManager.H - distance : scrollSize.sH;
 					multiplier = distance / ( scrollBG.height - slider.height );
-					delta = baseDelta / (multiplier*.5);
+					delta = baseDelta / ( multiplier*.5);
 					delta = (delta > 6)? delta : 6;
-					trace( multiplier+' / '+delta );
 					rect = new Rectangle(0, 0, 0, scrollBG.height - slider.height );
 					oldStageH = StageManager.H;
 					scrollSize.fH = scrollBG.height;
