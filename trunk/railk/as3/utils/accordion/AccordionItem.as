@@ -26,12 +26,13 @@ package railk.as3.utils.accordion {
 		private var _content                                :Object;
 		private var _oldH                                   :Number;
 		private var _oldW                                   :Number;
+		private var _separator                              :Number;
 			
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function AccordionItem( name:String, type:String, content:Object ):void 
+		public function AccordionItem( name:String, type:String, content:Object, separator:Number ):void 
 		{
 			_name = name;
 			_type = type;
@@ -39,10 +40,11 @@ package railk.as3.utils.accordion {
 			_Y = content.y;
 			_oldH = content.height;
 			_oldW = content.width;
-			_nextX = _oldW+_X;
-			_nextY = _oldH+_Y;
+			_nextX = _oldW+_X+separator;
+			_nextY = _oldH+_Y+separator;
 			_content = content;
-			this.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+			_separator = separator;
+			content.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 		}
 		
 		
@@ -51,27 +53,28 @@ package railk.as3.utils.accordion {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void 
 		{	
-			this.removeEventListener( Event.ENTER_FRAME, manageEvent );
-			_content = null;
+			_content.removeEventListener( Event.ENTER_FRAME, manageEvent );
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get X():int { return _X; }
+		public function get x():int { return _X; }
 		
-		public function set X(value:int):void 
+		public function set x(value:int):void 
 		{
 			_X = value;
+			_nextX = _Y + _oldW + _separator;
 			_content.x = value;
 		}
 		
-		public function get Y():int { return _Y; }
+		public function get y():int { return _Y; }
 		
-		public function set Y(value:int):void 
+		public function set y(value:int):void 
 		{
 			_Y = value;
+			_nextY = _Y + _oldH + _separator;
 			_content.y = value;
 		}
 		
@@ -104,6 +107,7 @@ package railk.as3.utils.accordion {
 					if ( _content.width != _oldW && _type == 'H' )
 					{
 						_oldW = _content.width;
+						_nextX = _X + _oldW + _separator;
 						///////////////////////////////////////////////////////////////
 						args = { info:name+' width change', data:name };
 						eEvent = new AccordionEvent( AccordionEvent.ON_WIDTH_CHANGE, args );
@@ -112,6 +116,8 @@ package railk.as3.utils.accordion {
 					}
 					else if ( _content.height != _oldH && _type == 'V' )
 					{
+						_oldH = content.height;
+						_nextY = _Y + _oldH + _separator;
 						///////////////////////////////////////////////////////////////
 						args = { info:name+' height change', data:name };
 						eEvent = new AccordionEvent( AccordionEvent.ON_HEIGHT_CHANGE, args );
