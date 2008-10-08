@@ -23,6 +23,7 @@ package railk.as3.utils.scrollList {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.CustomEvent;
+	import railk.as3.tween.process.*;
 	
 	
 	public class ScrollList extends Sprite {
@@ -39,9 +40,8 @@ package railk.as3.utils.scrollList {
 		private var walker                                       :ObjectNode;
 		private var scrollListSize                               :Number;
 		private var rectSize                                     :Number = 1;
-		
-		private var eEvent                                       :CustomEvent;
-		
+		private var delta                                        :Number = 14;
+		private var oldMouseY                                	 :Number=0;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
@@ -92,6 +92,7 @@ package railk.as3.utils.scrollList {
 		public function create():void 
 		{
 			var place = 0;
+			var count:int = 0;
 			//--mise ne place
 			walker = objects.head;
 			while ( walker ) 
@@ -118,8 +119,10 @@ package railk.as3.utils.scrollList {
 					obj.x = place;
 					place += obj.width + _espacement;
 				}
+				count++;
 				walker = walker.next;
 			}
+			trace( count );
 			
 			//taille totale de la zone de scroll
 			scrollListSize = place;
@@ -145,8 +148,7 @@ package railk.as3.utils.scrollList {
 			container.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 			container.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 			container.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			if ( wheelEnable ) { StageManager._stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true ); }
-			StageManager._stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			StageManager._stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true );
 		}
 		
 		public function delListeners():void {
@@ -154,8 +156,7 @@ package railk.as3.utils.scrollList {
 			container.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 			container.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
 			container.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			if ( wheelEnable ) { StageManager._stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent ); }
-			StageManager._stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			StageManager._stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent );
 		}
 		
 		
@@ -183,6 +184,9 @@ package railk.as3.utils.scrollList {
 		private function manageEvent( evt:* ):void 
 		{
 			var args:Object = new Object();
+			var eEvent:*;
+			var rect:Rectangle = container.scrollRect;
+			var value:Number;
 			switch( evt.type )
 			{
 				/*case Event.ENTER_FRAME:
@@ -219,78 +223,55 @@ package railk.as3.utils.scrollList {
 					break;
 					
 				case MouseEvent.MOUSE_DOWN :
-					if ( evt.currentTarget.name == "container" ) {
-						evt.currentTarget.startDrag( false, rect );
-						StageManager._stage.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
-						container.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
-					}	
-					else {
-						StageManager._stage.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-					}
+					oldMouseY = mouseY;
+					trace( oldMouseY );
+					StageManager._stage.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
+					container.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 					break;
 					
 				case MouseEvent.MOUSE_UP :
-					var eEvent:MouseEvent = new MouseEvent( MouseEvent.ROLL_OUT, true,false, container.x, container.y, container );
-					if( evt.currentTarget.name == "container" ){
-						evt.currentTarget.stopDrag();
-						StageManager._stage.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
-						container.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
-					}
-					else {
-						StageManager._stage.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-						container.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
-						manageEvent( eEvent );
-						stopDrag();
-					}
+					oldMouseY = mouseY;
+					StageManager._stage.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
+					container.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 					break;
 					
 				case MouseEvent.MOUSE_MOVE :
-					if ( evt.currentTarget.name == "container" ) {
-						if ( way == "V" ) {
-							if ( mouseY >= rect.height ) { value = rect.height; }
-							else if ( mouseY <= container.height ) { value = 0; }
-							else { value = mouseY - container.height / 2; }
-							Process.to( container, 1, { y:value},{ onUpdate: function() { content.y = -(container.y * multiplier); } } );
-						}
-						else if ( way == "H" ) {
-							if ( mouseX >= rect.width ) { value = rect.width; }
-							else if ( mouseX <= container.width ) { value = 0; }
-							else { value = mouseX - container.width / 2; }
-							Process.to( container, 1, { x:value},{onUpdate: function() { content.x = -(container.x * multiplier); } } );
-						}
+					if ( _orientation == "V" ) {
+						trace( rect.y +' / '+ (oldMouseY-mouseY) );
+						if ( rect.y > rect.height ) { value = rect.height; }
+						else if ( rect.y < 0 ) { value = 0; }
+						else { value = rect.y + (oldMouseY-mouseY); }
+						Process.to( rect, .4, { y:value}, { onUpdate:function() { container.scrollRect = rect; } } );
 					}
-					else {
-						if( way == "V" ) {
-							Process.to( content,.3, { y: -(container.y * multiplier) }, {rounded:true} );
-						}
-						else if( way == "H" ) {
-							Process.to( content,.3, { x: -(container.x * multiplier)}, {rounded:true } );
-						}
+					else if ( _orientation == "H" ) {
+						if ( mouseX >= rect.width ) { value = rect.width; }
+						else if ( mouseX <= container.width ) { value = 0; }
+						else { value = mouseX - container.width / 2; }
+						Process.to( container, 1, { x:value} );
 					}
 					break;
 					
 				case MouseEvent.MOUSE_WHEEL :
-					
-					if ( way == "V" ) {
-						if ( container.y >= 0 + evt.delta*delta  && container.y <= rect.height+ evt.delta*delta  ) {
-							Process.to( container, .4, { y: container.y - (evt.delta * delta)} , { onUpdate: function() { content.y = -(container.y * multiplier); } } );
+					if ( _orientation== "V" ) {
+						if ( rect.y >= 0 + evt.delta*delta  && rect.y <= rect.height+ evt.delta*delta  ) {
+							Process.to( rect, .4, { y:rect.y - (evt.delta * delta) }, { onUpdate:function() { container.scrollRect = rect; } } );
 						}
-						else if( container.y < 0 + evt.delta*delta ) {
-							Process.to( container, .4, { y: 0}, {onUpdate: function() { content.y = -(container.y * multiplier); } } );
+						else if( rect.y < 0 + evt.delta*delta ) {
+							Process.to( rect, .4, { y: 0}, { onUpdate:function() { container.scrollRect = rect; } } );
 						}
-						else if ( container.y > rect.height + evt.delta*delta ) {
-							Process.to( container, .4, { y:rect.height }, {onUpdate: function() { content.y = -(container.y * multiplier); } } );
+						else if ( rect.y > rect.height + evt.delta*delta ) {
+							Process.to( rect, .4, { y:rect.height }, { onUpdate:function() { container.scrollRect = rect; } } );
 						}
 					}
-					else if ( way == "H" ) {
+					else if ( _orientation == "H" ) {
 						if ( container.x >= 0 + evt.delta*delta && container.x <= rect.width + evt.delta*delta ) {
-							Process.to( container, .4, { x: container.x - (evt.delta * delta)} , {onUpdate: function() { content.x = -(container.x * multiplier); } } );
+							Process.to( container, .4, { x: container.x + (evt.delta * delta)} );
 						}
 						else if( container.x < 0 + evt.delta*delta ) {
-							Process.to( container, .4, { x: 0 }, {onUpdate: function() { content.x = -(container.x * multiplier); } } );
+							Process.to( container, .4, { x: 0 } );
 						}
 						else if ( container.x > rect.height+evt.delta*delta ) {
-							Process.to( container, .4, { x:rect.width }, { onUpdate: function() { content.x = -(container.x * multiplier); } } );
+							Process.to( container, .4, { x:rect.width } );
 						}
 					}
 					break;

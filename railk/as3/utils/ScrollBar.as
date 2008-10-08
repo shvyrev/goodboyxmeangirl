@@ -172,7 +172,8 @@ package railk.as3.utils {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   GESTION LISTERNERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function initListeners():void {
+		public function initListeners():void 
+		{
 			scrollContainer.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
 			scrollContainer.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 			scrollContainer.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
@@ -182,7 +183,8 @@ package railk.as3.utils {
 			StageManager._stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
 		}
 		
-		public function delListeners():void {
+		public function delListeners():void 
+		{
 			scrollContainer.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
 			scrollContainer.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 			scrollContainer.removeEventListener( MouseEvent.CLICK, manageEvent );
