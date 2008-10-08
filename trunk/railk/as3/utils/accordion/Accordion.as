@@ -3,10 +3,7 @@
 * Accordion
 * 
 * @author Richard Rodney
-* @version 0.1
-* 
-* TODO: ENABLE MODIFICATION FROM THE CENTER OF THE ITEM OR NOT
-* 
+* @version 0.1 
 */
 
 

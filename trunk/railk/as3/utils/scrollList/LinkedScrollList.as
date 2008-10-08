@@ -7,7 +7,7 @@
 * @version 0.1
 */
 
-package railk.as3.utils {
+package railk.as3.utils.scrollList {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
@@ -16,22 +16,25 @@ package railk.as3.utils {
 	import flash.geom.Rectangle;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.display.GraphicShape;
+	import railk.as3.utils.objectList.ObjectList;
+	import railk.as3.utils.objectList.ObjectNode;
+	import railk.as3.utils.CustomEvent;
 	
 	
-	public class ScrollList extends Sprite {
+	public class LinkedScrollList extends Sprite {
 		
 		// _____________________________________________________________________________ VARIABLES SCROLLIST
 		private var _name                                        :String;
 		private var _orientation                                 :String;
-		private var _width                                       :int;
-		private var _height                                      :int;
+		private var _size                                        :Number
 		private var _espacement                                  :int;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
-		private var container                                    :Sprite;
-		private var objects                                      :Array;
-		private var scrollListSize                               :int;
+		private var walker                                       :ObjectNode;
+		private var objects                                      :ObjectList;
+		private var scrollLists                                  :ObjectList;
+		private var currentScrollList                            :int = 0;
+		private var currentSize                                  :Number = 0;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -41,92 +44,103 @@ package railk.as3.utils {
 		 * 
 		 * @param	name
 		 * @param	orientation   'V'|'H'
-		 * @param	size          height or width depending on orientation
+		 * @param	size
+		 * @param	espacement
 		 */
-		public function ScrollList( name:String, orientation:String, width:int, height:int, espacement:int ):void {
+		public function LinkedScrollList( name:String, orientation:String, size:Number, espacement:int ):void 
+		{
 			_name = name;
 			_orientation = orientation;
 			_espacement = espacement;
-			_width = width;
-			_height = height;
+			_size = size;
 			
-			//--init
-			objects = new Array();
-			
-			//--Container + scrollListRect
-			container = new Sprite();
-			addChild( container );
-			container.scrollRect = new Rectangle( 0,0,width,height );
+			objects = new ObjectList();
+			scrollLists = new ObjectList();
+			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), _orientation, size, _espacement )] );
+			initScrollListners( currentScroll() );
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	     ADD OBJECT TO THE SCROLLLIST
+		// 																  ADD OBJECT TO THE LINKED SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
+		 * @param	name
 		 * @param	o
-		 * @param	size
 		 */
-		public function add( o:*, size:int ):void { objects.push( { object:o, size:size } ); }
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	     		CREATE THE SCROLLLIST
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function create():void 
-		{
-			var place = 0;
-			//--mise ne place
-			for (var i:int = 0; i < objects.length; i++)
+		public function add( name:String, o:* ):void 
+		{ 
+			o.alpha = .3;
+			if ( _orientation == 'V' ) currentSize += o.height+_espacement;
+			else if ( _orientation == 'H' ) currentSize += o.width+_espacement;
+			if ( currentSize >= _size + o.height )
 			{
-				var obj:* = objects[i].object;
-				container.addChild( obj );
-				if ( _orientation == 'V' ) obj.y = place;
-				else if( _orientation == 'H' ) obj.x = place;
-				place += objects[i].size + _espacement;
-				container.addChild( obj );
+				objects.add( [name, o] );
+				newScroll().add( name, o );
+				currentSize = o.height+_espacement;
 			}
-			//taille totale de la zone de scroll
-			scrollListSize = place;
-			//on ajoute un fond a thumbs pour le scroll
-			var fond:GraphicShape = new GraphicShape();
-			fond.name = "bg";
-			if ( _orientation == 'V' ) fond.rectangle(0x000000, 0, 0, _width, scrollListSize );
-			else if ( _orientation == 'H' ) fond.rectangle(0x000000, 0, 0, scrollListSize, _height);
-			fond.alpha = 0;
-			container.addChildAt(fond, 0);
-			
-			///////////////////////////////
-			initListeners();
-			///////////////////////////////
+			else
+			{
+				objects.add( [name, o] );
+				currentScroll().add( name, o );
+			}	
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																 		CREATE NEW SCROLL WHEN NEEDED
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function newScroll():ScrollList 
+		{
+			currentScrollList += 1;
+			scrollLists.add( [scrollLists.length,  new ScrollList( String(currentScrollList), _orientation, _size, _espacement )] );
+			return scrollLists.getObjectByName( String(currentScrollList) ).data as ScrollList;
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																 		CREATE NEW SCROLL WHEN NEEDED
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function currentScroll():ScrollList
+		{
+			return scrollLists.getObjectByName( String(currentScrollList) ).data as ScrollList;
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	    			   INIT LISTENERS
+		// 																 	   CREATE THE LINKED SCROLL LISTS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function initListeners():void {
-			container.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
-			container.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
+		public function create():void {
+			var X:Number = 0;
+			walker = scrollLists.head;
+			while ( walker ) 
+			{
+				walker.data.x = X;
+				addChild( walker.data );
+				walker.data.create();
+				X += walker.data.width+_espacement;
+				walker = walker.next;
+			}
 		}
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	    			    DEL LSITENERS
+		// 																 	   CREATE THE LINKED SCROLL LISTS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function delListeners():void {
-			container.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
-			container.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
+		public function initScrollListeners(scroll:ScrollList ):void 
+		{
+			scroll.addEventListener( 'onTop', manageEvent, false, 0, true );
+			scroll.addEventListener( 'onBottom', manageEvent, false, 0, true );
+			scroll.addEventListener( 'onScrollOver', manageEvent, false, 0, true );
+			scroll.addEventListener( 'onScrollOut', manageEvent, false, 0, true );
+			scroll.addEventListener( 'onScrollResize', manageEvent, false, 0, true );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	    			    	   resize
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function resize( size:int ):void {
-			if ( _orientation == 'V' ) 	container.scrollRect = new Rectangle( 0,0,_width,size );
-			else if ( _orientation == 'H' ) container.scrollRect = new Rectangle( 0,0,size,_height );
+		public function delScrollListeners( scroll:ScrollList ):void 
+		{
+			scroll.removeEventListener( 'onTop', manageEvent );
+			scroll.removeEventListener( 'onBottom', manageEvent );
+			scroll.addEventListener( 'onScrollOver', manageEvent );
+			scroll.addEventListener( 'onScrollOut', manageEvent );
+			scroll.addEventListener( 'onScrollResize', manageEvent );
 		}
 		
 		
@@ -134,8 +148,15 @@ package railk.as3.utils {
 		// 																	    			    	  DISPOSE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function dispose():void {
-			delListeners();
-			container = null;
+			objects.clear();
+			walker = scrollLists.head;
+			while ( walker ) 
+			{
+				delScrollListeners( walker.data );
+				walker.data.dispose();
+				walker = walker.next;
+			}
+			scrollLists.clear();
 		}
 		
 		
@@ -145,43 +166,11 @@ package railk.as3.utils {
 		private function manageEvent( evt:* ):void {
 			switch( evt.type )
 			{
-				case MouseEvent.ROLL_OVER :
-					container.addEventListener(Event.ENTER_FRAME, manageEvent, false,0,true);
+				case 'onTop' :
 					break;
-				
-				case MouseEvent.ROLL_OUT :
-					container.removeEventListener(Event.ENTER_FRAME, manageEvent );
-					break;
-				
-				case Event.ENTER_FRAME :
-					var rect:Rectangle = container.scrollRect;
-					if ( _orientation == 'V' )
-					{
-						if ( mouseY < _height && mouseY > _height-200 && rect.y < (scrollListSize-rect.height) )
-						{
-							rect.y += 13;
-							container.scrollRect = rect;
-						}
-						else if ( mouseY > 0 && mouseY < 200 && rect.y > 0 )
-						{
-							rect.y -= 13;
-							container.scrollRect = rect;
-						}
-					}
-					else if (_orientation == 'H' )
-					{
-						if ( mouseX < _width && mouseX > _width-200 && rect.x < (scrollListSize-rect.width) )
-						{
-							rect.x += 13;
-							container.scrollRect = rect;
-						}
-						else if ( mouseX > 0 && mouseX < 200 && rect.x > 0 )
-						{
-							rect.x -= 13;
-							container.scrollRect = rect;
-						}
-					}
-					break;
+					
+				case 'onBottom' :
+					break;	
 			}
 		}
 	}
