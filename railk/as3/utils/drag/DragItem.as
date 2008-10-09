@@ -15,32 +15,32 @@ package railk.as3.utils.drag
 	
 	public class DragItem
 	{
-		private static var _bounds:Rectangle;
-		private static var _o:Object;
-		private static var _orientation:String;
-		private static var _stage:Stage;
+		private var name:String;
+		private var bounds:Rectangle;
+		private var o:Object;
+		private var orientation:String;
+		private var stage:Stage;
 		
-		private static var hasBound:Boolean = false;
-		private static var isDragging:Boolean = false;
-		private static var current:Number = 0;
-		private static var last:Number = 0;
-		private static var v:Number = 0;
-		private static var offset:Number;
-		private static var itemsList:ObjectList;
-		private static var walker:ObjectNode
+		private var hasBound:Boolean = false;
+		private var isDragging:Boolean = false;
+		private var current:Number = 0;
+		private var last:Number = 0;
+		private var v:Number = 0;
+		private var offset:Number;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	   	 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function DragItem( stage:Stage, name:String, o:Object, orientation:String, bounds:Rectangle=null )
 		{
-			_stage = stage;
-			_orientation = orientation;
-			_o = o;
+			this.stage = stage;
+			this.name = name;
+			this.orientation = orientation;
+			this.o = o;
 			if (bounds) 
 			{
 				hasBound = true;
-				_bounds = bounds;
+				this.bounds = bounds;
 			}
 			if ( orientation == 'V' ) current = last = o.y;
 			else if ( orientation == 'H' ) current = last = o.x;
@@ -53,66 +53,74 @@ package railk.as3.utils.drag
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function initListeners():void 
+		public function initListeners():void 
 		{
-			_o.buttonMode = true;
-			_o.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			_stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			_stage.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+			o.buttonMode = true;
+			o.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			stage.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 			
 		}
 		
-		public static function delListeners():void 
+		public function delListeners():void 
 		{
-			_o.buttonMode = false;
-			_o.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			_stage.removeEventListener( Event.ENTER_FRAME, manageEvent );
-			_stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			o.buttonMode = false;
+			o.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			stage.removeEventListener( Event.ENTER_FRAME, manageEvent );
+			stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
 			
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							  DISPOSE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function dispose():void {
+		public function dispose():void {
 			delListeners();
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function toString():String
+		{
+			return '[ DRAGITEM > ' + name + ', ( containing : ' + o + ' ) ]';
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:*):void 
+		private function manageEvent( evt:*):void 
 		{
 			switch( evt.type )
 			{
 				case MouseEvent.MOUSE_UP :
 					isDragging = false;
-					_stage.removeEventListener(MouseEvent.MOUSE_MOVE, manageEvent );
+					stage.removeEventListener(MouseEvent.MOUSE_MOVE, manageEvent );
 					break;
 					
 				case MouseEvent.MOUSE_DOWN :
 					isDragging = true;
-					offset = (_orientation == 'V')? _o.mouseY : _o.mouseX;
-					_stage.addEventListener(MouseEvent.MOUSE_MOVE, manageEvent );
+					offset = (orientation == 'V')? o.mouseY : o.mouseX;
+					stage.addEventListener(MouseEvent.MOUSE_MOVE, manageEvent );
 					break;
 				
 				case MouseEvent.MOUSE_MOVE :
-					if ( _orientation == 'V' )
+					if ( orientation == 'V' )
 					{
-						_o.y = _stage.mouseY - offset;
+						o.y = stage.mouseY - offset;
 						if ( hasBound)
 						{
-							if(_o.y <= _bounds.top) _o.x = _bounds.top;
-							else if (_o.y >= _bounds.bottom) _o.x = _bounds.bottom;
+							if(o.y <= bounds.top) o.x = bounds.top;
+							else if (o.y >= bounds.bottom) o.x = bounds.bottom;
 						}	
 					}
-					else if ( _orientation == 'H' )
+					else if ( orientation == 'H' )
 					{
-						_o.x = _stage.mouseX - offset;
+						o.x = stage.mouseX - offset;
 						if ( hasBound)
 						{
-							if(_o.x <= _bounds.left) _o.x = _bounds.left;
-							else if (_o.x >= _bounds.right) _o.x = _bounds.right;
+							if(o.x <= bounds.left) o.x = bounds.left;
+							else if (o.x >= bounds.right) o.x = bounds.right;
 						}	
 					}
 					evt.updateAfterEvent();
@@ -122,40 +130,40 @@ package railk.as3.utils.drag
 					if(isDragging)
 					{
 						last = current;
-						current = (_orientation == 'V')? _stage.mouseY : _stage.mouseX;
+						current = (orientation == 'V')? stage.mouseY : stage.mouseX;
 						v = current - last;
 					}	
 					else
 					{
-						if( _orientation == 'V') _o.y += v;
-						else if( _orientation == 'H') _o.x += v;
+						if( orientation == 'V') o.y += v;
+						else if( orientation == 'H') o.x += v;
 					}
 					
 					if ( hasBound)
 					{
-						if ( _orientation == 'V' )
+						if ( orientation == 'V' )
 						{
-							if(_o.y <= _bounds.top)
+							if(o.y <= bounds.top)
 							{
-								_o.y  = _bounds.top;
+								o.y  = bounds.top;
 								v *= -1;
 							}
-							else if(_o.y >= _bounds.bottom-_o.height)
+							else if(o.y >= bounds.bottom-o.height)
 							{
-								_o.y = _bounds.bottom-_o.height;
+								o.y = bounds.bottom-o.height;
 								v *= -1;
 							}
 						}
-						else if ( _orientation == 'H' )
+						else if ( orientation == 'H' )
 						{
-							if(_o.x <= _bounds.left)
+							if(o.x <= bounds.left)
 							{
-								_o.x  = _bounds.left;
+								o.x  = bounds.left;
 								v *= -1;
 							}
-							else if(_o.x >= _bounds.right-_o.width)
+							else if(o.x >= bounds.right-o.width)
 							{
-								_o.x = _bounds.right-_o.width;
+								o.x = bounds.right-o.width;
 								v *= -1;
 							}
 						}

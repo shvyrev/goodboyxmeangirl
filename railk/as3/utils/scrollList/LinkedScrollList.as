@@ -19,8 +19,8 @@ package railk.as3.utils.scrollList {
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
-	import railk.as3.utils.CustomEvent;
 	import railk.as3.utils.drag.DragAndThrow;
+	import railk.as3.utils.CustomEvent;
 	
 	
 	public class LinkedScrollList extends Sprite {
@@ -56,13 +56,24 @@ package railk.as3.utils.scrollList {
 			_espacement = espacement;
 			_size = size;
 			
-			DragAndThrow.init( this.stage );
 			objects = new ObjectList();
 			scrollLists = new ObjectList();
 			
-			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), _orientation, size, _espacement )] );
-			initScrollListners( currentScroll() );
-			DragAndThrow.enable( currentScroll() );
+			this.addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 CONSTRUCTEUR
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function setup( evt:Event ):void
+		{
+			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), _orientation, _size, _espacement )] );
+			initScrollListeners( currentScroll() );
+			
+			DragAndThrow.init( stage );
+			DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation );
+			
+			this.removeEventListener( Event.ADDED_TO_STAGE, setup );
 		}
 		
 		
@@ -83,6 +94,7 @@ package railk.as3.utils.scrollList {
 			{
 				objects.add( [name, o] );
 				newScroll().add( name, o );
+				DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation );
 				currentSize = o.height+_espacement;
 			}
 			else
@@ -162,6 +174,14 @@ package railk.as3.utils.scrollList {
 				walker = walker.next;
 			}
 			scrollLists.clear();
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	    			    	  DISPOSE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		override public function toString():String 
+		{
+			return DragAndThrow.toString();
 		}
 		
 		

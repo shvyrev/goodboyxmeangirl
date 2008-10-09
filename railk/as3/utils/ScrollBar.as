@@ -175,6 +175,8 @@ package railk.as3.utils {
 				scrollBG.alpha = scrollAlpha.fond;
 				slider.alpha = scrollAlpha.slider;
 			}
+			
+			this.removeEventListener( Event.ADDED_TO_STAGE, setup );
 		}
 		
 		
