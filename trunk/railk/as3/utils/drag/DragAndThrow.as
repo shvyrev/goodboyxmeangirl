@@ -1,0 +1,61 @@
+﻿/**
+ * 
+ * drag and trown object with bounds or not
+ * 
+ * @author Richard Rodney
+ * @version 0.1
+ */
+
+package railk.as3.utils.drag
+{
+	import flash.display.Stage;
+	import flash.geom.Rectangle;
+		import railk.as3.utils.objectList.ObjectList;
+	
+	public class DragAndThrow
+	{
+		private static var _stage:Stage;
+		private static var itemsList:ObjectList;
+		private static var walker:ObjectNode
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	   	 INIT
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function init( stage:Stage )
+		{
+			_stage = stage;
+			itemsList = new ObjectList();
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	   ENABLE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function enable( name:String, o:Object, orientation:String, bounds:Rectangle=null  )
+		{
+			itemsList.add( [name, new DragItem(_stage,name,o,orientation,bounds)] );
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	   REMOVE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function remove( name:String ):void
+		{
+			itemsList.getObjectByName( name ).data.dispose();
+			itemsList.remove( name );
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							  DISPOSE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function dispose():void 
+		{
+			walker = itemsList.head;
+			while ( walker ) 
+			{
+				walker.data.dispose();
+				walker = walker.next;
+			}
+		}
+	}
+}

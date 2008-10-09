@@ -10,14 +10,13 @@ package railk.as3.utils {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
+	import flash.display.Stage
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
-	import railk.as3.stage.StageManager;
-	import railk.as3.stage.StageManagerEvent;
 	import railk.as3.utils.Utils;
 	import railk.as3.tween.process.*;
 	
@@ -35,6 +34,7 @@ package railk.as3.utils {
 		private var scrollBG                   :GraphicShape;
 		private var scrollSize                 :Object;
 		private var scrollColor                :Object; 
+		private var scrollAlpha                :Object;
 		private var customSlider               :Boolean;
 		private var wheelEnable                :Boolean;
 		private var resizeEnable               :Boolean;
@@ -83,6 +83,8 @@ package railk.as3.utils {
 			content = toScroll;
 			scrollSize = sizes;
 			scrollColor = colors;
+			scrollAlpha = alphas;
+			way = orientation;
 			
 			scrollContainer = new Sprite();
 			scrollContainer.alpha = 0;
@@ -107,12 +109,21 @@ package railk.as3.utils {
 				slider.buttonMode = true;
 				scrollContainer.addChild( slider );
 				
-				
+			if ( !Process.pluginEnabled ) Process.enablePlugin( ProcessPlugins );
+			this.addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																								SETUP
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function setup( evt:Event ):void 
+		{
 			//--resize
 			if( resizeEnable ){
-				StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
-				oldStageH = StageManager.H;
-				oldStageW = StageManager.W;
+				stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
+				oldStageH = stage.stageHeight;
+				oldStageW = stage.stageWidth;
 			}
 			
 			//--Autocheck if scroll bar is needed or must be resized if content size is modified
@@ -127,16 +138,15 @@ package railk.as3.utils {
 			}	
 				
 			//--Scroll setup
-			if ( orientation == "V" ) {
-				way = orientation;
-				if ( content.height > StageManager.H ) {
+			if ( way == "V" ) {
+				if ( content.height > stage.stageHeight ) {
 					showHide(1, true);
-					distance = content.height - StageManager.H;
-					slider.height = ( (StageManager.H - distance) > sizes.sH ) ? StageManager.H - distance : sizes.sH;
-					multiplier = distance / ( sizes.fH - slider.height );
+					distance = content.height - stage.stageHeight;
+					slider.height = ( (stage.stageHeight - distance) > scrollSize.sH ) ? stage.stageHeight - distance : scrollSize.sH;
+					multiplier = distance / ( scrollSize.fH - slider.height );
 					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
-					rect = new Rectangle(0, 0, 0, sizes.fH - slider.height);
+					rect = new Rectangle(0, 0, 0, scrollSize.fH - slider.height);
 					////////////////////////////////////
 					initListeners();
 					listeners = true;
@@ -144,16 +154,15 @@ package railk.as3.utils {
 				}
 				else showHide(0,false);
 			}
-			else if ( orientation == "H" ) {
-				way = orientation;
-				if ( content.width > StageManager.W ) {
+			else if ( way == "H" ) {
+				if ( content.width > stage.stageWidth ) {
 					showHide(1,true);
-					distance = content.width - StageManager.W;
-					slider.width = ( (StageManager.W - distance) > sizes.sW ) ? StageManager.W - distance : sizes.sW;
-					multiplier = distance / ( sizes.fW - slider.width );
+					distance = content.width - stage.stageWidth;
+					slider.width = ( (stage.stageWidth - distance) > scrollSize.sW ) ? stage.stageWidth - distance : scrollSize.sW;
+					multiplier = distance / ( scrollSize.fW - slider.width );
 					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
-					rect = new Rectangle(0, 0, sizes.fW - slider.width, 0);
+					rect = new Rectangle(0, 0, scrollSize.fW - slider.width, 0);
 					////////////////////////////////////
 					initListeners();
 					listeners = true;
@@ -162,9 +171,9 @@ package railk.as3.utils {
 				else showHide(0,false);
 			}
 			
-			if ( alphas != null ) {
-				scrollBG.alpha = alphas.fond;
-				slider.alpha = alphas.slider;
+			if ( scrollAlpha != null ) {
+				scrollBG.alpha = scrollAlpha.fond;
+				slider.alpha = scrollAlpha.slider;
 			}
 		}
 		
@@ -179,8 +188,8 @@ package railk.as3.utils {
 			scrollContainer.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			slider.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 			slider.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			if ( wheelEnable ) { StageManager._stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true ); }
-			StageManager._stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			if ( wheelEnable ) { stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true ); }
+			stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
 		}
 		
 		public function delListeners():void 
@@ -190,8 +199,8 @@ package railk.as3.utils {
 			scrollContainer.removeEventListener( MouseEvent.CLICK, manageEvent );
 			slider.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
 			slider.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			if ( wheelEnable ) { StageManager._stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent ); }
-			StageManager._stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			if ( wheelEnable ) { stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent ); }
+			stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
 		}
 		
 		
@@ -201,20 +210,20 @@ package railk.as3.utils {
 		private function resize():void 
 		{
 			if ( way == "V" ) {
-				if ( content.height > StageManager.H ) {
+				if ( content.height > stage.stageHeight ) {
 					scrollContainer.visible = true;
 					showHide(1, true);
-					if ( slider.y >= oldStageH - slider.height ) { slider.y = StageManager.H - slider.height; }
-					else { slider.y = ( slider.y * StageManager.H ) / oldStageH; }
+					if ( slider.y >= oldStageH - slider.height ) { slider.y = stage.stageHeight - slider.height; }
+					else { slider.y = ( slider.y * stage.stageHeight ) / oldStageH; }
 					
-					scrollBG.height = ( scrollSize.fH * StageManager.H ) / oldStageH;
-					distance = content.height - StageManager.H;
-					slider.height = ( (StageManager.H - distance) > scrollSize.sH ) ? StageManager.H - distance : scrollSize.sH;
+					scrollBG.height = ( scrollSize.fH * stage.stageHeight ) / oldStageH;
+					distance = content.height - stage.stageHeight;
+					slider.height = ( (stage.stageHeight - distance) > scrollSize.sH ) ? stage.stageHeight - distance : scrollSize.sH;
 					multiplier = distance / ( scrollBG.height - slider.height );
 					delta = baseDelta / ( multiplier*.5);
 					delta = (delta > 6)? delta : 6;
 					rect = new Rectangle(0, 0, 0, scrollBG.height - slider.height );
-					oldStageH = StageManager.H;
+					oldStageH = stage.stageHeight;
 					scrollSize.fH = scrollBG.height;
 					
 					if(!listeners){
@@ -234,19 +243,19 @@ package railk.as3.utils {
 				}	
 			}
 			else if ( way == "H" ) {
-				if ( content.height > StageManager.H ) {
+				if ( content.height > stage.stageWidth) {
 					showHide(1, true);
-					if ( slider.x >= oldStageW - slider.width ) { slider.x = StageManager.W - slider.width; }
-					else { slider.x = ( slider.x * StageManager.W ) / oldStageW; }
+					if ( slider.x >= oldStageW - slider.width ) { slider.x = stage.stageWidth - slider.width; }
+					else { slider.x = ( slider.x * stage.stageWidth ) / oldStageW; }
 					
-					scrollBG.width = ( scrollSize.fW * StageManager.W ) / oldStageW; 
-					distance = content.height - StageManager.W;
-					slider.width = ( (StageManager.W - distance) > scrollSize.sW ) ? StageManager.W - distance : scrollSize.sW;
+					scrollBG.width = ( scrollSize.fW * stage.stageWidth ) / oldStageW; 
+					distance = content.height - stage.stageWidth;
+					slider.width = ( (stage.stageWidth - distance) > scrollSize.sW ) ? stage.stageWidth - distance : scrollSize.sW;
 					multiplier = distance / ( scrollBG.width - slider.width  );
 					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
 					rect = new Rectangle(0, 0, scrollBG.width - slider.width, 0);
-					oldStageW = StageManager.W;
+					oldStageW = stage.stageWidth;
 					scrollSize.fW = scrollBG.width;
 					
 					if(!listeners){
@@ -303,7 +312,7 @@ package railk.as3.utils {
 					}
 					break;
 				
-				case StageManagerEvent.ONSTAGERESIZE :
+				case Event.RESIZE :
 					resize();
 					break;
 					
@@ -342,11 +351,11 @@ package railk.as3.utils {
 				case MouseEvent.MOUSE_DOWN :
 					if ( evt.currentTarget.name == "slider" ) {
 						evt.currentTarget.startDrag( false, rect );
-						StageManager._stage.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
+						stage.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
 						scrollContainer.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 					}	
 					else {
-						StageManager._stage.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+						stage.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 					}
 					break;
 					
@@ -354,11 +363,11 @@ package railk.as3.utils {
 					var eEvent:MouseEvent = new MouseEvent( MouseEvent.ROLL_OUT, true,false, scrollContainer.x, scrollContainer.y, scrollContainer );
 					if( evt.currentTarget.name == "slider" ){
 						evt.currentTarget.stopDrag();
-						StageManager._stage.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
+						stage.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
 						scrollContainer.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 					}
 					else {
-						StageManager._stage.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+						stage.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
 						scrollContainer.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 						manageEvent( eEvent );
 						stopDrag();

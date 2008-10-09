@@ -23,6 +23,7 @@ package railk.as3.tween.process {
 	
 	public class Process extends EventDispatcher {
 		public static var defaultEase:Function = Process.easeOut;
+		public static var pluginEnabled:Boolean = false;
 		protected static var _tweens:Dictionary = new Dictionary();
 		protected static var _curTime:uint;
 		private static var _timer:Timer = new Timer(2000);
@@ -94,7 +95,7 @@ package railk.as3.tween.process {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							  OPTIONS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function enablePlugin(pm:Class):void { _pluginClass = pm; }
+		public static function enablePlugin(pm:Class):void { _pluginClass = pm; pluginEnabled = true; }
 		public static function set sequence( s:ISequence ):void { _sequence = s; }
 		
 		public function setOptions( options:Object ):void {

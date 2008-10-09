@@ -35,7 +35,7 @@ package railk.as3.stage {
 		public static var W                            :Number;
 		
 		// ____________________________________________________________________________________________ STAGE
-		public static var _stage                       :Stage;
+		private static var _stage                      :Stage;
 		public static var folder                       :String;
 		public static var url                          :String;
 		
@@ -175,6 +175,11 @@ package railk.as3.stage {
 				isActive += 1;
 			}
 		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						GETTER/SETTER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function get stage():Stage { return _stage; }
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT

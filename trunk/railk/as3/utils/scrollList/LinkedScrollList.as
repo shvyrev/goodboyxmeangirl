@@ -11,6 +11,7 @@ package railk.as3.utils.scrollList {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
@@ -19,6 +20,7 @@ package railk.as3.utils.scrollList {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.CustomEvent;
+	import railk.as3.utils.drag.DragAndThrow;
 	
 	
 	public class LinkedScrollList extends Sprite {
@@ -54,10 +56,13 @@ package railk.as3.utils.scrollList {
 			_espacement = espacement;
 			_size = size;
 			
+			DragAndThrow.init( this.stage );
 			objects = new ObjectList();
 			scrollLists = new ObjectList();
+			
 			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), _orientation, size, _espacement )] );
 			initScrollListners( currentScroll() );
+			DragAndThrow.enable( currentScroll() );
 		}
 		
 		
