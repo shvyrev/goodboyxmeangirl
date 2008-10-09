@@ -71,7 +71,7 @@ package railk.as3.utils.scrollList {
 			initScrollListeners( currentScroll() );
 			
 			DragAndThrow.init( stage );
-			DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation );
+			DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation, true );
 			
 			this.removeEventListener( Event.ADDED_TO_STAGE, setup );
 		}
@@ -94,7 +94,7 @@ package railk.as3.utils.scrollList {
 			{
 				objects.add( [name, o] );
 				newScroll().add( name, o );
-				DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation );
+				DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation,true );
 				currentSize = o.height+_espacement;
 			}
 			else
