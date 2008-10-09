@@ -6,42 +6,42 @@
  * @version 0.1
  */
 
-package railk.as3.utils
+package railk.as3.utils.drag
 {
 	import flash.display.Stage;
 	import flash.geom.Rectangle;
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	
-	public class DragAndThrow
+	public class DragItem
 	{
 		private static var _bounds:Rectangle;
 		private static var _o:Object;
 		private static var _orientation:String;
 		private static var _stage:Stage;
 		
+		private static var hasBound:Boolean = false;
 		private static var isDragging:Boolean = false;
 		private static var current:Number = 0;
 		private static var last:Number = 0;
 		private static var v:Number = 0;
 		private static var offset:Number;
+		private static var itemsList:ObjectList;
+		private static var walker:ObjectNode
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	   	 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( stage:Stage )
+		public function DragItem( stage:Stage, name:String, o:Object, orientation:String, bounds:Rectangle=null )
 		{
 			_stage = stage;
-		}
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	   ENABLE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function enable( o:Object, bounds:Rectangle, orientation:String )
-		{
 			_orientation = orientation;
 			_o = o;
-			_bounds = bounds;
+			if (bounds) 
+			{
+				hasBound = true;
+				_bounds = bounds;
+			}
 			if ( orientation == 'V' ) current = last = o.y;
 			else if ( orientation == 'H' ) current = last = o.x;
 			
@@ -100,14 +100,20 @@ package railk.as3.utils
 					if ( _orientation == 'V' )
 					{
 						_o.y = _stage.mouseY - offset;
-						if(_o.y <= _bounds.top) _o.x = _bounds.top;
-						else if (_o.y >= _bounds.bottom) _o.x = _bounds.bottom;
+						if ( hasBound)
+						{
+							if(_o.y <= _bounds.top) _o.x = _bounds.top;
+							else if (_o.y >= _bounds.bottom) _o.x = _bounds.bottom;
+						}	
 					}
 					else if ( _orientation == 'H' )
 					{
 						_o.x = _stage.mouseX - offset;
-						if(_o.x <= _bounds.left) _o.x = _bounds.left;
-						else if (_o.x >= _bounds.right) _o.x = _bounds.right;
+						if ( hasBound)
+						{
+							if(_o.x <= _bounds.left) _o.x = _bounds.left;
+							else if (_o.x >= _bounds.right) _o.x = _bounds.right;
+						}	
 					}
 					evt.updateAfterEvent();
 					break;
@@ -118,7 +124,6 @@ package railk.as3.utils
 						last = current;
 						current = (_orientation == 'V')? _stage.mouseY : _stage.mouseX;
 						v = current - last;
-						trace( v );
 					}	
 					else
 					{
@@ -126,32 +131,35 @@ package railk.as3.utils
 						else if( _orientation == 'H') _o.x += v;
 					}
 					
-					if ( _orientation == 'V' )
+					if ( hasBound)
 					{
-						if(_o.y <= _bounds.top)
+						if ( _orientation == 'V' )
 						{
-							_o.y  = _bounds.top;
-							v *= -1;
+							if(_o.y <= _bounds.top)
+							{
+								_o.y  = _bounds.top;
+								v *= -1;
+							}
+							else if(_o.y >= _bounds.bottom-_o.height)
+							{
+								_o.y = _bounds.bottom-_o.height;
+								v *= -1;
+							}
 						}
-						else if(_o.y >= _bounds.bottom-_o.height)
+						else if ( _orientation == 'H' )
 						{
-							_o.y = _bounds.bottom-_o.height;
-							v *= -1;
+							if(_o.x <= _bounds.left)
+							{
+								_o.x  = _bounds.left;
+								v *= -1;
+							}
+							else if(_o.x >= _bounds.right-_o.width)
+							{
+								_o.x = _bounds.right-_o.width;
+								v *= -1;
+							}
 						}
-					}
-					else if ( _orientation == 'H' )
-					{
-						if(_o.x <= _bounds.left)
-						{
-							_o.x  = _bounds.left;
-							v *= -1;
-						}
-						else if(_o.x >= _bounds.right-_o.width)
-						{
-							_o.x = _bounds.right-_o.width;
-							v *= -1;
-						}
-					}
+					}	
 					
 					v *= .9;
 					

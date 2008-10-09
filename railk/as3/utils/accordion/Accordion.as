@@ -15,9 +15,7 @@ package railk.as3.utils.accordion {
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.accordion.AccordionEvent;
-	import railk.as3.utils.objectList.*;
-	import railk.as3.tween.process.*;
-	
+	import railk.as3.utils.objectList.*;	
 	
 	
 	public class  Accordion extends EventDispatcher {
