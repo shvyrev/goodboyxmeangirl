@@ -10,7 +10,9 @@ package railk.as3.utils.drag
 {
 	import flash.display.Stage;
 	import flash.geom.Rectangle;
-		import railk.as3.utils.objectList.ObjectList;
+	
+	import railk.as3.utils.objectList.ObjectList;
+	import railk.as3.utils.objectList.ObjectNode;
 	
 	public class DragAndThrow
 	{
@@ -30,6 +32,13 @@ package railk.as3.utils.drag
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	   ENABLE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * 
+		 * @param	name
+		 * @param	o
+		 * @param	orientation
+		 * @param	bounds
+		 */
 		public static function enable( name:String, o:Object, orientation:String, bounds:Rectangle=null  )
 		{
 			itemsList.add( [name, new DragItem(_stage,name,o,orientation,bounds)] );
@@ -56,6 +65,14 @@ package railk.as3.utils.drag
 				walker.data.dispose();
 				walker = walker.next;
 			}
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function toString():String
+		{
+			return itemsList.toString();
 		}
 	}
 }

@@ -27,7 +27,6 @@ package railk.as3.utils.scrollList {
 	public class ScrollList extends Sprite {
 		
 		// _____________________________________________________________________________ VARIABLES SCROLLIST
-		private var name                                         :String;
 		private var orientation                                  :String;
 		private var size	                                     :Number;
 		private var espacement                                   :int;
@@ -63,8 +62,8 @@ package railk.as3.utils.scrollList {
 			container = new Sprite();
 			addChild( container );
 			
-			if ( _orientation == 'V' ) container.scrollRect = new Rectangle( 0,0,rectSize,size );
-			else if ( _orientation == 'H' ) container.scrollRect = new Rectangle( 0,0,size,rectSize );
+			if ( orientation == 'V' ) container.scrollRect = new Rectangle( 0,0,rectSize,size );
+			else if ( orientation == 'H' ) container.scrollRect = new Rectangle( 0,0,size,rectSize );
 		}
 		
 		
@@ -93,7 +92,7 @@ package railk.as3.utils.scrollList {
 			{
 				var obj:* = walker.data;
 				container.addChild( obj );
-				if ( _orientation == 'V' )
+				if ( orientation == 'V' )
 				{
 					if ( obj.width > rectSize ) {
 						rectSize = obj.width;
@@ -101,7 +100,7 @@ package railk.as3.utils.scrollList {
 					}
 					
 					obj.y = place;
-					place += obj.height + _espacement;
+					place += obj.height + espacement;
 				}
 				else if ( orientation == 'H' )
 				{
@@ -138,7 +137,6 @@ package railk.as3.utils.scrollList {
 			container.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 			container.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 			container.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			this.stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true );
 		}
 		
 		public function delListeners():void {
@@ -146,7 +144,6 @@ package railk.as3.utils.scrollList {
 			container.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 			container.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
 			container.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			this.stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent );
 		}
 		
 		
@@ -154,8 +151,8 @@ package railk.as3.utils.scrollList {
 		// 																	    			    	   resize
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function resize():void {
-			if ( _orientation == 'V' ) 	container.scrollRect = new Rectangle( 0,0,rectSize,_size );
-			else if ( _orientation == 'H' ) container.scrollRect = new Rectangle( 0,0,_size,rectSize );
+			if ( orientation == 'V' ) 	container.scrollRect = new Rectangle( 0,0,rectSize,size );
+			else if ( orientation == 'H' ) container.scrollRect = new Rectangle( 0,0,size,rectSize );
 		}
 		
 		
@@ -165,6 +162,14 @@ package railk.as3.utils.scrollList {
 		private function dispose():void {
 			delListeners();
 			container = null;
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		override public function toString():String
+		{
+			return '[ SCROLL_LIST > ' + name + ', ( orientation : ' + orientation + ' ), ( size : ' + size + ' ), ( espacement : ' + espacement + ' ) ]';
 		}
 		
 		
@@ -197,6 +202,7 @@ package railk.as3.utils.scrollList {
 					break;
 				
 				case MouseEvent.ROLL_OVER :
+					stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true );
 					///////////////////////////////////////////////////////////////
 					args = { info:name+' height change', data:name };
 					eEvent = new CustomEvent( 'onScrollOver', args );
@@ -205,6 +211,7 @@ package railk.as3.utils.scrollList {
 					break;
 					
 				case MouseEvent.ROLL_OUT :
+					stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent );
 					///////////////////////////////////////////////////////////////
 					args = { info:name+' height change', data:name };
 					eEvent = new CustomEvent( 'onScrollOut', args );
@@ -213,7 +220,7 @@ package railk.as3.utils.scrollList {
 					break;
 					
 				case MouseEvent.MOUSE_WHEEL :
-					if ( _orientation== "V" ) {
+					if ( orientation== "V" ) {
 						if ( rect.y >= 0 + evt.delta*delta  && rect.y <= rect.height+ evt.delta*delta  ) {
 							Process.to( rect, .4, { y:rect.y - (evt.delta * delta) }, { onUpdate:function() { container.scrollRect = rect; } } );
 						}
@@ -224,7 +231,7 @@ package railk.as3.utils.scrollList {
 							Process.to( rect, .4, { y:rect.height }, { onUpdate:function() { container.scrollRect = rect; } } );
 						}
 					}
-					else if ( _orientation == "H" ) {
+					else if ( orientation == "H" ) {
 						if ( container.x >= 0 + evt.delta*delta && container.x <= rect.width + evt.delta*delta ) {
 							Process.to( container, .4, { x: container.x + (evt.delta * delta)} );
 						}
