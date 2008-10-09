@@ -32,7 +32,7 @@ package railk.as3.utils.scrollList {
 		private var espacement                                   :int;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
-		private var container                                    :Sprite;
+		public var content                                       :Sprite;
 		private var objects                                      :ObjectList;
 		private var walker                                       :ObjectNode;
 		private var scrollListSize                               :Number;
@@ -59,11 +59,11 @@ package railk.as3.utils.scrollList {
 			this.size = size;
 			
 			objects = new ObjectList();			
-			container = new Sprite();
-			addChild( container );
+			content = new Sprite();
+			addChild( content );
 			
-			if ( orientation == 'V' ) container.scrollRect = new Rectangle( 0,0,rectSize,size );
-			else if ( orientation == 'H' ) container.scrollRect = new Rectangle( 0,0,size,rectSize );
+			if ( orientation == 'V' ) content.scrollRect = new Rectangle( 0,0,rectSize,size );
+			else if ( orientation == 'H' ) content.scrollRect = new Rectangle( 0,0,size,rectSize );
 		}
 		
 		
@@ -91,12 +91,12 @@ package railk.as3.utils.scrollList {
 			while ( walker ) 
 			{
 				var obj:* = walker.data;
-				container.addChild( obj );
+				content.addChild( obj );
 				if ( orientation == 'V' )
 				{
 					if ( obj.width > rectSize ) {
 						rectSize = obj.width;
-						container.scrollRect = new Rectangle( 0,0,rectSize,size );
+						content.scrollRect = new Rectangle( 0,0,rectSize,size );
 					}
 					
 					obj.y = place;
@@ -106,7 +106,7 @@ package railk.as3.utils.scrollList {
 				{
 					if ( obj.height > rectSize ) {
 						rectSize = obj.height;
-						container.scrollRect = new Rectangle( 0,0,size,rectSize );
+						content.scrollRect = new Rectangle( 0,0,size,rectSize );
 					}
 					
 					obj.x = place;
@@ -118,10 +118,10 @@ package railk.as3.utils.scrollList {
 			scrollListSize = place;
 			var fond:GraphicShape = new GraphicShape();
 			fond.name = "bg";
-			if ( orientation == 'V' ) fond.rectangle(0xffffff, 0, 0, rectSize, scrollListSize );
+			if ( orientation == 'V' ) fond.rectangle(0xff0000, 0, 0, rectSize, scrollListSize );
 			else if ( orientation == 'H' ) fond.rectangle(0xffffff, 0, 0, scrollListSize, rectSize);
 			fond.alpha = 0;
-			container.addChildAt(fond, 0);
+			addChildAt(fond, 0);
 			
 			///////////////////////////////
 			initListeners();
@@ -133,17 +133,19 @@ package railk.as3.utils.scrollList {
 		// 																				   GESTION LISTERNERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function initListeners():void {
-			container.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
-			container.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
-			container.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			container.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			this.buttonMode = true;
+			this.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
+			this.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
+			this.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			this.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
 		}
 		
 		public function delListeners():void {
-			container.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
-			container.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
-			container.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			container.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			this.buttonMode = true;
+			this.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
+			this.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
+			this.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			this.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
 		}
 		
 		
@@ -151,8 +153,8 @@ package railk.as3.utils.scrollList {
 		// 																	    			    	   resize
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function resize():void {
-			if ( orientation == 'V' ) 	container.scrollRect = new Rectangle( 0,0,rectSize,size );
-			else if ( orientation == 'H' ) container.scrollRect = new Rectangle( 0,0,size,rectSize );
+			if ( orientation == 'V' ) 	content.scrollRect = new Rectangle( 0,0,rectSize,size );
+			else if ( orientation == 'H' ) content.scrollRect = new Rectangle( 0,0,size,rectSize );
 		}
 		
 		
@@ -161,7 +163,7 @@ package railk.as3.utils.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function dispose():void {
 			delListeners();
-			container = null;
+			content = null;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -180,7 +182,7 @@ package railk.as3.utils.scrollList {
 		{
 			var args:Object = new Object();
 			var eEvent:*;
-			var rect:Rectangle = container.scrollRect;
+			var rect:Rectangle = content.scrollRect;
 			var value:Number;
 			switch( evt.type )
 			{
@@ -222,24 +224,24 @@ package railk.as3.utils.scrollList {
 				case MouseEvent.MOUSE_WHEEL :
 					if ( orientation== "V" ) {
 						if ( rect.y >= 0 + evt.delta*delta  && rect.y <= rect.height+ evt.delta*delta  ) {
-							Process.to( rect, .4, { y:rect.y - (evt.delta * delta) }, { onUpdate:function() { container.scrollRect = rect; } } );
+							Process.to( rect, .4, { y:rect.y - (evt.delta * delta) }, { onUpdate:function() { content.scrollRect = rect; } } );
 						}
 						else if( rect.y < 0 + evt.delta*delta ) {
-							Process.to( rect, .4, { y: 0}, { onUpdate:function() { container.scrollRect = rect; } } );
+							Process.to( rect, .4, { y: 0}, { onUpdate:function() { content.scrollRect = rect; } } );
 						}
 						else if ( rect.y > rect.height + evt.delta*delta ) {
-							Process.to( rect, .4, { y:rect.height }, { onUpdate:function() { container.scrollRect = rect; } } );
+							Process.to( rect, .4, { y:rect.height }, { onUpdate:function() { content.scrollRect = rect; } } );
 						}
 					}
 					else if ( orientation == "H" ) {
-						if ( container.x >= 0 + evt.delta*delta && container.x <= rect.width + evt.delta*delta ) {
-							Process.to( container, .4, { x: container.x + (evt.delta * delta)} );
+						if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) {
+							Process.to( rect, .4, { x: rect.x + (evt.delta * delta)}, { onUpdate:function() { content.scrollRect = rect; } } );
 						}
-						else if( container.x < 0 + evt.delta*delta ) {
-							Process.to( container, .4, { x: 0 } );
+						else if( rect.x < 0 + evt.delta*delta ) {
+							Process.to( rect, .4, { x: 0 }, { onUpdate:function() { content.scrollRect = rect; } } );
 						}
-						else if ( container.x > rect.height+evt.delta*delta ) {
-							Process.to( container, .4, { x:rect.width } );
+						else if ( rect.x > rect.height+evt.delta*delta ) {
+							Process.to( rect, .4, { x:rect.width }, { onUpdate:function() { content.scrollRect = rect; } } );
 						}
 					}
 					break;

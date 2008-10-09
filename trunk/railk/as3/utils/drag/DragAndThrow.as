@@ -37,11 +37,12 @@ package railk.as3.utils.drag
 		 * @param	name
 		 * @param	o
 		 * @param	orientation
+		 * @param	useRect			object passed must contain a public object name content where the content to scroll is
 		 * @param	bounds
 		 */
-		public static function enable( name:String, o:Object, orientation:String, bounds:Rectangle=null  )
+		public static function enable( name:String, o:Object, orientation:String, useRect:Boolean=false, bounds:Rectangle=null  )
 		{
-			itemsList.add( [name, new DragItem(_stage,name,o,orientation,bounds)] );
+			itemsList.add( [name, new DragItem(_stage,name,o,orientation,useRect,bounds)] );
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
