@@ -1,0 +1,71 @@
+﻿/**
+ * 
+ * item for scroll list
+ * 
+ * @author Richard Rodney
+ */
+
+package railk.as3.utils.scrollList
+{
+	import flash.events.EventDispatcher;
+	import flash.events.Event;
+	import flash.geom.Point;
+	import railk.as3.utils.CustomEvent;
+	
+	public class ScrollListItem extends EventDispatcher
+	{
+		public var name:String;
+		public var o:Object;
+		public var oldX:Number;
+		public var oldY:Number;
+		
+		public function ScrollListItem( name:String, o:Object ) 
+		{
+			this.name = name;
+			this.o = o;
+			oldX = o.x;
+			oldY = o.y;
+			o.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+		}
+		
+		public function dispose():void {
+			o.removeEventListener( Event.ENTER_FRAME, manageEvent );
+		}
+		
+		override public function toString():String
+		{
+			return '[ SCROLLITEM > ' + name + ', ( x:' + globalXY.x + ' ), ( y:' + globalXY.y + ' ) ]';
+		}
+		
+		private function manageEvent( evt:Event ):void
+		{
+			if ( oldY != globalXY.y || oldX != globalXY.x ) {
+				oldX = globalXY.x;
+				oldY = globalXY.y;
+				dispatchEvent( new CustomEvent( 'onScrollItemChange', { item:this }) );
+			}
+		}
+		
+		public function get globalXY():Point
+		{
+			return o.parent.localToGlobal(new Point(x,y));
+		}
+		
+		public function get x():Number { return o.x; }
+		
+		public function set x(value:Number):void 
+		{
+			o.x = value;
+		}
+		
+		public function get y():Number { return o.y; }
+		
+		public function set y(value:Number):void 
+		{
+			o.y = value;
+		}
+		
+		
+	}
+	
+}

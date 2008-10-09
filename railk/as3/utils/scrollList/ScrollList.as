@@ -18,10 +18,11 @@ package railk.as3.utils.scrollList {
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
+	import railk.as3.tween.process.*;
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.CustomEvent;
-	import railk.as3.tween.process.*;
+	import railk.as3.utils.ObjectDumper;
 	
 	
 	public class ScrollList extends Sprite {
@@ -63,7 +64,7 @@ package railk.as3.utils.scrollList {
 			addChild( content );
 			
 			if ( orientation == 'V' ) content.scrollRect = new Rectangle( 0,0,rectSize,size );
-			else if ( orientation == 'H' ) content.scrollRect = new Rectangle( 0,0,size,rectSize );
+			else if ( orientation == 'H' ) content.scrollRect = new Rectangle( 0, 0, size, rectSize );
 		}
 		
 		
@@ -77,7 +78,7 @@ package railk.as3.utils.scrollList {
 		 */
 		public function add( name:String,  o:* ):void 
 		{ 
-			objects.add( [ name, o ] );
+			objects.add( [ name, new ScrollListItem( String(objects.length), o ) ] );
 		}	
 		
 		
@@ -90,7 +91,7 @@ package railk.as3.utils.scrollList {
 			walker = objects.head;
 			while ( walker ) 
 			{
-				var obj:* = walker.data;
+				var obj:* = walker.data.o;
 				content.addChild( obj );
 				if ( orientation == 'V' )
 				{
@@ -100,6 +101,7 @@ package railk.as3.utils.scrollList {
 					}
 					
 					obj.y = place;
+					walker.data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
 					place += obj.height + espacement;
 				}
 				else if ( orientation == 'H' )
@@ -110,6 +112,7 @@ package railk.as3.utils.scrollList {
 					}
 					
 					obj.x = place;
+					walker.data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
 					place += obj.width + espacement;
 				}
 				walker = walker.next;
@@ -150,7 +153,7 @@ package railk.as3.utils.scrollList {
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	    			    	   resize
+		// 																	    			    	   RESIZE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function resize():void {
 			if ( orientation == 'V' ) 	content.scrollRect = new Rectangle( 0,0,rectSize,size );
@@ -186,13 +189,9 @@ package railk.as3.utils.scrollList {
 			var value:Number;
 			switch( evt.type )
 			{
-				/*case Event.ENTER_FRAME:
-					if ( content.height != contentCheck.height || content.width != contentCheck.width ) {
-						contentCheck.height = content.height;
-						contentCheck.width = content.width;
-						resize();
-					}
-					break;*/
+				case 'onScrollItemChange' :
+					trace( evt.item );
+					break;
 				
 				case Event.RESIZE :
 					resize();
