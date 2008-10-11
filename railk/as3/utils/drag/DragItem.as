@@ -17,11 +17,11 @@ package railk.as3.utils.drag
 	{
 		private var name:String;
 		private var bounds:Rectangle;
-		private var o:Object;
+		public var o:Object;
 		private var orientation:String;
 		private var stage:Stage;
 		
-		private var useRect:Boolean = false;
+		public var useRect:Boolean = false;
 		private var hasBound:Boolean = false;
 		private var isDragging:Boolean = false;
 		private var current:Number = 0;

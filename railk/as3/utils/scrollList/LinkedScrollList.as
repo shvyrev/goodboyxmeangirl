@@ -26,10 +26,9 @@ package railk.as3.utils.scrollList {
 	public class LinkedScrollList extends Sprite {
 		
 		// _____________________________________________________________________________ VARIABLES SCROLLIST
-		private var _name                                        :String;
-		private var _orientation                                 :String;
-		private var _size                                        :Number
-		private var _espacement                                  :int;
+		private var orientation                                 :String;
+		private var size                                        :Number
+		private var espacement                                  :int;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
 		private var walker                                       :ObjectNode;
@@ -51,11 +50,11 @@ package railk.as3.utils.scrollList {
 		 */
 		public function LinkedScrollList( name:String, orientation:String, size:Number, espacement:int ):void 
 		{
-			_name = name;
-			_orientation = orientation;
-			_espacement = espacement;
-			_size = size;
-			
+			this.name = name;
+			this.orientation = orientation;
+			this.espacement = espacement;
+			this.size = size;
+						
 			objects = new ObjectList();
 			scrollLists = new ObjectList();
 			
@@ -67,11 +66,11 @@ package railk.as3.utils.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function setup( evt:Event ):void
 		{
-			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), _orientation, _size, _espacement )] );
+			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), orientation, size, espacement )] );
 			initScrollListeners( currentScroll() );
 			
 			DragAndThrow.init( stage );
-			DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation, true );
+			DragAndThrow.enable( String(currentScrollList), currentScroll(), orientation, true );
 			
 			this.removeEventListener( Event.ADDED_TO_STAGE, setup );
 		}
@@ -88,14 +87,14 @@ package railk.as3.utils.scrollList {
 		public function add( name:String, o:* ):void 
 		{ 
 			o.alpha = .3;
-			if ( _orientation == 'V' ) currentSize += o.height+_espacement;
-			else if ( _orientation == 'H' ) currentSize += o.width+_espacement;
-			if ( currentSize >= _size + o.height )
+			if ( orientation == 'V' ) currentSize += o.height+espacement;
+			else if ( orientation == 'H' ) currentSize += o.width+espacement;
+			if ( currentSize >= size + o.height )
 			{
 				objects.add( [name, o] );
 				newScroll().add( name, o );
-				DragAndThrow.enable( String(currentScrollList), currentScroll(), _orientation,true );
-				currentSize = o.height+_espacement;
+				DragAndThrow.enable( String(currentScrollList), currentScroll(), orientation,true );
+				currentSize = o.height+espacement;
 			}
 			else
 			{
@@ -110,7 +109,8 @@ package railk.as3.utils.scrollList {
 		public function newScroll():ScrollList 
 		{
 			currentScrollList += 1;
-			scrollLists.add( [scrollLists.length,  new ScrollList( String(currentScrollList), _orientation, _size, _espacement )] );
+			scrollLists.add( [scrollLists.length,  new ScrollList( String(currentScrollList), orientation, size, espacement )] );
+			initScrollListeners( currentScroll() );
 			return scrollLists.getObjectByName( String(currentScrollList) ).data as ScrollList;
 		}
 		
@@ -134,7 +134,7 @@ package railk.as3.utils.scrollList {
 				walker.data.x = X;
 				addChild( walker.data );
 				walker.data.create();
-				X += walker.data.width+_espacement;
+				X += walker.data.width+espacement;
 				walker = walker.next;
 			}
 		}
@@ -144,20 +144,63 @@ package railk.as3.utils.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function initScrollListeners(scroll:ScrollList ):void 
 		{
-			scroll.addEventListener( 'onTop', manageEvent, false, 0, true );
-			scroll.addEventListener( 'onBottom', manageEvent, false, 0, true );
-			scroll.addEventListener( 'onScrollOver', manageEvent, false, 0, true );
-			scroll.addEventListener( 'onScrollOut', manageEvent, false, 0, true );
-			scroll.addEventListener( 'onScrollResize', manageEvent, false, 0, true );
+			scroll.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
+			scroll.addEventListener( 'onScrollListMove', manageEvent, false, 0, true );
 		}
 		
 		public function delScrollListeners( scroll:ScrollList ):void 
 		{
-			scroll.removeEventListener( 'onTop', manageEvent );
-			scroll.removeEventListener( 'onBottom', manageEvent );
-			scroll.addEventListener( 'onScrollOver', manageEvent );
-			scroll.addEventListener( 'onScrollOut', manageEvent );
-			scroll.addEventListener( 'onScrollResize', manageEvent );
+			scroll.removeEventListener( 'onScrollItemChange', manageEvent );
+			scroll.removeEventListener( 'onScrollListMove', manageEvent );
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 															   MOVE ITEMS TO MANAGE LINKED SCROLLLIST
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function crossScrollItems( item:ScrollListItem ):void
+		{
+			var x:Number = item.globalXY.x;
+			var y:Number = item.globalXY.y;
+			var height:Number = item.height;
+			var width:Number = item.width;
+			var scrollname = item.scrollName;
+			var scroll:ScrollList;
+			
+			if ( orientation == 'V' )
+			{
+				if ( y + height  <= 0 )
+				{
+					if ( scrollLists.getObjectByName( scrollname ) != scrollLists.head )
+					{
+						scroll = scrollLists.getObjectByName( scrollname ).data
+						var prevScroll:ScrollList = scrollLists.getObjectByName( scrollname ).prev.data;
+						prevScroll.update( item.name, item.o );
+						scroll.remove( item.name );
+					}
+					else 
+					{
+						scroll = scrollLists.getObjectByName( scrollname ).data
+						var nextScroll:ScrollList = scrollLists.getObjectByName( scrollname ).next.data;
+						nextScroll.update( item.name, item.o );
+						scroll.remove( item.name );
+					}
+				}
+			}
+			else if ( orientation == 'H' )
+			{
+				
+			}
+			
+			
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 															  				   MOVE LINKED SCROLLLIST
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function moveLinkedScrollLists( item:ScrollList, x:Number, y:Number ):void
+		{
+			DragAndThrow.drag( item.name, x, y );
 		}
 		
 		
@@ -191,10 +234,12 @@ package railk.as3.utils.scrollList {
 		private function manageEvent( evt:* ):void {
 			switch( evt.type )
 			{
-				case 'onTop' :
+				case 'onScrollItemChange' :
+					crossScrollItems( evt.item );
 					break;
 					
-				case 'onBottom' :
+				case 'onScrollListMove' :
+					moveLinkedScrollLists( evt.item, evt.x, evt.y );
 					break;	
 			}
 		}

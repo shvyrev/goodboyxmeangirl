@@ -16,13 +16,19 @@ package railk.as3.utils.scrollList
 	{
 		public var name:String;
 		public var o:Object;
+		public var height:Number;
+		public var width:Number;
 		public var oldX:Number;
 		public var oldY:Number;
+		public var scrollName:String;
 		
-		public function ScrollListItem( name:String, o:Object ) 
+		public function ScrollListItem( name:String, o:Object, scrollName:String ) 
 		{
 			this.name = name;
 			this.o = o;
+			this.height = o.height;
+			this.width = o.width;
+			this.scrollName = scrollName;
 			oldX = o.x;
 			oldY = o.y;
 			o.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
@@ -34,7 +40,7 @@ package railk.as3.utils.scrollList
 		
 		override public function toString():String
 		{
-			return '[ SCROLLITEM > ' + name + ', ( x:' + globalXY.x + ' ), ( y:' + globalXY.y + ' ) ]';
+			return '[ SCROLLITEM > ' + name + ' FROM '+scrollName+', ( x:' + globalXY.x + ' ), ( y:' + globalXY.y + ' ) ]';
 		}
 		
 		private function manageEvent( evt:Event ):void

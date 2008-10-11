@@ -39,7 +39,8 @@ package railk.as3.utils.scrollList {
 		private var scrollListSize                               :Number;
 		private var rectSize                                     :Number = 1;
 		private var delta                                        :Number = 14;
-		private var oldMouseY                                	 :Number=0;
+		private var oldX	                                	 :Number;
+		private var oldY	                                	 :Number;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
@@ -78,7 +79,22 @@ package railk.as3.utils.scrollList {
 		 */
 		public function add( name:String,  o:* ):void 
 		{ 
-			objects.add( [ name, new ScrollListItem( String(objects.length), o ) ] );
+			objects.add( [ name, new ScrollListItem( name, o, this.name ) ] );
+			objects.getObjectByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	  REMOVE OBJECT TO THE SCROLLLIST
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * 
+		 * @param	name
+		 */
+		public function remove( name:String):void 
+		{ 
+			objects.getObjectByName( name ).data.removeEventListener( 'onScrollItemChange', manageEvent);
+			trace( name +' / '+ objects.remove( name ) );
+			trace( objects.toString() );
 		}	
 		
 		
@@ -101,7 +117,6 @@ package railk.as3.utils.scrollList {
 					}
 					
 					obj.y = place;
-					walker.data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
 					place += obj.height + espacement;
 				}
 				else if ( orientation == 'H' )
@@ -112,7 +127,6 @@ package railk.as3.utils.scrollList {
 					}
 					
 					obj.x = place;
-					walker.data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
 					place += obj.width + espacement;
 				}
 				walker = walker.next;
@@ -126,9 +140,25 @@ package railk.as3.utils.scrollList {
 			fond.alpha = 0;
 			addChildAt(fond, 0);
 			
+			this.oldX = content.scrollRect.x;
+			this.oldY = content.scrollRect.y;
+			
+			trace( objects );
+			
 			///////////////////////////////
 			initListeners();
 			///////////////////////////////
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	     		UPDATE THE SCROLLLIST
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function update( name:String, o:* ):void 
+		{
+			add( name, o );
+			this.content.addChild( o );
+			o.y = scrollListSize;
+			scrollListSize += o.height + espacement;
 		}
 		
 		
@@ -141,6 +171,7 @@ package railk.as3.utils.scrollList {
 			this.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 			this.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 			this.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			this.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 		}
 		
 		public function delListeners():void {
@@ -149,6 +180,7 @@ package railk.as3.utils.scrollList {
 			this.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 			this.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
 			this.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			this.removeEventListener( Event.ENTER_FRAME, manageEvent );
 		}
 		
 		
@@ -160,6 +192,14 @@ package railk.as3.utils.scrollList {
 			else if ( orientation == 'H' ) content.scrollRect = new Rectangle( 0,0,size,rectSize );
 		}
 		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	    		   MANAGE SCROLL ITEM
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function getItemByName( name:String ):ScrollListItem
+		{
+			return objects.getObjectByName( name ).data;
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	    			    	  DISPOSE
@@ -190,7 +230,24 @@ package railk.as3.utils.scrollList {
 			switch( evt.type )
 			{
 				case 'onScrollItemChange' :
-					trace( evt.item );
+					dispatchEvent( new CustomEvent( evt.type, { item:evt.item}) );
+					break;
+					
+				case Event.ENTER_FRAME :
+					if ( orientation == "V" ) 
+					{
+						if ( oldY != content.scrollRect.y )
+						{
+							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:content.scrollRect.x, y:content.scrollRect.y  } ) );
+						}
+					}
+					else if ( orientation == "H" ) 
+					{
+						if ( oldX != content.scrollRect.x )
+						{
+							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:content.scrollRect.x, y:content.scrollRect.y } ) );
+						}
+					}
 					break;
 				
 				case Event.RESIZE :
