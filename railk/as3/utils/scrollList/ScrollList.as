@@ -28,9 +28,9 @@ package railk.as3.utils.scrollList {
 	public class ScrollList extends Sprite {
 		
 		// _____________________________________________________________________________ VARIABLES SCROLLIST
-		private var orientation                                  :String;
-		private var size	                                     :Number;
-		private var espacement                                   :int;
+		public var orientation                                  :String;
+		public var size	                                     	:Number;
+		public var espacement                                   :int;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
 		public var content                                       :Sprite;
@@ -53,7 +53,7 @@ package railk.as3.utils.scrollList {
 		 * @param	height
 		 * @param	espacement
 		 */
-		public function ScrollList( name:String, orientation:String, size:Number, espacement:int ):void 
+		public function ScrollList( name:String='', orientation:String='V', size:Number=200, espacement:int=10 ):void 
 		{	
 			this.name = name;
 			this.orientation = orientation;

@@ -10,7 +10,6 @@
 package railk.as3.utils.tag {
 	
 	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.Sprite;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
@@ -23,7 +22,7 @@ package railk.as3.utils.tag {
 	import railk.as3.utils.objectList.*;
 	
 	
-	public class TagManager extends Sprite {
+	public class TagManager {
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
 		private static var tagList                            :ObjectList;
