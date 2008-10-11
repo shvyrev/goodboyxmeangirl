@@ -20,9 +20,11 @@ package railk.as3.data.checker {
 	
 	public class FileCheck extends EventDispatcher {
 		
-		// _______________________________________________________________________________VARIABLES PROTEGEES
+		// ______________________________________________________________________________ VARIABLES PROTEGEES
 		protected static var disp                               :EventDispatcher;
-	
+		
+		// ________________________________________________________________________________________ VARIABLES
+		private static var amf                                  :AmfphpClient;
 		private static var _file                                :String;
 		private static var requester                            :String = 'fileCheck';
 		
@@ -57,12 +59,12 @@ package railk.as3.data.checker {
 		 */
 		public static function check( file:String, server:String='', path:String='' ):void 
 		{	
-			AmfphpClient.init( server, path );
+			amf = new AmfphpClient( server, path );
 			_file = file;
 			
 			////////////////////////////////////
 			initListeners();
-			AmfphpClient.call( new FileService().check( _file ), requester );
+			amf.call( new FileService().check( _file ), requester );
 			////////////////////////////////////
 		}
 		
@@ -71,13 +73,13 @@ package railk.as3.data.checker {
 		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function initListeners():void {
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			amf.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		private static function delListeners():void {
-			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
-			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			amf.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		
@@ -86,6 +88,7 @@ package railk.as3.data.checker {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function dispose():void {
 			delListeners();
+			amf.close();
 		}
 		
 		

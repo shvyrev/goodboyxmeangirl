@@ -39,6 +39,7 @@ package railk.as3.data.saver.xml {
 	public class XmlSaver extends EventDispatcher {
 		
 		//__________________________________________________________________________________ VARIABLES SERVICE
+		private var amf                                   :AmfphpClient;
 		private var service                               :FileService;
 		private var requester                             :String = 'xmlSaver';
 		private var loader                                :URLLoader;
@@ -64,7 +65,7 @@ package railk.as3.data.saver.xml {
 		public function XmlSaver( name:String = "undefined", server:String = '', path:String = '' ):void 
 		{
 			_name = name;
-			AmfphpClient.init( server, path );
+			amf = new AmfphpClient( server, path );
 			
 			////////////////////////////////////
 			initListeners()
@@ -75,13 +76,13 @@ package railk.as3.data.saver.xml {
 		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function initListeners():void {
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			amf.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		private function delListeners():void {
-			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
-			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			amf.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		
@@ -159,7 +160,7 @@ package railk.as3.data.saver.xml {
 			var toCheck:String
 			if ( _zip) toCheck = _file.split('.')[0] + '.zip';
 			else toCheck = _file;
-			AmfphpClient.call( new FileService().check( toCheck ), requester );
+			amf.call( new FileService().check( toCheck ), requester );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -168,6 +169,7 @@ package railk.as3.data.saver.xml {
 		private function loadFile():void 
 		{
 			var toLoad:String
+			//AmfphpClient.call( new FileService().load( toLoad, (_zip) ? 'binary' : 'xml' ), requester );
 			if ( _zip) {
 				toLoad = _file.split('.')[0] + '.zip';
 				loader= new URLLoader();
@@ -178,7 +180,10 @@ package railk.as3.data.saver.xml {
 			else
 			{
 				toLoad = _file;
-				AmfphpClient.call( new FileService().load( toLoad, (_zip) ? 'binary' : 'xml' ), requester );
+				loader= new URLLoader();
+				loader.addEventListener( Event.COMPLETE, loadEvent, false, 0, true );
+				loader.dataFormat = 'text';
+				loader.load(new URLRequest( toLoad ));
 			}
 		}
 		
@@ -200,11 +205,11 @@ package railk.as3.data.saver.xml {
 				zipFile.closeEntry();
 				zipFile.finish();	
 				
-				AmfphpClient.call( new FileService().saveFile( zipName+'.zip', zipFile.byteArray ), requester);
+				amf.call( new FileService().saveFile( zipName+'.zip', zipFile.byteArray ), requester);
 			}
 			else 
 			{
-				AmfphpClient.call( new FileService().saveXml( _file, xml.toXMLString() ), requester);
+				amf.call( new FileService().saveXml( _file, xml.toXMLString() ), requester);
 			}	
 		}
 		
@@ -245,7 +250,6 @@ package railk.as3.data.saver.xml {
 							case 'load' :
 								if ( _zip ) xmlFile = new XML( parseZip( evt.data as ByteArray ) );
 								else xmlFile = new XML( evt.data );
-								
 								updateXmlFile();
 								///////////////////////////////////////////////////////////////
 								args = { info:"load complete" };
@@ -279,7 +283,8 @@ package railk.as3.data.saver.xml {
 		}
 		
 		private function loadEvent( evt:Event ):void {
-			xmlFile = new XML( parseZip( loader.data ) );
+			if ( _zip) xmlFile = new XML( parseZip( loader.data ) );
+			else xmlFile = new XML( loader.data );
 			updateXmlFile();
 		}
 		
@@ -288,7 +293,8 @@ package railk.as3.data.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void 
 		{
-			delListeners()
+			delListeners();
+			amf.close();
 		}
 		
 		
@@ -402,8 +408,8 @@ package railk.as3.data.saver.xml {
 		private function updateXmlFile():void 
 		{
 			var updated:Boolean = false;
-			if ( _nodes[0].root == 'atom' ) xmlFile = removeXmlNamespace( xmlFile.toXMLString() );
-			
+			if ( _nodes[0].root == 'atom' ) xmlFile = removeXmlNamespace( xmlFile );
+						
 			var actualXML:Array = parseToNode( xmlFile );
 			var newXML:Array = _nodes;
 			var i:int, j:int = 0;
@@ -601,9 +607,8 @@ package railk.as3.data.saver.xml {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function removeXmlNamespace( child:XML ):XML {
 			var result:XML;
-			var xmlnsPattern:RegExp = new RegExp('xmlns[ a-zA-Z0-9é._%-/:"=]{1,}', '');
-			result = child.replace(xmlnsPattern, '');
-			
+			var xmlnsPattern:RegExp = new RegExp('xmlns[a-zA-Z0-9é._%-/:"=]{1,}', '');
+			result = new XML( child.toString().replace(xmlnsPattern, '') );
 			return result;
 		}
 		

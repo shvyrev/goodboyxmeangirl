@@ -31,6 +31,7 @@ package railk.as3.data.saver.file {
 		private var _fileType                             :String;
 		
 		//______________________________________________________________________________________________ VARIABLES
+		private var amf                                   :AmfphpClient;
 		private var downloader                            :FileReference;
 		private var requester                             :String = 'fileSaver';
 		
@@ -44,7 +45,7 @@ package railk.as3.data.saver.file {
 		public function FileSaver( name:String = 'undefined', server:String = '', path:String = '' )
 		{
 			_name = name;
-			AmfphpClient.init( server, path );
+			amf = new AmfphpClient( server, path );
 			downloader = new FileReference();
 			
 			////////////////////////////////////
@@ -56,13 +57,13 @@ package railk.as3.data.saver.file {
 		// 																				GESTION DES LISTENERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function initListeners():void {
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
-			AmfphpClient.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			amf.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		private function delListeners():void {
-			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
-			AmfphpClient.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
+			amf.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
 		
@@ -97,7 +98,7 @@ package railk.as3.data.saver.file {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function saveFile():void 
 		{	
-			AmfphpClient.call( new FileService().saveFile( _path + "/" + _fileName + "." + _fileType, _data ), requester );
+			amf.call( new FileService().saveFile( _path + "/" + _fileName + "." + _fileType, _data ), requester );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -116,7 +117,8 @@ package railk.as3.data.saver.file {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function dispose():void 
 		{
-			delListeners()
+			delListeners();
+			amf.close();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

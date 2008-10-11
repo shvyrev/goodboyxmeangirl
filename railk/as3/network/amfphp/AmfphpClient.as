@@ -22,41 +22,22 @@ package railk.as3.network.amfphp
 	import railk.as3.stage.StageManager;
 	
 	
-	public class  AmfphpClient
+	public class  AmfphpClient extends EventDispatcher
 	{
-		// ______________________________________________________________________________ VARIABLES PROTEGEES
-		protected static var disp                      				:EventDispatcher;
-		
 		// ______________________________________________________________________________ VARIABLES CONNEXION
-		public static var rootPath                                  :String;
-		public static var currentService                            :String;
-		public static var currentRequester                          :String;
-		private static var connected                                :Boolean = false;
-		private static var connexion                                :NetConnection;
-		private static var responder                                :Responder;
+		public static var rootPath                           :String;
+		public var currentService                            :String;
+		public var currentRequester                          :String;
+		public var persistent                                :Boolean;
+		private var server                                   :String;
+		private var path                                     :String;
+		private var connexion                                :NetConnection;
+		private var responder                                :Responder;
+		private var connected                                :Boolean = false;
 		
 		// __________________________________________________________________________________ VARIABLES EVENT
-		private static var eEvent                                   :AmfphpClientEvent;
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	   GESTION DES LISTENERS DE CLASS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function addEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false, p_priority:int=0, p_useWeakReference:Boolean=false):void {
-      			if (disp == null) { disp = new EventDispatcher(); }
-      			disp.addEventListener(p_type, p_listener, p_useCapture, p_priority, p_useWeakReference);
-      	}
-		
-    	public static function removeEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false):void {
-      			if (disp == null) { return; }
-      			disp.removeEventListener(p_type, p_listener, p_useCapture);
-      	}
-		
-    	public static function dispatchEvent(p_event:Event):void {
-      			if (disp == null) { return; }
-      			disp.dispatchEvent(p_event);
-      	}
-		
+		private  var eEvent                                   :AmfphpClientEvent;
+				
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  	CONNECT TO AMFPHP
@@ -65,28 +46,43 @@ package railk.as3.network.amfphp
 		 * 
 		 * @param	server 'http://'SERVER'/'PATH'/gateway.php'
 		 */
-		public static function init( server:String, path:String, servicePath:String='../' ):void 
+		public function AmfphpClient( server:String, path:String, persistent:Boolean=false, servicePath:String = '../' ):void 
 		{	
-			if ( connected == false ) {
-				//trace
-				trace("                                Amfphp Client initialise");
-				trace("---------------------------------------------------------------------------------------");
-				
-				connexion = new NetConnection();
-				connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
-				connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
-				responder = new Responder( onResult, onError );
-				connected = true;
-				
-				//--rootPath
-				rootPath = servicePath;
-				var a:Array = path.split('/');
-				for (var i:int = 0; i <a.length ; i++) 
-				{
-					rootPath += '../';
-				}
-				rootPath += StageManager.folder;
-			}	
+			this.server = server;
+			this.path = path;
+			this.persistent = persistent;
+			
+			open();
+			//--rootPath
+			rootPath = servicePath;
+			var a:Array = path.split('/');
+			for (var i:int = 0; i <a.length ; i++) 
+			{
+				rootPath += '../';
+			}
+			rootPath += StageManager.folder;
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  	  OPEN CONNECTION
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function open():void
+		{
+			connexion = new NetConnection();
+			connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
+			connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
+			responder = new Responder( onResult, onError );
+			connected = true;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																				  	 CLOSE CONNECTION
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function close():void
+		{
+			connexion.close();
+			connected = false;
 		}
 		
 		
@@ -98,26 +94,18 @@ package railk.as3.network.amfphp
 		 * @param	service 	service to be used
 		 * @param	requester   requester of the call
 		 */
-		public static function call( service:*, requester:String='' ):void 
+		public function call( service:*, requester:String='' ):void 
 		{ 
 			currentRequester = requester;
 			currentService = service.name;
 			service.exec( connexion, responder );
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  	 CLOSE CONNECTION
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function close():void
-		{
-			connexion.close();
-		}
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   RESULT OF THE SERVICE CALL
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onResult( response:Object ):void 
+		private function onResult( response:Object ):void 
 		{
 			///////////////////////////////////////////////////////////////
 			var args:Object = { info:"service call success", requester:currentRequester, service:currentService, data:response };
@@ -129,7 +117,7 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   			   ERROR HANDLING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onError( response:Object ):void 
+		private function onError( response:Object ):void 
 		{
 			var result:String = '';
 			for ( var prop in response ) { result += String( prop )+'\n'; }			
@@ -144,7 +132,7 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   			   ERROR HANDLING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function onNetStatus( evt:NetStatusEvent ):void 
+		private function onNetStatus( evt:NetStatusEvent ):void 
 		{
 			///////////////////////////////////////////////////////////////
 			var args:Object = { info:"connexion error\n"+ ObjectDumper.dump(evt.info) };
@@ -156,12 +144,12 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   			    GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function get state():Boolean { return connected; }
+		public function get state():Boolean { return connected; }
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		   			   		TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function toString():String
+		override public function toString():String
 		{
 			return '[ AMFPHP CLIENT > '+(connected)? 'connected' :'non_connected'+' ]'
 		}
