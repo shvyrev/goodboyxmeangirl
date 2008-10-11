@@ -45,6 +45,30 @@ package railk.as3.utils.drag
 			itemsList.add( [name, new DragItem(_stage,name,o,orientation,useRect,bounds)] );
 		}
 		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							PROG DRAG
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function drag( name:String, x:Number, y:Number ):void
+		{
+			var from = itemsList.getObjectByName( name );
+			if (from != itemsList.tail ){
+				var item:DragItem = itemsList.getObjectByName( name ).next.data;
+				if ( item.useRect )
+				{
+					var rect:Rectangle = item.o.content.scrollRect;
+					rect.y = y;
+					rect.x = x;
+					item.o.content.scrollRect = rect;
+				}
+				else 
+				{
+					item.o.y = y;
+					item.o.x = x;
+				}
+			}	
+		}
+		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	   REMOVE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

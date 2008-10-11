@@ -15,6 +15,17 @@ package railk.as3.display {
 	
 	public class GraphicShape extends DynamicRegistration {
 		
+		public var graphicsCopy:*;
+		public var copy:Boolean;
+	
+		
+		public function GraphicShape(copy:Boolean=false)
+		{
+			this.copy = copy;
+			if ( copy ) graphicsCopy = new GraphicCopy(graphics);
+			else graphicsCopy = graphics;
+		}
+		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	  DEGRADE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -30,17 +41,18 @@ package railk.as3.display {
 		* @param	hide
 		* @return
 		*/
-		public function gradient(colors:Array, W:int, H:int, rotation:int, type:String, alphas:Array, ratios:Array, hide:Boolean=false):void {
+		public function gradient(colors:Array, W:int, H:int, rotation:int, type:String, alphas:Array, ratios:Array, hide:Boolean = false):void 
+		{
 			var matrix:Matrix = new Matrix();
 			matrix.createGradientBox(W, H, rotation, 0, 0);
 			
-			this.graphics.clear();
-			this.graphics.beginGradientFill(type, colors, alphas, ratios, matrix, "pad","RGB"); 
-			this.graphics.lineTo(W, 0);
-			this.graphics.lineTo(W, H);
-			this.graphics.lineTo(0, H);
-			this.graphics.lineTo(0, 0);
-			this.graphics.endFill();
+			this.graphicsCopy.clear();
+			this.graphicsCopy.beginGradientFill(type, colors, alphas, ratios, matrix, "pad","RGB"); 
+			this.graphicsCopy.lineTo(W, 0);
+			this.graphicsCopy.lineTo(W, H);
+			this.graphicsCopy.lineTo(0, H);
+			this.graphicsCopy.lineTo(0, 0);
+			this.graphicsCopy.endFill();
 			(hide == true) ? this.alpha = 0 : this.alpha = 100;
 		}
 		
@@ -58,10 +70,10 @@ package railk.as3.display {
 		*/
 		public function rectangle (color:uint, X:int, Y:int, W:int, H:int):void
 		{
-			this.graphics.clear();
-			this.graphics.beginFill(color);
-			this.graphics.drawRect(X,Y,W,H);
-			this.graphics.endFill();
+			this.graphicsCopy.clear();
+			this.graphicsCopy.beginFill(color);
+			this.graphicsCopy.drawRect(X,Y,W,H);
+			this.graphicsCopy.endFill();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -76,12 +88,12 @@ package railk.as3.display {
 		 */
 		public function triangle (A:Point, B:Point, C:Point, color:uint):void
 		{
-			this.graphics.clear();
-			this.graphics.beginFill(color);
-			this.graphics.moveTo( A.x, A.y );
-			this.graphics.lineTo( B.x, B.y );
-			this.graphics.lineTo( C.x, C.y );
-			this.graphics.endFill();
+			this.graphicsCopy.clear();
+			this.graphicsCopy.beginFill(color);
+			this.graphicsCopy.moveTo( A.x, A.y );
+			this.graphicsCopy.lineTo( B.x, B.y );
+			this.graphicsCopy.lineTo( C.x, C.y );
+			this.graphicsCopy.endFill();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -100,10 +112,10 @@ package railk.as3.display {
 		*/
 		public function roundRectangle (color:uint, X:int, Y:int, W:int, H:int, cornerW:int, cornerH:int):void
 		{
-			this.graphics.clear();
-			this.graphics.beginFill(color);
-			this.graphics.drawRoundRect(X,Y,W,H,cornerW,cornerH);
-			this.graphics.endFill();
+			this.graphicsCopy.clear();
+			this.graphicsCopy.beginFill(color);
+			this.graphicsCopy.drawRoundRect(X,Y,W,H,cornerW,cornerH);
+			this.graphicsCopy.endFill();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -119,10 +131,10 @@ package railk.as3.display {
 		*/
 		public function cercle (color:uint, X:int, Y:int, radius:Number, alpha:Number=-1):void {
 			if (alpha == -1){ alpha = 1; }
-			this.graphics.clear();
-			this.graphics.beginFill(color,alpha);
-			this.graphics.drawCircle(radius,radius,radius);
-			this.graphics.endFill();
+			this.graphicsCopy.clear();
+			this.graphicsCopy.beginFill(color,alpha);
+			this.graphicsCopy.drawCircle(radius,radius,radius);
+			this.graphicsCopy.endFill();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -145,19 +157,19 @@ package railk.as3.display {
 			var rad:Number = Math.PI/180;
 			var segm:Number = (endAngle-startAngle)/segments;
 			
-			this.graphics.clear();
-			this.graphics.beginFill(color,1);
-			this.graphics.moveTo(X,Y);
-			this.graphics.moveTo(X+radius*Math.cos(startAngle*rad), Y+radius*Math.sin(startAngle*rad));
+			this.graphicsCopy.clear();
+			this.graphicsCopy.beginFill(color,1);
+			this.graphicsCopy.moveTo(X,Y);
+			this.graphicsCopy.moveTo(X+radius*Math.cos(startAngle*rad), Y+radius*Math.sin(startAngle*rad));
 			for (var s:Number = startAngle+segm; s<=endAngle+1; s += segm) {
 				var c_x = radius*Math.cos(s*rad);
 				var c_y = radius*Math.sin(s*rad);
 				var a_x = c_x+radius*Math.tan(segm/2*rad)*Math.cos((s-90)*rad);
 				var a_y = c_y+radius*Math.tan(segm/2*rad)*Math.sin((s-90)*rad);
-				this.graphics.curveTo(a_x+x, a_y+y, c_x+x, c_y+y);
+				this.graphicsCopy.curveTo(a_x+x, a_y+y, c_x+x, c_y+y);
 			}
-			this.graphics.lineTo(X, Y);
-			this.graphics.endFill();
+			this.graphicsCopy.lineTo(X, Y);
+			this.graphicsCopy.endFill();
 		}
 		
 		
@@ -175,7 +187,7 @@ package railk.as3.display {
 		*/
 		public function arcCircle(epaisseur:int, color:uint, centerX:int, centerY:int, radius:int, startAngle:int, arcAngle:int, precision:int):void 
 		{
-			this.graphics.clear();
+			this.graphicsCopy.clear();
 			startAngle = startAngle/360;
 			arcAngle = arcAngle/360;
 			var twoPI = 2 * Math.PI;
@@ -183,13 +195,13 @@ package railk.as3.display {
 			var X = centerX + Math.cos(startAngle * twoPI) * radius;
 			var Y = centerY + Math.sin(startAngle * twoPI) * radius;
 			//--
-			this.graphics.lineStyle( epaisseur, color,1,false,"normal","square","round",3 );
-			this.graphics.moveTo(X, Y);
+			this.graphicsCopy.lineStyle( epaisseur, color,1,false,"normal","square","round",3 );
+			this.graphicsCopy.moveTo(X, Y);
 			for(var i=1; i<=precision; i++){
 				var angle = startAngle + i * angleStep;
 				X = centerX + Math.cos(angle * twoPI) * radius;
 				Y = centerY + Math.sin(angle * twoPI) * radius;
-				this.graphics.lineTo(X, Y);
+				this.graphicsCopy.lineTo(X, Y);
 			}
 		}
 		
@@ -219,17 +231,17 @@ package railk.as3.display {
 			var innerArcAngle:Number;
 			
 			//--Begin ribbon shape
-			this.graphics.clear();
-			this.graphics.beginFill( color );
-			this.graphics.lineStyle( lineThickness, color, 100, false, "normal", "round", "round");
+			this.graphicsCopy.clear();
+			this.graphicsCopy.beginFill( color );
+			this.graphicsCopy.lineStyle( lineThickness, color, 100, false, "normal", "round", "round");
 			
 			//--first pointand line
 			X = innerRadius * Math.cos(radInnerCornerAngle);
 			Y = innerRadius * Math.sin(radInnerCornerAngle);
-			this.graphics.moveTo( X,Y );
+			this.graphicsCopy.moveTo( X,Y );
 			X = outerRadius * Math.cos(radOuterCornerAngle);
 			Y = outerRadius * Math.sin(radOuterCornerAngle);
-			this.graphics.lineTo(X, Y);
+			this.graphicsCopy.lineTo(X, Y);
 			angle = outerCornerAngle;
 			
 			//--outer shape
@@ -243,7 +255,7 @@ package railk.as3.display {
 					Y = outerRadius * Math.sin(radAngle);
 					controlX = X + outerRadius * tanAngle * Math.cos(demiAngle);
 					controlY = Y + outerRadius * tanAngle * Math.sin(demiAngle);
-					graphics.curveTo(controlX, controlY, X, Y);
+					graphicsCopy.curveTo(controlX, controlY, X, Y);
 				}
 				angle= angle + precision;
 			}
@@ -260,7 +272,7 @@ package railk.as3.display {
 				Y = outerRadius * Math.sin(radAngle);
 				controlX = X + outerRadius * tanAngle * Math.cos(demiAngle);
 				controlY = Y + outerRadius * tanAngle * Math.sin(demiAngle);
-				graphics.curveTo(controlX, controlY, X, Y);
+				graphicsCopy.curveTo(controlX, controlY, X, Y);
 			}
 			
 			//--inner Shape
@@ -269,7 +281,7 @@ package railk.as3.display {
 				angle = arcAngle - innerCornerAngle;
 				X = innerRadius * Math.cos(toRadians(angle));
 				Y = innerRadius * Math.sin(toRadians(angle));
-				graphics.lineTo(X, Y);
+				graphicsCopy.lineTo(X, Y);
 				
 				tanAngle = Math.tan(-toRadians(precision / 2));
 				angle = arcAngle - innerCornerAngle;
@@ -282,7 +294,7 @@ package railk.as3.display {
 						Y = innerRadius * Math.sin(radAngle);
 						controlX = X + innerRadius * tanAngle * Math.cos(demiAngle);
 						controlY = Y + innerRadius * tanAngle * Math.sin(demiAngle);
-						graphics.curveTo(controlX, controlY, X, Y);
+						graphicsCopy.curveTo(controlX, controlY, X, Y);
 					}
 					angle = angle - precision;
 				}
@@ -300,16 +312,16 @@ package railk.as3.display {
 						Y = innerRadius * Math.sin(radAngle);
 						controlX = X + innerRadius * tanAngle * Math.cos(demiAngle);
 						controlY = Y + innerRadius * tanAngle * Math.sin(demiAngle);
-						graphics.curveTo(controlX, controlY, X, Y);
+						graphicsCopy.curveTo(controlX, controlY, X, Y);
 					}
 				}
 			}
 			else
 			{
-				graphics.lineTo(innerRadius, 0);
+				graphicsCopy.lineTo(innerRadius, 0);
 			}
 			
-			this.graphics.endFill();
+			this.graphicsCopy.endFill();
 		}	
 
 		private function toRadians( degree:Number ):Number {
