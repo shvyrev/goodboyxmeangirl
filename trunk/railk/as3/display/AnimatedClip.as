@@ -29,7 +29,7 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function AnimatedClip( frames:int ):void {
+		public function AnimatedClip( frames:int=1 ):void {
 			_frames = frames;
 			framesList = new ObjectList();
 			for ( var i:int=0; i < frames; i++ )
@@ -44,9 +44,9 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		 PLAY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function play( rate:int = 1 ):void {
-			_frameRate = rate;
-			t.delay = rate;
+		public function play( frameRate:int = 1 ):void {
+			_frameRate = frameRate;
+			t.delay = frameRate;
 			t.start();
 		}
 		

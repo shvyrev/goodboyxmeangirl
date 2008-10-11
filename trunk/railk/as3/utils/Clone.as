@@ -25,6 +25,8 @@ package railk.as3.utils {
 			var classInfo:XML = describeType( target );
 			var targetClass:Class = Object(target).constructor;
 			
+			if (  String(targetClass) == '[class Text]' ) trace( classInfo );
+			
 			var duplicate:*
 			if ( String(targetClass) == '[class GraphicShape]' && target.copy )
 			{

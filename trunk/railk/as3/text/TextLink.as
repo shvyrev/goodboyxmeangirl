@@ -69,7 +69,7 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function TextLink(	name:String, type:String, text:String, color:uint, font:String, embedFont:Boolean, size:Number, align:String, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0, backgroundColor:uint=0x00FFFFFF, borderColor:uint=0x00FFFFFF ):void 
+		public function TextLink(	name:String='', type:String='dynamic', text:String='', color:uint=0xffffff, font:String='arial', embedFont:Boolean=false, size:Number=10, align:String='left', wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0, backgroundColor:uint=0x00FFFFFF, borderColor:uint=0x00FFFFFF ):void 
 		{
 			_name = name;
 			_type = type;
