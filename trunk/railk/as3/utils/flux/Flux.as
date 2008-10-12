@@ -227,7 +227,7 @@ package railk.as3.utils.flux {
 			
 			if( date == "" ){
 				var myTime:Date = new Date();
-				timeStr =  String( myTime.fullYear + "-" + zero(myTime.getMonth()) + "-" + zero(myTime.getDate()) + "T" + zero(myTime.getHours()) +":" + zero(myTime.getMinutes()) +":" + zero(myTime.getSeconds()) + "Z" );
+				timeStr =  String( myTime.fullYear + "-" + zero(myTime.getMonth()+1) + "-" + zero(myTime.getDate()) + "T" + zero(myTime.getHours()) +":" + zero(myTime.getMinutes()) +":" + zero(myTime.getSeconds()) + "Z" );
 			}
 			else {
 				tmpArr = date.split(" "); var day:String = tmpArr[0]; var dmy:String = tmpArr[1]; var heure:String = tmpArr[2];

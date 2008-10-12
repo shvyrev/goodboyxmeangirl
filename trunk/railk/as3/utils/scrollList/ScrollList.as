@@ -21,7 +21,7 @@ package railk.as3.utils.scrollList {
 	import railk.as3.tween.process.*;
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
-	import railk.as3.utils.CustomEvent;
+	import railk.as3.event.CustomEvent;
 	import railk.as3.utils.ObjectDumper;
 	
 	

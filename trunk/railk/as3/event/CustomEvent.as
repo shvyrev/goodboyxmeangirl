@@ -6,7 +6,7 @@
 * @version 0.1
 */
 
-package railk.as3.utils {
+package railk.as3.event {
 
 	import flash.events.Event;
 	public dynamic class CustomEvent extends Event{

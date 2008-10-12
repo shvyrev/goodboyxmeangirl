@@ -409,10 +409,12 @@ package railk.as3.data.saver.xml {
 		{
 			var updated:Boolean = false;
 			if ( _nodes[0].root == 'atom' ) xmlFile = removeXmlNamespace( xmlFile );
-						
+			else if ( _nodes[0].root == 'rss' ) xmlFile = rssToXml( xmlFile );
+			
 			var actualXML:Array = parseToNode( xmlFile );
 			var newXML:Array = _nodes;
 			var i:int, j:int = 0;
+			
 			
 			switch( _updateType )
 			{
@@ -442,17 +444,62 @@ package railk.as3.data.saver.xml {
 					break;
 					
 				case 'modify' :
-					for (i= 0; i < newXML.length; i++) 
+					if ( _nodes[0].root == 'atom')
 					{
-						for (j = 0; j < actualXML.length ; j++) 
+						for (i=0; i < 5; i++) 
 						{
-							if ( newXML[i].content[0].content == actualXML[j].content[0].content )
+							actualXML[i].root = 'atom';
+						}
+						for (i=5; i < newXML.length; i++) 
+						{
+							for (j = 5; j < actualXML.length ; j++) 
 							{
-								actualXML[j] = newXML[i];
-								updated = true;
+								if ( newXML[i].content[2].content != actualXML[j].content[2].content )
+								{
+									actualXML[j] = newXML[i];
+									updated = true;
+								}
+							}
+						}
+						if (updated) actualXML[2].content = newXML[2].content;
+					}
+					else if ( _nodes[0].root == 'rss')
+					{
+						for (i=0; i < 5; i++) 
+						{
+							actualXML[i].root = 'rss';
+							if ( i == 4 )
+							{
+								actualXML[i].attribute['xmlns:atom'] = 'http://www.w3.org/2005/Atom';
+								actualXML[i].type = 'atom:link';
+							}
+						}
+						for (i= 5; i < newXML.length; i++) 
+						{
+							for (j = 5; j < actualXML.length ; j++) 
+							{
+								if ( newXML[i].content[1].content != actualXML[j].content[1].content )
+								{
+									actualXML[j] = newXML[i];
+									updated = true;
+								}
 							}
 						}
 					}
+					else
+					{
+						for (i= 0; i < newXML.length; i++) 
+						{
+							for (j = 0; j < actualXML.length ; j++) 
+							{
+								if ( newXML[i].content[0].content != actualXML[j].content[0].content )
+								{
+									actualXML[j] = newXML[i];
+									updated = true;
+								}
+							}
+						}
+					}	
 					_nodes = actualXML;
 					break;	
 			}
@@ -609,6 +656,15 @@ package railk.as3.data.saver.xml {
 			var result:XML;
 			var xmlnsPattern:RegExp = new RegExp('xmlns[a-zA-Z0-9é._%-/:"=]{1,}', '');
 			result = new XML( child.toString().replace(xmlnsPattern, '') );
+			return result;
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					 	   RSS TO XML
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function rssToXml( child:XML ):XML {
+			var result:XML;
+			result = child.children()[0];
 			return result;
 		}
 		
