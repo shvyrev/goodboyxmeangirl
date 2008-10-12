@@ -10,7 +10,7 @@ package railk.as3.utils.scrollList
 	import flash.events.EventDispatcher;
 	import flash.events.Event;
 	import flash.geom.Point;
-	import railk.as3.utils.CustomEvent;
+	import railk.as3.event.CustomEvent;
 	
 	public class ScrollListItem extends EventDispatcher
 	{

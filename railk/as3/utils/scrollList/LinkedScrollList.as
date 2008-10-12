@@ -20,7 +20,7 @@ package railk.as3.utils.scrollList {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.drag.DragAndThrow;
-	import railk.as3.utils.CustomEvent;
+	import railk.as3.event.CustomEvent;
 	
 	
 	public class LinkedScrollList extends Sprite {

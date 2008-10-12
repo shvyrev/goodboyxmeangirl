@@ -24,8 +24,9 @@ package railk.as3.utils {
 			var childs:Array = new Array();
 			var classInfo:XML = describeType( target );
 			var targetClass:Class = Object(target).constructor;
-						
-			var duplicate:*
+			
+			
+			var duplicate:*;
 			if ( String(targetClass) == '[class GraphicShape]' && target.copy )
 			{
 				duplicate = new targetClass(true);
@@ -60,6 +61,7 @@ package railk.as3.utils {
 					if (propertyName == 'numChildren') acceptChild = true;	
 				}
             }
+			
 			
 			if ( acceptChild)
 			{
