@@ -12,8 +12,10 @@ package railk.as3.utils.drag
 	import flash.geom.Rectangle;
 	import flash.events.MouseEvent;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import railk.as3.event.CustomEvent;
 	
-	public class DragItem
+	public class DragItem extends EventDispatcher
 	{
 		private var name:String;
 		private var bounds:Rectangle;
@@ -83,7 +85,7 @@ package railk.as3.utils.drag
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function toString():String
+		override public function toString():String
 		{
 			return '[ DRAGITEM > ' + name + ', ( containing : ' + o + ' ) ]';
 		}
@@ -109,6 +111,7 @@ package railk.as3.utils.drag
 					if( useRect ) offset = (orientation == 'V')? this.o.content.mouseY : this.o.content.mouseX;
 					else offset = (orientation == 'V')? this.o.mouseY : this.o.mouseX;
 					stage.addEventListener(MouseEvent.MOUSE_MOVE, manageEvent );
+					dispatchEvent( new CustomEvent( 'onScrollListDrag', { info:name+' is being dragged', name:this.o.name} ) );
 					break;
 				
 				case MouseEvent.MOUSE_MOVE :

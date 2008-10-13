@@ -22,7 +22,7 @@ package railk.as3.utils.scrollList {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.event.CustomEvent;
-	import railk.as3.utils.ObjectDumper;
+	import railk.as3.utils.drag.DragAndThrow;
 	
 	
 	public class ScrollList extends Sprite {
@@ -34,9 +34,9 @@ package railk.as3.utils.scrollList {
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
 		public var content                                       :Sprite;
+		private var scrollListSize                             	 :Number;
 		private var objects                                      :ObjectList;
 		private var walker                                       :ObjectNode;
-		private var scrollListSize                               :Number;
 		private var rectSize                                     :Number = 1;
 		private var delta                                        :Number = 14;
 		private var oldX	                                	 :Number;
@@ -58,7 +58,7 @@ package railk.as3.utils.scrollList {
 			this.name = name;
 			this.orientation = orientation;
 			this.espacement = espacement;
-			this.size = size;
+			this.size = this.scrollListSize = size;
 			
 			objects = new ObjectList();			
 			content = new Sprite();
@@ -83,6 +83,12 @@ package railk.as3.utils.scrollList {
 			objects.getObjectByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
 		}
 		
+		public function insertBefore( name:String, o:*):void
+		{
+			objects.insertBefore( objects.head, name, new ScrollListItem( name, o, this.name ));
+			objects.getObjectByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
+		}
+		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	  REMOVE OBJECT TO THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -90,11 +96,10 @@ package railk.as3.utils.scrollList {
 		 * 
 		 * @param	name
 		 */
-		public function remove( name:String):void 
+		public function remove( name:String):Boolean 
 		{ 
 			objects.getObjectByName( name ).data.removeEventListener( 'onScrollItemChange', manageEvent);
-			trace( name +' / '+ objects.remove( name ) );
-			trace( objects.toString() );
+			return  objects.remove( name );
 		}	
 		
 		
@@ -132,18 +137,15 @@ package railk.as3.utils.scrollList {
 				walker = walker.next;
 			}
 			
-			scrollListSize = place;
 			var fond:GraphicShape = new GraphicShape();
 			fond.name = "bg";
 			if ( orientation == 'V' ) fond.rectangle(0xff0000, 0, 0, rectSize, scrollListSize );
-			else if ( orientation == 'H' ) fond.rectangle(0xffffff, 0, 0, scrollListSize, rectSize);
+			else if ( orientation == 'H' ) fond.rectangle(0xffffff, 0, 0, scrollListSize , rectSize);
 			fond.alpha = 0;
 			addChildAt(fond, 0);
 			
 			this.oldX = content.scrollRect.x;
 			this.oldY = content.scrollRect.y;
-			
-			trace( objects );
 			
 			///////////////////////////////
 			initListeners();
@@ -153,12 +155,20 @@ package railk.as3.utils.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		UPDATE THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function update( name:String, o:* ):void 
-		{
-			add( name, o );
-			this.content.addChild( o );
-			o.y = scrollListSize;
-			scrollListSize += o.height + espacement;
+		public function update( name:String, o:*, head:Boolean=false ):void 
+		{	
+			if (head)
+			{
+				this.content.addChild( o );
+				o.y = objects.head.data.y - espacement - o.height;
+				insertBefore( name, o );
+			}
+			else 
+			{
+				this.content.addChild( o );
+				o.y = objects.tail.data.y + o.height + espacement
+				add( name, o );
+			}
 		}
 		
 		
@@ -192,14 +202,6 @@ package railk.as3.utils.scrollList {
 			else if ( orientation == 'H' ) content.scrollRect = new Rectangle( 0,0,size,rectSize );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	    		   MANAGE SCROLL ITEM
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getItemByName( name:String ):ScrollListItem
-		{
-			return objects.getObjectByName( name ).data;
-		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	    			    	  DISPOSE
@@ -262,8 +264,8 @@ package railk.as3.utils.scrollList {
 				case MouseEvent.ROLL_OVER :
 					stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true );
 					///////////////////////////////////////////////////////////////
-					args = { info:name+' height change', data:name };
-					eEvent = new CustomEvent( 'onScrollOver', args );
+					args = { info:name+' height change', name:this.name };
+					eEvent = new CustomEvent( 'onScrollListOver', args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
 					break;
@@ -271,15 +273,16 @@ package railk.as3.utils.scrollList {
 				case MouseEvent.ROLL_OUT :
 					stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent );
 					///////////////////////////////////////////////////////////////
-					args = { info:name+' height change', data:name };
-					eEvent = new CustomEvent( 'onScrollOut', args );
+					args = { info:name+' height change', name:this.name };
+					eEvent = new CustomEvent( 'onScrollListOut', args );
 					dispatchEvent( eEvent );
 					///////////////////////////////////////////////////////////////
 					break;
 					
 				case MouseEvent.MOUSE_WHEEL :
-					if ( orientation== "V" ) {
-						if ( rect.y >= 0 + evt.delta*delta  && rect.y <= rect.height+ evt.delta*delta  ) {
+					if ( orientation == "V" ) {
+						DragAndThrow.drag( this.name, rect.x, rect.y - (evt.delta * delta) );
+						/*if ( rect.y >= 0 + evt.delta*delta  && rect.y <= rect.height+ evt.delta*delta  ) {
 							Process.to( rect, .4, { y:rect.y - (evt.delta * delta) }, { onUpdate:function() { content.scrollRect = rect; } } );
 						}
 						else if( rect.y < 0 + evt.delta*delta ) {
@@ -287,7 +290,7 @@ package railk.as3.utils.scrollList {
 						}
 						else if ( rect.y > rect.height + evt.delta*delta ) {
 							Process.to( rect, .4, { y:rect.height }, { onUpdate:function() { content.scrollRect = rect; } } );
-						}
+						}*/
 					}
 					else if ( orientation == "H" ) {
 						if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) {
