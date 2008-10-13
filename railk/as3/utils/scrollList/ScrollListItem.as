@@ -31,6 +31,11 @@ package railk.as3.utils.scrollList
 			this.scrollName = scrollName;
 			oldX = o.x;
 			oldY = o.y;
+			initListeners();
+		}
+		
+		public function initListeners():void
+		{
 			o.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 		}
 		
@@ -45,7 +50,8 @@ package railk.as3.utils.scrollList
 		
 		private function manageEvent( evt:Event ):void
 		{
-			if ( oldY != globalXY.y || oldX != globalXY.x ) {
+			if ( oldY != globalXY.y || oldX != globalXY.x ) 
+			{
 				oldX = globalXY.x;
 				oldY = globalXY.y;
 				dispatchEvent( new CustomEvent( 'onScrollItemChange', { item:this }) );

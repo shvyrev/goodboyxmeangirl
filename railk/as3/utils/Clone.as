@@ -7,7 +7,6 @@
 
 package railk.as3.utils {
 	
-	import flash.utils.ByteArray;
 	import flash.utils.describeType;
  
 	public class Clone  {
