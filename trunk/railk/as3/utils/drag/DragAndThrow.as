@@ -70,6 +70,13 @@ package railk.as3.utils.drag
 			itemsList.tail.data.addEventListener( 'onScrollListDrag', manageEvent, false, 0, true );
 		}
 		
+		public static function disable( name:String  )
+		{
+			itemsList.getObjectByName(name).data.removeEventListener( 'onScrollListDrag', manageEvent);
+			itemsList.getObjectByName( name ).data.dispose();
+			itemsList.remove( name );
+		}
+		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							PROG DRAG

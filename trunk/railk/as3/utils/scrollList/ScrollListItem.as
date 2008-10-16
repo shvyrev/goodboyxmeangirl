@@ -41,6 +41,7 @@ package railk.as3.utils.scrollList
 		
 		public function dispose():void {
 			o.removeEventListener( Event.ENTER_FRAME, manageEvent );
+			o = null;
 		}
 		
 		override public function toString():String
