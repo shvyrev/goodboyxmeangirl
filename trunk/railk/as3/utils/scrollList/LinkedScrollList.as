@@ -20,7 +20,6 @@ package railk.as3.utils.scrollList {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.drag.DragAndThrow;
-	import railk.as3.utils.Clone;
 	import railk.as3.event.CustomEvent;
 	
 	
@@ -151,6 +150,23 @@ package railk.as3.utils.scrollList {
 				addChild( walker.data );
 				walker.data.create();
 				X += walker.data.width+espacement;
+				walker = walker.next;
+			}
+			
+			walker = scrollLists.head;
+			while ( walker ) 
+			{
+				if ( walker == scrollLists.head )
+				{ 
+					if (scrollLists.tail.data.full) walker.data.enableClones( scrollLists.tail.data.objects.tail.data.o, walker.next.data.objects.head.data.o );
+					else walker.data.enableClones( null, walker.next.data.objects.head.data.o );
+				}
+				else if (walker == scrollLists.tail)
+				{ 
+					if (scrollLists.tail.data.full) walker.data.enableClones( walker.prev.data.objects.tail.data.o, scrollLists.head.data.objects.head.data.o );
+					else walker.data.enableClones( walker.prev.data.objects.tail.data.o, null );
+				}
+				else walker.data.enableClones( walker.prev.data.objects.tail.data.o, walker.next.data.objects.head.data.o );
 				walker = walker.next;
 			}
 		}

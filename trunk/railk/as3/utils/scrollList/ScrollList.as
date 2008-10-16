@@ -22,6 +22,7 @@ package railk.as3.utils.scrollList {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.tween.process.*;
+	import railk.as3.utils.Clone;
 	
 	
 	public class ScrollList extends Sprite {
@@ -31,6 +32,7 @@ package railk.as3.utils.scrollList {
 		public var size	                                     	:Number;
 		public var oldSize	                                    :Number=0;
 		public var espacement                                   :int;
+		public var full                                         :Boolean = false;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
 		public var content                                      :Sprite;
@@ -48,6 +50,8 @@ package railk.as3.utils.scrollList {
 		private var oldStageW                  					:Number;
 		private var lastTail                                    :Object;
 		private var lastHead                                    :Object;
+		//private var headClone                                   :*;
+		//private var tailClone                                   :*;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -161,7 +165,9 @@ package railk.as3.utils.scrollList {
 			this.oldStageW = stage.stageWidth;
 			this.oldX = content.scrollRect.x;
 			this.oldY = content.scrollRect.y;
+			if ( objects.tail.data.y >= size - objects.tail.data.height - espacement ) full = true;
 			lastHead = { x:objects.head.data.x - (objects.head.data.width + espacement), y:objects.head.data.y - (objects.head.data.height + espacement) };
+			
 			
 			///////////////////////////////
 			initListeners();
@@ -169,10 +175,42 @@ package railk.as3.utils.scrollList {
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	     		   GESTION DES CLONES
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function enableClones( head:*, tail:*):void
+		{
+			if ( head )
+			{
+				var headClone:* = Clone.deep( head );
+				addClone( 'headclone', headClone );
+			}
+			if ( tail )
+			{
+				var tailClone:* = Clone.deep( tail );
+				addClone( 'tailclone', tailClone );
+			}	
+		}
+		
+		private function addClone( name:String, clone:* ):void
+		{
+			if ( name == 'headclone' ) clone.y = -(clone.height + espacement);
+			else if ( name == 'tailclone' ) clone.y = objects.tail.data.y + (clone.height + espacement);
+			clone.name = name;
+			content.addChild( clone );
+		}
+		
+		private function removeClone( name:String ):void
+		{
+			content.removeChild( content.getChildByName( name ) );
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		UPDATE THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function update( name:String, o:*, head:Boolean=false ):void 
 		{	
+			
+			//ajouté la gestion des clones//
 			if (head)
 			{
 				this.content.addChild( o );
