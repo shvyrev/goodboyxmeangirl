@@ -14,11 +14,10 @@ package railk.as3.transform {
 	{
 		private var type:String;
 		
-		public function TransformItem( object:* )
+		public function TransformItem( name:String, object:* )
 		{
 			
 		}
-		
 		
 		public function changeRegistration(x:Number, y:Number):void
 		{
