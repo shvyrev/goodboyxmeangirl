@@ -18,6 +18,11 @@ package railk.as3.transform {
 		private var stage:Stage;
 		private var itemsList:ObjectList;
 		
+		public static const CTRL:String = '17';
+		public static const SPACEBAR:String = '32';
+		public static const SHIFT:String = '16';
+		public static const TAB:String = '9';
+		
 		public static function init( stage:Stage ):void
 		{
 			this.stage = stage;
@@ -38,10 +43,54 @@ package railk.as3.transform {
 			}
 		}
 		
+		public static function duplicate( name:String ):*
+		{
+			return Clone.deep( itemsList.getObjectByName(name).data );
+		}
+		
+		public static function bringTofront():void
+		{
+			
+		}
+		
+		public static function select():*
+		{
+			
+		}
+		
+		public static function selectMultiple():Array
+		{
+			
+		}
+		
+		public static function moveMultiple():Array
+		{
+			
+		}
+		
+		
+		public static function rotateMultiple():Array
+		{
+			
+		}
+		
+		
+		public static function scaleMultiple():Array
+		{
+			
+		}
+		
+		
 		public static function remove( name:String ):void 
 		{
 			itemsList.getObjectByName( name).data.dispose();
 			itemsList.remove( name );
+		}
+		
+		public function dispose()
+		{
+			removeAll();
+			itemsList = null;
 		}
 		
 		public static function removeAll():void 
@@ -52,6 +101,14 @@ package railk.as3.transform {
 				walker = walker.next;
 			}
 			itemsList.clear();
+		}
+		
+		private static function manageEvent( evt:* ):void
+		{
+			switch( evt.type)
+			{
+				
+			}
 		}
 	}
 }
