@@ -142,31 +142,50 @@ package railk.as3.utils.scrollList {
 		// 																 	   CREATE THE LINKED SCROLL LISTS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function create():void {
-			var X:Number = 0;
+			var place:Number = 0;
 			walker = scrollLists.head;
 			while ( walker ) 
 			{
-				walker.data.x = X;
-				addChild( walker.data );
-				walker.data.create();
-				X += walker.data.width+espacement;
+				if ( orientation == 'V' )
+				{
+					walker.data.x = place;
+					addChild( walker.data );
+					walker.data.create();
+					place += walker.data.width + espacement;
+				}
+				else {
+					walker.data.y = place;
+					addChild( walker.data );
+					walker.data.create();
+					place += walker.data.height + espacement;
+				}
 				walker = walker.next;
 			}
 			
 			walker = scrollLists.head;
 			while ( walker ) 
 			{
-				if ( walker == scrollLists.head )
+				if ( walker == scrollLists.head && walker == scrollLists.tail )
+				{
+					if ( !walker.data.full ) {
+						DragAndThrow.disable( walker.name );
+						walker.data.delListeners();
+					}
+					else {
+						walker.data.enableClones( walker.data.objects.tail.data.o, walker.data.objects.head.data.o, true );
+					}
+				}
+				else if ( walker == scrollLists.head )
 				{ 
-					if (scrollLists.tail.data.full) walker.data.enableClones( scrollLists.tail.data.objects.tail.data.o, walker.next.data.objects.head.data.o );
-					else walker.data.enableClones( null, walker.next.data.objects.head.data.o );
+					if (scrollLists.tail.data.full) walker.data.enableClones( scrollLists.tail.data.objects.tail.data.o, walker.next.data.objects.head.data.o, true );
+					else walker.data.enableClones( null, walker.next.data.objects.head.data.o, true );
 				}
 				else if (walker == scrollLists.tail)
 				{ 
-					if (scrollLists.tail.data.full) walker.data.enableClones( walker.prev.data.objects.tail.data.o, scrollLists.head.data.objects.head.data.o );
-					else walker.data.enableClones( walker.prev.data.objects.tail.data.o, null );
+					if (scrollLists.tail.data.full) walker.data.enableClones( walker.prev.data.objects.tail.data.o, scrollLists.head.data.objects.head.data.o, true );
+					else walker.data.enableClones( walker.prev.data.objects.tail.data.o, null, true );
 				}
-				else walker.data.enableClones( walker.prev.data.objects.tail.data.o, walker.next.data.objects.head.data.o );
+				else  walker.data.enableClones( walker.prev.data.objects.tail.data.o, walker.next.data.objects.head.data.o, true );
 				walker = walker.next;
 			}
 		}
@@ -207,99 +226,160 @@ package railk.as3.utils.scrollList {
 			var tailScroll:ScrollList;
 			var headScroll:ScrollList;
 			
-			if ( orientation == 'V' )
+			
+			var head:Number = (orientation == 'V')? y+height : x+width;
+			var tail:Number = (orientation == 'V')? y : x;
+			if ( head  <= 0  )
 			{
-				if ( y + height  <= 0 )
+				if ( scrollLists.getObjectByName( scrollname ) ==  scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
 				{
-					if ( scrollLists.getObjectByName( scrollname ) ==  scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
-					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						tailScroll = scrollLists.tail.data;
-						if( scroll.remove( item.name ) ) tailScroll.update( item.name, item.o );
-					}
-					else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head )
-					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						tailScroll = scrollLists.tail.data;
-						if( scroll.remove( item.name ) ) tailScroll.update( item.name, item.o );
-					}
-					else 
-					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
-						if ( scroll.remove( item.name ) ) prevScroll.update( item.name, item.o );
+					scroll = scrollLists.getObjectByName( scrollname ).data
+					tailScroll = scrollLists.tail.data;
+					if ( scroll.remove( item.name ) ) {
+						tailScroll.update( item.name, item.o);
+						tailScroll.enableClones( item.o,scroll.objects.head.data.o,true)
 					}
 				}
-				else if ( y > size )
+				else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head )
 				{
-					if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+					scroll = scrollLists.getObjectByName( scrollname ).data;
+					tailScroll = scrollLists.tail.data;
+					nextScroll =  scrollLists.getObjectByName( scrollname ).next.data;
+					if ( scroll.remove( item.name ) ) 
 					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						headScroll = scrollLists.head.data;
-						if( scroll.remove( item.name ) ) headScroll.update( item.name, item.o, true );
+						if ( tailScroll.full ) {
+							tailScroll.update( item.name, item.o, tailScroll.objects.head.data.o,  scroll.objects.head.data.o );
+						}
+						else
+						{
+							tailScroll.update( item.name, item.o, tailScroll.objects.head.data.o, null );
+						}
 					}	
-					else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+				}
+				else if (scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+				{
+					scroll = scrollLists.getObjectByName( scrollname ).data;
+					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					if ( scroll.remove( item.name ) ) 
 					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						headScroll = scrollLists.head.data;
-						if( scroll.remove( item.name ) ) headScroll.update( item.name, item.o, true );
+						if (prevScroll == scrollLists.head.data )
+						{	
+							if ( prevScroll.full )
+							{
+								prevScroll.update( item.name, item.o );
+								if( scroll.full ) prevScroll.enableClones( scroll.objects.tail.data.o, scroll.objects.head.data.o, true );
+								else prevScroll.enableClones( null, scroll.objects.head.data.o, true );
+							}
+							else prevScroll.update( item.name, item.o , null, scroll.objects.head.data.o);
+						}
+						else
+						{
+							prevScroll.update( item.name, item.o );
+							prevScroll.enableClones( scrollLists.getObjectByName( scrollname ).prev.prev.data.objects.tail.data.o, scroll.objects.head.data.o, true );
+						}
 					}
-					else 
+				}
+				else 
+				{
+					scroll = scrollLists.getObjectByName( scrollname ).data;
+					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					tailScroll = scrollLists.tail.data;
+					if ( scroll.remove( item.name ) ) 
 					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						nextScroll = scrollLists.getObjectByName( scrollname ).next.data;
-						if( scroll.remove( item.name ) ) nextScroll.update( item.name, item.o, true );
+						prevScroll.update( item.name, item.o);
+						if ( prevScroll == scrollLists.head.data )
+						{
+							if ( tailScroll.full ) prevScroll.enableClones( tailScroll.objects.tail.data.o, scroll.objects.head.data.o );
+							else prevScroll.enableClones(null, scroll.objects.head.data.o );
+						}
+						else
+						{
+							prevScroll.enableClones( scrollLists.getObjectByName( scrollname ).prev.prev.data.objects.tail.data.o, scroll.objects.head.data.o );
+						}
 					}
 				}
 			}
-			else if ( orientation == 'H' )
+			else if ( tail > size )
 			{
-				if ( x + width  <= 0 )
+				if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
 				{
-					if ( scrollLists.getObjectByName( scrollname ) ==  scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
-					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						tailScroll = scrollLists.tail.data;
-						if( scroll.remove( item.name ) ) tailScroll.update( item.name, item.o );
-					}
-					else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head )
-					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						tailScroll = scrollLists.tail.data;
-						if( scroll.remove( item.name ) ) tailScroll.update( item.name, item.o );
-					}
-					else 
-					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
-						if ( scroll.remove( item.name ) ) prevScroll.update( item.name, item.o );
+					scroll = scrollLists.getObjectByName( scrollname ).data;
+					headScroll = scrollLists.head.data;
+					if ( scroll.remove( item.name ) ) {
+						headScroll.update( item.name, item.o, null, null, true );
+						headScroll.enableClones( scroll.objects.tail.data.o, item.o,true );
 					}
 				}
-				else if ( x > size )
+				else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head )
 				{
-					if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+					scroll = scrollLists.getObjectByName( scrollname ).data;
+					nextScroll = scrollLists.getObjectByName( scrollname ).next.data;
+					tailScroll = scrollLists.tail.data;
+					if ( scroll.remove( item.name ) ) 
 					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						headScroll = scrollLists.head.data;
-						if( scroll.remove( item.name ) ) headScroll.update( item.name, item.o, true );
-					}	
-					else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
-					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						headScroll = scrollLists.head.data;
-						if( scroll.remove( item.name ) ) headScroll.update( item.name, item.o, true );
+						if ( nextScroll.full ) 
+						{
+							if ( nextScroll == scrollLists.tail.data ) 
+							{ 
+								nextScroll.update( item.name, item.o, null, null, true );
+								nextScroll.enableClones( scroll.objects.tail.data.o, nextScroll.objects.tail.data.o, true );
+							}
+							else 
+							{
+								nextScroll.update( item.name, item.o, null, null, true );
+								nextScroll.enableClones( scroll.objects.tail.data.o, scrollLists.getObjectByName( scrollname ).next.next.data.objects.head.data.o, true );
+								scroll.removeClones();
+								if ( scroll.full && tailScroll.full ) scroll.enableClones(tailScroll.objects.tail.data.o, nextScroll.objects.head.data.o, true );
+								else scroll.enableClones(null, nextScroll.objects.head.data.o );
+							}
+						}
+						else
+						{
+							nextScroll.update( item.name, item.o, null, null, true );
+							nextScroll.enableClones( scroll.objects.tail.data.o, null, true );
+						}	
 					}
-					else 
+				}
+				else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+				{
+					scroll = scrollLists.getObjectByName( scrollname ).data;
+					headScroll = scrollLists.head.data;
+					tailScroll = scrollLists.tail.data;
+					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					if ( scroll.remove( item.name ) )
 					{
-						scroll = scrollLists.getObjectByName( scrollname ).data
-						nextScroll = scrollLists.getObjectByName( scrollname ).next.data;
-						if( scroll.remove( item.name ) ) nextScroll.update( item.name, item.o, true );
+						if ( tailScroll.full ) 
+						{
+							headScroll.update( item.name, item.o, null, null, true );
+							headScroll.enableClones( scroll.objects.tail.data.o, scrollLists.head.next.data.objects.head.data.o, true );
+							scroll.removeClones();
+							if ( scroll.full ) scroll.enableClones(prevScroll.objects.tail.data.o, headScroll.objects.head.data.o, true );
+							else scroll.enableClones(prevScroll.objects.tail.data.o, null, true );
+						}
+						else 
+						{
+							headScroll.update( item.name, item.o, null, null, true );
+							headScroll.enableClones(null,scrollLists.head.next.data.objects.head.data.o,true);
+							scroll.removeClones();
+							scroll.enableClones(prevScroll.objects.tail.data.o, null,true );
+						}
+					}	
+				}
+				else 
+				{
+					scroll = scrollLists.getObjectByName( scrollname ).data;
+					nextScroll = scrollLists.getObjectByName( scrollname ).next.data;
+					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					if ( scroll.remove( item.name ) ) {
+						if ( nextScroll.full ) nextScroll.update( item.name, item.o, scroll.objects.tail.data.o, nextScroll.objects.head.data.o, true );
+						else nextScroll.update( item.name, item.o, scroll.objects.tail.data.o, null, true );
+						scroll.removeClones();
+						scroll.enableClones( prevScroll.objects.tail.data.o, item.o,true );
 					}
 				}
 			}
-			
-			
 		}
+		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 															  				   MOVE LINKED SCROLLLIST

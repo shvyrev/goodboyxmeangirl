@@ -62,17 +62,13 @@ package railk.as3.utils.drag
 			if( !useRect ) o.buttonMode = true;
 			o.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 			stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			stage.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
-			
 		}
 		
 		public function delListeners():void 
 		{
 			if( !useRect ) o.buttonMode = false;
 			o.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			stage.removeEventListener( Event.ENTER_FRAME, manageEvent );
 			stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -112,6 +108,7 @@ package railk.as3.utils.drag
 					if( useRect ) offset = (orientation == 'V')? this.o.content.mouseY : this.o.content.mouseX;
 					else offset = (orientation == 'V')? this.o.mouseY : this.o.mouseX;
 					stage.addEventListener(MouseEvent.MOUSE_MOVE, manageEvent );
+					stage.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 					dispatchEvent( new CustomEvent( 'onScrollListDrag', { info:name+' is being dragged', name:this.o.name} ) );
 					break;
 				
@@ -153,12 +150,14 @@ package railk.as3.utils.drag
 						last = current;
 						current = (orientation == 'V')? stage.mouseY : stage.mouseX;
 						v = current - last;
+						
 					}	
 					else
 					{
 						if( orientation == 'V') (useRect) ? o.y -= v : o.y += v;
 						else if ( orientation == 'H') (useRect) ? o.x -= v : o.x += v;
 						if ( useRect ) this.o.content.scrollRect = o;
+						if (v == 0) stage.removeEventListener( Event.ENTER_FRAME, manageEvent );
 					}
 					
 					if ( hasBound)
@@ -196,8 +195,7 @@ package railk.as3.utils.drag
 					var absv:Number;
 					if (v < 0)  absv = -v;
 					else absv = v;
-
-					if( absv < 0.5 ) v = 0;
+					if ( absv < 0.5 ) v = 0;
 					break;
 			}
 		}
