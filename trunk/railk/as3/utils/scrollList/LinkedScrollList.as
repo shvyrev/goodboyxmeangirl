@@ -5,6 +5,9 @@
 * 
 * @author Richard Rodney
 * @version 0.1
+* 
+* TODO:clean up the crossscrollitem part code it's a bit messy right now, and chase bugs in real life test
+* 
 */
 
 package railk.as3.utils.scrollList {
