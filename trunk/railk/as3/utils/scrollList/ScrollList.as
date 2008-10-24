@@ -50,8 +50,8 @@ package railk.as3.utils.scrollList {
 		private var oldStageW                  					:Number;
 		private var lastTail                                    :Object;
 		private var lastHead                                    :Object;
-		//private var headClone                                   :*;
-		//private var tailClone                                   :*;
+		private var headClone                                   :*;
+		private var tailClone                                   :*;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -177,40 +177,55 @@ package railk.as3.utils.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		   GESTION DES CLONES
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function enableClones( head:*, tail:*):void
+		public function enableClones( head:*, tail:*, first:Boolean=false):void
 		{
 			if ( head )
 			{
-				var headClone:* = Clone.deep( head );
-				addClone( 'headclone', headClone );
+				headClone = Clone.deep( head );
+				addClone( 'headclone', headClone, first );
 			}
 			if ( tail )
 			{
-				var tailClone:* = Clone.deep( tail );
-				addClone( 'tailclone', tailClone );
+				tailClone = Clone.deep( tail );
+				addClone( 'tailclone', tailClone, first );
 			}	
 		}
 		
-		private function addClone( name:String, clone:* ):void
+		private function addClone( name:String, clone:*, first:Boolean ):void
 		{
-			if ( name == 'headclone' ) clone.y = -(clone.height + espacement);
-			else if ( name == 'tailclone' ) clone.y = objects.tail.data.y + (clone.height + espacement);
+			if ( name == 'headclone' ) {
+				var h:Number = ((first)? clone.height+espacement : 0);
+				clone.y =  objects.head.data.y -( h );
+			}
+			else if ( name == 'tailclone' ) {
+				clone.y = objects.tail.data.y + (objects.tail.data.height + espacement);
+			}
 			clone.name = name;
 			content.addChild( clone );
 		}
 		
-		private function removeClone( name:String ):void
+		public function removeClones():void
 		{
-			content.removeChild( content.getChildByName( name ) );
+			if (headClone != null) {
+				content.removeChild( headClone );
+				headClone = null;
+			}
+			if (tailClone != null) {
+				content.removeChild( tailClone );
+				tailClone = null;
+			}
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		UPDATE THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function update( name:String, o:*, head:Boolean=false ):void 
+		public function update( name:String, o:*, headClone:*=null, tailClone:*=null, head:Boolean = false ):void 
 		{	
 			
-			//ajouté la gestion des clones//
+			//////////////////////////////////////////////////////////
+			if ( linked ) removeClones();
+			//////////////////////////////////////////////////////////
+			
 			if (head)
 			{
 				this.content.addChild( o );
@@ -231,6 +246,10 @@ package railk.as3.utils.scrollList {
 				add( name, o );
 			}
 			objectsSize += o.height + espacement;
+			
+			//////////////////////////////////////////////////////////
+			if ( linked ) enableClones( headClone, tailClone, head );
+			//////////////////////////////////////////////////////////
 		}
 		
 		
@@ -324,16 +343,16 @@ package railk.as3.utils.scrollList {
 				case Event.ENTER_FRAME :
 					if ( orientation == "V" ) 
 					{
-						if ( oldY != content.scrollRect.y )
+						if ( oldY != rect.y )
 						{
-							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:content.scrollRect.x, y:content.scrollRect.y  } ) );
+							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:rect.x, y:rect.y  } ) );
 						}
 					}
 					else if ( orientation == "H" ) 
 					{
-						if ( oldX != content.scrollRect.x )
+						if ( oldX != rect.x )
 						{
-							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:content.scrollRect.x, y:content.scrollRect.y } ) );
+							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:rect.x, y:rect.y } ) );
 						}
 					}
 					break;
@@ -372,28 +391,18 @@ package railk.as3.utils.scrollList {
 					}
 					else
 					{
-						if (orientation == "V" ) {
-						if ( rect.y >= 0 + evt.delta*delta  && rect.y <= rect.height+ evt.delta*delta  ) {
-							Process.to( rect, .4, { y: rect.y - (evt.delta * delta)} , {  onUpdate:function(){ content.scrollRect = rect; } } );
+						if (orientation == "V" ) 
+						{
+							if ( rect.y >= 0 + evt.delta * delta  && rect.y <= rect.height + evt.delta * delta  ) Process.to( rect, .4, { y: rect.y - (evt.delta * delta)} , {  onUpdate:function(){ content.scrollRect = rect; } } );
+							else if ( rect.y < 0 + evt.delta * delta ) Process.to( rect, .4, { y: 0}, { onUpdate:function(){ content.scrollRect = rect; } } );
+							else if ( rect.y > rect.height + evt.delta * delta ) Process.to( rect, .4, { y:rect.height }, { onUpdate:function(){ content.scrollRect = rect; } } );
 						}
-						else if( rect.y < 0 + evt.delta*delta ) {
-							Process.to( rect, .4, { y: 0}, { onUpdate:function(){ content.scrollRect = rect; } } );
+						else if (orientation == "H" ) 
+						{
+							if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) Process.to( rect, .4, { x: rect.x - (evt.delta * delta)} , { onUpdate:function(){ content.scrollRect = rect; } } );
+							else if( rect.x < 0 + evt.delta*delta ) Process.to( rect, .4, { x: 0 }, { onUpdate:function(){ content.scrollRect = rect; } } );
+							else if ( rect.x > rect.height+evt.delta*delta ) Process.to( rect, .4, { x:rect.width }, { onUpdate:function(){ content.scrollRect = rect; } } );
 						}
-						else if ( rect.y > rect.height + evt.delta*delta ) {
-							Process.to( rect, .4, { y:rect.height }, { onUpdate:function(){ content.scrollRect = rect; } } );
-						}
-					}
-					else if (orientation == "H" ) {
-						if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) {
-							Process.to( rect, .4, { x: rect.x - (evt.delta * delta)} , { onUpdate:function(){ content.scrollRect = rect; } } );
-						}
-						else if( rect.x < 0 + evt.delta*delta ) {
-							Process.to( rect, .4, { x: 0 }, { onUpdate:function(){ content.scrollRect = rect; } } );
-						}
-						else if ( rect.x > rect.height+evt.delta*delta ) {
-							Process.to( rect, .4, { x:rect.width }, { onUpdate:function(){ content.scrollRect = rect; } } );
-						}
-					}
 					}
 					break;
 			}
