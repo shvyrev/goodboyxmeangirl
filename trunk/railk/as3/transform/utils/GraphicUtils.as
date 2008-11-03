@@ -75,34 +75,36 @@
 			return corner;
 		}
 		
-		public static function border():Object
+		public static function border(x,y):Object
 		{
 			var border:DrawingShape = new DrawingShape();
 			var data:Object =  { 
 				width:10, height:19, pixels:[ 
 					[0xFFFFFFFF,1],1,1,1,1,1,0,0,0,0,
+					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
 					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
+					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
 					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
+					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
 					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],1,1,1,1,
+					[0xFFFFFFFF,1],1,1,1,1,1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],
 					1,[0xFF000000,1],1,1,1,1,1,1,1,[0xFFFFFFFF,1],
+					[0xFFFFFFFF,1],1,1,1,1,1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],
 					1,[0xFF000000,1],1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					1,[0xFF000000,1],1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					1,[0xFF000000,1],1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					1,[0xFF000000,1],1,1,1,1,1,1,1,[0xFFFFFFFF,1],
+					[0xFFFFFFFF,1],1,1,1,1,1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],
 					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],1,1,1,1,
+					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
 					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
+					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
 					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
+					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
 					1,1,1,1,1,1,0,0,0,0
 				] 
 			}; 
 			border.drawPixelArrayShape( data );
 			border.setRegistration(6, 9.5);
+			border.x2 = x;
+			border.y2 = y;
 			return border;
 		}
 		
@@ -176,25 +178,26 @@
 		public static function regPoint(x,y):Shape
 		{
 			var regPoint:Shape = new Shape();
-			regPoint.graphics.beginFill(0x00CCFF);
-			regPoint.graphics.moveTo(x-5, y-5);
-			regPoint.graphics.lineTo(x+5, y-5);
-			regPoint.graphics.lineTo(x+5, y+5);
-			regPoint.graphics.lineTo(x-5,y+5);
-			regPoint.graphics.moveTo(x-5, y-5);
+			regPoint.graphics.lineStyle(1,0xFFFFFF,1);
+			regPoint.graphics.beginFill(0x000000, 1);
+			regPoint.graphics.drawCircle(x, y, 6);
+			regPoint.graphics.drawCircle(x, y, 3);
+			regPoint.graphics.drawCircle(x, y, 1.5);
 			regPoint.graphics.endFill();
+			regPoint.alpha = .7;
 			return regPoint;
 		}
 		
 		public static function contour(x,y,w,h):Shape
 		{
 			var contour:Shape = new Shape();
-			contour.graphics.lineStyle( 1, 0xFF0000, 1,true,'normal','square','miter' );
+			contour.graphics.lineStyle( 1, 0x000000, 1,true,'normal','square','miter' );
 			contour.graphics.moveTo(x-1, y-1);
 			contour.graphics.lineTo(x+w, y-1);
 			contour.graphics.lineTo(x+w, y+h);
 			contour.graphics.lineTo(x-1, y+h);
-			contour.graphics.lineTo(x-1, y-1);
+			contour.graphics.lineTo(x - 1, y - 1);
+			contour.alpha = .12;
 			return contour;
 		}
 		
