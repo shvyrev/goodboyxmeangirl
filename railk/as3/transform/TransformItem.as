@@ -94,8 +94,8 @@ package railk.as3.transform {
 			//shapes.add( ['blPoint', GraphicUtils.regPoint(BL.x, BL.y)] );
 			//shapes.add( ['trPoint', GraphicUtils.regPoint(TR.x, TR.y)] );
 			//shapes.add( ['brPoint', GraphicUtils.regPoint(BR.x, BR.y)] );
-			//shapes.add( ['centerPoint', GraphicUtils.regPoint(CENTER.x, CENTER.y)] );
-			//shapes.add( ['tPoint', GraphicUtils.regPoint(T.x, T.y)] );
+			shapes.add( ['centerPoint', GraphicUtils.regPoint(CENTER.x, CENTER.y)] );
+			shapes.add( ['tPoint', GraphicUtils.border(T.x, T.y)] );
 			//shapes.add( ['lPoint', GraphicUtils.regPoint(L.x, L.y)] );
 			//shapes.add( ['rPoint', GraphicUtils.regPoint(R.x, R.y)] );
 			//shapes.add( ['bPoint', GraphicUtils.regPoint(B.x, B.y)] );
@@ -103,7 +103,7 @@ package railk.as3.transform {
 			walker = shapes.head;
 			while ( walker ) {
 				addChild( walker.data );
-				walker.data.visible = false;
+				walker.data.visible = true;
 				walker = walker.next;
 			}
 		}
