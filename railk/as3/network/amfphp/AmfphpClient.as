@@ -46,7 +46,7 @@ package railk.as3.network.amfphp
 		 * 
 		 * @param	server 'http://'SERVER'/'PATH'/gateway.php'
 		 */
-		public function AmfphpClient( server:String, path:String, persistent:Boolean=false, servicePath:String = '../' ):void 
+		public function AmfphpClient( server:String, path:String, persistent:Boolean=false, servicePath:String = '' ):void 
 		{	
 			this.server = server;
 			this.path = path;
@@ -69,8 +69,8 @@ package railk.as3.network.amfphp
 		public function open():void
 		{
 			connexion = new NetConnection();
-			connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
 			connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
+			connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
 			responder = new Responder( onResult, onError );
 			connected = true;
 		}
@@ -151,7 +151,8 @@ package railk.as3.network.amfphp
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		override public function toString():String
 		{
-			return '[ AMFPHP CLIENT > '+(connected)? 'connected' :'non_connected'+' ]'
+			var str:String = (connected)? 'connected' :'non_connected';
+			return '[ AMFPHP CLIENT > '+str+' ]'
 		}
 	}
 }	

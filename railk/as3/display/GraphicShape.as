@@ -7,6 +7,8 @@
 
 package railk.as3.display {
 	
+	import flash.geom.ColorTransform;
+	import flash.geom.Transform;
 	import flash.geom.Matrix;
 	import flash.display.Graphics;
 	import flash.geom.Point;
@@ -25,6 +27,7 @@ package railk.as3.display {
 			if ( copy ) graphicsCopy = new GraphicCopy(graphics);
 			else graphicsCopy = graphics;
 		}
+		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	  DEGRADE
@@ -68,9 +71,10 @@ package railk.as3.display {
 		* @param	H
 		* @return
 		*/
-		public function rectangle (color:uint, X:int, Y:int, W:int, H:int):void
+		public function rectangle (color:uint, X:int, Y:int, W:int, H:int, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
 		{
 			this.graphicsCopy.clear();
+			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
 			this.graphicsCopy.drawRect(X,Y,W,H);
 			this.graphicsCopy.endFill();
@@ -86,9 +90,10 @@ package railk.as3.display {
 		 * @param	C  point
 		 * @param	color
 		 */
-		public function triangle (A:Point, B:Point, C:Point, color:uint):void
+		public function triangle (A:Point, B:Point, C:Point, color:uint, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
 		{
 			this.graphicsCopy.clear();
+			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
 			this.graphicsCopy.moveTo( A.x, A.y );
 			this.graphicsCopy.lineTo( B.x, B.y );
@@ -110,9 +115,10 @@ package railk.as3.display {
 		* @param	cornerH
 		* @return
 		*/
-		public function roundRectangle (color:uint, X:int, Y:int, W:int, H:int, cornerW:int, cornerH:int):void
+		public function roundRectangle (color:uint, X:int, Y:int, W:int, H:int, cornerW:int, cornerH:int, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
 		{
 			this.graphicsCopy.clear();
+			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
 			this.graphicsCopy.drawRoundRect(X,Y,W,H,cornerW,cornerH);
 			this.graphicsCopy.endFill();
@@ -129,9 +135,9 @@ package railk.as3.display {
 		* @param	radius
 		* @return
 		*/
-		public function cercle (color:uint, X:int, Y:int, radius:Number, alpha:Number=-1):void {
-			if (alpha == -1){ alpha = 1; }
+		public function cercle (color:uint, X:int, Y:int, radius:Number, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void {
 			this.graphicsCopy.clear();
+			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color,alpha);
 			this.graphicsCopy.drawCircle(radius,radius,radius);
 			this.graphicsCopy.endFill();
@@ -152,12 +158,13 @@ package railk.as3.display {
 		* @param	type  null:plein, "L":ligne, "FL":ligne et plein
 		* @return
 		*/
-		public function camembert (color:uint, X:int, Y:int, radius:int, startAngle:int, endAngle:int, segments:int):void 
+		public function camembert (color:uint, X:int, Y:int, radius:int, startAngle:int, endAngle:int, segments:int, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void 
 		{
 			var rad:Number = Math.PI/180;
 			var segm:Number = (endAngle-startAngle)/segments;
 			
 			this.graphicsCopy.clear();
+			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color,1);
 			this.graphicsCopy.moveTo(X,Y);
 			this.graphicsCopy.moveTo(X+radius*Math.cos(startAngle*rad), Y+radius*Math.sin(startAngle*rad));
@@ -169,6 +176,30 @@ package railk.as3.display {
 				this.graphicsCopy.curveTo(a_x+x, a_y+y, c_x+x, c_y+y);
 			}
 			this.graphicsCopy.lineTo(X, Y);
+			this.graphicsCopy.endFill();
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	  	DONUT
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * 
+		 * @param	X
+		 * @param	Y
+		 * @param	outerRadius
+		 * @param	outerRadius
+		 * @param	color
+		 * @param	lineThickness
+		 * @param	lineColor
+		 */
+		public function donut(  color:uint, X:Number, Y:Number, outerRadius:Number, innerRadius:Number, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
+		{
+			this.graphicsCopy.clear();
+			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
+			this.graphicsCopy.beginFill(color, 1);
+			this.graphicsCopy.drawCircle(X, Y, outerRadius);
+			this.graphicsCopy.drawCircle(X, Y, innerRadius);
 			this.graphicsCopy.endFill();
 		}
 		
@@ -326,6 +357,20 @@ package railk.as3.display {
 
 		private function toRadians( degree:Number ):Number {
 			return degree * 0.0174532925;
+		}
+		
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					 	GETTER/SETTER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function get color():uint { return this.transform.colorTransform.color; }
+		
+		public function set color(value:uint):void
+		{
+			var newCol:ColorTransform = new ColorTransform();
+			var t:Transform = new Transform(this);
+			newCol.color = value;
+			t.colorTransform = newCol;
 		}
 	}
 }

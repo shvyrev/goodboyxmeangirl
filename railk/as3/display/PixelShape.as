@@ -40,6 +40,7 @@ package railk.as3.display
 			var nbCol:int = Math.ceil( W/espaceW );
 			var nbLigne:int = Math.ceil( H/espaceH );
 			
+			bmp.bitmapData.lock();
 			var m:Boolean = true;
 			var xLoop:int = 0;
 			var yLoop:int = 0;
@@ -58,7 +59,7 @@ package railk.as3.display
 					Y = Y+espaceH;
 				}
 			}
-			
+			bmp.bitmapData.unlock();
 			this.addChild( bmp );
 		}
 		
@@ -90,6 +91,7 @@ package railk.as3.display
 			var nbLigne = Math.ceil( H/patternH );
 			var nbCol = Math.ceil( W/patternW );
 			
+			bmp.bitmapData.lock();
 			var m:Boolean = true;
 			var xLoop:int = 0;
 			var yLoop:int = 0;
@@ -121,7 +123,7 @@ package railk.as3.display
 					X = 0;
 				}
 			}
-			
+			bmp.bitmapData.unlock();
 			this.addChild( bmp );
 		}
 		
