@@ -75,7 +75,7 @@
 			return corner;
 		}
 		
-		public static function border(x,y):Object
+		public static function border(x,y,rotation):Object
 		{
 			var border:DrawingShape = new DrawingShape();
 			var data:Object =  { 
@@ -103,8 +103,10 @@
 			}; 
 			border.drawPixelArrayShape( data );
 			border.setRegistration(6, 9.5);
+			border.rotation2 = rotation;
 			border.x2 = x;
 			border.y2 = y;
+			border.alpha = .7;
 			return border;
 		}
 		
