@@ -11,9 +11,10 @@ package railk.as3.display.drawingShape
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	
 	
-	public class DrawingShape extends DynamicRegistration
+	public class DrawingShape extends RegistrationPoint
 	{
 		/**
 		 * 
@@ -55,6 +56,7 @@ package railk.as3.display.drawingShape
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function drawPixelShape( color:uint, data:Object ):void {
 			var result:Bitmap = new Bitmap( new BitmapData( data.width, data.height, true, 0x00FFFFFF ) );
+			result.bitmapData.lock();
 			for ( var i:int = 0; i < data.points.length; i++ ){
 				var x:int = data.points[i].A.x;
 				var y:int = data.points[i].A.y;
@@ -63,8 +65,9 @@ package railk.as3.display.drawingShape
 				var absDx:Number;
 				var absDy:Number;
 				var sqrDist:Number = Math.sqrt( dx * dx + dy * dy );
+				var pixColor:uint = (data.points[i].color)? data.points[i].color : color;
 				
-				if (dx == 0 && dy == 0 ) result.bitmapData.setPixel32( x,y,color );
+				if (dx == 0 && dy == 0 ) result.bitmapData.setPixel32( x,y,pixColor );
 				else
 				{
 					var yLonger:Boolean=false;
@@ -84,13 +87,13 @@ package railk.as3.display.drawingShape
 						if (dx>0) {
 							dx+=y;
 							for (var j:int = 0x8000 + (x << 16); y <= dx; y++) {
-								result.bitmapData.setPixel32( j >> 16,y,color );
+								result.bitmapData.setPixel32( j >> 16,y,pixColor  );
 								j+=decInc;
 							}
 						}
 						dx+=y;
 						for (j = 0x8000 + (x << 16); y >= dx; y--) {
-							result.bitmapData.setPixel32( j >> 16,y,color );
+							result.bitmapData.setPixel32( j >> 16,y,pixColor );
 							j-=decInc;
 						}
 					}
@@ -98,17 +101,58 @@ package railk.as3.display.drawingShape
 					if (dx>0) {
 						dx+=x;
 						for (j = 0x8000 + (y << 16); x <= dx; x++) {
-							result.bitmapData.setPixel32( x,j >> 16,color );
+							result.bitmapData.setPixel32( x,j >> 16,pixColor );
 							j+=decInc;
 						}
 					}
 					dx+=x;
 					for (j = 0x8000 + (y << 16); x >= dx; x--) {
-						result.bitmapData.setPixel( x,j >> 16,color );
+						result.bitmapData.setPixel( x,j >> 16,pixColor );
 						j-=decInc;
 					}
 				}	
 			}
+			result.bitmapData.unlock();
+			this.addChild( result );
+		}
+		
+		/**
+		 * 
+		 * @param	data {height:number,width:number,pixels:array}
+		 */
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					DRAW PIXELS ARRAY
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function drawPixelArrayShape( data:Object ):void 
+		{
+			var color:uint = 0xFFFFFFFF;
+			var result:Bitmap = new Bitmap( new BitmapData( data.width, data.height, true, 0x00FFFFFF ) );
+			
+			result.bitmapData.lock();
+			var m:Boolean=true;
+			var xLoop:int=0;
+			var yLoop:int = 0;
+			var nx:Number, pos:int;
+			while (true) 
+			{
+				nx = m ? xLoop++ : --xLoop;
+				pos = yLoop * data.width + nx;
+				
+				var pixel = data.pixels[pos];
+				if( pixel is int && pixel == 1) result.bitmapData.setPixel32( nx, yLoop, color );
+				else if ( pixel is Array)
+				{
+					color = pixel[0];
+					result.bitmapData.setPixel32( nx, yLoop, color );
+				}
+				
+				if (xLoop == data.width || xLoop == 0) {
+					if (yLoop++ == data.height) break;
+					m = !m;
+				}
+			}
+			
+			result.bitmapData.unlock();
 			this.addChild( result );
 		}
 	}

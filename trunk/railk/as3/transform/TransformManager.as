@@ -15,8 +15,9 @@ package railk.as3.transform {
 	
 	public class TransformManager
 	{
-		private var stage:Stage;
-		private var itemsList:ObjectList;
+		private static var _stage:Stage;
+		private static var itemsList:ObjectList;
+		private static var walker:ObjectNode;
 		
 		public static const CTRL:String = '17';
 		public static const SPACEBAR:String = '32';
@@ -25,16 +26,32 @@ package railk.as3.transform {
 		
 		public static function init( stage:Stage ):void
 		{
-			this.stage = stage;
+			_stage = stage;
 			itemsList = new ObjectList();
 		}
 		
-		public static function enable( name:String, object:* ):void 
+		public static function enable():void
 		{
-			itemsList.add([name, new TransformItem(name,object)])
+			walker = itemsList.head;
+			while ( walker ) {
+				_stage.addChild( walker.data );
+				walker.data.x = walker.data.X;
+				walker.data.y = walker.data.Y;
+				walker = walker.next;
+			}
 		}
 		
-		public static function enableMultiple( args:Array ):void 
+		public static function disable():void
+		{
+			
+		}
+		
+		public static function add( name:String, object:* ):void 
+		{
+			itemsList.add([name, new TransformItem(name, object)])
+		}
+		
+		public static function addMultiple( args:Array ):void 
 		{
 			var i:int = 0;
 			for ( i; i < args.length; i++) 
@@ -60,24 +77,24 @@ package railk.as3.transform {
 		
 		public static function selectMultiple():Array
 		{
-			
+			return new Array();
 		}
 		
 		public static function moveMultiple():Array
 		{
-			
+			return new Array();
 		}
 		
 		
 		public static function rotateMultiple():Array
 		{
-			
+			return new Array();
 		}
 		
 		
 		public static function scaleMultiple():Array
 		{
-			
+			return new Array();
 		}
 		
 		
@@ -87,7 +104,7 @@ package railk.as3.transform {
 			itemsList.remove( name );
 		}
 		
-		public function dispose()
+		public static function dispose():void
 		{
 			removeAll();
 			itemsList = null;
@@ -95,7 +112,7 @@ package railk.as3.transform {
 		
 		public static function removeAll():void 
 		{
-			walker = itemslist.head;
+			walker = itemsList.head;
 			while ( walker ) {
 				walker.data.dispose();
 				walker = walker.next;

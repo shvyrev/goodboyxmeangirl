@@ -20,7 +20,6 @@ package railk.as3.utils {
 	import railk.as3.utils.DynamicRegistration;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.utils.BitmapConvertor;
-	import railk.as3.tween.process.*;
 	
 	
 	public dynamic class Loading extends DynamicRegistration {	
@@ -50,9 +49,7 @@ package railk.as3.utils {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function Loading():void {
-			Process.enablePlugin( ProcessPlugins );
-		}
+		public function Loading(){}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -65,38 +62,27 @@ package railk.as3.utils {
 		* @param	innerRadius
 		* @return
 		*/
-		public function cercleLoading(colors:Object, radius:Number, innerRadius:Number):void {
+		public function cercleLoading(colors:Object, radius:Number, innerRadius:Number):void 
+		{
 			//--
 			current = 'cercle';
-			
-			//on sauvegarde le radius pour le changement d'angle du loading
 			_radius = radius;
 			
 			//création du loading
 			cercleCont = new DynamicRegistration();
-			cercleCont.name = "cercleCont";
 			
-			var cercleFond:GraphicShape = new GraphicShape();
-			cercleFond.name = "cercleFond";
-			cercleFond.cercle(colors.fond,0,0,radius);
-			
-			cercleCercle = new GraphicShape();
-			cercleCercle.name = "cercle";
-			cercleCercle.cercle(colors.cercle,0,0,radius);
-			cercleCercle.alpha = 0;
-			
-			cercleMask = new GraphicShape();
-			cercleMask.name = "mask";
-			
-			var cercleTop:GraphicShape = new GraphicShape();
-			cercleTop.name = "cercleTop";
-			cercleTop.cercle(colors.mask,0,0,innerRadius);
-			cercleTop.x = cercleMask.y = (radius - innerRadius)/20;
+				var cercleFond:GraphicShape = new GraphicShape();
+				cercleFond.donut(colors.fond,0,0,radius,innerRadius);
+				
+				cercleCercle = new GraphicShape();
+				cercleCercle.donut(colors.cercle,0,0,radius,innerRadius);
+				cercleCercle.alpha = 0;
+				
+				cercleMask = new GraphicShape();
 			
 			cercleCont.addChild(cercleFond);
 			cercleCont.addChild(cercleCercle);
 			cercleCont.addChild(cercleMask);
-			cercleCont.addChild(cercleTop);
 			addChild(cercleCont);
 			
 			
@@ -206,17 +192,13 @@ package railk.as3.utils {
 		public function barLoading(colors:Object, X:Number, Y:Number, H:Number, W:Number):void {
 			//--
 			current = 'barre';
-			//--
 			barCont = new DynamicRegistration();
-			barCont.name = "barCont";
 			
-			barFd = new GraphicShape();
-			barFd.name = "barFd";
-			barFd.rectangle(colors.fond,0,0,W,H);
-			
-			bar = new GraphicShape();
-			bar.name = "bar";
-			bar.rectangle(colors.bar,0,0,1,H);
+				barFd = new GraphicShape();
+				barFd.rectangle(colors.fond,0,0,W,H);
+				
+				bar = new GraphicShape();
+				bar.rectangle(colors.bar,0,0,1,H);
 			
 			barCont.addChild(barFd);
 			barCont.addChild(bar)
@@ -230,12 +212,12 @@ package railk.as3.utils {
 			var bmpC:BitmapConvertor = new BitmapConvertor();
 			var tmpObj:Bitmap = bmpC.convert( bar,1,null );
 			var col:uint = tmpObj.bitmapData.getPixel( 0,0 );
-			
+			bmpC.dispose();
 			return col;
 		}
 		
 		public function set barColor( value:uint ):void {
-			Process.to( bar, 0, { color:value } );
+			bar.color = value;
 		}
 		
 		public function get barFond():Number {
