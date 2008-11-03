@@ -9,12 +9,12 @@ package railk.as3.utils {
 	
 	import flash.display.Sprite;
 	import flash.geom.Point;
+	import flash.geom.Matrix;
 
 	public class RegistrationPoint extends Sprite
 	{
 		private var rp						 :Point;
-		private var _a                       :Point;
-		private var _b                       :Point;
+		private var rpT                      :Point;
 		private var _x2                      :Number;
 		private var _y2                      :Number;
 		private var _scaleX2                 :Number;
@@ -31,6 +31,7 @@ package railk.as3.utils {
 			_scaleY2 = 1;
 			_scaleXY = 1;
 			_rotation2 = 0;
+			rp = new Point(0, 0);
 		}
 		
 		public function setRegistration(x:Number=0, y:Number=0):void
@@ -39,37 +40,33 @@ package railk.as3.utils {
 		}
 		
 		public function get reg():Point{
-			_a = this.getOrigin();
-			return _a;
+			return rp;
 		}
 		
 		//X
 		public function set x2(value:Number):void {
-			_a = this.getOrigin();
-			this.x += value - _a.x;
+			this.x += value - rp.x;
 			this._x2 = value;
 		}
 		public function get x2():Number {
-			return this.getOrigin().x;
+			return rp.x;
 		}
 
 		//Y
 		public function set y2(value:Number):void {
-			_a = this.getOrigin();
-			this.y += value - _a.y;
+			this.y += value - rp.y;
 			this._y2 = value;
 		}
 		public function get y2():Number {
-			return this.getOrigin().y;
+			return rp.y;
 		}
 		
 		//scaleX
 		public function set scaleX2(value:Number):void {
-			_a = this.getOrigin();
 			this.scaleX = value;
-			_b = this.getOrigin();
-			this.x -= _b.x - _a.x;
-			this.y -= _b.y - _a.y;
+			rpT = this.transform.matrix.deltaTransformPoint(rp);
+			this.x -= rpT.x - rp.x;
+			this.y -= rpT.y - rp.y;
 			this._scaleX2 = value;
 		}
 		public function get scaleX2():Number {
@@ -78,11 +75,10 @@ package railk.as3.utils {
 		
 		//scaleY
 		public function set scaleY2(value:Number):void {
-			_a = this.getOrigin();
 			this.scaleY = value;
-			_b = this.getOrigin();
-			this.x -= _b.x - _a.x;
-			this.y -= _b.y - _a.y;
+			rpT = this.transform.matrix.deltaTransformPoint(rp);
+			this.x -= rpT.x - rp.x;
+			this.y -= rpT.y - rp.y;
 			this._scaleY2 = value;
 		}
 		public function get scaleY2():Number {
@@ -91,12 +87,11 @@ package railk.as3.utils {
 		
 		//scaleXY
 		public function set scaleXY(value:Number):void {
-			_a = this.getOrigin();
 			this.scaleX = value;
 			this.scaleY = value;
-			_b = this.getOrigin();
-			this.x += _a.x - _b.x;
-			this.y += _a.y - _b.y;
+			rpT = this.transform.matrix.deltaTransformPoint(rp);
+			this.x += rp.x - rpT.x;
+			this.y += rp.y - rpT.y;
 			this._scaleXY = value;
 		}
 		public function get scaleXY():Number {
@@ -105,31 +100,23 @@ package railk.as3.utils {
 		
 		//rotation
 		public function set rotation2(value:Number):void {
-			_a = this.getOrigin();
 			this.rotation = value;
-			_b = this.getOrigin();
-			this.x += _a.x -_b.x;
-			this.y += _a.y -_b.y;
+			rpT = this.transform.matrix.deltaTransformPoint(rp);
+			this.x += rp.x -rpT.x;
+			this.y += rp.y -rpT.y;
 			this._rotation2 = value;
 		}
 		public function get rotation2():Number {
 			return this._rotation2;
 		}
 		
-		
 		//getter mouseX et mouse Y
 		public function get mouseX2():Number {
-			_a = this.getOrigin();
-			return this.mouseX - _a.x;
+			return this.mouseX - rp.x;
 		}
 		public function get mouseY2():Number {
-			_a = this.getOrigin();
-			return this.mouseY - _a.y;
+			return this.mouseY - rp.y;
 		}
-		
-		//recuperation du centre du clip
-		private function getOrigin():Point{
-			return rp;
-		}
+
 	}
 }

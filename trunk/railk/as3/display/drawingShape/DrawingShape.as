@@ -10,12 +10,17 @@ package railk.as3.display.drawingShape
 	import flash.geom.Point;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import railk.as3.utils.DynamicRegistration;
 	import railk.as3.utils.RegistrationPoint;
 	
 	
 	public class DrawingShape extends RegistrationPoint
 	{
+		
+		public function DrawingShape()
+		{
+			super();
+		}
+		
 		/**
 		 * 
 		 * @param	...args   new point(x,y),.../ or an array of point

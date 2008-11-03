@@ -95,7 +95,7 @@ package railk.as3.transform {
 			//shapes.add( ['trPoint', GraphicUtils.regPoint(TR.x, TR.y)] );
 			//shapes.add( ['brPoint', GraphicUtils.regPoint(BR.x, BR.y)] );
 			shapes.add( ['centerPoint', GraphicUtils.regPoint(CENTER.x, CENTER.y)] );
-			shapes.add( ['tPoint', GraphicUtils.border(T.x, T.y)] );
+			shapes.add( ['tPoint', GraphicUtils.border(T.x, T.y,90)] );
 			//shapes.add( ['lPoint', GraphicUtils.regPoint(L.x, L.y)] );
 			//shapes.add( ['rPoint', GraphicUtils.regPoint(R.x, R.y)] );
 			//shapes.add( ['bPoint', GraphicUtils.regPoint(B.x, B.y)] );
