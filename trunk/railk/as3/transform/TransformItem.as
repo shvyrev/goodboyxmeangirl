@@ -90,15 +90,22 @@ package railk.as3.transform {
 		private function createShapes():void
 		{
 			shapes.add( ['contour', GraphicUtils.contour(TL.x,TL.y,WIDTH,HEIGHT )] );
-			//shapes.add( ['tlPoint', GraphicUtils.regPoint(TL.x, TL.y)] );
-			//shapes.add( ['blPoint', GraphicUtils.regPoint(BL.x, BL.y)] );
-			//shapes.add( ['trPoint', GraphicUtils.regPoint(TR.x, TR.y)] );
-			//shapes.add( ['brPoint', GraphicUtils.regPoint(BR.x, BR.y)] );
+			shapes.add( ['tlPoint', GraphicUtils.corner(0xFF000000,TL.x, TL.y,0)] );
+			shapes.add( ['blPoint', GraphicUtils.corner(0xFF000000,BL.x, BL.y,-90)] );
+			shapes.add( ['trPoint', GraphicUtils.corner(0xFF000000,TR.x, TR.y,90)] );
+			shapes.add( ['brPoint', GraphicUtils.corner(0xFF000000,BR.x, BR.y,180)] );
 			shapes.add( ['centerPoint', GraphicUtils.regPoint(CENTER.x, CENTER.y)] );
 			shapes.add( ['tPoint', GraphicUtils.border(T.x, T.y,90)] );
-			//shapes.add( ['lPoint', GraphicUtils.regPoint(L.x, L.y)] );
-			//shapes.add( ['rPoint', GraphicUtils.regPoint(R.x, R.y)] );
-			//shapes.add( ['bPoint', GraphicUtils.regPoint(B.x, B.y)] );
+			shapes.add( ['lPoint', GraphicUtils.border(L.x, L.y,0)] );
+			shapes.add( ['rPoint', GraphicUtils.border(R.x, R.y,180)] );
+			shapes.add( ['bPoint', GraphicUtils.border(B.x, B.y,-90)] );
+			
+			
+			
+			addChild( GraphicUtils.plus() ).x = 200;
+			addChild( GraphicUtils.moins() ).x = 100;
+			addChild( GraphicUtils.borderSelected() ).x = 330;
+			addChild( GraphicUtils.cornerSelected() ).x = 400;
 			
 			walker = shapes.head;
 			while ( walker ) {

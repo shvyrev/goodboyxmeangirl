@@ -6,76 +6,83 @@
 	
     public class GraphicUtils extends Shape
     {	
-		public static function rotate():Object
+		public static function rotate():GraphicShape
 		{
 			var rotate:GraphicShape = new GraphicShape();
 			rotate.donut(0x000000, 0, 0, 163, 140);
 			return rotate;
 		}
 		
-		public static function corner(color:uint):Object
+		public static function corner(color:uint,x:Number,y:Number,rotation:Number):Object
 		{
 			var corner:DrawingShape = new DrawingShape();
 			var data:Object =  { 
 				width:14, height:14,  pixels:[ 
 					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,1,1,
+					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,[color,1],[0xFFFFFFFF,1],
 					1,[color,1],1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					1,[color,1],1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					1,[color,1],1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],
+					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,[color,1],[0xFFFFFFFF,1],
 					1,[color,1],1,1,[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,
+					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
 					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
 					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
 					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
 					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
 					1,1,1,1,1,0,0,0,0,0,0,0,0,0
 				] 
 			}; 
 			corner.drawPixelArrayShape( data );
-			corner.setRegistration(7, 7);
+			corner.setRegistration(6, 6);
+			corner.rotation2 = rotation;
+			corner.x2 = x;
+			corner.y2 = y;
+			corner.alpha = .7;
 			return corner;
 		}
 		
-		public static function cornerSelected(color:uint):Object
+		public static function cornerSelected(x:Number,y:Number,rotation:Number):DrawingShape
 		{
 			var corner:DrawingShape = new DrawingShape();
 			var data:Object =  { 
-				width:24, height:24,  pixels:[ 
+				width:24, height:23,  pixels:[ 
 					0,0,0,0,0,0,0,0,0,0,0,[0xFFFFFFFF,1],1,1,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,1,[0xFF000000,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,0,0,[0xFFFFFFFF,1],1,1,[0xFF000000,1],1,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,1,[0xFF000000,1],1,1,1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,1,[0xFF000000,1],1,1,1,1,1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,[0xFFFFFFFF,1],1,1,1,1,1,1,[0xFF000000,1],1,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,1,[0xFF000000,1],1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,
-					0,0,0,0,0,0,1,[0xFF000000,1],1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],0,0,0,0,0,
+					0,0,0,0,0,0,[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,[0xFF000000,1],1,0,0,0,0,0,
 					0,0,0,0,0,1,[0xFF000000,1],1,1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					0,0,0,0,1,[0xFF000000,1],1,1,1,1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],0,0,0,
+					0,0,0,0,[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,1,1,1,[0xFF000000,1],1,0,0,0,
 					0,0,0,1,[0xFF000000,1],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],0,0,
-					0,0,1,[0xFF000000,1],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],0,
+					0,0,[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,[0xFF000000,1],1,0,
 					0,1,[0xFF000000,1],1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					1,[0xFF000000,1],1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					1,[0xFF000000,1],1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					1,[0xFF000000,1],1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					0,1,[0xFF000000,1],1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,1,[0xFF000000,1],1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,[0xFFFFFFFF,1],1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					0,0,0,1,[0xFF000000,1],1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,1,[0xFF000000,1],1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,[0xFFFFFFFF,1],1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,1,[0xFF000000,1],1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,1,[0xFF000000,1],1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,1,[0xFF000000,1],1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,1,[0xFF000000,1],0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,[0xFFFFFFFF,1],1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,1,[0xFF000000,1],1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+					0,0,0,0,0,0,0,0,[0xFFFFFFFF,1],1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 					0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-					0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
 				] 
 			}; 
 			corner.drawPixelArrayShape( data );
-			corner.setRegistration(7, 7);
+			corner.setRegistration(11, 11);
+			border.rotation2 = rotation;
+			corner.x2 = x;
+			corner.y2 = y;
+			corn.alpha = .25;
 			return corner;
 		}
 		
-		public static function border(x,y,rotation):Object
+		public static function border(x:Number,y:Number,rotation:Number):DrawingShape
 		{
 			var border:DrawingShape = new DrawingShape();
 			var data:Object =  { 
@@ -102,7 +109,7 @@
 				] 
 			}; 
 			border.drawPixelArrayShape( data );
-			border.setRegistration(6, 9.5);
+			border.setRegistration(6, 9);
 			border.rotation2 = rotation;
 			border.x2 = x;
 			border.y2 = y;
@@ -110,13 +117,13 @@
 			return border;
 		}
 		
-		public static function borderSelected():Object
+		public static function borderSelected(x:Number,y:Number,rotation:Number):DrawingShape
 		{
 			var borderSel:DrawingShape = new DrawingShape();
 			var data:Object =  { 
 				width:10, height:19, pixels:[ 
 					0,[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,
-					1,1,[0xFF000000,1],1,1,1,1,1,1,1,
+					1,[0xFFFFFFFF,1],1,1,1,1,1,1,1,[0xFF000000,1],
 					[0xFFFFFFFF,1],[0xFF000000,1],1,1,1,1,1,1,1,1,
 					[0xFFFFFFFF,1],[0xFF000000,1],1,1,1,1,1,1,1,1,
 					[0xFFFFFFFF,1],[0xFF000000,1],1,1,1,1,1,1,1,1,
@@ -137,23 +144,27 @@
 				] 
 			}; 
 			borderSel.drawPixelArrayShape( data );
-			borderSel.setRegistration(10, 9.5);
+			borderSel.setRegistration(10, 9);
+			borderSel.rotation2 = rotation;
+			borderSel.x2 = x;
+			borderSel.y2 = y;
+			borderSel.alpha = .25;
 			return borderSel;
 		}
 		
-		public static function plus():Object
+		public static function plus():DrawingShape
 		{
 			var plus:DrawingShape = new DrawingShape();
 			var data:Object =  { 
 				width:8, height:8, pixels:[ 
 					0,0,0,[0xFFFFFFFF,1],1,0,0,0,
-					0,0,1,[0xFF000000,1],1,[0xFFFFFFFF,1],0,0,
+					0,0,[0xFFFFFFFF,1],1,[0xFF000000,1],1,0,0,
 					0,1,1,[0xFF000000,1],1,[0xFFFFFFFF,1],1,0,
+					[0xFFFFFFFF,1],1,1,1,1,1,[0xFF000000,1],1,
 					1,[0xFF000000,1],1,1,1,1,1,[0xFFFFFFFF,1],
-					1,[0xFF000000,1],1,1,1,1,1,[0xFFFFFFFF,1],
-					0,1,1,[0xFF000000,1],1,[0xFFFFFFFF,1],1,0,
+					0,1,[0xFFFFFFFF,1],1,[0xFF000000,1],1,1,0,
 					0,0,1,[0xFF000000,1],1,[0xFFFFFFFF,1],0,0,
-					0,0,0,[0xFFFFFFFF,1],1,0,0,0
+					0,0,0,1,1,0,0,0
 				] 
 			}; 
 			plus.drawPixelArrayShape( data );
@@ -161,32 +172,32 @@
 			return plus;
 		}
 		
-		public static function moins():Object
+		public static function moins():DrawingShape
 		{
 			var moins:DrawingShape = new DrawingShape();
 			var data:Object =  { 
 				width:9, height:4, pixels:[ 
 					0,[0xFFFFFFFF,1],1,1,1,1,1,1,0,
-					1,[0xFF000000,1],1,1,1,1,1,1,[0xFFFFFFFF,1],
+					[0xFFFFFFFF,1],1,1,1,1,1,1,[0xFF000000,1],1,
 					1,[0xFF000000,1],1,1,1,1,1,1,[0xFFFFFFFF,1],
 					0,1,1,1,1,1,1,1,0
 				] 
 			}; 
 			moins.drawPixelArrayShape( data );
-			moins.setRegistration(4.5, 2);
+			moins.setRegistration(4, 2);
 			return moins;
 		}
 		
 		public static function regPoint(x,y):Shape
 		{
 			var regPoint:Shape = new Shape();
-			regPoint.graphics.lineStyle(1,0xFFFFFF,1);
+			regPoint.graphics.lineStyle(.5,0xFFFFFF,1);
 			regPoint.graphics.beginFill(0x000000, 1);
 			regPoint.graphics.drawCircle(x, y, 6);
 			regPoint.graphics.drawCircle(x, y, 3);
 			regPoint.graphics.drawCircle(x, y, 1.5);
 			regPoint.graphics.endFill();
-			regPoint.alpha = .7;
+			regPoint.alpha = .8;
 			return regPoint;
 		}
 		
