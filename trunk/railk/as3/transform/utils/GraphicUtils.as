@@ -75,10 +75,10 @@
 			}; 
 			corner.drawPixelArrayShape( data );
 			corner.setRegistration(11, 11);
-			border.rotation2 = rotation;
+			corner.rotation2 = rotation;
 			corner.x2 = x;
 			corner.y2 = y;
-			corn.alpha = .25;
+			corner.alpha = .25;
 			return corner;
 		}
 		

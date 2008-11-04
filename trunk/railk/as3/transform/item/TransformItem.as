@@ -5,7 +5,7 @@
 * @author Richard Rodney
 */
 
-package railk.as3.transform {
+package railk.as3.transform.item {
 	
 	import flash.display.Shape;
 	import flash.geom.Point;
@@ -42,7 +42,8 @@ package railk.as3.transform {
 		private var type:String;
 		private var object:*;
 		private var editFlag:Shape;
-		private var cursors:ObjectList;
+		private var contour:Shape;
+		private var statesList:ObjectList;
 		private var shapes:ObjectList;
 		private var walker:ObjectNode;
 		private var hasChildren:Boolean = false;
@@ -58,38 +59,25 @@ package railk.as3.transform {
 			getRegPoints();
 			this.changeRegistration( CENTER.x, CENTER.y);
 			createEditFlag();
-			
-			cursors = new ObjectList();
+			statesList = new ObjectList();
 			shapes = new ObjectList();
-			createCursors();
 			createShapes();
 			initListeners();
 		}
 		
 		private function createEditFlag():void
 		{
+			contour = GraphicUtils.contour(TL.x, TL.y, WIDTH, HEIGHT );
+			addChild( contour );
+			
 			editFlag = GraphicUtils.bg(TL.x, TL.y, WIDTH, HEIGHT );
 			editFlag.alpha = 0;
 			addChild( editFlag );
 		}
 		
-		private function createCursors():void
-		{
-			//cursors.add( ['rotate', GraphicUtils.rotateCursor()] );
-			//cursors.add( ['move', GraphicUtils.moveCursor()] );
-			//cursors.add( ['scale', GraphicUtils.scaleCursor()] );
-			
-			walker = cursors.head;
-			while ( walker ) {
-				addChild( walker.data );
-				walker.data.visible = false;
-				walker = walker.next;
-			}
-		}
 		
 		private function createShapes():void
 		{
-			shapes.add( ['contour', GraphicUtils.contour(TL.x,TL.y,WIDTH,HEIGHT )] );
 			shapes.add( ['tlPoint', GraphicUtils.corner(0xFF000000,TL.x, TL.y,0)] );
 			shapes.add( ['blPoint', GraphicUtils.corner(0xFF000000,BL.x, BL.y,-90)] );
 			shapes.add( ['trPoint', GraphicUtils.corner(0xFF000000,TR.x, TR.y,90)] );
@@ -101,16 +89,10 @@ package railk.as3.transform {
 			shapes.add( ['bPoint', GraphicUtils.border(B.x, B.y,-90)] );
 			
 			
-			
-			addChild( GraphicUtils.plus() ).x = 200;
-			addChild( GraphicUtils.moins() ).x = 100;
-			addChild( GraphicUtils.borderSelected() ).x = 330;
-			addChild( GraphicUtils.cornerSelected() ).x = 400;
-			
 			walker = shapes.head;
 			while ( walker ) {
 				addChild( walker.data );
-				walker.data.visible = true;
+				walker.data.visible = false;
 				walker = walker.next;
 			}
 		}

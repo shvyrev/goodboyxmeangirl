@@ -8,10 +8,12 @@
 package railk.as3.transform {
 	
 	import flash.display.Stage;
+	import railk.as3.transform.item.*;
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.Clone;
+	import railk.as3.utils.Key;
 	
 	public class TransformManager
 	{
@@ -23,6 +25,12 @@ package railk.as3.transform {
 		public static const SPACEBAR:String = '32';
 		public static const SHIFT:String = '16';
 		public static const TAB:String = '9';
+		public static const DEL:String = '46';
+		public static const C:String = '67';
+		public static const V:String = '86';
+		public static const A:String = '65';
+		public static const Z:String = '90';
+		public static const S:String = '83';
 		
 		public static function init( stage:Stage ):void
 		{
@@ -43,7 +51,13 @@ package railk.as3.transform {
 		
 		public static function disable():void
 		{
-			
+			walker = itemsList.head;
+			while ( walker ) {
+				_stage.addChild( walker.data );
+				walker.data.dispose();
+				walker = walker.next;
+			}
+
 		}
 		
 		public static function add( name:String, object:* ):void 
@@ -68,16 +82,6 @@ package railk.as3.transform {
 		public static function bringTofront():void
 		{
 			
-		}
-		
-		public static function select():*
-		{
-			
-		}
-		
-		public static function selectMultiple():Array
-		{
-			return new Array();
 		}
 		
 		public static function moveMultiple():Array
