@@ -33,6 +33,7 @@ package railk.as3.utils.link {
 		private static var treeRoot                           :TreeNode
 		
 		//_____________________________________________________________________________ VARIABLES LINKMANAGER
+		private static var _inited                            :Boolean = false;
 		private static var siteTitre                          :String;
 		private static var swfAdress                          :Boolean = false;
 		private static var updateTitle                        :Boolean = false;
@@ -78,6 +79,7 @@ package railk.as3.utils.link {
 			}
 			updateTitle = updateTitleEnabled;
 			linkList = new ObjectList();
+			_inited = true;
 		}
 		
 		
@@ -234,12 +236,14 @@ package railk.as3.utils.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function get titre():String { return siteTitre; }
+		static public function get titre():String { return siteTitre; }
 		
-		public static function set titre( value:String ):void { 
+		static public function set titre( value:String ):void { 
 			siteTitre = value;
 			SWFAddress.setTitle( siteTitre );
 		}
+		
+		static public function get inited():Boolean { return _inited; }
 		
 	}
 }

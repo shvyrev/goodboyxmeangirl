@@ -95,24 +95,33 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		       REMOVE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function remove( name:String ):Boolean
+		/**
+		 * 
+		 * @param	value  an ID/ a NAME / or an Object
+		 * @return
+		 */
+		public function remove( value:* ):Boolean
 		{
 			var result:Boolean;
+			var type:String;
 			var current:ObjectNode = _head;
 			loop:while ( current )
 			{
-				if (current.name == name )
+				if ( value is String ) type = 'name';
+				else if ( value is int ) type = 'id';
+				else  type = 'data';
+				
+				if (current[type] == value )
 				{ 
 					removeObjectNode( current );
 					result = true;
 					break loop; 
 				}	
-				else { result = false; }	
+				else result = false;
 				current = current.next;
 			}
 			return result;
 		}
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		DIRECT REMOVE
