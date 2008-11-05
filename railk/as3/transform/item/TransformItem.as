@@ -3,22 +3,23 @@
 * Tool for manipulating object in flash
 * 
 * @author Richard Rodney
+* @version 0.1
 */
 
 package railk.as3.transform.item {
 	
-	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.text.TextField
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	import flash.ui.Mouse;
-	import railk.as3.event.CustomEvent;
 	
+	import railk.as3.transform.TransformManagerEvent;
+	import railk.as3.transform.utils.*;
 	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.InfoBulle;
-	import railk.as3.transform.utils.*;
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	
@@ -41,28 +42,32 @@ package railk.as3.transform.item {
 		
 		private var type:String;
 		private var object:*;
-		private var editFlag:Shape;
-		private var contour:Shape;
+		private var editFlag:Sprite;
+		private var contour:Sprite;
 		private var statesList:ObjectList;
 		private var shapes:ObjectList;
 		private var walker:ObjectNode;
 		private var hasChildren:Boolean = false;
-		private var states:TransformItemState;
+		
+		private var eEvent:TransformManagerEvent;
 		
 		
 		public function TransformItem( name:String, object:* )
 		{
+			statesList = new ObjectList();
+			shapes = new ObjectList();
+			TransformItemAction.init();
+			
 			this.name = name;
 			this.object = object;
 			this.type = getType();
-			if ( this.object.numChildren > 0 ) hasChildren = true;
+			if ( this.object.numChildren > 0 ) this.hasChildren = true;
+			
 			getRegPoints();
-			this.changeRegistration( CENTER.x, CENTER.y);
 			createEditFlag();
-			statesList = new ObjectList();
-			shapes = new ObjectList();
 			createShapes();
 			initListeners();
+			this.changeRegistration( CENTER.x, CENTER.y);
 		}
 		
 		private function createEditFlag():void
@@ -92,7 +97,8 @@ package railk.as3.transform.item {
 			walker = shapes.head;
 			while ( walker ) {
 				addChild( walker.data );
-				walker.data.visible = false;
+				TransformItemAction.enable( walker.name, walker.data, function() { delListeners(); }, function() { initListeners(); }, null, function() { scale(); } );
+				walker.data.visible = true;
 				walker = walker.next;
 			}
 		}
@@ -137,6 +143,16 @@ package railk.as3.transform.item {
 			}
 		}
 		
+		private function scale( constraint:String='' ):void
+		{
+			this.transform.matrix;
+		}
+		
+		private function rotate( constraint:String='' ):void
+		{
+			
+		}
+		
 		public function initListeners():void
 		{
 			this.buttonMode = true;
@@ -174,6 +190,11 @@ package railk.as3.transform.item {
 			return 'object';
 		}
 		
+		public function dispose():void
+		{
+			
+		}
+		
 		
 		private function manageEvent( evt:* ):void {
 			switch( evt.type )
@@ -184,25 +205,41 @@ package railk.as3.transform.item {
 					
 				case MouseEvent.ROLL_OUT :
 					editFlag.alpha = 0;
-					disableEditMode();
+					//disableEditMode();
 					break;
 					
 				case MouseEvent.CLICK :
 					enableEditMode();
+					//////////////////////////////////////////////////////////////
+					eEvent = new TransformManagerEvent( TransformManagerEvent.ON_ITEM_SELECTED, { item:this } );
+					dispatchEvent( eEvent );
+					//////////////////////////////////////////////////////////////
 					break;
 				
 				case MouseEvent.DOUBLE_CLICK :
-					dispatchEvent( new CustomEvent( 'onTransformItemOpen', { item:this } ) );
+					//////////////////////////////////////////////////////////////
+					eEvent = new TransformManagerEvent( TransformManagerEvent.ON_ITEM_OPEN, { item:this } );
+					dispatchEvent( eEvent );
+					//////////////////////////////////////////////////////////////
 					break;
 				
 				case MouseEvent.MOUSE_UP :
 					stopDrag();
 					this.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
+					statesList.add([statesList.length, new TransformItemState(object)] );
+					//////////////////////////////////////////////////////////////
+					eEvent = new TransformManagerEvent( TransformManagerEvent.ON_ITEM_MOVING, { item:this } );
+					dispatchEvent( eEvent );
+					//////////////////////////////////////////////////////////////
 					break;
 					
 				case MouseEvent.MOUSE_DOWN :
 					this.startDrag();
 					this.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
+					//////////////////////////////////////////////////////////////
+					eEvent = new TransformManagerEvent( TransformManagerEvent.ON_ITEM_STOP_MOVING, { item:this } );
+					dispatchEvent( eEvent );
+					//////////////////////////////////////////////////////////////
 					break;
 					
 				case MouseEvent.MOUSE_MOVE :

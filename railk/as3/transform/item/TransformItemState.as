@@ -2,6 +2,7 @@
 	
 	import flash.display.DisplayObject;
 	import flash.text.TextFormat;
+	import flash.text.TextField;
     public class TransformItemState {
 		
 		public var x:Number;
@@ -16,7 +17,7 @@
 		public var format:TextFormat;
 		public var _group:String;
 		
-		public function TransformItemState(item:DisplayObject, group = ''):void 
+		public function TransformItemState(item:*, group = ''):void 
 		{
 			this.x = item.x;
 			this.y = item.y;
@@ -41,7 +42,7 @@
 			}
 		}
 		
-		public function apply(item:DisplayObject):void
+		public function apply(item:*):void
 		{
 			item.x = this.x;
 			item.y = this.y;
@@ -60,9 +61,9 @@
 
 		}
 		
-		public function getType(item:DisplayObject):String
+		public function getType(item:*):String
 		{
-			if ( item.text ) return 'text';
+			if ( item is TextField ) return 'text';
 			return 'other';
 		}
 		

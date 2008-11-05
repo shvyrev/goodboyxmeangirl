@@ -13,6 +13,8 @@ package railk.as3.transform {
 			
 		static public const ON_ITEM_OPEN                    :String = "ontemOpen";
 		static public const ON_ITEM_SELECTED                :String = "onItemSelected";
+		static public const ON_ITEM_MOVING                	:String = "onItemMoving";
+		static public const ON_ITEM_STOP_MOVING             :String = "onItemStopMoving";
 		
 		public function TransformManagerEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;

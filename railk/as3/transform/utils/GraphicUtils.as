@@ -1,10 +1,11 @@
 ﻿package railk.as3.transform.utils {
 	
-	import flash.display.Shape;
+	import flash.display.Sprite;
 	import railk.as3.display.drawingShape.DrawingShape;
 	import railk.as3.display.GraphicShape;
+	import railk.as3.display.DashedLine;
 	
-    public class GraphicUtils extends Shape
+    public class GraphicUtils extends Sprite
     {	
 		public static function rotate():GraphicShape
 		{
@@ -13,7 +14,7 @@
 			return rotate;
 		}
 		
-		public static function corner(color:uint,x:Number,y:Number,rotation:Number):Object
+		public static function corner(color:uint,x:Number,y:Number,rotation:Number):DrawingShape
 		{
 			var corner:DrawingShape = new DrawingShape();
 			var data:Object =  { 
@@ -188,9 +189,9 @@
 			return moins;
 		}
 		
-		public static function regPoint(x,y):Shape
+		public static function regPoint(x,y):Sprite
 		{
-			var regPoint:Shape = new Shape();
+			var regPoint:Sprite = new Sprite();
 			regPoint.graphics.lineStyle(.5,0xFFFFFF,1);
 			regPoint.graphics.beginFill(0x000000, 1);
 			regPoint.graphics.drawCircle(x, y, 6);
@@ -201,9 +202,9 @@
 			return regPoint;
 		}
 		
-		public static function contour(x,y,w,h):Shape
+		public static function contour(x,y,w,h):Sprite
 		{
-			var contour:Shape = new Shape();
+			var contour:Sprite = new Sprite();
 			contour.graphics.lineStyle( 1, 0x000000, 1,true,'normal','square','miter' );
 			contour.graphics.moveTo(x-1, y-1);
 			contour.graphics.lineTo(x+w, y-1);
@@ -214,9 +215,9 @@
 			return contour;
 		}
 		
-		public static function bg(x,y,w,h):Shape
+		public static function bg(x,y,w,h):Sprite
 		{
-			var bg:Shape = new Shape();
+			var bg:Sprite = new Sprite();
 			bg.graphics.beginFill(0x000000,.5);
 			bg.graphics.moveTo(x-2, y-2);
 			bg.graphics.lineTo(x+w+1, y-2);
