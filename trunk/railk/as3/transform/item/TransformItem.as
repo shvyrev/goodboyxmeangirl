@@ -1,4 +1,4 @@
-﻿/**
+/**
 * 
 * Tool for manipulating object in flash
 * 
