@@ -1,4 +1,4 @@
-ï»¿/**
+/**
 * 
 * Tool for manipulating object in flash
 * 
@@ -43,6 +43,9 @@ package railk.as3.transform {
 		private static var itemInteracting:Boolean=false;
 		
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						  CONSTRUCTEUR
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function init( stage:Stage ):void
 		{
 			_stage = stage;
