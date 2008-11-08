@@ -15,6 +15,7 @@ package railk.as3.utils.objectList
 		private var _data                          :*;
 		private var _group                         :String;
 		private var _action                        :Function;
+		private var _args                          :Object;
 		private var _prev                          :ObjectNode;
 		private var _next                          :ObjectNode;
 		
@@ -30,11 +31,12 @@ package railk.as3.utils.objectList
 		 * @param	group
 		 * @param	action
 		 */
-		public function ObjectNode( id:int, name:String, data:*, group:String='', action:Function=null ):void {
+		public function ObjectNode( id:int, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void {
 			_name = name;
 			_data = data;
 			_group = group;
 			_action = action;
+			_args = args;
 			_id = id;
 			_prev = _next = null;
 		}
@@ -79,6 +81,7 @@ package railk.as3.utils.objectList
 		public function dispose():void {
 			_data = null;
 			_action = null;
+			_args = null;
 		}
 		
 		
@@ -112,5 +115,9 @@ package railk.as3.utils.objectList
 		public function get group():String { return _group; }
 		
 		public function set group(value:String):void { _group = value; }
+		
+		public function get args():Object { return _args; }
+		
+		public function set args(value:Object):void { _args = value; }
 	}
 }

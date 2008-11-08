@@ -8,10 +8,12 @@
 
 package railk.as3.transform {
 	
+	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
+	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.transform.item.*;
 	import railk.as3.transform.utils.*;
 	import railk.as3.display.MarchingAntsSelect;
@@ -44,7 +46,7 @@ package railk.as3.transform {
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
+		// 																						  		  INIT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function init( stage:Stage ):void
 		{
@@ -52,6 +54,9 @@ package railk.as3.transform {
 			itemsList = new ObjectList();
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					   MANAGE LISTENER
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function initListeners():void
 		{
 			_stage.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
@@ -66,6 +71,9 @@ package railk.as3.transform {
 			_stage.removeEventListener( Event.ENTER_FRAME, manageEvent );
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																			  ENABLE TRANSFORM MANAGER
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function enable():void
 		{
 			walker = itemsList.head;
@@ -91,10 +99,23 @@ package railk.as3.transform {
 			_stage.removeChild( select );
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	 ADD OBJECTS TO THE TRANSFORM LIST
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function add( name:String, object:* ):void 
 		{
 			itemsList.add([name, new TransformItem(name, object)]);
 			initItemListeners( itemsList.tail.data );
+		}
+		
+		public static function addMultiple( args:Array ):void 
+		{
+			var i:int = 0;
+			for ( i; i < args.length; i++) 
+			{
+				itemsList.add([args[i].name, new TransformItem(args[i].name, args[i].object)]);
+				initItemListeners( itemsList.tail.data );
+			}
 		}
 		
 		public static function initItemListeners( item:TransformItem ):void
@@ -113,26 +134,26 @@ package railk.as3.transform {
 			item.removeEventListener( TransformManagerEvent.ON_ITEM_STOP_MOVING, manageEvent);
 		}
 		
-		public static function addMultiple( args:Array ):void 
-		{
-			var i:int = 0;
-			for ( i; i < args.length; i++) 
-			{
-				itemsList.add([args[i].name, new TransformItem(args[i].name, args[i].object)]);
-				initItemListeners( itemsList.tail.data );
-			}
-		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																		  DUPLICATE AN EXISTING OBJECT
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function duplicate( name:String ):*
 		{
 			return Clone.deep( itemsList.getObjectByName(name).data );
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	 					BRING TO FRONT
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function bringTofront():void
 		{
 			
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																MANAGE MULTIPLE OBJECT TRANSFORMATIONS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function moveMultiple():Array
 		{
 			return new Array();
@@ -151,16 +172,13 @@ package railk.as3.transform {
 		}
 		
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						REMOVE OBJECTS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function remove( name:String ):void 
 		{
 			itemsList.getObjectByName( name).data.dispose();
 			itemsList.remove( name );
-		}
-		
-		public static function dispose():void
-		{
-			removeAll();
-			itemsList = null;
 		}
 		
 		public static function removeAll():void 
@@ -173,6 +191,20 @@ package railk.as3.transform {
 			itemsList.clear();
 		}
 		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							   DISPOSE
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		public static function dispose():void
+		{
+			removeAll();
+			itemsList = null;
+		}
+		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 MANAGE EVENTS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function manageEvent( evt:* ):void
 		{
 			switch( evt.type)
