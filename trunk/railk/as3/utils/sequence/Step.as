@@ -7,48 +7,51 @@
 
 package railk.as3.utils.sequence
 {	 
-	import flash.events.EventDispatcher;
-	import flash.events.TimerEvent;
-	import flash.utils.Timer;
-	
 	import railk.as3.utils.objectList.ObjectList;
+	import railk.as3.utils.objectList.ObjectNode;
 	
-	public class Step extends EventDispatcher
+	public class Step
 	{
 		public var id:Number;
 		public var targetsList:ObjectList
-		public var args:Object;
+		private var walker:ObjectNode;
 		public var state:String;
 		
-		public function Step( id:Number, args:Object = null)
+		public function Step( id:Number )
 		{
 			this.id = id;
-			this.args = args;
 			this.targetsList = new ObjectList();
 		}
 		
-		public function addTarget( name:String, target:*, action:Function, listenTo:String ):void
+		public function addTarget( name:String, target:*, action:Function, listenTo:String, args:Object = null ):void
 		{
-			targetsList.add([name,target,'',action,{ listenTo:listenTo }])
+			if ( args.hasOwnProperty( actionParams ) ) targetsList.add([name,target,'',action,{ listenTo:listenTo, actionParams:args.actionParams }])
+			else targetsList.add([name,target,'',action,{ listenTo:listenTo }])
 		}
 		
 		public function dispose():String
 		{	
-			
+			walker = targetsList.head;
+			while ( walker )
+			{
+				walker.data = null;
+				walker.action = null;
+				walker.args = null;
+				walker = walker.next;
+			}
+			targetsList.clear();
 		}
 		
 		public function toString():String
 		{	
-			return '[ STEP > +'(this.id as String).toUpperCase()'+  ]'
-		}
-		
-		private function manageEvent( evt:* ):void
-		{
-			switch( evt.type )
+			var result:String = '[ STEP > +'(this.id as String).toUpperCase() + '\n';
+			walker = targetsList.head;
+			while ( walker )
 			{
-				case '' :
-					break;
+				result += '( target > ' + walker.name + ' ,' + walker.data + ' )\n';
+				walker = walker.next;
 			}
+			result += 'END STEP ]';
 		}
 	}	
 }
