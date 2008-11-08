@@ -9,6 +9,7 @@ package railk.as3.utils.sequence
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import railk.as3.event.CustomEvent;
 	
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
@@ -53,6 +54,7 @@ package railk.as3.utils.sequence
 			else
 			{
 				sequencesList.add([sequence, new Sequence(sequence)]);
+				(sequencesList.tail.data  as Sequence).addEventListener( Event.COMPLETE, manageEvent, false, 0, true );
 				(sequencesList.tail.data  as Sequence).addStep( id, target, action, listenTo, args );
 			}
 		}
@@ -67,34 +69,31 @@ package railk.as3.utils.sequence
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function removeSequence( name:String ):void
 		{
+			(sequencesList.getObjectByName( name ).data as Sequence).removeEventListener( Event.COMPLETE, manageEvent );
 			(sequencesList.getObjectByName( name ).data as Sequence).dispose();
 			sequencesList.remove( name );
 		}
 		
 		public static function start( name:String='' ):void
 		{
-			
+			(sequencesList.getObjectByName(name).data as Sequence).start();
 		}
 		
 		public static function pause( name:String='' ):void
 		{
-			
-		}
-		
-		public static function stop( name:String='' ):void
-		{
-			
+			(sequencesList.getObjectByName(name).data as Sequence).pause();
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   				  	 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function manageEvent( evt:* ):void
+		public static function manageEvent( evt:Event ):void
 		{
 			switch( evt.type )
 			{
 				case Event.COMPLETE :
+					dispatchEvent( new CustomEvent( Event.COMPLETE, { sequence:evt.target } ) );
 					break;
 			}
 		}
