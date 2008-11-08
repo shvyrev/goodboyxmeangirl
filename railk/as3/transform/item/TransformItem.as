@@ -8,6 +8,7 @@
 
 package railk.as3.transform.item {
 	
+	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -16,6 +17,7 @@ package railk.as3.transform.item {
 	import flash.events.Event;
 	import flash.ui.Mouse;
 	
+	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.transform.TransformManagerEvent;
 	import railk.as3.transform.utils.*;
 	import railk.as3.utils.RegistrationPoint;
@@ -52,6 +54,9 @@ package railk.as3.transform.item {
 		private var eEvent:TransformManagerEvent;
 		
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						  CONSTRUCTEUR
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function TransformItem( name:String, object:* )
 		{
 			statesList = new ObjectList();
@@ -70,6 +75,10 @@ package railk.as3.transform.item {
 			this.changeRegistration( CENTER.x, CENTER.y);
 		}
 		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																			ENABLE THE TRANSFORM TOOLS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createEditFlag():void
 		{
 			contour = GraphicUtils.contour(TL.x, TL.y, WIDTH, HEIGHT );
@@ -103,6 +112,9 @@ package railk.as3.transform.item {
 			}
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																			ENABLE THE TRANSFORM TOOLS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function changeRegistration(x:Number, y:Number):void
 		{
 			super.setRegistration( x, y );
@@ -153,6 +165,9 @@ package railk.as3.transform.item {
 			
 		}
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					  MANAGE LISTENERS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function initListeners():void
 		{
 			this.buttonMode = true;
@@ -178,6 +193,9 @@ package railk.as3.transform.item {
 		}
 		
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							 UTILITIES
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function getBound():Rectangle
 		{
 			return object.getBounds(object.parent);
@@ -190,12 +208,19 @@ package railk.as3.transform.item {
 			return 'object';
 		}
 		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							   DISPOSE
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void
 		{
 			
 		}
 		
 		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						  MANAGE EVENT
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:* ):void {
 			switch( evt.type )
 			{
