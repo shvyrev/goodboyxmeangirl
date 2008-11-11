@@ -40,33 +40,33 @@ package railk.as3.utils {
 		}
 		
 		public function get reg():Point{
-			return rp;
+			return global;
 		}
 		
 		//X
 		public function set x2(value:Number):void {
-			this.x += value - rp.x;
+			this.x += value - global.x;
 			this._x2 = value;
 		}
 		public function get x2():Number {
-			return rp.x;
+			return global.x;
 		}
 
 		//Y
 		public function set y2(value:Number):void {
-			this.y += value - rp.y;
+			this.y += value - global.y;
 			this._y2 = value;
 		}
 		public function get y2():Number {
-			return rp.y;
+			return global.y;
 		}
 		
 		//scaleX
 		public function set scaleX2(value:Number):void {
 			this.scaleX = value;
-			rpT = this.transform.matrix.deltaTransformPoint(rp);
-			this.x -= rpT.x - rp.x;
-			this.y -= rpT.y - rp.y;
+			rpT = this.transform.matrix.deltaTransformPoint(global);
+			this.x -= rpT.x - global.x;
+			this.y -= rpT.y - global.y;
 			this._scaleX2 = value;
 		}
 		public function get scaleX2():Number {
@@ -76,9 +76,9 @@ package railk.as3.utils {
 		//scaleY
 		public function set scaleY2(value:Number):void {
 			this.scaleY = value;
-			rpT = this.transform.matrix.deltaTransformPoint(rp);
-			this.x -= rpT.x - rp.x;
-			this.y -= rpT.y - rp.y;
+			rpT = this.transform.matrix.deltaTransformPoint(global);
+			this.x -= rpT.x - global.x;
+			this.y -= rpT.y - global.y;
 			this._scaleY2 = value;
 		}
 		public function get scaleY2():Number {
@@ -89,9 +89,9 @@ package railk.as3.utils {
 		public function set scaleXY(value:Number):void {
 			this.scaleX = value;
 			this.scaleY = value;
-			rpT = this.transform.matrix.deltaTransformPoint(rp);
-			this.x += rp.x - rpT.x;
-			this.y += rp.y - rpT.y;
+			rpT = this.transform.matrix.deltaTransformPoint(global);
+			this.x += global.x - rpT.x;
+			this.y += global.y - rpT.y;
 			this._scaleXY = value;
 		}
 		public function get scaleXY():Number {
@@ -101,9 +101,9 @@ package railk.as3.utils {
 		//rotation
 		public function set rotation2(value:Number):void {
 			this.rotation = value;
-			rpT = this.transform.matrix.deltaTransformPoint(rp);
-			this.x += rp.x -rpT.x;
-			this.y += rp.y -rpT.y;
+			rpT = this.transform.matrix.deltaTransformPoint(global);
+			this.x += global.x -rpT.x;
+			this.y += global.y -rpT.y;
 			this._rotation2 = value;
 		}
 		public function get rotation2():Number {
@@ -112,10 +112,16 @@ package railk.as3.utils {
 		
 		//getter mouseX et mouse Y
 		public function get mouseX2():Number {
-			return this.mouseX - rp.x;
+			return this.mouseX - global.x;
 		}
 		public function get mouseY2():Number {
-			return this.mouseY - rp.y;
+			return this.mouseY - global.y;
+		}
+		
+		private function get global():Point
+		{
+			var bounds = this.getBounds(this.parent);
+			return( new Point(bounds.left+rp.x, bounds.top+rp.y) );
 		}
 
 	}

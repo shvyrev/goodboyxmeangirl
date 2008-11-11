@@ -1,6 +1,7 @@
 ﻿package railk.as3.transform.utils {
 	
 	import flash.display.Sprite;
+	import railk.as3.utils.DynamicRegistration;
 	import railk.as3.display.drawingShape.DrawingShape;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.display.DashedLine;
@@ -41,6 +42,7 @@
 			corner.x2 = x;
 			corner.y2 = y;
 			corner.alpha = .7;
+			//corner.addChild( hover() );
 			return corner;
 		}
 		
@@ -115,6 +117,7 @@
 			border.x2 = x;
 			border.y2 = y;
 			border.alpha = .7;
+			//border.addChild( hover() );
 			return border;
 		}
 		
@@ -189,9 +192,9 @@
 			return moins;
 		}
 		
-		public static function regPoint(x,y):Sprite
+		public static function regPoint(x,y):DynamicRegistration
 		{
-			var regPoint:Sprite = new Sprite();
+			var regPoint:DynamicRegistration = new DynamicRegistration();
 			regPoint.graphics.lineStyle(.5,0xFFFFFF,1);
 			regPoint.graphics.beginFill(0x000000, 1);
 			regPoint.graphics.drawCircle(x, y, 6);
@@ -219,13 +222,21 @@
 		{
 			var bg:Sprite = new Sprite();
 			bg.graphics.beginFill(0x000000,.5);
-			bg.graphics.moveTo(x-2, y-2);
-			bg.graphics.lineTo(x+w+1, y-2);
-			bg.graphics.lineTo(x+w+1, y+h+1);
-			bg.graphics.lineTo(x-2, y+h+1);
-			bg.graphics.lineTo(x-2, y-2);
+			bg.graphics.moveTo(x-1, y-1);
+			bg.graphics.lineTo(x+w, y-1);
+			bg.graphics.lineTo(x+w, y+h);
+			bg.graphics.lineTo(x-1, y+h);
+			bg.graphics.lineTo(x-1, y-1);
 			bg.graphics.endFill();
 			return bg;
+		}
+		
+		public static function hover():GraphicShape
+		{
+			var hover:GraphicShape = new GraphicShape();
+			hover.alpha = .4;
+			hover.cercle(0xFF0000, 0, 0, 25);
+			return hover;
 		}
 	}
 }	
