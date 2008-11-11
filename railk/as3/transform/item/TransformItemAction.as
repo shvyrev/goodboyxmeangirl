@@ -7,33 +7,24 @@
 	
 	public class TransformItemAction 
 	{
-		private static var _object:*;
-		private static var _hover:Function;
-		private static var _out:Function;
-		private static var _click:Function;
-		private static var _move:Function;
+		private var _object:*;
+		private var objects:ObjectList;
+		private var walker:ObjectNode;
 		
-		private static var objects:ObjectList;
-		private static var walker:ObjectNode;
-		
-		public static function init():void
+		public function TransformItemAction():void
 		{
 			objects = new ObjectList();
 		}
 		
-		public static function enable(name:String, object:*,hover:Function=null,out:Function=null,click:Function=null,move:Function=null):void
+		public function enable(name:String, object:*,hover:Function=null,out:Function=null,up:Function=null,down:Function=null,click:Function=null,move:Function=null):void
 		{
 			_object = object;
-			_hover = hover;
-			_out = out;
-			_click = click;
-			_move = move;
-			
+			_object.name = name;
 			initListeners(_object);
-			objects.add([name, object]);
+			objects.add([name, object,null,null,{hover:hover, out:out, up:up, down:down, click:click, move:move}]);
 		}
 		
-		private static function initListeners(object:*):void
+		private function initListeners(object:*):void
 		{
 			object.buttonMode = true;
 			object.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
@@ -43,7 +34,7 @@
 			object.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 		}
 		
-		private static function delListeners(object:*):void
+		private function delListeners(object:*):void
 		{
 			object.buttonMode = false;
 			object.removeEventListener( MouseEvent.CLICK, manageEvent );
@@ -64,32 +55,35 @@
 			objects.clear();
 		}
 		
-		private static function manageEvent( evt:* ):void
+		private function manageEvent( evt:* ):void
 		{
+			var f:Object = objects.getObjectByName(evt.target.name).args;
 			switch(evt.type)
 			{
 				case MouseEvent.CLICK :
-					if (_click != null) _click.apply();
+					if (f.click != null) f.click.apply();
 					break;
 					
 				case MouseEvent.MOUSE_DOWN :
-					_object.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
+					if (f.down != null ) f.down.apply();
+					evt.target.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
 					break;
 				
 				case MouseEvent.MOUSE_UP :
-					_object.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
+					if (f.up != null ) f.up.apply();
+					evt.target.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
 					break;
 					
 				case MouseEvent.MOUSE_MOVE :
-					if (_move != null ) _move.apply();
+					if (f.move != null ) f.move.apply();
 					break;
 					
 				case MouseEvent.MOUSE_OVER :
-					if (_hover != null ) _hover.apply();
+					if (f.hover != null ) f.hover.apply();
 					break;
 					
 				case MouseEvent.MOUSE_OUT :
-					if (_out != null ) _out.apply();
+					if (f.out != null ) f.out.apply();
 					break;
 			}
 		}

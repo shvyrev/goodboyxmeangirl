@@ -48,23 +48,37 @@ package railk.as3.transform.utils
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   TRANSFORMER
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function scaleX( dist:Number ):void
+		public function scaleX( dist:Number, constraint:String ):void
 		{
-			m2.a = m.a + (dist/tWidth)*m.a;
-			m2.tx = oX;
+			if ( constraint == 'LEFT')
+			{
+				m2.a = m.a - (dist/tWidth)*m.a;
+				m2.tx = dist + oX;
+			}
+			else {
+				m2.a = m.a + (dist / tWidth) * m.a;
+				m2.tx = oX;
+			}
 			m2.ty = oY;
 			t.matrix = m2;
 		}
 		
-		public function scaleY( dist:Number ):void
+		public function scaleY( dist:Number, constraint:String ):void
 		{
-			m2.d = m.d + (dist/tHeight)*m.d;
+			if ( constraint == 'UP')
+			{
+				m2.d = m.d - (dist/tHeight)*m.d;
+				m2.ty = dist + oY;
+			}
+			else {
+				m2.d = m.d + (dist / tHeight) * m.d;
+				m2.ty = oY;
+			}	
 			m2.tx = oX;
-			m2.ty = oY;
 			t.matrix = m2;
 		}
 		
-		public function skewX( dist:Number ):void
+		public function skewX( dist:Number, constraint:String ):void
 		{
 			m2.c = m.c + (dist/tHeight) * m.d;
 			m2.tx = oX;
@@ -72,7 +86,7 @@ package railk.as3.transform.utils
 			t.matrix = m2;
 		}
 		
-		public function skewY( dist:Number ):void
+		public function skewY( dist:Number, constraint:String ):void
 		{
 			m2.b = m.b + (dist/tWidth) * m.a;
 			m2.tx = oX;
@@ -88,11 +102,23 @@ package railk.as3.transform.utils
 		public function apply():void
 		{
 			tWidth = int( tWidth*(m2.a/m.a) );
-			tHeight = int( tHeight*(m2.d/m.d) );
+			tHeight = int( tHeight * (m2.d / m.d) );
+			m.tx = oX = m2.tx;
+			m.ty = oY = m2.ty;
 			m.a = m2.a;
 			m.b = m2.b;
 			m.c = m2.c;
 			m.d = m2.d;
+			
+		}
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					   UPDATE POISTION
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		public function update():void
+		{
+			oX = _target.x;
+			oY = _target.y;
 		}
     }
 }
