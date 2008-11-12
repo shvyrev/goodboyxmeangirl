@@ -31,9 +31,9 @@ package railk.as3.data.preloader {
 	import flash.display.StageScaleMode;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.display.DSprite;
 	import railk.as3.root.Current;
 	import railk.as3.utils.Loading;
-	import railk.as3.utils.DynamicRegistration;
 	import railk.as3.display.GraphicShape;
 
 	
@@ -41,10 +41,10 @@ package railk.as3.data.preloader {
 	public class MainPreloader extends MovieClip
 	{
 		// ______________________________________________________________________________ VARIABLES PRELOADER
-		private var container                                  :DynamicRegistration;
-		private var foreground                                 :DynamicRegistration;
-		private var background                                 :DynamicRegistration;
-		private var masker                                     :DynamicRegistration;
+		private var container                                  :DSprite;
+		private var foreground                                 :DSprite;
+		private var background                                 :DSprite;
+		private var masker                                     :DSprite;
 		private var loading                                    :Loading;
 		
 		
@@ -75,7 +75,7 @@ package railk.as3.data.preloader {
 			stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
 			
 			//--create loading bar
-			container = new DynamicRegistration();
+			container = new DSprite();
 			this.addChild( container );
 			
 				background =  createBackground();
@@ -116,27 +116,27 @@ package railk.as3.data.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 		CREATE BG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBackground():DynamicRegistration
+		protected function createBackground():DSprite
 		{
-			return new DynamicRegistration();
+			return new DSprite();
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					CREATE FOREGROUND
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createForeground():DynamicRegistration
+		protected function createForeground():DSprite
 		{
-			return new DynamicRegistration();
+			return new DSprite();
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					CREATE FOREGROUND
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createMask():DynamicRegistration
+		protected function createMask():DSprite
 		{
-			var s:DynamicRegistration= new DynamicRegistration();
+			var s:DSprite= new DSprite();
 			
 				var m:GraphicShape = new GraphicShape();
 				m.rectangle( 0xFF0000, 0, 0, 200, 6 );

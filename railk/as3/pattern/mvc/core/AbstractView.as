@@ -8,10 +8,10 @@
 package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.*;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	
 	
-	public class AbstractView extends DynamicRegistration implements IView
+	public class AbstractView extends RegistrationPoint implements IView
 	{
 		private var _model:IModel;
 		private var _controller:IController;

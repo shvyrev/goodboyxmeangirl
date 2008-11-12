@@ -17,17 +17,18 @@ package railk.as3.utils
 	import flash.text.TextFormat;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.display.DSprite;
 	import railk.as3.display.GraphicShape;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.tween.process.*;
 	
 	
-	public class InfoBulle extends DynamicRegistration
+	public class InfoBulle extends RegistrationPoint
 	{
 		// __________________________________________________________________________________ VARIABLES BULLE
 		private var bulle                          :GraphicShape;
 		private var triangle                       :GraphicShape;
-		private var info                           :DynamicRegistration;
+		private var info                           :DSprite;
 		private var txt                            :TextField;
 		private var format                         :TextFormat;
 		
@@ -100,7 +101,7 @@ package railk.as3.utils
 			format.font = font;
 			format.size =  fontSize;
 			
-			info = new DynamicRegistration();
+			info = new DSprite();
 			
 				txt = new TextField();
 				txt.name = 'txt';

@@ -9,17 +9,18 @@
 package railk.as3.utils.comment.commentItem
 {
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.display.DSprite;
+	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.objectList.*;
 	
 	
-	public class  Comment extends DynamicRegistration
+	public class  Comment extends RegistrationPoint
 	{
 		// ________________________________________________________________________________ VARIABLES COMMENT
 		private var _id                                  :int;
 		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
-		private var component                   		:DynamicRegistration = new DynamicRegistration();
+		private var component                   		:DSprite = new DSprite();
 		private var itemList                   			:ObjectList = new ObjectList(
 																	['emptyCom', component],
 																	['name', component],
@@ -115,12 +116,12 @@ package railk.as3.utils.comment.commentItem
 		public function set texte( value:String ):void {  itemList.getObjectByName('texte').data.getChildByName( 'texte' ).appendText(''); itemList.getObjectByName('texte').data.getChildByName( 'texte' ).text = value;}
 		public function set note( value:String ):void {  itemList.getObjectByName('note').data.getChildByName( 'texte' ).appendText(''); itemList.getObjectByName('note').data.getChildByName( 'texte' ).text = value; }
 		
-		public function get websiteBT():DynamicRegistration { return itemList.getObjectByID('website').data; }
-		public function get noteBT():DynamicRegistration { return itemList.getObjectByID('note').data; }
-		public function get deleteBT():DynamicRegistration { return itemList.getObjectByID('delete').data; }
-		public function get editBT():DynamicRegistration { return itemList.getObjectByID('edit').data; }
-		public function get mailBT():DynamicRegistration { return itemList.getObjectByID('mail').data; }
-		public function get answerBT():DynamicRegistration { return itemList.getObjectByID('answer').data; }
+		public function get websiteBT():DSprite { return itemList.getObjectByID('website').data; }
+		public function get noteBT():DSprite { return itemList.getObjectByID('note').data; }
+		public function get deleteBT():DSprite { return itemList.getObjectByID('delete').data; }
+		public function get editBT():DSprite { return itemList.getObjectByID('edit').data; }
+		public function get mailBT():DSprite { return itemList.getObjectByID('mail').data; }
+		public function get answerBT():DSprite { return itemList.getObjectByID('answer').data; }
 		
 		public function get id():int { return _id; }
 		

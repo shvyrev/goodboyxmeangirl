@@ -9,35 +9,35 @@
 package railk.as3.video.flvplayer
 {
 	import flash.display.BitmapData;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.display.DSprite;
 	
 	public interface IConfig
 	{
 		function init( width:Number, height:Number, fonts:Object, share:String, backgroundImage:BitmapData ):void;
-		function createBG():DynamicRegistration;
-		function createBGimage():DynamicRegistration; 
-		function createMask():DynamicRegistration; 
-		function createLoading():DynamicRegistration;
-		function createPlayPauseButton():DynamicRegistration;
-		function createReplayButton():DynamicRegistration;
-		function createBufferBar():DynamicRegistration; 
-		function createSeekBar():DynamicRegistration; 
-		function createSeeker():DynamicRegistration;
-		function createVolumeBarBG():DynamicRegistration;
-		function createVolumeBar():DynamicRegistration;
-		function createVolumeButton():DynamicRegistration;
-		function createVolumeSeeker():DynamicRegistration;
-		function createFullscreenButton():DynamicRegistration;
-		function createX2Button():DynamicRegistration; 
-		function createShareButton():DynamicRegistration;
-		function createSharePanel( share:String ):DynamicRegistration; 
-		function createDownloadButton():DynamicRegistration;
-		function createScreenshotButton():DynamicRegistration; 
-		function createPlayListButton():DynamicRegistration;
-		function createPlayList():DynamicRegistration;
-		function createBulle():DynamicRegistration;
-		function createTime():DynamicRegistration;
-		function createResizeButton():DynamicRegistration;
+		function createBG():DSprite;
+		function createBGimage():DSprite; 
+		function createMask():DSprite; 
+		function createLoading():DSprite;
+		function createPlayPauseButton():DSprite;
+		function createReplayButton():DSprite;
+		function createBufferBar():DSprite; 
+		function createSeekBar():DSprite; 
+		function createSeeker():DSprite;
+		function createVolumeBarBG():DSprite;
+		function createVolumeBar():DSprite;
+		function createVolumeButton():DSprite;
+		function createVolumeSeeker():DSprite;
+		function createFullscreenButton():DSprite;
+		function createX2Button():DSprite; 
+		function createShareButton():DSprite;
+		function createSharePanel( share:String ):DSprite; 
+		function createDownloadButton():DSprite;
+		function createScreenshotButton():DSprite; 
+		function createPlayListButton():DSprite;
+		function createPlayList():DSprite;
+		function createBulle():DSprite;
+		function createTime():DSprite;
+		function createResizeButton():DSprite;
 	}
 	
 }

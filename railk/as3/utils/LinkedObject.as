@@ -23,7 +23,11 @@ package railk.as3.utils
 		
 		flash_proxy override function callProperty(methodName:*, ...args:Array):* 
 		{ 
-			master[methodName].apply(null, args); 
+			master[methodName].apply(null, args);
+			for (var i:int = 0; i < linked.length; i++) 
+			{
+				linked[i][methodName].apply(null, args);
+			}
 		}
 		
 		flash_proxy override function getProperty(prop:*):* {

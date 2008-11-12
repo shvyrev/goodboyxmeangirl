@@ -41,14 +41,15 @@ package railk.as3.video.flvplayer {
 	import railk.as3.data.saver.FileSaver;
 	import railk.as3.data.parser.Parser;
 	import railk.as3.display.GraphicShape;
-	import railk.as3.display.PixelShapes;
+	import railk.as3.display.DSprite;
+	import railk.as3.display.drawingShape.PixelShapes;
 	import railk.as3.display.AnimatedClip;
 	import railk.as3.root.Current;
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
 	import railk.as3.stage.FullScreenMode;
 	import railk.as3.text.TextLink;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.InfoBulle;
 	import railk.as3.utils.link.LinkManager;
 	import railk.as3.utils.Loading;
@@ -66,7 +67,7 @@ package railk.as3.video.flvplayer {
 	
 	
 	
-	public class FlvPlayer extends DynamicRegistration  
+	public class FlvPlayer extends RegistrationPoint  
 	{
 		// _________________________________________________________________________________ VARIABLES STREAM
 		private var nc                                  :NetConnection;
@@ -113,10 +114,10 @@ package railk.as3.video.flvplayer {
 		private var volume                              :SoundTransform;
 		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
-		private var container                           :DynamicRegistration;
-		private var containerMask                       :DynamicRegistration;
+		private var container                           :DSprite;
+		private var containerMask                       :DSprite;
 		
-		private var component                           :DynamicRegistration = new DynamicRegistration();
+		private var component                           :DSprite = new DSprite();
 		protected var currentNode                       :ObjectNode;
 		protected var interfaceItemList                 :ObjectList = new ObjectList(
 																	['bg', component],
@@ -241,11 +242,11 @@ package railk.as3.video.flvplayer {
 			_config.init( width, height, fonts, share, backgroundImage );
 			
 			//--main container
-			container = new DynamicRegistration();
+			container = new DSprite();
 			addChild( container );
 			
 			//--attach video
-			interfaceItemList.getObjectByName('videoContainer').data = new DynamicRegistration( { x:0, y:0, alpha:1, resize:function(){} } );
+			interfaceItemList.getObjectByName('videoContainer').data = new DSprite( { x:0, y:0, alpha:1, resize:function(){} } );
 			
 				video = new Video( videoWidth, videoHeight );
 				video.attachNetStream ( stream );

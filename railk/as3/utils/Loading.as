@@ -17,12 +17,13 @@ package railk.as3.utils {
 	import flash.text.TextFormat;
 	
 	// ___________________________________________________________________ import Railk
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.display.DSprite;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.utils.BitmapConvertor;
+	import railk.as3.utils.RegistrationPoint;
 	
 	
-	public dynamic class Loading extends DynamicRegistration {	
+	public dynamic class Loading extends RegistrationPoint {	
 		
 		//____________________________________________________________________ variables rapatriées
 		private var _radius                  :Number;
@@ -32,15 +33,15 @@ package railk.as3.utils {
 		
 		//____________________________________________________________________ variables
 		private var current                 :String;
-		private var barCont                 :DynamicRegistration;
+		private var barCont                 :DSprite;
 		private var bar                     :GraphicShape;
 		private var barFd                   :GraphicShape;
 		
-		private var cercleCont              :DynamicRegistration;
+		private var cercleCont              :DSprite;
 		private var cercleMask              :GraphicShape;
 		private var cercleCercle            :GraphicShape;
 		
-		private var texteCont               :DynamicRegistration;
+		private var texteCont               :DSprite;
 		private var texte                   :TextField;
 
 		
@@ -69,7 +70,7 @@ package railk.as3.utils {
 			_radius = radius;
 			
 			//création du loading
-			cercleCont = new DynamicRegistration();
+			cercleCont = new DSprite();
 			
 				var cercleFond:GraphicShape = new GraphicShape();
 				cercleFond.donut(colors.fond,0,0,radius,innerRadius);
@@ -192,7 +193,7 @@ package railk.as3.utils {
 		public function barLoading(colors:Object, X:Number, Y:Number, H:Number, W:Number):void {
 			//--
 			current = 'barre';
-			barCont = new DynamicRegistration();
+			barCont = new DSprite();
 			
 				barFd = new GraphicShape();
 				barFd.rectangle(colors.fond,0,0,W,H);
@@ -247,7 +248,7 @@ package railk.as3.utils {
 			//--
 			current = 'texte';
 			//
-			texteCont = new DynamicRegistration();
+			texteCont = new DSprite();
 			texteCont.name = "textecont";
 			addChild( texteCont );
 			

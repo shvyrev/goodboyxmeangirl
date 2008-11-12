@@ -25,6 +25,8 @@ package railk.as3.transform.utils
 		
 		private var oX:Number;
 		private var oY:Number;
+		private var distX:Number=0;
+		private var distY:Number=0;
 		private var tWidth:Number;
 		private var tHeight:Number;
 		
@@ -61,6 +63,7 @@ package railk.as3.transform.utils
 			}
 			m2.ty = oY;
 			t.matrix = m2;
+			distX = dist;
 		}
 		
 		public function scaleY( dist:Number, constraint:String ):void
@@ -76,6 +79,44 @@ package railk.as3.transform.utils
 			}	
 			m2.tx = oX;
 			t.matrix = m2;
+			distY = dist;
+		}
+		
+		public function scaleXY( distX:Number, distY:Number, constraint:String ):void
+		{
+			switch( constraint )
+			{
+				case 'LEFT_UP':
+					m2.a = m.a - (distX/tWidth)*m.a;
+					m2.d = m.d - (distY/tHeight)*m.d;
+					m2.ty = distY + oY;
+					m2.tx = distX + oX;
+					break;
+				
+				case 'LEFT_DOWN':
+					m2.a = m.a - (distX/tWidth)*m.a;
+					m2.d = m.d + (distY/tHeight)*m.d;
+					m2.ty = oY;
+					m2.tx = distX + oX;
+					break;
+				
+				case 'RIGHT_UP':
+					m2.a = m.a + (distX/tWidth)*m.a;
+					m2.d = m.d - (distY/tHeight)*m.d;
+					m2.ty = distY + oY;
+					m2.tx = oX;
+					break;
+					
+				case 'RIGHT_DOWN':
+					m2.a = m.a + (distX/tWidth)*m.a;
+					m2.d = m.d + (distY/tHeight)*m.d;
+					m2.ty =  oY;
+					m2.tx =  oX;
+					break;	
+			}	
+			t.matrix = m2;
+			this.distY = distY;
+			this.distX = distX;
 		}
 		
 		public function skewX( dist:Number, constraint:String ):void
@@ -99,7 +140,7 @@ package railk.as3.transform.utils
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																			APPLY MATRIX MODIFICATIONS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function apply():void
+		public function apply(...args):void
 		{
 			tWidth = int( tWidth*(m2.a/m.a) );
 			tHeight = int( tHeight * (m2.d / m.d) );
@@ -109,7 +150,6 @@ package railk.as3.transform.utils
 			m.b = m2.b;
 			m.c = m2.c;
 			m.d = m2.d;
-			
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -119,6 +159,14 @@ package railk.as3.transform.utils
 		{
 			oX = _target.x;
 			oY = _target.y;
+		}
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					   		GET BOUNDS
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		public function get bounds():Rectangle
+		{
+			return new Rectangle(distX, distY, _target.width, _target.height);//_target.getBounds(_target.parent);
 		}
     }
 }

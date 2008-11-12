@@ -23,12 +23,13 @@ package railk.as3.utils.comment {
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.loader.MultiLoader;
 	import railk.as3.data.loader.MultiLoaderEvent;
-	import railk.as3.data.saver.XmlSaver;
-	import railk.as3.data.saver.XmlSaverEvent;
+	import railk.as3.data.saver.xml.XmlSaver;
+	import railk.as3.data.saver.xml.XmlSaverEvent;
 	import railk.as3.data.parser.Parser;
 	import railk.as3.data.checker.FileCheck;
 	import railk.as3.data.checker.FileCheckEvent;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.display.DSprite;
+	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.ScrollBar;
 	import railk.as3.utils.link.LinkManager;
 	import railk.as3.utils.objectList.*;	
@@ -40,7 +41,7 @@ package railk.as3.utils.comment {
 	import railk.as3.utils.comment.commentItem.Form;
 	
 	
-	public class Comments extends DynamicRegistration {
+	public class Comments extends RegistrationPoint {
 		
 		// _____________________________________________________________________________ VARIABLES RAPATRIEES
 		private var _path                       		:String;
@@ -52,9 +53,9 @@ package railk.as3.utils.comment {
 		private var loader              				:MultiLoader;
 		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
-		private var container                  			:DynamicRegistration;
+		private var container                  			:DSprite;
 		private var scroll                     			:ScrollBar;
-		private var comments                            :DynamicRegistration;
+		private var comments                            :DSprite;
 		private var commentList                         :ObjectList;
 		private var comment                             :Comment;
 		private var form                                :Form;
@@ -84,7 +85,7 @@ package railk.as3.utils.comment {
 			_config = _config;
 			
 			//--conteneur
-			container = new DynamicRegistration();
+			container = new DSprite();
 			addChild( container );
 			
 			//--commentList
@@ -119,7 +120,7 @@ package railk.as3.utils.comment {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createLayout( mode:String ):void 
 		{
-			comments = new DynamicRegistration();
+			comments = new DSprite();
 			if ( mode == 'empty' )
 			{
 				comment = new Comment( _config, mode );

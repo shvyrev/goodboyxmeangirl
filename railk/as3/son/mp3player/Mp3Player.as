@@ -24,13 +24,14 @@ package railk.as3.son.mp3player {
 	import flash.system.System;
 
 	// _________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.display.DSprite;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.data.parser.Parser;
 	import railk.as3.root.Current;
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
 	import railk.as3.text.TextLink;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.link.LinkManager;
 	import railk.as3.utils.Logger;
 	import railk.as3.utils.tag.TagManager;
@@ -39,7 +40,7 @@ package railk.as3.son.mp3player {
 	
 	
 	
-	public class Mp3Player extends DynamicRegistration  
+	public class Mp3Player extends RegistrationPoint  
 	{
 		// _____________________________________________________________________________ VARIABLES RAPATRIEES
 		private var _name                               :String;
@@ -67,10 +68,10 @@ package railk.as3.son.mp3player {
 		private var time                                :String;
 		
 		// ______________________________________________________________________________ VARIABLES INTERFACE
-		private var container                           :DynamicRegistration;
-		private var mask                                :DynamicRegistration;
+		private var container                           :DSprite;
+		private var mask                                :DSprite;
 		
-		private var components                          :DynamicRegistration;
+		private var components                          :DSprite;
 		private var currentNode                         :ObjectNode;
 		private var interfaceItemList                   :ObjectList = {
 																	['bg', component],

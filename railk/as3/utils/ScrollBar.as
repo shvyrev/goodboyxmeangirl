@@ -22,7 +22,7 @@ package railk.as3.utils {
 	
 	
 	
-	public class ScrollBar extends DynamicRegistration  {
+	public class ScrollBar extends RegistrationPoint  {
 		
 		//______________________________________________________________________________ VARIABLES STATIQUES
 		public static var scrollList           :Object = { };
