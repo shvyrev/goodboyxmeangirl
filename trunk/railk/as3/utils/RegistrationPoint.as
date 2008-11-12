@@ -112,7 +112,8 @@ package railk.as3.utils {
 				var bounds:Rectangle = this.getBounds(this.parent);
 				rp = new Point((bounds.left + bounds.width) * .5, (bounds.top + bounds.height) * .5);
 			}
-			return this.localToGlobal(rp);
+			if (!this.parent) return this.localToGlobal(rp);
+			return this.parent.globalToLocal(this.localToGlobal(rp));
 		}
 		
 		private function setProperty(value:Number, ...props):void
