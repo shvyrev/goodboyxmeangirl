@@ -110,7 +110,7 @@ package railk.as3.utils {
 			if (!rp) 
 			{
 				var bounds:Rectangle = this.getBounds(this.parent);
-				rp = new Point((bounds.left+bounds.width)*.5, (bounds.top+bounds.height)*.5);
+				rp = new Point((bounds.left + bounds.width) * .5, (bounds.top + bounds.height) * .5);
 			}
 			return this.localToGlobal(rp);
 		}

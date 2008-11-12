@@ -23,6 +23,7 @@ package railk.as3.display {
 		
 		public function GraphicShape(copy:Boolean=false)
 		{
+			super();
 			this.copy = copy;
 			if ( copy ) graphicsCopy = new GraphicCopy(graphics);
 			else graphicsCopy = graphics;

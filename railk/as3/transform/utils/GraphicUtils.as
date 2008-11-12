@@ -1,7 +1,7 @@
 ﻿package railk.as3.transform.utils {
 	
 	import flash.display.Sprite;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.display.DSprite;
 	import railk.as3.display.drawingShape.DrawingShape;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.display.DashedLine;
@@ -190,16 +190,19 @@
 			return moins;
 		}
 		
-		public static function regPoint(x,y):DynamicRegistration
+		public static function regPoint(x,y):DSprite
 		{
-			var regPoint:DynamicRegistration = new DynamicRegistration();
+			var regPoint:DSprite = new DSprite();
 			regPoint.graphics.lineStyle(.5,0xFFFFFF,1);
 			regPoint.graphics.beginFill(0x000000, 1);
-			regPoint.graphics.drawCircle(x, y, 6);
-			regPoint.graphics.drawCircle(x, y, 3);
-			regPoint.graphics.drawCircle(x, y, 1.5);
+			regPoint.graphics.drawCircle(0, 0, 6);
+			regPoint.graphics.drawCircle(0, 0, 3);
+			regPoint.graphics.drawCircle(0, 0, 1.5);
 			regPoint.graphics.endFill();
 			regPoint.alpha = .8;
+			regPoint.setRegistration(0,0);
+			regPoint.x2 = x;
+			regPoint.y2 = y;
 			return regPoint;
 		}
 		
@@ -232,7 +235,7 @@
 		public static function hover():GraphicShape
 		{
 			var hover:GraphicShape = new GraphicShape();
-			hover.alpha = 0;
+			hover.alpha = .5;
 			hover.cercle(0xFF0000, 0, 0, 18);
 			return hover;
 		}
