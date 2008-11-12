@@ -194,7 +194,7 @@ package railk.as3.transform.item {
 					move = function() { scale(item, 'RIGHT_DOWN'); replace( transformObject.bounds, name ); };
 					break;
 				case 'centerPoint' :
-					move = function() { item.x2 = mouseX; item.y2 = mouseY; changeRegistration(mouseX, mouseY) };
+					move = function() { moveRegPoint(item) };
 					break;
 				case 'tPoint' :
 					move = function() { scale(item, 'UP'); replace( transformObject.bounds, name ); };
@@ -215,18 +215,19 @@ package railk.as3.transform.item {
 		
 		private function scale( item:*, constraint:String='' ):void
 		{
+			var p:Point = new Point(mouseX, mouseY);
 			switch( constraint )
 			{
 				case 'UP' :
 				case 'DOWN' :
-					item.y2 = mouseY;
+					item.y2 = this.localToGlobal(p).y;
 					transformObject.scaleY( item.y2 - entryPoint.y, constraint);
 					transformFlag.scaleY( item.y2 - entryPoint.y, constraint);
 					break;
 					
 				case 'LEFT' :
 				case 'RIGHT' :
-					item.x2 = mouseX;
+					item.x2 = this.localToGlobal(p).x;
 					transformObject.scaleX( item.x2 - entryPoint.x, constraint);
 					transformFlag.scaleX( item.x2 - entryPoint.x, constraint);
 					break;
@@ -235,8 +236,8 @@ package railk.as3.transform.item {
 				case 'LEFT_DOWN' :
 				case 'RIGHT_UP' :
 				case 'RIGHT_DOWN' :
-					item.x2 = mouseX;
-					item.y2 = mouseY;
+					item.x2 = this.localToGlobal(p).x;
+					item.y2 = this.localToGlobal(p).y;
 					transformObject.scaleXY( item.x2 - entryPoint.x, item.y2-entryPoint.y, constraint);
 					transformFlag.scaleXY( item.x2 - entryPoint.x, item.y2 - entryPoint.y, constraint);
 					break;
@@ -253,9 +254,17 @@ package railk.as3.transform.item {
 			
 		}
 		
+		private function moveRegPoint( item:* ):void
+		{
+			var p:Point = new Point(mouseX, mouseY);
+			item.x2 = this.localToGlobal(p).x; 
+			item.y2 = this.localToGlobal(p).y; 
+			changeRegistration(item.x2, item.y2) 
+		}
+		
 		private function replace( bounds:Rectangle, except:String ):void
 		{
-			walker = linkedObjectList.head;
+			/*walker = linkedObjectList.head;
 			while ( walker )
 			{
 				if (walker.name != except ) 
@@ -300,7 +309,7 @@ package railk.as3.transform.item {
 					}
 				}	
 				walker = walker.next;
-			}
+			}*/
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————

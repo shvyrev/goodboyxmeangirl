@@ -13,6 +13,11 @@ package railk.as3.display
 	
 	public class PixelShape extends RegistrationPoint
 	{
+		
+		public function PixelShape()
+		{
+			super();
+		}
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	PIXEL SURFACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

@@ -29,7 +29,8 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function AnimatedClip( frames:int=1 ):void {
+		public function AnimatedClip( frames:int = 1 ):void {
+			super();
 			_frames = frames;
 			framesList = new ObjectList();
 			for ( var i:int=0; i < frames; i++ )
