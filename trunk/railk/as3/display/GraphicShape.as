@@ -12,10 +12,10 @@ package railk.as3.display {
 	import flash.geom.Matrix;
 	import flash.display.Graphics;
 	import flash.geom.Point;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	
 	
-	public class GraphicShape extends DynamicRegistration {
+	public class GraphicShape extends RegistrationPoint {
 		
 		public var graphicsCopy:*;
 		public var copy:Boolean;

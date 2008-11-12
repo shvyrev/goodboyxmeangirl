@@ -42,7 +42,6 @@
 			corner.x2 = x;
 			corner.y2 = y;
 			corner.alpha = .7;
-			//corner.addChild( hover() );
 			return corner;
 		}
 		
@@ -117,7 +116,6 @@
 			border.x2 = x;
 			border.y2 = y;
 			border.alpha = .7;
-			//border.addChild( hover() );
 			return border;
 		}
 		
@@ -222,11 +220,11 @@
 		{
 			var bg:Sprite = new Sprite();
 			bg.graphics.beginFill(0x000000,.5);
-			bg.graphics.moveTo(x-1, y-1);
-			bg.graphics.lineTo(x+w, y-1);
+			bg.graphics.moveTo(x, y);
+			bg.graphics.lineTo(x+w, y);
 			bg.graphics.lineTo(x+w, y+h);
-			bg.graphics.lineTo(x-1, y+h);
-			bg.graphics.lineTo(x-1, y-1);
+			bg.graphics.lineTo(x, y+h);
+			bg.graphics.lineTo(x, y);
 			bg.graphics.endFill();
 			return bg;
 		}
@@ -234,8 +232,8 @@
 		public static function hover():GraphicShape
 		{
 			var hover:GraphicShape = new GraphicShape();
-			hover.alpha = .4;
-			hover.cercle(0xFF0000, 0, 0, 25);
+			hover.alpha = 0;
+			hover.cercle(0xFF0000, 0, 0, 18);
 			return hover;
 		}
 	}

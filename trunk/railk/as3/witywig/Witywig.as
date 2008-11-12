@@ -16,9 +16,7 @@ package railk.as3.witywig
 	import flash.events.KeyboardEvent;
 	import flash.utils.Dictionary;
 	import flash.events.TextEvent;
-	
 	import railk.as3.text.Text;
-	import railk.as3.utils.DynamicRegistration;
 	
 	public class  Witywig extends EventDispatcher
 	{

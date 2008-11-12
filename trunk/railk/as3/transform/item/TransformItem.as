@@ -51,9 +51,11 @@ package railk.as3.transform.item {
 		private var contour:Sprite;
 		private var statesList:ObjectList;
 		private var shapes:ObjectList;
+		private var linkedObjectList:ObjectList;
 		private var walker:ObjectNode;
 		private var hasChildren:Boolean = false;
 		private var transformObject:MatrixUtils;
+		private var transformFlag:MatrixUtils;
 		private var transformAction:TransformItemAction;
 		private var entryPoint:Point;
 		
@@ -64,23 +66,26 @@ package railk.as3.transform.item {
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function TransformItem( name:String, object:* )
-		{
+		{	
 			statesList = new ObjectList();
 			shapes = new ObjectList();
-			transformAction = new TransformItemAction();
-			transformObject = new MatrixUtils( object );
-			entryPoint = new Point();
-			
+			linkedObjectList = new ObjectList();
 			this.name = name;
 			this.object = object;
 			this.type = getType();
 			if ( this.object.numChildren > 0 ) this.hasChildren = true;
+			
+			transformAction = new TransformItemAction();
+			transformObject = new MatrixUtils( object );
+			entryPoint = new Point();
 			
 			getRegPoints();
 			createEditFlag();
 			createShapes();
 			initListeners();
 			this.changeRegistration( CENTER.x, CENTER.y);
+			
+			
 		}
 		
 		
@@ -95,6 +100,7 @@ package railk.as3.transform.item {
 			editFlag = GraphicUtils.bg(TL.x, TL.y, WIDTH, HEIGHT );
 			editFlag.alpha = 0;
 			addChild( editFlag );
+			transformFlag = new MatrixUtils( editFlag );
 		}
 		
 		
@@ -108,7 +114,7 @@ package railk.as3.transform.item {
 			shapes.add( ['tPoint', GraphicUtils.border(T.x, T.y,90)] );
 			shapes.add( ['lPoint', GraphicUtils.border(L.x, L.y,0)] );
 			shapes.add( ['rPoint', GraphicUtils.border(R.x, R.y,180)] );
-			shapes.add( ['bPoint', GraphicUtils.border(B.x, B.y, -90)] );			
+			shapes.add( ['bPoint', GraphicUtils.border(B.x, B.y, -90)] );
 			
 			walker = shapes.head;
 			while ( walker ) {
@@ -120,8 +126,9 @@ package railk.as3.transform.item {
 				hover.y2 = walker.data.y2;
 				addChild( hover );
 				var lk:LinkedObject = new LinkedObject(hover, walker.data);
+				linkedObjectList.add([walker.name,lk])
 				enableActions( walker.name, lk );
-				walker.data.visible = true;
+				walker.data.visible = false;
 				walker = walker.next;
 			}
 		}
@@ -171,36 +178,39 @@ package railk.as3.transform.item {
 		
 		private function enableActions( name:String, item:* ):void
 		{
+			var move:Function;
 			switch( name )
 			{
 				case 'tlPoint' :
-					//transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); },null, null, null, function() { scale(item,'UP'); } );
+					move = function() { scale(item, 'LEFT_UP'); replace( transformObject.bounds, name ); };
 					break;
 				case 'blPoint' :
-					//transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); },null, null, null, function() { scale(item,'UP'); } );
+					move = function() { scale(item, 'LEFT_DOWN'); replace( transformObject.bounds, name ); };
 					break;
 				case 'trPoint' :
-					//transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); },null, null, null, function() { scale(item,'UP'); } );
+					move = function() { scale(item, 'RIGHT_UP'); replace( transformObject.bounds, name ); };
 					break;
 				case 'brPoint' :
-					//transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); },null, null, null, function() { scale(item,'UP'); } );
+					move = function() { scale(item, 'RIGHT_DOWN'); replace( transformObject.bounds, name ); };
 					break;
 				case 'centerPoint' :
-					//transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); },null, null, null, function() { scale(item,'UP'); } );
+					move = function() { item.x2 = mouseX; item.y2 = mouseY; changeRegistration(mouseX, mouseY) };
 					break;
 				case 'tPoint' :
-					transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { transformObject.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { scale(item, 'UP'); } );
+					move = function() { scale(item, 'UP'); replace( transformObject.bounds, name ); };
 					break;
 				case 'lPoint' :
-					transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { transformObject.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { scale(item,'LEFT'); } );
+					move =  function() { scale(item, 'LEFT'); replace( transformObject.bounds, name ); };
 					break;
 				case 'rPoint' :
-					transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { transformObject.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { scale(item,'RIGHT'); } );
+					move = function() { scale(item,'RIGHT'); replace( transformObject.bounds, name ); };
 					break;
 				case 'bPoint' :
-					transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { transformObject.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { scale(item, 'DOWN'); } );
+					move = function() { scale(item, 'DOWN'); replace( transformObject.bounds, name ); };
 					break;
 			}
+			transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { transformObject.apply(); transformFlag.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, move );
+
 		}
 		
 		private function scale( item:*, constraint:String='' ):void
@@ -211,12 +221,24 @@ package railk.as3.transform.item {
 				case 'DOWN' :
 					item.y2 = mouseY;
 					transformObject.scaleY( item.y2 - entryPoint.y, constraint);
+					transformFlag.scaleY( item.y2 - entryPoint.y, constraint);
 					break;
 					
 				case 'LEFT' :
 				case 'RIGHT' :
 					item.x2 = mouseX;
 					transformObject.scaleX( item.x2 - entryPoint.x, constraint);
+					transformFlag.scaleX( item.x2 - entryPoint.x, constraint);
+					break;
+				
+				case 'LEFT_UP' :
+				case 'LEFT_DOWN' :
+				case 'RIGHT_UP' :
+				case 'RIGHT_DOWN' :
+					item.x2 = mouseX;
+					item.y2 = mouseY;
+					transformObject.scaleXY( item.x2 - entryPoint.x, item.y2-entryPoint.y, constraint);
+					transformFlag.scaleXY( item.x2 - entryPoint.x, item.y2 - entryPoint.y, constraint);
 					break;
 			}
 		}
@@ -229,6 +251,56 @@ package railk.as3.transform.item {
 		private function rotate( item:* ):void
 		{
 			
+		}
+		
+		private function replace( bounds:Rectangle, except:String ):void
+		{
+			walker = linkedObjectList.head;
+			while ( walker )
+			{
+				if (walker.name != except ) 
+				{
+					switch(walker.name )
+					{
+						case 'tlPoint' :
+							walker.data.x2 = bounds.x;
+							walker.data.y2 = bounds.y;
+							break;
+						case 'blPoint' :
+							walker.data.x2 = bounds.x;
+							walker.data.y2 = bounds.height + bounds.y;
+							break;
+						case 'trPoint' :
+							walker.data.x2 = bounds.width + bounds.x;
+							walker.data.y2 = bounds.y;
+							break;
+						case 'brPoint' :
+							walker.data.x2 = bounds.width + bounds.x;
+							walker.data.y2 = bounds.height + bounds.y;
+							break;
+						case 'centerPoint' :
+							//trace( this.reg );
+							break;
+						case 'tPoint' :
+							walker.data.x2 = bounds.width*.5 + bounds.x;
+							walker.data.y2 = bounds.y;
+							break;
+						case 'lPoint' :
+							walker.data.x2 = bounds.x;
+							walker.data.y2 = bounds.height*.5 + bounds.y;
+							break;
+						case 'rPoint' :
+							walker.data.x2 = bounds.width + bounds.x;
+							walker.data.y2 = bounds.height*.5 + bounds.y;
+							break;
+						case 'bPoint' :	
+							walker.data.x2 = bounds.width*.5  + bounds.x;
+							walker.data.y2 = bounds.height + bounds.y;
+							break;
+					}
+				}	
+				walker = walker.next;
+			}
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -292,15 +364,15 @@ package railk.as3.transform.item {
 			{
 				case MouseEvent.ROLL_OVER :
 					editFlag.alpha = .5;
+					enableEditMode();
 					break;
 					
 				case MouseEvent.ROLL_OUT :
 					editFlag.alpha = 0;
-					//disableEditMode();
+					disableEditMode();
 					break;
 					
 				case MouseEvent.CLICK :
-					enableEditMode();
 					//////////////////////////////////////////////////////////////
 					eEvent = new TransformManagerEvent( TransformManagerEvent.ON_ITEM_SELECTED, { item:this } );
 					dispatchEvent( eEvent );
@@ -335,8 +407,8 @@ package railk.as3.transform.item {
 					break;
 					
 				case MouseEvent.MOUSE_MOVE :
-					object.x = this.x;
-					object.y = this.y;
+					object.x = this.localToGlobal( new Point(editFlag.x,editFlag.y) ).x;
+					object.y = this.localToGlobal( new Point(editFlag.x,editFlag.y) ).y;
 					evt.updateAfterEvent()
 					break;		
 			}

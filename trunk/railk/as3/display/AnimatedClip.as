@@ -12,11 +12,11 @@ package railk.as3.display
 	import flash.events.TimerEvent;
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	
-	public class AnimatedClip extends DynamicRegistration 
+	public class AnimatedClip extends RegistrationPoint
 	{
 		// ________________________________________________________________________________________ VARIABLES
 		private var _frames                                               :int = 0;

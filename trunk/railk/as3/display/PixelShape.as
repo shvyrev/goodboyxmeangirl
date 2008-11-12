@@ -9,9 +9,9 @@ package railk.as3.display
 {
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	
-	public class PixelShape extends DynamicRegistration
+	public class PixelShape extends RegistrationPoint
 	{
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	PIXEL SURFACE

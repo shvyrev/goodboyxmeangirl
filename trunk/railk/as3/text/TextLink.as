@@ -16,10 +16,10 @@ package railk.as3.text
 	import flash.text.TextFieldType;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.utils.RegistrationPoint;
 	
 	
-	public class  TextLink extends DynamicRegistration
+	public class  TextLink extends RegistrationPoint
 	{
 		//________________________________________________________________________________________ CONSTANTES
 		public static const AUTOSIZE_LEFT                         :String = TextFieldAutoSize.LEFT;

@@ -10,13 +10,14 @@
 package railk.as3.utils.comment.commentItem 
 {
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.display.DSprite;
+	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.objectList.*;
 	
-	public class  Form extends DynamicRegistration
+	public class  Form extends RegistrationPoint
 	{
 		// ______________________________________________________________________________ VARIABLES INTERFACE
-		private var component                   		:DynamicRegistration = new DynamicRegistration();
+		private var component                   		:DSprite = new DSprite();
 		private var itemList                   			:ObjectList = new ObjectList(
 																	['name',component],
 																	['mail',component],
@@ -117,9 +118,9 @@ package railk.as3.utils.comment.commentItem
 		public function get texte():String { return itemList.getObjectByName('texte').data.getChildByName( 'texte' ).text; }
 		public function set texte( value:String ):void { return itemList.getObjectByName('texte').data.getChildByName( 'texte' ).appendText(''); itemList.getObjectByName('texte').data.getChildByName( 'texte' ).text=value; }
 		
-		public function get resetBT():DynamicRegistration { return itemList.getObjectByName('reset').data }
-		public function get sendBT():DynamicRegistration { return itemList.getObjectByName('send').data }
-		public function get viewBT():DynamicRegistration { return itemList.getObjectByName('view').data }
+		public function get resetBT():DSprite { return itemList.getObjectByName('reset').data }
+		public function get sendBT():DSprite { return itemList.getObjectByName('send').data }
+		public function get viewBT():DSprite { return itemList.getObjectByName('view').data }
 	}
 	
 }
