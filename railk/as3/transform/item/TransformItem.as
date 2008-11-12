@@ -220,14 +220,14 @@ package railk.as3.transform.item {
 			{
 				case 'UP' :
 				case 'DOWN' :
-					item.y2 = this.localToGlobal(p).y;
+					item.y2 = mouseY;
 					transformObject.scaleY( item.y2 - entryPoint.y, constraint);
 					transformFlag.scaleY( item.y2 - entryPoint.y, constraint);
 					break;
 					
 				case 'LEFT' :
 				case 'RIGHT' :
-					item.x2 = this.localToGlobal(p).x;
+					item.x2 = mouseX
 					transformObject.scaleX( item.x2 - entryPoint.x, constraint);
 					transformFlag.scaleX( item.x2 - entryPoint.x, constraint);
 					break;
@@ -236,8 +236,8 @@ package railk.as3.transform.item {
 				case 'LEFT_DOWN' :
 				case 'RIGHT_UP' :
 				case 'RIGHT_DOWN' :
-					item.x2 = this.localToGlobal(p).x;
-					item.y2 = this.localToGlobal(p).y;
+					item.x2 = mouseX
+					item.y2 = mouseY
 					transformObject.scaleXY( item.x2 - entryPoint.x, item.y2-entryPoint.y, constraint);
 					transformFlag.scaleXY( item.x2 - entryPoint.x, item.y2 - entryPoint.y, constraint);
 					break;
@@ -272,8 +272,8 @@ package railk.as3.transform.item {
 					switch(walker.name )
 					{
 						case 'tlPoint' :
-							walker.data.x2 = bounds.x;
-							walker.data.y2 = bounds.y;
+							walker.data.x2 = this.localToGlobal(new Point(bounds.x,bounds.y)).x;
+							walker.data.y2 = this.localToGlobal(new Point(bounds.x,bounds.y)).y;
 							break;
 						case 'blPoint' :
 							walker.data.x2 = bounds.x;
