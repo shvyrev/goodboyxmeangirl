@@ -235,7 +235,7 @@
 		public static function hover():GraphicShape
 		{
 			var hover:GraphicShape = new GraphicShape();
-			hover.alpha = .5;
+			hover.alpha = 0;
 			hover.cercle(0xFF0000, 0, 0, 18);
 			return hover;
 		}
