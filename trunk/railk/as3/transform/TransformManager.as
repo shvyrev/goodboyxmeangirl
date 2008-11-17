@@ -21,7 +21,7 @@ package railk.as3.transform {
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.Clone;
-	import railk.as3.utils.Key;
+	import railk.as3.ui.*;
 	
 	public class TransformManager
 	{

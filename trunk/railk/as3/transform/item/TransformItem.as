@@ -27,6 +27,7 @@ package railk.as3.transform.item {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.LinkedObject;
+	import railk.as3.ui.*;
 	
 	public class TransformItem extends RegistrationPoint
 	{
@@ -84,8 +85,8 @@ package railk.as3.transform.item {
 			createShapes();
 			initListeners();
 			this.changeRegistration( CENTER.x, CENTER.y);
-			
-			
+			Key.addEventListener( KeyEvent.ON_KEY_PRESS, manageEvent, false, 0, true );
+			Key.addEventListener( KeyEvent.ON_KEY_RELEASE, manageEvent, false, 0, true );
 		}
 		
 		
@@ -94,8 +95,8 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function createEditFlag():void
 		{
-			contour = GraphicUtils.contour(TL.x, TL.y, WIDTH, HEIGHT );
-			addChild( contour );
+			//contour = GraphicUtils.contour(TL.x, TL.y, WIDTH, HEIGHT );
+			//addChild( contour );
 			
 			editFlag = GraphicUtils.bg(TL.x, TL.y, WIDTH, HEIGHT );
 			editFlag.alpha = 0;
@@ -147,7 +148,8 @@ package railk.as3.transform.item {
 			Y = object.y;
 			WIDTH = object.width;
 			HEIGHT = object.height;
-			CENTER = new Point( WIDTH * .5,  HEIGHT * .5);
+			CENTER = new Point( 60,  60);
+			//CENTER = new Point( WIDTH * .5,  HEIGHT * .5);
 			TL = new Point(0, 0);
 			BL = new Point(0, HEIGHT );
 			L = new Point(0,  HEIGHT*.5)
@@ -182,40 +184,39 @@ package railk.as3.transform.item {
 			switch( name )
 			{
 				case 'tlPoint' :
-					move = function() { scale(item, 'LEFT_UP'); replace( transformObject.bounds, name ); };
+					move = function() { scale(item, 'LEFT_UP'); replace( transformObject.bounds, 'LEFT_UP' ); };
 					break;
 				case 'blPoint' :
-					move = function() { scale(item, 'LEFT_DOWN'); replace( transformObject.bounds, name ); };
+					move = function() { scale(item, 'LEFT_DOWN'); replace( transformObject.bounds, 'LEFT_DOWN' ); };
 					break;
 				case 'trPoint' :
-					move = function() { scale(item, 'RIGHT_UP'); replace( transformObject.bounds, name ); };
+					move = function() { scale(item, 'RIGHT_UP'); replace( transformObject.bounds, 'RIGHT_UP' ); };
 					break;
 				case 'brPoint' :
-					move = function() { scale(item, 'RIGHT_DOWN'); replace( transformObject.bounds, name ); };
+					move = function() { scale(item, 'RIGHT_DOWN'); replace( transformObject.bounds, 'RIGHT_DOWN' ); };
 					break;
 				case 'centerPoint' :
 					move = function() { moveRegPoint(item) };
 					break;
 				case 'tPoint' :
-					move = function() { scale(item, 'UP'); replace( transformObject.bounds, name ); };
+					move = function() { scale(item, 'UP'); replace( transformObject.bounds, 'UP' ); };
 					break;
 				case 'lPoint' :
-					move =  function() { scale(item, 'LEFT'); replace( transformObject.bounds, name ); };
+					move =  function() { scale(item, 'LEFT'); replace( transformObject.bounds, 'LEFT' ); };
 					break;
 				case 'rPoint' :
-					move = function() { scale(item,'RIGHT'); replace( transformObject.bounds, name ); };
+					move = function() { scale(item,'RIGHT'); replace( transformObject.bounds,'RIGHT' ); };
 					break;
 				case 'bPoint' :
-					move = function() { scale(item, 'DOWN'); replace( transformObject.bounds, name ); };
+					move = function() { scale(item, 'DOWN'); replace( transformObject.bounds, 'DOWN' ); };
 					break;
 			}
-			transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { transformObject.apply(); transformFlag.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, move );
+			transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { changeRegistration(CENTER.x, CENTER.y); HEIGHT = transformObject.bounds.height; WIDTH = transformObject.bounds.width; transformObject.apply(); transformFlag.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, move );
 
 		}
 		
 		private function scale( item:*, constraint:String='' ):void
 		{
-			var p:Point = new Point(mouseX, mouseY);
 			switch( constraint )
 			{
 				case 'UP' :
@@ -249,68 +250,113 @@ package railk.as3.transform.item {
 			
 		}
 		
-		private function rotate( item:* ):void
+		private function rotate( item:*, angle ):void
 		{
 			
 		}
 		
-		private function moveRegPoint( item:* ):void
+		private function moveRegPoint( item:*, x:Number=NaN, y:Number=NaN ):void
 		{
-			var p:Point = new Point(mouseX, mouseY);
-			item.x2 = this.localToGlobal(p).x; 
-			item.y2 = this.localToGlobal(p).y; 
-			changeRegistration(item.x2, item.y2) 
+			item.x2 = (x)? x : mouseX; 
+			item.y2 = (y)? y : mouseY; 
+			changeRegistration(mouseX, mouseY);
+			trace( this.getRegistration() );
 		}
 		
-		private function replace( bounds:Rectangle, except:String ):void
+		private function replace( bounds:Rectangle, constraint:String ):void
 		{
-			/*walker = linkedObjectList.head;
-			while ( walker )
+			var tl:* = linkedObjectList.getObjectByName( 'tlPoint').data;
+			var t:* = linkedObjectList.getObjectByName( 'tPoint').data;
+			var tr:* = linkedObjectList.getObjectByName( 'trPoint').data;
+			var r:* = linkedObjectList.getObjectByName( 'rPoint').data;
+			var br:* = linkedObjectList.getObjectByName( 'brPoint').data;
+			var b:* = linkedObjectList.getObjectByName( 'bPoint').data;
+			var bl:* = linkedObjectList.getObjectByName( 'blPoint').data;
+			var l:* = linkedObjectList.getObjectByName( 'lPoint').data;
+			var center:* = linkedObjectList.getObjectByName( 'centerPoint').data;
+			X = this.localToGlobal( new Point(transformObject.bounds.x, transformObject.bounds.y) ).x; 
+			Y = this.localToGlobal( new Point(transformObject.bounds.x, transformObject.bounds.y) ).y;
+			center.y2 = this.globalToLocal(new Point(X, Y)).y + this.getRegistration().y * (bounds.height/HEIGHT);
+			center.x2 = this.globalToLocal(new Point(X, Y)).x + this.getRegistration().x * (bounds.width/WIDTH);
+			CENTER.y = this.getRegistration().y * (bounds.height / HEIGHT);
+			CENTER.x = this.getRegistration().x * (bounds.width / WIDTH);
+			
+			switch( constraint )
 			{
-				if (walker.name != except ) 
-				{
-					switch(walker.name )
-					{
-						case 'tlPoint' :
-							walker.data.x2 = this.localToGlobal(new Point(bounds.x,bounds.y)).x;
-							walker.data.y2 = this.localToGlobal(new Point(bounds.x,bounds.y)).y;
-							break;
-						case 'blPoint' :
-							walker.data.x2 = bounds.x;
-							walker.data.y2 = bounds.height + bounds.y;
-							break;
-						case 'trPoint' :
-							walker.data.x2 = bounds.width + bounds.x;
-							walker.data.y2 = bounds.y;
-							break;
-						case 'brPoint' :
-							walker.data.x2 = bounds.width + bounds.x;
-							walker.data.y2 = bounds.height + bounds.y;
-							break;
-						case 'centerPoint' :
-							//trace( this.reg );
-							break;
-						case 'tPoint' :
-							walker.data.x2 = bounds.width*.5 + bounds.x;
-							walker.data.y2 = bounds.y;
-							break;
-						case 'lPoint' :
-							walker.data.x2 = bounds.x;
-							walker.data.y2 = bounds.height*.5 + bounds.y;
-							break;
-						case 'rPoint' :
-							walker.data.x2 = bounds.width + bounds.x;
-							walker.data.y2 = bounds.height*.5 + bounds.y;
-							break;
-						case 'bPoint' :	
-							walker.data.x2 = bounds.width*.5  + bounds.x;
-							walker.data.y2 = bounds.height + bounds.y;
-							break;
-					}
-				}	
-				walker = walker.next;
-			}*/
+				case 'UP' :
+					tl.y2 = bounds.y;
+					l.y2 = bounds.y + bounds.height * .5;
+					tr.y2 = bounds.y;
+					r.y2 = bounds.y + bounds.height * .5;
+					break;
+					
+				case 'DOWN' :
+					bl.y2 = bounds.y+bounds.height;
+					l.y2 = bounds.y+bounds.height*.5;
+					br.y2 = bounds.y+bounds.height;
+					r.y2 = bounds.y + bounds.height * .5;
+					break;
+					
+				case 'LEFT' :
+					tl.x2 = bounds.x;
+					t.x2 = bounds.x+bounds.width*.5;
+					bl.x2 = bounds.x;
+					b.x2 = bounds.x + bounds.width * .5;
+					break;
+					
+				case 'RIGHT' :
+					tr.x2 = bounds.x+bounds.width;
+					t.x2 = bounds.x+bounds.width*.5;
+					br.x2 = bounds.x+bounds.width;
+					b.x2 = bounds.x + bounds.width * .5;
+					break;
+				
+				case 'LEFT_UP' :
+					t.x2=bounds.x+bounds.width*.5;
+					t.y2=bounds.y;
+					tr.y2=bounds.y;
+					r.y2 = bounds.y + bounds.height * .5;
+					l.x2=bounds.x;
+					l.y2 = bounds.y + bounds.height * .5;
+					bl.x2= bounds.x;
+					b.x2=bounds.x+bounds.width*.5;
+					break;
+					
+				case 'LEFT_DOWN' :
+					l.x2=bounds.x;
+					l.y2 = bounds.y+bounds.height*.5;
+					tl.x2 = bounds.x;
+					t.x2 = bounds.x+bounds.width*.5;
+					b.x2 = bounds.x+bounds.width*.5;
+					b.y2 = bounds.y+bounds.height;
+					br.y2 = bounds.y+bounds.height;
+					r.y2 = bounds.y + bounds.height*.5;
+					break;
+					
+				case 'RIGHT_UP' :
+					t.x2 = bounds.x+bounds.width*.5;
+					t.y2 = bounds.y;
+					tl.y2 = bounds.y;
+					l.y2 = bounds.height*.5 + bounds.y;
+					r.y2 = bounds.height * .5 + bounds.y;
+					r.x2 = bounds.x+bounds.width;
+					br.x2 = bounds.x+bounds.width;
+					b.x2 = bounds.x+bounds.width*.5;
+					break;
+					
+				case 'RIGHT_DOWN' :
+					r.y2 = bounds.y+bounds.height*.5;
+					r.x2 = bounds.x+bounds.width;
+					tr.x2 = bounds.x+bounds.width;
+					t.x2=bounds.x+bounds.width*.5;
+					b.x2=bounds.x+bounds.width*.5;
+					b.y2=bounds.y+bounds.height;
+					bl.y2=bounds.y+bounds.height;
+					l.y2 = bounds.y+bounds.height*.5;
+					break;
+			}
 		}
+		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					  MANAGE LISTENERS
@@ -378,7 +424,7 @@ package railk.as3.transform.item {
 					
 				case MouseEvent.ROLL_OUT :
 					editFlag.alpha = 0;
-					disableEditMode();
+					//disableEditMode();
 					break;
 					
 				case MouseEvent.CLICK :
@@ -416,8 +462,8 @@ package railk.as3.transform.item {
 					break;
 					
 				case MouseEvent.MOUSE_MOVE :
-					object.x = this.localToGlobal( new Point(editFlag.x,editFlag.y) ).x;
-					object.y = this.localToGlobal( new Point(editFlag.x,editFlag.y) ).y;
+					X = object.x = this.localToGlobal( new Point(editFlag.x,editFlag.y) ).x;
+					Y = object.y = this.localToGlobal( new Point(editFlag.x,editFlag.y) ).y;
 					evt.updateAfterEvent()
 					break;		
 			}
