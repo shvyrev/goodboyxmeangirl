@@ -239,5 +239,18 @@
 			hover.cercle(0xFF0000, 0, 0, 18);
 			return hover;
 		}
+		
+		public static function skewBorder(x,y,w,h,constraint):GraphicShape
+		{
+			var border:GraphicShape = new GraphicShape()
+			border.rectangle(0xFF0000, 0, 0, w, h);
+			if (constraint == 'LEFT') border.setRegistration(w, 0);
+			else if (constraint == 'TOP') border.setRegistration(0, h);
+			else border.setRegistration(0, 0);
+			border.x2 = x;
+			border.y2 = y;
+			border.alpha = 0;
+			return border;
+		}
 	}
 }	

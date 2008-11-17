@@ -28,7 +28,6 @@ package railk.as3.transform.item {
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.LinkedObject;
-	import railk.as3.ui.*;
 	
 	public class TransformItem extends RegistrationPoint
 	{
@@ -86,8 +85,6 @@ package railk.as3.transform.item {
 			createShapes();
 			initListeners();
 			this.changeRegistration( CENTER.x, CENTER.y);
-			Key.addEventListener( KeyEvent.ON_KEY_PRESS, manageEvent, false, 0, true );
-			Key.addEventListener( KeyEvent.ON_KEY_RELEASE, manageEvent, false, 0, true );
 		}
 		
 		
@@ -108,6 +105,10 @@ package railk.as3.transform.item {
 		
 		private function createShapes():void
 		{
+			shapes.add( ['tBorder', GraphicUtils.skewBorder(TL.x, TL.y, WIDTH, 15,'TOP' )] );
+			shapes.add( ['lBorder', GraphicUtils.skewBorder(TL.x, TL.y, 15, HEIGHT,'LEFT')] );
+			shapes.add( ['bBorder', GraphicUtils.skewBorder(TL.x, HEIGHT,WIDTH,15,'BOTTOM' )] );
+			shapes.add( ['rBorder', GraphicUtils.skewBorder(WIDTH,TL.y,15,HEIGHT,'RIGHT' )] );
 			shapes.add( ['tlPoint', GraphicUtils.corner(0xFF000000,TL.x, TL.y,0)] );
 			shapes.add( ['blPoint', GraphicUtils.corner(0xFF000000,BL.x, BL.y,-90)] );
 			shapes.add( ['trPoint', GraphicUtils.corner(0xFF000000,TR.x, TR.y,90)] );
@@ -130,7 +131,7 @@ package railk.as3.transform.item {
 				var lk:LinkedObject = new LinkedObject(hover, walker.data);
 				linkedObjectList.add([walker.name,lk])
 				enableActions( walker.name, lk );
-				walker.data.visible = false;
+				walker.data.visible = true;
 				walker = walker.next;
 			}
 		}
@@ -200,7 +201,7 @@ package railk.as3.transform.item {
 					move = function() { moveRegPoint(item) };
 					break;
 				case 'tPoint' :
-					move = function() { if( Key.isDown(Key.CTRL) ){skew(item, 'UP'); } else{scale(item, 'UP');} replace( transformObject.bounds, 'UP' ); };
+					move = function() { scale(item, 'UP'); replace( transformObject.bounds, 'UP' ); };
 					break;
 				case 'lPoint' :
 					move =  function() { scale(item, 'LEFT'); replace( transformObject.bounds, 'LEFT' ); };
@@ -210,6 +211,18 @@ package railk.as3.transform.item {
 					break;
 				case 'bPoint' :
 					move = function() { scale(item, 'DOWN'); replace( transformObject.bounds, 'DOWN' ); };
+					break;
+				case 'tBorder' :
+					move = function() { skew(item, 'UP');  replace( transformObject.bounds, 'UP' ); };
+					break;
+				case 'lBorder' :
+					move = function() { skew(item, 'LEFT');  replace( transformObject.bounds, 'UP' ); };
+					break;
+				case 'rBorder' :
+					move = function() { skew(item, 'RIGHT');  replace( transformObject.bounds, 'UP' ); };
+					break;
+				case 'bBorder' :
+					move = function() { skew(item, 'DOWN');  replace( transformObject.bounds, 'UP' ); };
 					break;
 			}
 			transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { changeRegistration(CENTER.x, CENTER.y); HEIGHT = transformObject.bounds.height; WIDTH = transformObject.bounds.width; transformObject.apply(); transformFlag.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, move );
