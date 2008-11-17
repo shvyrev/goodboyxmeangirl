@@ -28,18 +28,6 @@ package railk.as3.transform {
 		private static var _stage:Stage;
 		private static var itemsList:ObjectList;
 		private static var walker:ObjectNode;
-		
-		private static const CTRL:String = '17';
-		private static const SPACEBAR:String = '32';
-		private static const SHIFT:String = '16';
-		private static const TAB:String = '9';
-		private static const DEL:String = '46';
-		private static const C:String = '67';
-		private static const V:String = '86';
-		private static const A:String = '65';
-		private static const Z:String = '90';
-		private static const S:String = '83';
-		
 		private static var select:MarchingAntsSelect;
 		
 		private static var itemInteracting:Boolean=false;
@@ -52,6 +40,7 @@ package railk.as3.transform {
 		{
 			_stage = stage;
 			itemsList = new ObjectList();
+			if ( !Key.initialized ) Key.initialize( stage );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————

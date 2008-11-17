@@ -16,6 +16,7 @@ package railk.as3.transform.item {
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	import flash.ui.Mouse;
+	import railk.as3.display.DSprite;
 	
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
@@ -148,8 +149,8 @@ package railk.as3.transform.item {
 			Y = object.y;
 			WIDTH = object.width;
 			HEIGHT = object.height;
-			CENTER = new Point( 60,  60);
-			//CENTER = new Point( WIDTH * .5,  HEIGHT * .5);
+			if(object is DSprite) CENTER = new Point( WIDTH * .5,  HEIGHT * .5);
+			else CENTER = new Point( WIDTH * .5,  HEIGHT * .5);
 			TL = new Point(0, 0);
 			BL = new Point(0, HEIGHT );
 			L = new Point(0,  HEIGHT*.5)
@@ -199,7 +200,7 @@ package railk.as3.transform.item {
 					move = function() { moveRegPoint(item) };
 					break;
 				case 'tPoint' :
-					move = function() { scale(item, 'UP'); replace( transformObject.bounds, 'UP' ); };
+					move = function() { if( Key.isDown(Key.CTRL) ){skew(item, 'UP'); } else{scale(item, 'UP');} replace( transformObject.bounds, 'UP' ); };
 					break;
 				case 'lPoint' :
 					move =  function() { scale(item, 'LEFT'); replace( transformObject.bounds, 'LEFT' ); };
@@ -247,6 +248,21 @@ package railk.as3.transform.item {
 		
 		private function skew( item:*, constraint:String='' ):void
 		{
+			switch(constraint)
+			{
+				case 'UP' :
+					transformObject.skewX( -(mouseX - entryPoint.x), constraint );
+					break;
+					
+				case 'DOWN' :
+					break;
+					
+				case 'LEFT' :
+					break;
+				
+				case 'RIGHT' :
+					break;
+			}
 			
 		}
 		
@@ -260,7 +276,8 @@ package railk.as3.transform.item {
 			item.x2 = (x)? x : mouseX; 
 			item.y2 = (y)? y : mouseY; 
 			changeRegistration(mouseX, mouseY);
-			trace( this.getRegistration() );
+			CENTER.x = this.getRegistration().x;
+			CENTER.y = this.getRegistration().y;
 		}
 		
 		private function replace( bounds:Rectangle, constraint:String ):void

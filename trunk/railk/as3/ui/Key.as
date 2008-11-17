@@ -1,14 +1,28 @@
 package railk.as3.ui {
    
+	// _________________________________________________________________________________________ IMPORT FLASH
     import flash.display.Stage;
     import flash.events.Event;
     import flash.events.KeyboardEvent;
 	import flash.events.EventDispatcher;
    
     public class Key extends EventDispatcher {
+		
+		// _______________________________________________________________________________________ CONSTANTES
+		public static const CTRL:uint = 17;
+		public static const SPACEBAR:uint = 32;
+		public static const SHIFT:uint = 16;
+		public static const TAB:uint = 9;
+		public static const DEL:uint = 46;
+		public static const C:uint = 67;
+		public static const V:uint = 86;
+		public static const A:uint = 65;
+		public static const Z:uint = 90;
+		public static const S:uint = 83;
        
+		// _______________________________________________________________________________________ VARIABLES
 		protected static var disp:EventDispatcher;
-        private static var initialized:Boolean = false;
+        private static var _initialized:Boolean = false;
         private static var keysDown:Object = new Object();
        
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -33,11 +47,11 @@ package railk.as3.ui {
 		// 																	   							 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
         public static function initialize(stage:Stage) {
-            if (!initialized) {
+            if (!_initialized) {
                 stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
                 stage.addEventListener(KeyboardEvent.KEY_UP, keyReleased);
                 stage.addEventListener(Event.DEACTIVATE, clearKeys);
-                initialized = true;
+                _initialized = true;
             }
         }
        
@@ -45,7 +59,7 @@ package railk.as3.ui {
 		// 																	   						 KEY DOWN 
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
         public static function isDown(keyCode:uint):Boolean {
-            if (!initialized) {
+            if (!_initialized) {
                 throw new Error("Key class has yet been initialized.");
             }
             return keysDown[keyCode];
@@ -55,13 +69,13 @@ package railk.as3.ui {
 		// 																	   				   KEY MANAGEMENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
         private static function keyPressed(evt:KeyboardEvent):void {
-            keysDown[event.keyCode] = true;
+            keysDown[evt.keyCode] = true;
 			dispatchEvent( new KeyEvent(KeyEvent.ON_KEY_PRESS, { keyCode:evt.keyCode, alt:evt.altKey, ctrl:evt.ctrlKey, shift:evt.shiftKey }) );
         }
        
         private static function keyReleased(evt:KeyboardEvent):void {
-            if (event.keyCode in keysDown) {
-                delete keysDown[event.keyCode];
+            if (evt.keyCode in keysDown) {
+                delete keysDown[evt.keyCode];
             }
 			dispatchEvent( new KeyEvent(KeyEvent.ON_KEY_RELEASE, { keyCode:evt.keyCode, alt:evt.altKey, ctrl:evt.ctrlKey, shift:evt.shiftKey }) );
         }
@@ -69,5 +83,10 @@ package railk.as3.ui {
         private static function clearKeys(evt:Event):void {
             keysDown = new Object();
         }
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																	   				 	GETTER/SETTER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		static public function get initialized():Boolean { return _initialized; }
     }
 }
