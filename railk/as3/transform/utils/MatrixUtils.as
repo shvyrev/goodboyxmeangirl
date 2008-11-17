@@ -128,8 +128,16 @@ package railk.as3.transform.utils
 		
 		public function skewX( dist:Number, constraint:String ):void
 		{
-			m2.c = m.c + (dist/tHeight) * m.d;
-			m2.tx = oX;
+			m2.c = m.c + (dist / tHeight) * m.d;
+			if ( constraint == 'UP' )
+			{
+				m2.tx = oX-dist;
+			}
+			else
+			{
+				m2.tx = oX;
+			}
+			
 			m2.ty = oY;
 			t.matrix = m2;
 		}
