@@ -137,7 +137,6 @@ package railk.as3.transform.utils
 			{
 				m2.tx = oX;
 			}
-			
 			m2.ty = oY;
 			t.matrix = m2;
 		}
@@ -146,7 +145,14 @@ package railk.as3.transform.utils
 		{
 			m2.b = m.b + (dist/tWidth) * m.a;
 			m2.tx = oX;
-			m2.ty = oY;
+			if ( constraint == 'LEFT' )
+			{
+				m2.ty = oY-dist;
+			}
+			else
+			{
+				m2.ty = oY;
+			}
 			t.matrix = m2;
 		}
 
@@ -154,7 +160,7 @@ package railk.as3.transform.utils
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																			APPLY MATRIX MODIFICATIONS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function apply(...args):void
+		public function apply():void
 		{
 			tWidth = int( tWidth*(m2.a/m.a) );
 			tHeight = int( tHeight*(m2.d/m.d) );

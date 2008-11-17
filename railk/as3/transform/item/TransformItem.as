@@ -182,50 +182,63 @@ package railk.as3.transform.item {
 		
 		private function enableActions( name:String, item:* ):void
 		{
-			var move:Function;
+			var move:Function, down:Function;
 			switch( name )
 			{
 				case 'tlPoint' :
 					move = function() { scale(item, 'LEFT_UP'); replace( transformObject.bounds, 'LEFT_UP' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'blPoint' :
 					move = function() { scale(item, 'LEFT_DOWN'); replace( transformObject.bounds, 'LEFT_DOWN' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'trPoint' :
 					move = function() { scale(item, 'RIGHT_UP'); replace( transformObject.bounds, 'RIGHT_UP' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'brPoint' :
 					move = function() { scale(item, 'RIGHT_DOWN'); replace( transformObject.bounds, 'RIGHT_DOWN' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'centerPoint' :
 					move = function() { moveRegPoint(item) };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'tPoint' :
 					move = function() { scale(item, 'UP'); replace( transformObject.bounds, 'UP' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'lPoint' :
 					move =  function() { scale(item, 'LEFT'); replace( transformObject.bounds, 'LEFT' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'rPoint' :
-					move = function() { scale(item,'RIGHT'); replace( transformObject.bounds,'RIGHT' ); };
+					move = function() { scale(item, 'RIGHT'); replace( transformObject.bounds, 'RIGHT' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'bPoint' :
 					move = function() { scale(item, 'DOWN'); replace( transformObject.bounds, 'DOWN' ); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'tBorder' :
 					move = function() { skew(item, 'UP');  replace( transformObject.bounds, 'UP' ); };
+					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					break;
 				case 'lBorder' :
 					move = function() { skew(item, 'LEFT');  replace( transformObject.bounds, 'UP' ); };
+					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					break;
 				case 'rBorder' :
 					move = function() { skew(item, 'RIGHT');  replace( transformObject.bounds, 'UP' ); };
+					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					break;
 				case 'bBorder' :
 					move = function() { skew(item, 'DOWN');  replace( transformObject.bounds, 'UP' ); };
+					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					break;
 			}
-			transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { changeRegistration(CENTER.x, CENTER.y); HEIGHT = transformObject.bounds.height; WIDTH = transformObject.bounds.width; transformObject.apply(); transformFlag.apply(); }, function() { entryPoint = new Point(item.x2, item.y2); }, function() { entryPoint = new Point(item.x2, item.y2); }, move );
+			transformAction.enable( name, item, function() { delListeners(); }, function() { initListeners(); }, function() { changeRegistration(CENTER.x, CENTER.y); HEIGHT = transformObject.bounds.height; WIDTH = transformObject.bounds.width; transformObject.apply(); transformFlag.apply(); }, down, null, move );
 
 		}
 		
@@ -268,12 +281,15 @@ package railk.as3.transform.item {
 					break;
 					
 				case 'DOWN' :
+					transformObject.skewX( (mouseX - entryPoint.x), constraint );
 					break;
 					
 				case 'LEFT' :
+					transformObject.skewY( -(mouseY - entryPoint.y), constraint );
 					break;
 				
 				case 'RIGHT' :
+					transformObject.skewY( (mouseY - entryPoint.y), constraint );
 					break;
 			}
 			
