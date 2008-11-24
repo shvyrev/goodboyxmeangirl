@@ -4,14 +4,16 @@
 	import railk.as3.display.DSprite;
 	import railk.as3.display.drawingShape.DrawingShape;
 	import railk.as3.display.GraphicShape;
-	import railk.as3.display.DashedLine;
 	
     public class GraphicUtils extends Sprite
     {	
-		public static function rotate():GraphicShape
+		public static function rotate(x,y,outerRadius:Number, innerRadius:Number):GraphicShape
 		{
 			var rotate:GraphicShape = new GraphicShape();
-			rotate.donut(0x000000, 0, 0, 163, 140);
+			rotate.camembert( 0x000000, 0, 0, outerRadius, 0, 360, 22, innerRadius);
+			rotate.x = x;
+			rotate.y = y;
+			rotate.alpha = .25;
 			return rotate;
 		}
 		
@@ -249,7 +251,7 @@
 			else border.setRegistration(0, 0);
 			border.x2 = x;
 			border.y2 = y;
-			border.alpha = 0;
+			border.alpha = .5;
 			return border;
 		}
 	}
