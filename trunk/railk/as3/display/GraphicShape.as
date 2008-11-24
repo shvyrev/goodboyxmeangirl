@@ -159,14 +159,20 @@ package railk.as3.display {
 		* @param	type  null:plein, "L":ligne, "FL":ligne et plein
 		* @return
 		*/
-		public function camembert (color:uint, X:int, Y:int, radius:int, startAngle:int, endAngle:int, segments:int, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void 
-		{
-			var rad:Number = Math.PI/180;
-			var segm:Number = (endAngle-startAngle)/segments;
-			
+		public function camembert (color:uint, X:Number, Y:Number, radius:Number, startAngle:Number, endAngle:Number, segments:int, holeRadius:Number=NaN, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF ):void 
+		{	
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color,1);
+			this.drawCamembert(X, Y, radius, startAngle, endAngle, segments);
+			if(holeRadius) this.drawCamembert(X, Y, holeRadius, startAngle, endAngle, segments);
+			this.graphicsCopy.endFill();
+		}
+		
+		private function drawCamembert( X:Number, Y:Number, radius:Number, startAngle:Number, endAngle:Number, segments:int):void
+		{
+			var rad:Number = Math.PI/180;
+			var segm:Number = (endAngle-startAngle)/segments;
 			this.graphicsCopy.moveTo(X,Y);
 			this.graphicsCopy.moveTo(X+radius*Math.cos(startAngle*rad), Y+radius*Math.sin(startAngle*rad));
 			for (var s:Number = startAngle+segm; s<=endAngle+1; s += segm) {
@@ -177,7 +183,6 @@ package railk.as3.display {
 				this.graphicsCopy.curveTo(a_x+x, a_y+y, c_x+x, c_y+y);
 			}
 			this.graphicsCopy.lineTo(X, Y);
-			this.graphicsCopy.endFill();
 		}
 		
 		
@@ -199,8 +204,8 @@ package railk.as3.display {
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color, 1);
-			this.graphicsCopy.drawCircle(X, Y, outerRadius);
-			this.graphicsCopy.drawCircle(X, Y, innerRadius);
+			this.graphicsCopy.drawCircle(outerRadius, outerRadius, outerRadius);
+			this.graphicsCopy.drawCircle(outerRadius, outerRadius, innerRadius);
 			this.graphicsCopy.endFill();
 		}
 		

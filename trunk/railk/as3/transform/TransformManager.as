@@ -68,6 +68,7 @@ package railk.as3.transform {
 			walker = itemsList.head;
 			while ( walker ) {
 				_stage.addChild( walker.data );
+				//walker.data.initListeners();
 				walker.data.x = walker.data.X;
 				walker.data.y = walker.data.Y;
 				walker = walker.next;
@@ -93,7 +94,7 @@ package railk.as3.transform {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function add( name:String, object:* ):void 
 		{
-			itemsList.add([name, new TransformItem(name, object)]);
+			itemsList.add([name, new TransformItem(_stage, name, object)]);
 			initItemListeners( itemsList.tail.data );
 		}
 		
@@ -102,7 +103,7 @@ package railk.as3.transform {
 			var i:int = 0;
 			for ( i; i < args.length; i++) 
 			{
-				itemsList.add([args[i].name, new TransformItem(args[i].name, args[i].object)]);
+				itemsList.add([args[i].name, new TransformItem(_stage, args[i].name, args[i].object)]);
 				initItemListeners( itemsList.tail.data );
 			}
 		}

@@ -9,17 +9,17 @@
 package railk.as3.transform.utils 
 {
 	// _________________________________________________________________________________________ IMPORT FLASH
-	import flash.display.DisplayObject;
     import flash.geom.Point;
     import flash.geom.Matrix;
 	import flash.geom.Rectangle;
 	import flash.geom.Transform;
-	import fl.motion.MatrixTransformer;
 
     public class MatrixUtils 
 	{
 		// ________________________________________________________________________________________ VARIABLES
 		private var _target:*;
+		private var _assieteX:Number=0;
+		private var _assieteY:Number=0;
 		private var t:Transform;
 		private var m:Matrix;
 		private var m2:Matrix;
@@ -27,11 +27,11 @@ package railk.as3.transform.utils
 		private var oX:Number;
 		private var oY:Number;
 		private var distX:Number=0;
-		private var distY:Number=0;
+		private var distY:Number = 0;
+		private var lastSkewX:Number=0;
+		private var lastSkewY:Number = 0;
 		private var lastDistX:Number=0;
 		private var lastDistY:Number=0;
-		private var regDistX:Number=0;
-		private var regDistY:Number=0;
 		private var tWidth:Number;
 		private var tHeight:Number;
 		
@@ -44,7 +44,7 @@ package railk.as3.transform.utils
 			_target = target;
 			t = new Transform(target);
 			m = target.transform.matrix; 
-			m2 = new Matrix();
+			m2 = new Matrix(1,0,0,1,m.tx,m.ty);
 			
 			oX = target.x;
 			oY = target.y;
@@ -139,6 +139,7 @@ package railk.as3.transform.utils
 			}
 			m2.ty = oY;
 			t.matrix = m2;
+			_assieteX =  lastSkewX + dist;
 		}
 		
 		public function skewY( dist:Number, constraint:String ):void
@@ -154,6 +155,19 @@ package railk.as3.transform.utils
 				m2.ty = oY;
 			}
 			t.matrix = m2;
+			_assieteY = lastSkewY + dist;		
+		}
+		
+		
+		public function rotate( x:Number, y:Number, angle:Number ):void
+		{
+			var p:Point = new Point(x, y);
+			var a:Point = _target.parent.globalToLocal(_target.localToGlobal(p));
+			_target.rotation = angle;
+			var b:Point = _target.parent.globalToLocal(_target.localToGlobal(p));
+			_target.x -= (b.x -a.x);
+			_target.y -= (b.y -a.y);
+			m2 = _target.transform.matrix;
 		}
 
 		
@@ -172,6 +186,8 @@ package railk.as3.transform.utils
 			m.d = m2.d;
 			lastDistX = distX;
 			lastDistY = distY;
+			lastSkewX = _assieteX;
+			lastSkewY = _assieteY;
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -184,11 +200,12 @@ package railk.as3.transform.utils
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   		GET BOUNDS
+		// 																					   	 GETTER/SETTER
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get bounds():Rectangle
-		{
-			return new Rectangle(distX, distY, _target.width, _target.height);
-		}
+		public function get bounds():Rectangle { return new Rectangle(distX, distY, _target.width, _target.height); }
+		
+		public function get assieteX():Number { return _assieteX; }
+		
+		public function get assieteY():Number { return _assieteY; }
     }
 }
