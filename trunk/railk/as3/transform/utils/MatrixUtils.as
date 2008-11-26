@@ -126,33 +126,41 @@ package railk.as3.transform.utils
 			t.matrix = m2;
 		}
 		
-		public function skewX( dist:Number, constraint:String ):void
+		public function skewX( dist:Number, constraint:String, sub:String ):void
 		{
 			m2.c = m.c + (dist / tHeight) * m.d;
 			if ( constraint == 'UP' )
 			{
-				m2.tx = oX-dist;
+				m2.tx = oX - dist;
+				if (sub == 'RIGHT') distX = lastDistX + dist;
+				else distX = lastSkewX + dist;
 			}
 			else
 			{
 				m2.tx = oX;
+				if (sub == 'LEFT') distX = lastDistX + dist;
+				else distX = lastSkewX + dist;
 			}
 			m2.ty = oY;
 			t.matrix = m2;
 			_assieteX =  lastSkewX + dist;
 		}
 		
-		public function skewY( dist:Number, constraint:String ):void
+		public function skewY( dist:Number, constraint:String, sub:String ):void
 		{
 			m2.b = m.b + (dist/tWidth) * m.a;
 			m2.tx = oX;
 			if ( constraint == 'LEFT' )
 			{
-				m2.ty = oY-dist;
+				m2.ty = oY - dist;
+				if(sub == 'UP') distY = lastDistY - dist;
+				else distY = lastSkewY + dist;
 			}
 			else
 			{
 				m2.ty = oY;
+				if(sub == 'UP') distY = lastDistY + dist;
+				else distY = lastSkewY + dist;
 			}
 			t.matrix = m2;
 			_assieteY = lastSkewY + dist;		
@@ -207,5 +215,7 @@ package railk.as3.transform.utils
 		public function get assieteX():Number { return _assieteX; }
 		
 		public function get assieteY():Number { return _assieteY; }
+		
+		public function get matrix():Matrix { return m2; }
     }
 }
