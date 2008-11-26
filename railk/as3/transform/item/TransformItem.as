@@ -73,6 +73,7 @@ package railk.as3.transform.item {
 			linkedObjectList = new ObjectList();
 			
 			transformItem = this;
+			
 			this.name = name;
 			this.object = object;
 			this.type = getType();
@@ -203,7 +204,7 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function enableToolsActions( name:String, item:* ):void
 		{
-			var move:Function, down:Function;
+			var move:Function, down:Function, skewState:String;
 			switch( name )
 			{
 				case 'tlPoint' :
@@ -245,24 +246,28 @@ package railk.as3.transform.item {
 				case 'tBorder' :
 					move = function() { skew(item, 'UP');  replace( transformObject.bounds, 'SKEW_UP' ); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
+					skewState = 'UP';
 					break;
 				case 'lBorder' :
 					move = function() { skew(item, 'LEFT');  replace( transformObject.bounds, 'SKEW_LEFT' ); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
+					skewState = 'LEFT';
 					break;
 				case 'rBorder' :
 					move = function() { skew(item, 'RIGHT');  replace( transformObject.bounds, 'SKEW_RIGHT' ); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
+					skewState = 'RIGHT';
 					break;
 				case 'bBorder' :
 					move = function() { skew(item, 'DOWN');  replace( transformObject.bounds, 'SKEW_DOWN' ); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
+					skewState = 'DOWN';
 					break;
 				case 'rotate' :
 					move = function() { rotate(item); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
 			}
-			transformAction.enable( name, item, 'mouse', null, null , function() {  changeRegistration(CENTER.x, CENTER.y); HEIGHT = transformObject.bounds.height; WIDTH = transformObject.bounds.width; transformObject.apply(); transformFlag.apply(); }, down, move);
+			transformAction.enable( name, item, 'mouse', null, null , function() { HEIGHT = transformObject.bounds.height; WIDTH = transformObject.bounds.width; transformObject.apply(); transformFlag.apply(); }, down, move);
 
 		}
 		
@@ -304,26 +309,37 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function skew( item:*, constraint:String='' ):void
 		{
+			var subConstraint:String = '';
+			var assieteX:Number = transformObject.assieteX;
+			var assieteY:Number = transformObject.assieteY;
 			switch(constraint)
 			{
 				case 'UP' :
-					transformObject.skewX( -(mouseX - entryPoint.x), constraint );
-					transformFlag.skewX( -(mouseX - entryPoint.x), constraint );
+					if (assieteX > 0) subConstraint = 'LEFT';
+					else subConstraint = 'RIGHT';
+					transformObject.skewX( -(mouseX - entryPoint.x), constraint, subConstraint );
+					transformFlag.skewX( -(mouseX - entryPoint.x), constraint, subConstraint );
 					break;
 					
 				case 'DOWN' :
-					transformObject.skewX( (mouseX - entryPoint.x), constraint );
-					transformFlag.skewX( (mouseX - entryPoint.x), constraint );
+					if (assieteX < 0) subConstraint = 'LEFT';
+					else if (assieteX > 0) subConstraint = 'RIGHT';
+					transformObject.skewX( (mouseX - entryPoint.x), constraint, subConstraint );
+					transformFlag.skewX( (mouseX - entryPoint.x), constraint, subConstraint );
 					break;
 					
 				case 'LEFT' :
-					transformObject.skewY( -(mouseY - entryPoint.y), constraint );
-					transformFlag.skewY( -(mouseY - entryPoint.y), constraint );
+					if (assieteY > 0) subConstraint = 'UP';
+					else subConstraint = 'DOWN';
+					transformObject.skewY( -(mouseY - entryPoint.y), constraint, subConstraint );
+					transformFlag.skewY( -(mouseY - entryPoint.y), constraint, subConstraint );
 					break;
 				
 				case 'RIGHT' :
-					transformObject.skewY( (mouseY - entryPoint.y), constraint );
-					transformFlag.skewY( (mouseY - entryPoint.y), constraint );
+					if (assieteY < 0) subConstraint = 'UP';
+					else subConstraint = 'DOWN';
+					transformObject.skewY( (mouseY - entryPoint.y), constraint, subConstraint );
+					transformFlag.skewY( (mouseY - entryPoint.y), constraint, subConstraint );
 					break;
 			}
 			
@@ -357,6 +373,8 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function replace( bounds:Rectangle, constraint:String ):void
 		{
+			var assieteX:Number = transformObject.assieteX;
+			var assieteY:Number = transformObject.assieteY;
 			var tl:* = linkedObjectList.getObjectByName( 'tlPoint').data;
 			var t:* = linkedObjectList.getObjectByName( 'tPoint').data;
 			var tr:* = linkedObjectList.getObjectByName( 'trPoint').data;
@@ -371,161 +389,37 @@ package railk.as3.transform.item {
 			var skB:* = linkedObjectList.getObjectByName( 'bBorder').data;
 			var center:* = linkedObjectList.getObjectByName( 'centerPoint').data;
 			var rotate:* = linkedObjectList.getObjectByName( 'rotate').data;
-			X = this.localToGlobal( new Point(transformObject.bounds.x, transformObject.bounds.y) ).x; 
-			Y = this.localToGlobal( new Point(transformObject.bounds.x, transformObject.bounds.y) ).y;
-			CENTER.x = this.getRegistration().x * (bounds.width / WIDTH) ;
-			CENTER.y = this.getRegistration().y * (bounds.height / HEIGHT);
-			rotate.x = center.x2 = this.globalToLocal(new Point(X, Y)).x + this.getRegistration().x * (bounds.width / WIDTH);
-			rotate.y = center.y2 = this.globalToLocal(new Point(X, Y)).y + this.getRegistration().y * (bounds.height / HEIGHT);
+			
+			rotate.x = center.x2 = this.globalToLocal(transformObject.matrix.transformPoint(CENTER)).x
+			rotate.y = center.y2 = this.globalToLocal(transformObject.matrix.transformPoint(CENTER)).y;
+			this.changeRegistration(center.x2, center.y2);
+			
+			tl.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).y;
+			tl.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).x;
+			t.y2 = this.globalToLocal(transformObject.matrix.transformPoint(T)).y;
+			t.x2 = this.globalToLocal(transformObject.matrix.transformPoint(T)).x;
+			tr.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).y;
+			tr.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).x;
+			r.y2 = this.globalToLocal(transformObject.matrix.transformPoint(R)).y;
+			r.x2 = this.globalToLocal(transformObject.matrix.transformPoint(R)).x;
+			br.y2 = this.globalToLocal(transformObject.matrix.transformPoint(BR)).y;
+			br.x2 = this.globalToLocal(transformObject.matrix.transformPoint(BR)).x;
+			bl.y2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).y;
+			bl.x2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).x;
+			b.y2 = this.globalToLocal(transformObject.matrix.transformPoint(B)).y;
+			b.x2 = this.globalToLocal(transformObject.matrix.transformPoint(B)).x;
+			l.y2 = this.globalToLocal(transformObject.matrix.transformPoint(L)).y;
+			l.x2 = this.globalToLocal(transformObject.matrix.transformPoint(L)).x;
+			
 			skB.width = skT.width = bounds.width;
 			skL.height = skR.height = bounds.height;
 			
-			switch( constraint )
-			{
-				case 'UP' :
-					tl.y2 = bounds.y;
-					l.y2 = bounds.y + bounds.height * .5;
-					tr.y2 = bounds.y;
-					r.y2 = bounds.y + bounds.height * .5;
-					break;
-					
-				case 'DOWN' :
-					bl.y2 = bounds.y+bounds.height;
-					l.y2 = bounds.y+bounds.height*.5;
-					br.y2 = bounds.y+bounds.height;
-					r.y2 = bounds.y + bounds.height * .5;
-					break;
-					
-				case 'LEFT' :
-					tl.x2 = bounds.x;
-					t.x2 = bounds.x+bounds.width*.5;
-					bl.x2 = bounds.x;
-					b.x2 = bounds.x + bounds.width * .5;
-					break;
-					
-				case 'RIGHT' :
-					tr.x2 = bounds.x+bounds.width;
-					t.x2 = bounds.x+bounds.width*.5;
-					br.x2 = bounds.x+bounds.width;
-					b.x2 = bounds.x + bounds.width * .5;
-					break;
-				
-				case 'LEFT_UP' :
-					t.x2=bounds.x+bounds.width*.5;
-					t.y2=bounds.y;
-					tr.y2=bounds.y;
-					r.y2 = bounds.y + bounds.height * .5;
-					l.x2=bounds.x;
-					l.y2 = bounds.y + bounds.height * .5;
-					bl.x2= bounds.x;
-					b.x2=bounds.x+bounds.width*.5;
-					break;
-					
-				case 'LEFT_DOWN' :
-					l.x2=bounds.x;
-					l.y2 = bounds.y+bounds.height*.5;
-					tl.x2 = bounds.x;
-					t.x2 = bounds.x+bounds.width*.5;
-					b.x2 = bounds.x+bounds.width*.5;
-					b.y2 = bounds.y+bounds.height;
-					br.y2 = bounds.y+bounds.height;
-					r.y2 = bounds.y + bounds.height*.5;
-					break;
-					
-				case 'RIGHT_UP' :
-					t.x2 = bounds.x+bounds.width*.5;
-					t.y2 = bounds.y;
-					tl.y2 = bounds.y;
-					l.y2 = bounds.height*.5 + bounds.y;
-					r.y2 = bounds.height * .5 + bounds.y;
-					r.x2 = bounds.x+bounds.width;
-					br.x2 = bounds.x+bounds.width;
-					b.x2 = bounds.x+bounds.width*.5;
-					break;
-					
-				case 'RIGHT_DOWN' :
-					r.y2 = bounds.y+bounds.height*.5;
-					r.x2 = bounds.x+bounds.width;
-					tr.x2 = bounds.x+bounds.width;
-					t.x2=bounds.x+bounds.width*.5;
-					b.x2=bounds.x+bounds.width*.5;
-					b.y2=bounds.y+bounds.height;
-					bl.y2=bounds.y+bounds.height;
-					l.y2 = bounds.y+bounds.height*.5;
-					break;
-					
-				case 'SKEW_UP':
-					if ( transformObject.assieteX < 0)
-					{
-						r.x2 = br.x2 = tr.x2 = bounds.x + bounds.width;
-						b.x2 = t.x2 = bounds.x + bounds.width * .5;			
-						skL.x2 = skB.x2 = skT.x2 = bounds.x;
-						skR.x2 = bounds.x + bounds.width;
-					}
-					else
-					{
-						l.x2 = bl.x2 = tl.x2 = bounds.x - transformObject.assieteX;
-						b.x2 = t.x2 = bounds.x + bounds.width * .5 - transformObject.assieteX;
-						rotate.x = center.x2 = this.globalToLocal(new Point(X, Y)).x - transformObject.assieteX + this.getRegistration().x * (bounds.width / WIDTH);
-						skL.x2 = skB.x2 = skT.x2 = bounds.x-transformObject.assieteX;
-						skR.x2 = bounds.x+bounds.width-transformObject.assieteX;
-					}
-					break;
-					
-				case 'SKEW_DOWN':
-					if ( transformObject.assieteX > 0)
-					{
-						r.x2 = br.x2 = tr.x2 = bounds.x + bounds.width;
-						b.x2 = t.x2 = bounds.x + bounds.width * .5;
-						skL.x2 = skB.x2 = skT.x2 = bounds.x;
-						skR.x2 = bounds.x + bounds.width;
-					}
-					else
-					{
-						l.x2 = bl.x2 = tl.x2 = bounds.x + transformObject.assieteX;
-						b.x2 = t.x2 = bounds.x + bounds.width * .5 + transformObject.assieteX;
-						rotate.x = center.x2 = this.globalToLocal(new Point(X, Y)).x + transformObject.assieteX + this.getRegistration().x * (bounds.width / WIDTH);
-						skL.x2 = skB.x2 = skT.x2 = bounds.x+transformObject.assieteX;
-						skR.x2 = bounds.x+bounds.width+transformObject.assieteX;
-					}
-					break;
-					
-				case 'SKEW_LEFT':
-					if ( transformObject.assieteY < 0)
-					{
-						b.y2 = br.y2 = bl.y2 = bounds.y + bounds.height;
-						l.y2 = r.y2 = bounds.y + bounds.height * .5;
-						skR.y2 = skL.y2 = skT.y2 = bounds.y;
-						skB.y2 = bounds.y + bounds.height;
-					}
-					else 
-					{
-						t.y2 = tr.y2 = tl.y2 = bounds.y - transformObject.assieteY;
-						l.y2 = r.y2 = bounds.y + bounds.height * .5 - transformObject.assieteY;
-						skR.y2 = skL.y2 = skT.y2 = bounds.y-transformObject.assieteY;
-						skB.y2 = bounds.y + bounds.height - transformObject.assieteY;
-						rotate.y = center.y2 = this.globalToLocal(new Point(X, Y)).y - transformObject.assieteY + this.getRegistration().y * (bounds.height / HEIGHT);
-					}
-					break;
-					
-				case 'SKEW_RIGHT':
-					if ( transformObject.assieteY > 0)
-					{
-						b.y2 = br.y2 = bl.y2 = bounds.y + bounds.height;
-						l.y2 = r.y2 = bounds.y + bounds.height * .5;
-						skR.y2 = skL.y2 = skT.y2 = bounds.y;
-						skB.y2 = bounds.y + bounds.height;
-					}
-					else 
-					{
-						t.y2 = tr.y2 = tl.y2 = bounds.y + transformObject.assieteY;
-						l.y2 = r.y2 = bounds.y + bounds.height * .5 + transformObject.assieteY;
-						skR.y2 = skL.y2 = skT.y2 = bounds.y+transformObject.assieteY;
-						skB.y2 = bounds.y + bounds.height + transformObject.assieteY;
-						rotate.y = center.y2 = this.globalToLocal(new Point(X, Y)).y + transformObject.assieteY + this.getRegistration().y * (bounds.height / HEIGHT);
-					}
-					break;
-			}
+			skL.x2 = skT.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).x;//bounds.x;
+			skB.x2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).x;
+			skR.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).x;//bounds.x + bounds.width;
+			skR.y2 = skL.y2 = skT.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).y;//bounds.y;
+			skB.y2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).y;//bounds.y + bounds.height;
+			
 		}
 		
 		

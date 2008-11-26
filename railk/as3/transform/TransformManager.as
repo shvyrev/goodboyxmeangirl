@@ -181,6 +181,11 @@ package railk.as3.transform {
 			itemsList.clear();
 		}
 		
+		public static function getItem( name:String ):*
+		{
+			return itemsList.getObjectByName(name).data;
+		}
+		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							   DISPOSE
