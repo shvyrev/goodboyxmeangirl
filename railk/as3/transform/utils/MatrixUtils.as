@@ -18,20 +18,12 @@ package railk.as3.transform.utils
 	{
 		// ________________________________________________________________________________________ VARIABLES
 		private var _target:*;
-		private var _assieteX:Number=0;
-		private var _assieteY:Number=0;
 		private var t:Transform;
 		private var m:Matrix;
 		private var m2:Matrix;
 		
 		private var oX:Number;
 		private var oY:Number;
-		private var distX:Number=0;
-		private var distY:Number = 0;
-		private var lastSkewX:Number=0;
-		private var lastSkewY:Number = 0;
-		private var lastDistX:Number=0;
-		private var lastDistY:Number=0;
 		private var tWidth:Number;
 		private var tHeight:Number;
 		
@@ -61,7 +53,6 @@ package railk.as3.transform.utils
 			{
 				m2.a = m.a - (dist/tWidth)*m.a;
 				m2.tx = dist + oX;
-				distX = lastDistX + dist;
 			}
 			else {
 				m2.a = m.a + (dist / tWidth) * m.a;
@@ -77,7 +68,6 @@ package railk.as3.transform.utils
 			{
 				m2.d = m.d - (dist/tHeight)*m.d;
 				m2.ty = dist + oY;
-				distY = lastDistY + dist;
 			}
 			else {
 				m2.d = m.d + (dist / tHeight) * m.d;
@@ -96,8 +86,6 @@ package railk.as3.transform.utils
 					m2.d = m.d - (distY/tHeight)*m.d;
 					m2.ty = distY + oY;
 					m2.tx = distX + oX;
-					this.distY = lastDistY + distY;
-					this.distX = lastDistX + distX;
 					break;
 				
 				case 'LEFT_DOWN':
@@ -105,7 +93,6 @@ package railk.as3.transform.utils
 					m2.d = m.d + (distY/tHeight)*m.d;
 					m2.ty = oY;
 					m2.tx = distX + oX;
-					this.distX = lastDistX + distX;
 					break;
 				
 				case 'RIGHT_UP':
@@ -113,7 +100,6 @@ package railk.as3.transform.utils
 					m2.d = m.d - (distY/tHeight)*m.d;
 					m2.ty = distY + oY;
 					m2.tx = oX;
-					this.distY = lastDistY + distY;
 					break;
 					
 				case 'RIGHT_DOWN':
@@ -126,44 +112,34 @@ package railk.as3.transform.utils
 			t.matrix = m2;
 		}
 		
-		public function skewX( dist:Number, constraint:String, sub:String ):void
+		public function skewX( dist:Number, constraint:String ):void
 		{
 			m2.c = m.c + (dist / tHeight) * m.d;
 			if ( constraint == 'UP' )
 			{
 				m2.tx = oX - dist;
-				if (sub == 'RIGHT') distX = lastDistX + dist;
-				else distX = lastSkewX + dist;
 			}
 			else
 			{
 				m2.tx = oX;
-				if (sub == 'LEFT') distX = lastDistX + dist;
-				else distX = lastSkewX + dist;
 			}
 			m2.ty = oY;
 			t.matrix = m2;
-			_assieteX =  lastSkewX + dist;
 		}
 		
-		public function skewY( dist:Number, constraint:String, sub:String ):void
+		public function skewY( dist:Number, constraint:String ):void
 		{
 			m2.b = m.b + (dist/tWidth) * m.a;
 			m2.tx = oX;
 			if ( constraint == 'LEFT' )
 			{
 				m2.ty = oY - dist;
-				if(sub == 'UP') distY = lastDistY - dist;
-				else distY = lastSkewY + dist;
 			}
 			else
 			{
 				m2.ty = oY;
-				if(sub == 'UP') distY = lastDistY + dist;
-				else distY = lastSkewY + dist;
 			}
 			t.matrix = m2;
-			_assieteY = lastSkewY + dist;		
 		}
 		
 		
@@ -192,10 +168,6 @@ package railk.as3.transform.utils
 			m.b = m2.b;
 			m.c = m2.c;
 			m.d = m2.d;
-			lastDistX = distX;
-			lastDistY = distY;
-			lastSkewX = _assieteX;
-			lastSkewY = _assieteY;
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -210,12 +182,10 @@ package railk.as3.transform.utils
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   	 GETTER/SETTER
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get bounds():Rectangle { return new Rectangle(distX, distY, _target.width, _target.height); }
-		
-		public function get assieteX():Number { return _assieteX; }
-		
-		public function get assieteY():Number { return _assieteY; }
-		
 		public function get matrix():Matrix { return m2; }
+		
+		public function get height():Number { return _target.height; }
+		
+		public function get width():Number { return _target.width; }
     }
 }

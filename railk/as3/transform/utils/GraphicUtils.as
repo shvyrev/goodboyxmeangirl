@@ -1,6 +1,7 @@
 ﻿package railk.as3.transform.utils {
 	
 	import flash.display.Sprite;
+	import flash.geom.Point;
 	import railk.as3.display.DSprite;
 	import railk.as3.display.drawingShape.DrawingShape;
 	import railk.as3.display.GraphicShape;
@@ -22,23 +23,23 @@
 			var corner:DrawingShape = new DrawingShape();
 			var data:Object =  { 
 				width:14, height:14,  pixels:[ 
-					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,1,1,
-					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,[color,1],[0xFFFFFFFF,1],
-					1,[color,1],1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,[color,1],[0xFFFFFFFF,1],
-					1,[color,1],1,1,[0xFFFFFFFF,1],1,1,1,1,1,1,1,1,1,
-					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					[0xFFFFFFFF,1],1,1,[color,1],[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
-					1,[color,1],1,1,[0xFFFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					[0xFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,1,1,
+					[0xFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,[color,1],[0xFFFFFF,1],
+					1,[color,1],1,1,1,1,1,1,1,1,1,1,1,[0xFFFFFF,1],
+					[0xFFFFFF,1],1,1,1,1,1,1,1,1,1,1,1,[color,1],[0xFFFFFF,1],
+					1,[color,1],1,1,[0xFFFFFF,1],1,1,1,1,1,1,1,1,1,
+					[0xFFFFFF,1],1,1,[color,1],[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					1,[color,1],1,1,[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					[0xFFFFFF,1],1,1,[color,1],[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					1,[color,1],1,1,[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					[0xFFFFFF,1],1,1,[color,1],[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					1,[color,1],1,1,[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					[0xFFFFFF,1],1,1,[color,1],[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
+					1,[color,1],1,1,[0xFFFFFF,1],0,0,0,0,0,0,0,0,0,
 					1,1,1,1,1,0,0,0,0,0,0,0,0,0
 				] 
 			}; 
-			corner.drawPixelArrayShape( data );
+			corner.drawPixelGraphicsShape( data );
 			corner.setRegistration(6, 6);
 			corner.rotation2 = rotation;
 			corner.x2 = x;
@@ -91,28 +92,28 @@
 			var border:DrawingShape = new DrawingShape();
 			var data:Object =  { 
 				width:10, height:19, pixels:[ 
-					[0xFFFFFFFF,1],1,1,1,1,1,0,0,0,0,
-					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],1,1,1,1,
-					[0xFFFFFFFF,1],1,1,1,1,1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],
-					1,[0xFF000000,1],1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					[0xFFFFFFFF,1],1,1,1,1,1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],
-					1,[0xFF000000,1],1,1,1,1,1,1,1,[0xFFFFFFFF,1],
-					[0xFFFFFFFF,1],1,1,1,1,1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],1,1,1,1,
-					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
-					1,[0xFF000000,1],1,1,1,[0xFFFFFFFF,1],0,0,0,0,
-					[0xFFFFFFFF,1],1,1,1,[0xFF000000,1],[0xFFFFFFFF,1],0,0,0,0,
+					[0xFFFFFF,1],1,1,1,1,1,0,0,0,0,
+					[0xFFFFFF,1],1,1,1,[0x000000,1],[0xFFFFFF,1],0,0,0,0,
+					1,[0x000000,1],1,1,1,[0xFFFFFF,1],0,0,0,0,
+					[0xFFFFFF,1],1,1,1,[0x000000,1],[0xFFFFFF,1],0,0,0,0,
+					1,[0x000000,1],1,1,1,[0xFFFFFF,1],0,0,0,0,
+					[0xFFFFFF,1],1,1,1,[0x000000,1],[0xFFFFFF,1],0,0,0,0,
+					1,[0x000000,1],1,1,1,[0xFFFFFF,1],1,1,1,1,
+					[0xFFFFFF,1],1,1,1,1,1,1,1,[0x000000,1],[0xFFFFFF,1],
+					1,[0x000000,1],1,1,1,1,1,1,1,[0xFFFFFF,1],
+					[0xFFFFFF,1],1,1,1,1,1,1,1,[0x000000,1],[0xFFFFFF,1],
+					1,[0x000000,1],1,1,1,1,1,1,1,[0xFFFFFF,1],
+					[0xFFFFFF,1],1,1,1,1,1,1,1,[0x000000,1],[0xFFFFFF,1],
+					1,[0x000000,1],1,1,1,[0xFFFFFF,1],1,1,1,1,
+					[0xFFFFFF,1],1,1,1,[0x000000,1],[0xFFFFFF,1],0,0,0,0,
+					1,[0x000000,1],1,1,1,[0xFFFFFF,1],0,0,0,0,
+					[0xFFFFFF,1],1,1,1,[0x000000,1],[0xFFFFFF,1],0,0,0,0,
+					1,[0x000000,1],1,1,1,[0xFFFFFF,1],0,0,0,0,
+					[0xFFFFFF,1],1,1,1,[0x000000,1],[0xFFFFFF,1],0,0,0,0,
 					1,1,1,1,1,1,0,0,0,0
 				] 
 			}; 
-			border.drawPixelArrayShape( data );
+			border.drawPixelGraphicsShape( data );
 			border.setRegistration(6, 9);
 			border.rotation2 = rotation;
 			border.x2 = x;
@@ -192,7 +193,7 @@
 			return moins;
 		}
 		
-		public static function regPoint(x,y):DSprite
+		public static function regPoint(x:Number,y:Number):DSprite
 		{
 			var regPoint:DSprite = new DSprite();
 			regPoint.graphics.lineStyle(.5,0xFFFFFF,1);
@@ -208,7 +209,7 @@
 			return regPoint;
 		}
 		
-		public static function contour(x,y,w,h):Sprite
+		public static function contour(x:Number,y:Number,w:Number,h:Number):Sprite
 		{
 			var contour:Sprite = new Sprite();
 			contour.graphics.lineStyle( 1, 0x000000, 1,true,'normal','square','miter' );
@@ -221,7 +222,7 @@
 			return contour;
 		}
 		
-		public static function bg(x,y,w,h):Sprite
+		public static function bg(x:Number,y:Number,w:Number,h:Number):Sprite
 		{
 			var bg:Sprite = new Sprite();
 			bg.graphics.beginFill(0x000000,.5);
@@ -242,8 +243,8 @@
 			return hover;
 		}
 		
-		public static function skewBorder(x,y,w,h,constraint):GraphicShape
-		{
+		public static function skewBorder(x:Number,y:Number,w:Number,h:Number,constraint:String):GraphicShape
+		{ 
 			var border:GraphicShape = new GraphicShape()
 			border.rectangle(0xFF0000, 0, 0, w, h);
 			if (constraint == 'LEFT') border.setRegistration(w, 0);

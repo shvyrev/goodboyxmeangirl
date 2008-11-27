@@ -160,5 +160,48 @@ package railk.as3.display.drawingShape
 			result.bitmapData.unlock();
 			this.addChild( result );
 		}
+		
+		/**
+		 * 
+		 * @param	data {height:number,width:number,pixels:array}
+		 */
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					DRAW PIXELS ARRAY
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function drawPixelGraphicsShape( data:Object ):void 
+		{
+			var color:uint = 0xFFFFFFFF;
+			this.graphics.clear();
+			
+			var m:Boolean=true;
+			var xLoop:int=0;
+			var yLoop:int = 0;
+			var nx:Number, pos:int;
+			while (true) 
+			{
+				nx = m ? xLoop++ : --xLoop;
+				pos = yLoop * data.width + nx;
+				
+				var pixel = data.pixels[pos];
+				if ( pixel is int && pixel == 1)
+				{
+					this.graphics.beginFill(color,1);
+					this.graphics.drawRect( nx, yLoop, 1, 1 );
+				}
+				else if ( pixel is Array)
+				{
+					color = pixel[0];
+					this.graphics.beginFill(color);
+					this.graphics.drawRect( nx, yLoop, 1, 1 );
+				}
+				
+				if (xLoop == data.width || xLoop == 0) {
+					if (yLoop++ == data.height) break;
+					m = !m;
+				}
+			}
+			
+			this.graphics.endFill();
+		}
 	}
 }
