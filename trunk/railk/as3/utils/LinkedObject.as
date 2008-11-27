@@ -12,18 +12,18 @@ package railk.as3.utils
 	
 	public class LinkedObject extends Proxy
 	{
-		private var master:*;
+		private var _master:*;
 		private var linked:Array;
 		
 		public function LinkedObject( master:*, ...args ):void
 		{
-			this.master = master;
+			_master = master;
 			linked = args;
 		}
 		
 		flash_proxy override function callProperty(methodName:*, ...args:Array):* 
 		{ 
-			master[methodName].apply(null, args);
+			_master[methodName].apply(null, args);
 			for (var i:int = 0; i < linked.length; i++) 
 			{
 				linked[i][methodName].apply(null, args);
@@ -31,16 +31,18 @@ package railk.as3.utils
 		}
 		
 		flash_proxy override function getProperty(prop:*):* {
-			return master[prop];
+			return _master[prop];
 		}
 		
 		flash_proxy override function setProperty(prop:*,value:*):void {
-			master[prop] = value;
+			_master[prop] = value;
 			for (var i:int = 0; i < linked.length; i++) 
 			{
 				linked[i][prop] = value;
 			}
 		}
+		
+		public function get master():* { return _master; }
 	}
 	
 }

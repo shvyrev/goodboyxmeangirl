@@ -21,6 +21,7 @@ package railk.as3.transform {
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.Clone;
+	import railk.as3.utils.LinkedObject;
 	import railk.as3.ui.*;
 	
 	public class TransformManager
@@ -67,7 +68,7 @@ package railk.as3.transform {
 		{
 			walker = itemsList.head;
 			while ( walker ) {
-				_stage.addChild( walker.data );
+				_stage.addChild( walker.data.master );
 				//walker.data.initListeners();
 				walker.data.x = walker.data.X;
 				walker.data.y = walker.data.Y;
@@ -82,7 +83,7 @@ package railk.as3.transform {
 		{
 			walker = itemsList.head;
 			while ( walker ) {
-				_stage.addChild( walker.data );
+				_stage.addChild( walker.data.master );
 				walker.data.dispose();
 				walker = walker.next;
 			}
@@ -94,8 +95,8 @@ package railk.as3.transform {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function add( name:String, object:* ):void 
 		{
-			itemsList.add([name, new TransformItem(_stage, name, object)]);
-			initItemListeners( itemsList.tail.data );
+			itemsList.add([name, new LinkedObject( new TransformItem(_stage, name, object), object)]);
+			initItemListeners( itemsList.tail.data.master );
 		}
 		
 		public static function addMultiple( args:Array ):void 
@@ -103,8 +104,8 @@ package railk.as3.transform {
 			var i:int = 0;
 			for ( i; i < args.length; i++) 
 			{
-				itemsList.add([args[i].name, new TransformItem(_stage, args[i].name, args[i].object)]);
-				initItemListeners( itemsList.tail.data );
+				itemsList.add([args[i].name, new LinkedObject( new TransformItem(_stage, args[i].name, args[i].object), args[i].object)]);
+				initItemListeners( itemsList.tail.data.master );
 			}
 		}
 		
@@ -167,7 +168,7 @@ package railk.as3.transform {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function remove( name:String ):void 
 		{
-			itemsList.getObjectByName( name).data.dispose();
+			itemsList.getObjectByName( name).data.master.dispose();
 			itemsList.remove( name );
 		}
 		

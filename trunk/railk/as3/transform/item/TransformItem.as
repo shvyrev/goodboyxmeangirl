@@ -13,6 +13,7 @@ package railk.as3.transform.item {
 	import flash.display.Stage;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.geom.Transform;
 	import flash.text.TextField
 	import flash.events.MouseEvent;
 	import flash.events.Event;
@@ -150,10 +151,10 @@ package railk.as3.transform.item {
 			shapes.add( ['lBorder', GraphicUtils.skewBorder(TL.x, TL.y, 15, HEIGHT,'LEFT')] );
 			shapes.add( ['bBorder', GraphicUtils.skewBorder(TL.x, HEIGHT,WIDTH,15,'BOTTOM' )] );
 			shapes.add( ['rBorder', GraphicUtils.skewBorder(WIDTH,TL.y,15,HEIGHT,'RIGHT' )] );
-			shapes.add( ['tlPoint', GraphicUtils.corner(0xFF000000,TL.x, TL.y,0)] );
-			shapes.add( ['blPoint', GraphicUtils.corner(0xFF000000,BL.x, BL.y,-90)] );
-			shapes.add( ['trPoint', GraphicUtils.corner(0xFF000000,TR.x, TR.y,90)] );
-			shapes.add( ['brPoint', GraphicUtils.corner(0xFF000000,BR.x, BR.y,180)] );
+			shapes.add( ['tlPoint', GraphicUtils.corner(0x000000,TL.x, TL.y,0)] );
+			shapes.add( ['blPoint', GraphicUtils.corner(0x000000,BL.x, BL.y,-90)] );
+			shapes.add( ['trPoint', GraphicUtils.corner(0x000000,TR.x, TR.y,90)] );
+			shapes.add( ['brPoint', GraphicUtils.corner(0x000000,BR.x, BR.y,180)] );
 			shapes.add( ['centerPoint', GraphicUtils.regPoint(CENTER.x, CENTER.y)] );
 			shapes.add( ['tPoint', GraphicUtils.border(T.x, T.y,90)] );
 			shapes.add( ['lPoint', GraphicUtils.border(L.x, L.y,0)] );
@@ -170,9 +171,9 @@ package railk.as3.transform.item {
 				hover.x2 = walker.data.x2;
 				hover.y2 = walker.data.y2;
 				addChild( hover );
-				var lk:LinkedObject = new LinkedObject(hover, walker.data);
+				var lk:LinkedObject = new LinkedObject(walker.data, hover );
 				linkedObjectList.add([walker.name,lk])
-				if ( walker.name != 'rotate') enableToolsActions( walker.name, lk );
+				 enableToolsActions( walker.name, lk );
 				walker.data.visible = true;
 				walker = walker.next;
 			}
@@ -208,58 +209,58 @@ package railk.as3.transform.item {
 			switch( name )
 			{
 				case 'tlPoint' :
-					move = function() { scale(item, 'LEFT_UP'); replace( transformObject.bounds, 'LEFT_UP' ); };
+					move = function() { scale(item, 'LEFT_UP'); replace(); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'blPoint' :
-					move = function() { scale(item, 'LEFT_DOWN'); replace( transformObject.bounds, 'LEFT_DOWN' ); };
+					move = function() { scale(item, 'LEFT_DOWN'); replace(); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'trPoint' :
-					move = function() { scale(item, 'RIGHT_UP'); replace( transformObject.bounds, 'RIGHT_UP' ); };
+					move = function() { scale(item, 'RIGHT_UP'); replace( ); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'brPoint' :
-					move = function() { scale(item, 'RIGHT_DOWN'); replace( transformObject.bounds, 'RIGHT_DOWN' ); };
+					move = function() { scale(item, 'RIGHT_DOWN'); replace(); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'centerPoint' :
-					move = function() { moveRegPoint(item); trace('move'); };
+					move = function() { moveRegPoint(item); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'tPoint' :
-					move = function() { scale(item, 'UP'); replace( transformObject.bounds, 'UP' ); };
+					move = function() { scale(item, 'UP'); replace(); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'lPoint' :
-					move =  function() { scale(item, 'LEFT'); replace( transformObject.bounds, 'LEFT' ); };
+					move =  function() { scale(item, 'LEFT'); replace(); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'rPoint' :
-					move = function() { scale(item, 'RIGHT'); replace( transformObject.bounds, 'RIGHT' ); };
+					move = function() { scale(item, 'RIGHT'); replace(); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'bPoint' :
-					move = function() { scale(item, 'DOWN'); replace( transformObject.bounds, 'DOWN' ); };
+					move = function() { scale(item, 'DOWN'); replace(); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
 				case 'tBorder' :
-					move = function() { skew(item, 'UP');  replace( transformObject.bounds, 'SKEW_UP' ); };
+					move = function() { skew(item, 'UP');  replace(); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					skewState = 'UP';
 					break;
 				case 'lBorder' :
-					move = function() { skew(item, 'LEFT');  replace( transformObject.bounds, 'SKEW_LEFT' ); };
+					move = function() { skew(item, 'LEFT');  replace(); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					skewState = 'LEFT';
 					break;
 				case 'rBorder' :
-					move = function() { skew(item, 'RIGHT');  replace( transformObject.bounds, 'SKEW_RIGHT' ); };
+					move = function() { skew(item, 'RIGHT');  replace(); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					skewState = 'RIGHT';
 					break;
 				case 'bBorder' :
-					move = function() { skew(item, 'DOWN');  replace( transformObject.bounds, 'SKEW_DOWN' ); };
+					move = function() { skew(item, 'DOWN');  replace(); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
 					skewState = 'DOWN';
 					break;
@@ -267,7 +268,7 @@ package railk.as3.transform.item {
 					move = function() { rotate(item); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
 			}
-			transformAction.enable( name, item, 'mouse', null, null , function() { HEIGHT = transformObject.bounds.height; WIDTH = transformObject.bounds.width; transformObject.apply(); transformFlag.apply(); }, down, move);
+			transformAction.enable( name, item, 'mouse', null, null , function() { HEIGHT = transformObject.height; WIDTH = transformObject.width; transformObject.apply(); transformFlag.apply(); }, down, move);
 
 		}
 		
@@ -309,37 +310,26 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function skew( item:*, constraint:String='' ):void
 		{
-			var subConstraint:String = '';
-			var assieteX:Number = transformObject.assieteX;
-			var assieteY:Number = transformObject.assieteY;
 			switch(constraint)
 			{
 				case 'UP' :
-					if (assieteX > 0) subConstraint = 'LEFT';
-					else subConstraint = 'RIGHT';
-					transformObject.skewX( -(mouseX - entryPoint.x), constraint, subConstraint );
-					transformFlag.skewX( -(mouseX - entryPoint.x), constraint, subConstraint );
+					transformObject.skewX( -(mouseX - entryPoint.x), constraint);
+					transformFlag.skewX( -(mouseX - entryPoint.x), constraint);
 					break;
 					
 				case 'DOWN' :
-					if (assieteX < 0) subConstraint = 'LEFT';
-					else if (assieteX > 0) subConstraint = 'RIGHT';
-					transformObject.skewX( (mouseX - entryPoint.x), constraint, subConstraint );
-					transformFlag.skewX( (mouseX - entryPoint.x), constraint, subConstraint );
+					transformObject.skewX( (mouseX - entryPoint.x), constraint);
+					transformFlag.skewX( (mouseX - entryPoint.x), constraint);
 					break;
 					
 				case 'LEFT' :
-					if (assieteY > 0) subConstraint = 'UP';
-					else subConstraint = 'DOWN';
-					transformObject.skewY( -(mouseY - entryPoint.y), constraint, subConstraint );
-					transformFlag.skewY( -(mouseY - entryPoint.y), constraint, subConstraint );
+					transformObject.skewY( -(mouseY - entryPoint.y), constraint);
+					transformFlag.skewY( -(mouseY - entryPoint.y), constraint);
 					break;
 				
 				case 'RIGHT' :
-					if (assieteY < 0) subConstraint = 'UP';
-					else subConstraint = 'DOWN';
-					transformObject.skewY( (mouseY - entryPoint.y), constraint, subConstraint );
-					transformFlag.skewY( (mouseY - entryPoint.y), constraint, subConstraint );
+					transformObject.skewY( (mouseY - entryPoint.y), constraint);
+					transformFlag.skewY( (mouseY - entryPoint.y), constraint);
 					break;
 			}
 			
@@ -350,8 +340,9 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function rotate( item:*):void
 		{
-			transformObject.rotate( CENTER.x, CENTER.y, (360 * (mouseY - entryPoint.y)) / 360 );
-			transformFlag.rotate( CENTER.x, CENTER.y, (360 * (mouseY - entryPoint.y)) / 360 );
+			//transformObject.rotate( CENTER.x, CENTER.y, (360 * (mouseY - entryPoint.y)) / 360 );
+			//transformFlag.rotate( CENTER.x, CENTER.y, (360 * (mouseY - entryPoint.y)) / 360 );
+			this.rotation2 = (360 * (mouseY - entryPoint.y)) / 360;
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -371,10 +362,8 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																			   			 REPLACE TOOLS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function replace( bounds:Rectangle, constraint:String ):void
+		private function replace():void
 		{
-			var assieteX:Number = transformObject.assieteX;
-			var assieteY:Number = transformObject.assieteY;
 			var tl:* = linkedObjectList.getObjectByName( 'tlPoint').data;
 			var t:* = linkedObjectList.getObjectByName( 'tPoint').data;
 			var tr:* = linkedObjectList.getObjectByName( 'trPoint').data;
@@ -411,14 +400,17 @@ package railk.as3.transform.item {
 			l.y2 = this.globalToLocal(transformObject.matrix.transformPoint(L)).y;
 			l.x2 = this.globalToLocal(transformObject.matrix.transformPoint(L)).x;
 			
-			skB.width = skT.width = bounds.width;
-			skL.height = skR.height = bounds.height;
+			drawSkewBorders( skT.master, new Point(tl.x2, tl.y2 + 15), new Point(tr.x2, tr.y2 + 15), new Point(tr.x2, tr.y2), new Point(tl.x2, tl.y2) );
+			drawSkewBorders( skL.master,new Point(tl.x2-15,tl.y2),new Point(bl.x2-15,bl.y2),new Point(bl.x2,bl.y2),new Point(tl.x2,tl.y2) );
+			drawSkewBorders( skB.master, new Point(tl.x2, tl.y2 + 15), new Point(tr.x2, tr.y2 + 15), new Point(tr.x2, tr.y2), new Point(tl.x2, tl.y2));
+			drawSkewBorders( skR.master,new Point(tr.x2-15,tr.y2),new Point(br.x2-15,br.y2),new Point(br.x2,br.y2),new Point(tr.x2,tr.y2));
 			
-			skL.x2 = skT.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).x;//bounds.x;
+			skL.x2 = skT.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).x;
 			skB.x2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).x;
-			skR.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).x;//bounds.x + bounds.width;
-			skR.y2 = skL.y2 = skT.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).y;//bounds.y;
-			skB.y2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).y;//bounds.y + bounds.height;
+			skR.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).x;
+			skR.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).y;
+			skL.y2 = skT.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).y;
+			skB.y2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).y;
 			
 		}
 		
@@ -453,6 +445,23 @@ package railk.as3.transform.item {
 			R = new Point(WIDTH, HEIGHT*.5 );
 			B = new Point( WIDTH*.5, HEIGHT);
 			T = new Point( WIDTH*.5, 0);
+		}
+		
+		private function drawSkewBorders(who:GraphicShape, A:Point, B:Point, C:Point, D:Point ):void
+		{
+			var dx:Number = B.x - A.x;
+			var dy:Number = A.y - D.y;
+			var dw:Number = D.x - A.x;
+			var dh:Number = B.y - A.y;
+			
+			who.graphics.clear();
+			who.graphics.beginFill(0xFF0000);
+			who.graphics.moveTo(0, 0)
+			who.graphics.lineTo(dx, dh)
+			who.graphics.lineTo(dx+dw, dh+dy)
+			who.graphics.lineTo(0+dw, dy)
+			who.graphics.lineTo(0, 0)
+			who.graphics.endFill();
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
