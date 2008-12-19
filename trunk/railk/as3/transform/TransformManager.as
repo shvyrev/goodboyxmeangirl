@@ -12,6 +12,7 @@ package railk.as3.transform {
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.text.TextField;
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.transform.item.*;
@@ -69,7 +70,6 @@ package railk.as3.transform {
 			walker = itemsList.head;
 			while ( walker ) {
 				_stage.addChild( walker.data.master );
-				//walker.data.initListeners();
 				walker.data.x = walker.data.X;
 				walker.data.y = walker.data.Y;
 				walker = walker.next;
@@ -94,8 +94,12 @@ package railk.as3.transform {
 		// 																	 ADD OBJECTS TO THE TRANSFORM LIST
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function add( name:String, object:* ):void 
-		{
-			itemsList.add([name, new LinkedObject( new TransformItem(_stage, name, object), object)]);
+		{	
+			if( getType(object) == 'text') itemsList.add([name, new LinkedObject( new TransformText(_stage, name, object), object)]);
+			else
+			{
+				itemsList.add([name, new LinkedObject( new TransformItem(_stage, name, object,manageChilds( name,object)), object)]);
+			}
 			initItemListeners( itemsList.tail.data.master );
 		}
 		
@@ -104,9 +108,34 @@ package railk.as3.transform {
 			var i:int = 0;
 			for ( i; i < args.length; i++) 
 			{
-				itemsList.add([args[i].name, new LinkedObject( new TransformItem(_stage, args[i].name, args[i].object), args[i].object)]);
+				if( getType(args[i].object) == 'text') itemsList.add([args[i].name, new LinkedObject( new TransformText(_stage, args[i].name, args[i].object), args[i].object)]);
+				else
+				{
+					itemsList.add([args[i].name, new LinkedObject( new TransformItem(_stage,args[i].name,args[i].object, manageChilds( args[i].name, args[i].object) ),args[i].object)]);
+				}
 				initItemListeners( itemsList.tail.data.master );
 			}
+		}
+		
+		public static function manageChilds(name:String, object:*):ObjectList
+		{
+			var childList:ObjectList = new ObjectList();
+			if (object.numChildren > 0 )
+			{
+				for (var i:int = 0; i <object.numChildren ; i++) 
+				{
+					var child:* = object.getChildAt(i);
+					if( getType(child) == 'text') childList.add([child.name, new LinkedObject( new TransformText(_stage, child.name, child), child)]);
+					else 
+					{
+						childList.add([child.name, new LinkedObject( new TransformItem(_stage, child.name, child, manageChilds( child.name, child ) ), child)]);
+					}
+				}
+				
+			}
+			else childList = null;
+			
+			return childList;
 		}
 		
 		public static function initItemListeners( item:TransformItem ):void
@@ -185,6 +214,15 @@ package railk.as3.transform {
 		public static function getItem( name:String ):*
 		{
 			return itemsList.getObjectByName(name).data;
+		}
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																							 UTILITIES
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private static function getType(object:*):String
+		{
+			if ( object is TextField ) return 'text';
+			return 'object';
 		}
 		
 		

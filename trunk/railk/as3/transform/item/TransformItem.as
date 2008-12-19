@@ -18,13 +18,13 @@ package railk.as3.transform.item {
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	import flash.ui.Mouse;
-	import railk.as3.display.DSprite;
-	
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
+	import railk.as3.display.DSprite;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.transform.TransformManagerEvent;
 	import railk.as3.transform.utils.*;
+	import railk.as3.transform.matrix.*;
 	import railk.as3.utils.RegistrationPoint;
 	import railk.as3.utils.InfoBulle;
 	import railk.as3.utils.objectList.ObjectList;
@@ -49,39 +49,42 @@ package railk.as3.transform.item {
 		private var HEIGHT:Number;
 		
 		private var transformItem:TransformItem;
-		private var type:String;
 		private var object:*;
 		private var editFlag:Sprite;
 		private var contour:Sprite;
+		private var tools:DSprite;
+		private var childList:ObjectList;
 		private var statesList:ObjectList;
 		private var shapes:ObjectList;
-		private var linkedObjectList:ObjectList;
+		private var toolList:ObjectList;
 		private var walker:ObjectNode;
-		private var hasChildren:Boolean = false;
-		private var transformObject:MatrixUtils;
-		private var transformFlag:MatrixUtils;
+		private var transformTools:TransformMatrix;
+		private var transformObject:TransformMatrix;
+		private var transformFlag:TransformMatrix;
 		private var transformAction:TransformItemAction;
 		private var entryPoint:Point;
+		private var _hasChildren:Boolean = false;
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function TransformItem( stage:Stage, name:String, object:* )
+		public function TransformItem( stage:Stage, name:String, object:*, childList:ObjectList=null )
 		{	
 			statesList = new ObjectList();
 			shapes = new ObjectList();
-			linkedObjectList = new ObjectList();
+			toolList = new ObjectList();
+			tools = new DSprite();
 			
 			transformItem = this;
-			
 			this.name = name;
 			this.object = object;
-			this.type = getType();
-			if ( this.object.numChildren > 0 ) this.hasChildren = true;
+			this.childList = childList;
+			if ( childList != null ) _hasChildren = true;
 			
 			transformAction = new TransformItemAction(stage);
-			transformObject = new MatrixUtils( object );
+			transformObject = new TransformMatrix( object );
+			transformTools = new TransformMatrix( tools );
 			entryPoint = new Point();
 			
 			getToolsPoints();
@@ -119,13 +122,7 @@ package railk.as3.transform.item {
 										//////////////////////////////////////////////////////////////
 										dispatchEvent( new TransformManagerEvent( TransformManagerEvent.ON_ITEM_SELECTED, { item:transformItem } ) );
 										//////////////////////////////////////////////////////////////
-									},
-									function()
-									{
-										//////////////////////////////////////////////////////////////
-										dispatchEvent( new TransformManagerEvent( TransformManagerEvent.ON_ITEM_OPEN, { item:transformItem } ) );
-										//////////////////////////////////////////////////////////////
-									} );
+									});
 									
 		}
 		
@@ -141,42 +138,59 @@ package railk.as3.transform.item {
 			editFlag = GraphicUtils.bg(TL.x, TL.y, WIDTH, HEIGHT );
 			editFlag.alpha = 0;
 			addChild( editFlag );
-			transformFlag = new MatrixUtils( editFlag );
+			transformFlag = new TransformMatrix( editFlag );
+			transformAction.enable( 'editflag', editFlag, 'mouse', null, null, null, null, null, null, 
+									function() {
+										//manageChildren();
+										//////////////////////////////////////////////////////////////
+										dispatchEvent( new TransformManagerEvent( TransformManagerEvent.ON_ITEM_OPEN, { item:transformItem } ) );
+										//////////////////////////////////////////////////////////////
+									});
 		}
 		
 		
 		private function createShapes():void
 		{
-			shapes.add( ['tBorder', GraphicUtils.skewBorder(TL.x, TL.y, WIDTH, 15,'TOP' )] );
-			shapes.add( ['lBorder', GraphicUtils.skewBorder(TL.x, TL.y, 15, HEIGHT,'LEFT')] );
-			shapes.add( ['bBorder', GraphicUtils.skewBorder(TL.x, HEIGHT,WIDTH,15,'BOTTOM' )] );
-			shapes.add( ['rBorder', GraphicUtils.skewBorder(WIDTH,TL.y,15,HEIGHT,'RIGHT' )] );
-			shapes.add( ['tlPoint', GraphicUtils.corner(0x000000,TL.x, TL.y,0)] );
-			shapes.add( ['blPoint', GraphicUtils.corner(0x000000,BL.x, BL.y,-90)] );
-			shapes.add( ['trPoint', GraphicUtils.corner(0x000000,TR.x, TR.y,90)] );
-			shapes.add( ['brPoint', GraphicUtils.corner(0x000000,BR.x, BR.y,180)] );
-			shapes.add( ['centerPoint', GraphicUtils.regPoint(CENTER.x, CENTER.y)] );
-			shapes.add( ['tPoint', GraphicUtils.border(T.x, T.y,90)] );
-			shapes.add( ['lPoint', GraphicUtils.border(L.x, L.y,0)] );
-			shapes.add( ['rPoint', GraphicUtils.border(R.x, R.y,180)] );
-			shapes.add( ['bPoint', GraphicUtils.border(B.x, B.y, -90)] );
-			shapes.add( ['rotate', GraphicUtils.rotate(CENTER.x, CENTER.y, WIDTH*.25,WIDTH*.25-30)] );
+			shapes.add( ['ROTATE', GraphicUtils.rotate(CENTER.x, CENTER.y, WIDTH*.25,WIDTH*.25-30), 'bigtool'] );
+			shapes.add( ['SKEW_UP', GraphicUtils.skewBorder(TL.x, TL.y, WIDTH, 15,'TOP' ), 'bigtool'] );
+			shapes.add( ['SKEW_LEFT', GraphicUtils.skewBorder(TL.x, TL.y, 15, HEIGHT,'LEFT'), 'bigtool'] );
+			shapes.add( ['SKEW_DOWN', GraphicUtils.skewBorder(TL.x, HEIGHT,WIDTH,15,'BOTTOM' ), 'bigtool'] );
+			shapes.add( ['SKEW_RIGHT', GraphicUtils.skewBorder(WIDTH,TL.y,15,HEIGHT,'RIGHT' ), 'bigtool'] );
+			shapes.add( ['LEFT_UP', GraphicUtils.corner(0x000000,TL.x, TL.y,0)] );
+			shapes.add( ['LEFT_DOWN', GraphicUtils.corner(0x000000,BL.x, BL.y,-90)] );
+			shapes.add( ['RIGHT_UP', GraphicUtils.corner(0x000000,TR.x, TR.y,90)] );
+			shapes.add( ['RIGHT_DOWN', GraphicUtils.corner(0x000000,BR.x, BR.y,180)] );
+			shapes.add( ['CENTER', GraphicUtils.regPoint(CENTER.x, CENTER.y)] );
+			shapes.add( ['UP', GraphicUtils.border(T.x, T.y,90)] );
+			shapes.add( ['LEFT', GraphicUtils.border(L.x, L.y,0)] );
+			shapes.add( ['RIGHT', GraphicUtils.border(R.x, R.y,180)] );
+			shapes.add( ['DOWN', GraphicUtils.border(B.x, B.y, -90)] );
 			
 			walker = shapes.head;
 			while ( walker ) {
-				addChild( walker.data );
 				walker.data.name = walker.name;
-				var hover:GraphicShape = GraphicUtils.hover();
-				hover.name = walker.name;
-				hover.x2 = walker.data.x2;
-				hover.y2 = walker.data.y2;
-				addChild( hover );
-				var lk:LinkedObject = new LinkedObject(walker.data, hover );
-				linkedObjectList.add([walker.name,lk])
-				 enableToolsActions( walker.name, lk );
+				if ( walker.group == 'bigtool') 
+				{
+					toolList.add([walker.name,walker.data])
+					enableToolsActions( walker.name, walker.data );
+					tools.addChild( walker.data );
+				}
+				else
+				{
+					var hover:GraphicShape = GraphicUtils.hover();
+					hover.name = walker.name;
+					hover.x2 = walker.data.x2;
+					hover.y2 = walker.data.y2;
+					var lk:LinkedObject = new LinkedObject(walker.data, hover );
+					toolList.add([walker.name,lk])
+					enableToolsActions( walker.name, lk );
+					tools.addChild( walker.data );
+					tools.addChild( hover );
+				}	
 				walker.data.visible = true;
 				walker = walker.next;
 			}
+			addChild(tools);	
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -205,68 +219,31 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function enableToolsActions( name:String, item:* ):void
 		{
-			var move:Function, down:Function, skewState:String;
+			var move:Function, down:Function;
 			switch( name )
 			{
-				case 'tlPoint' :
-					move = function() { scale(item, 'LEFT_UP'); replace(); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'blPoint' :
-					move = function() { scale(item, 'LEFT_DOWN'); replace(); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'trPoint' :
-					move = function() { scale(item, 'RIGHT_UP'); replace( ); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'brPoint' :
-					move = function() { scale(item, 'RIGHT_DOWN'); replace(); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'centerPoint' :
+				case 'CENTER' :
 					move = function() { moveRegPoint(item); };
 					down = function() { entryPoint = new Point(item.x2, item.y2); };
 					break;
-				case 'tPoint' :
-					move = function() { scale(item, 'UP'); replace(); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'lPoint' :
-					move =  function() { scale(item, 'LEFT'); replace(); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'rPoint' :
-					move = function() { scale(item, 'RIGHT'); replace(); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'bPoint' :
-					move = function() { scale(item, 'DOWN'); replace(); };
-					down = function() { entryPoint = new Point(item.x2, item.y2); };
-					break;
-				case 'tBorder' :
-					move = function() { skew(item, 'UP');  replace(); };
-					down = function() { entryPoint = new Point(mouseX, mouseY); };
-					skewState = 'UP';
-					break;
-				case 'lBorder' :
-					move = function() { skew(item, 'LEFT');  replace(); };
-					down = function() { entryPoint = new Point(mouseX, mouseY); };
-					skewState = 'LEFT';
-					break;
-				case 'rBorder' :
-					move = function() { skew(item, 'RIGHT');  replace(); };
-					down = function() { entryPoint = new Point(mouseX, mouseY); };
-					skewState = 'RIGHT';
-					break;
-				case 'bBorder' :
-					move = function() { skew(item, 'DOWN');  replace(); };
-					down = function() { entryPoint = new Point(mouseX, mouseY); };
-					skewState = 'DOWN';
-					break;
-				case 'rotate' :
+				
+				case 'ROTATE' :
 					move = function() { rotate(item); };
 					down = function() { entryPoint = new Point(mouseX, mouseY); };
+					break;
+					
+				case 'SKEW_UP' :
+				case 'SKEW_LEFT' :
+				case 'SKEW_DOWN' :
+				case 'SKEW_RIGHT' :
+					move = function() { skew(item, name);  replace(); };
+					down = function() { entryPoint = new Point(mouseX, mouseY); };
+					break;
+					
+				default :
+					move = function() { scale(item, name); replace(); };
+					down = function() { entryPoint = new Point(item.x2, item.y2); };
+					break;	
 			}
 			transformAction.enable( name, item, 'mouse', null, null , function() { HEIGHT = transformObject.height; WIDTH = transformObject.width; transformObject.apply(); transformFlag.apply(); }, down, move);
 
@@ -277,28 +254,26 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function scale( item:*, constraint:String='' ):void
 		{
+			item.x2 = mouseX
+			item.y2 = mouseY
 			switch( constraint )
 			{
 				case 'UP' :
 				case 'DOWN' :
-					item.y2 = mouseY;
-					transformObject.scaleY( item.y2 - entryPoint.y, constraint);
-					transformFlag.scaleY( item.y2 - entryPoint.y, constraint);
+					transformObject.scaleY( 0,item.y2 - entryPoint.y, constraint);
+					transformFlag.scaleY( 0, item.y2 - entryPoint.y, constraint);
 					break;
 					
 				case 'LEFT' :
 				case 'RIGHT' :
-					item.x2 = mouseX;
-					transformObject.scaleX( item.x2 - entryPoint.x, constraint);
-					transformFlag.scaleX( item.x2 - entryPoint.x, constraint);
+					transformObject.scaleX( item.x2 - entryPoint.x,0, constraint);
+					transformFlag.scaleX( item.x2 - entryPoint.x,0, constraint);
 					break;
 				
 				case 'LEFT_UP' :
 				case 'LEFT_DOWN' :
 				case 'RIGHT_UP' :
 				case 'RIGHT_DOWN' :
-					item.x2 = mouseX
-					item.y2 = mouseY
 					transformObject.scaleXY( item.x2 - entryPoint.x, item.y2-entryPoint.y, constraint);
 					transformFlag.scaleXY( item.x2 - entryPoint.x, item.y2 - entryPoint.y, constraint);
 					break;
@@ -312,24 +287,24 @@ package railk.as3.transform.item {
 		{
 			switch(constraint)
 			{
-				case 'UP' :
-					transformObject.skewX( -(mouseX - entryPoint.x), constraint);
-					transformFlag.skewX( -(mouseX - entryPoint.x), constraint);
+				case 'SKEW_UP' :
+					transformObject.skewX( -(mouseX - entryPoint.x),0, constraint);
+					transformFlag.skewX( -(mouseX - entryPoint.x),0, constraint);
 					break;
 					
-				case 'DOWN' :
-					transformObject.skewX( (mouseX - entryPoint.x), constraint);
-					transformFlag.skewX( (mouseX - entryPoint.x), constraint);
+				case 'SKEW_DOWN' :
+					transformObject.skewX( (mouseX - entryPoint.x),0, constraint);
+					transformFlag.skewX( (mouseX - entryPoint.x),0, constraint);
 					break;
 					
-				case 'LEFT' :
-					transformObject.skewY( -(mouseY - entryPoint.y), constraint);
-					transformFlag.skewY( -(mouseY - entryPoint.y), constraint);
+				case 'SKEW_LEFT' :
+					transformObject.skewY( 0,-(mouseY - entryPoint.y), constraint);
+					transformFlag.skewY( 0,-(mouseY - entryPoint.y), constraint);
 					break;
 				
-				case 'RIGHT' :
-					transformObject.skewY( (mouseY - entryPoint.y), constraint);
-					transformFlag.skewY( (mouseY - entryPoint.y), constraint);
+				case 'SKEW_RIGHT' :
+					transformObject.skewY( 0,(mouseY - entryPoint.y), constraint);
+					transformFlag.skewY( 0,(mouseY - entryPoint.y), constraint);
 					break;
 			}
 			
@@ -340,9 +315,11 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function rotate( item:*):void
 		{
-			//transformObject.rotate( CENTER.x, CENTER.y, (360 * (mouseY - entryPoint.y)) / 360 );
-			//transformFlag.rotate( CENTER.x, CENTER.y, (360 * (mouseY - entryPoint.y)) / 360 );
-			this.rotation2 = (360 * (mouseY - entryPoint.y)) / 360;
+			var dist:Number = Math.sqrt( (mouseX - entryPoint.x) * (mouseX - entryPoint.x) + (mouseY - entryPoint.y) * (mouseY - entryPoint.y));
+			//this.rotation2 = dist;
+			transformObject.rotate(this.getRegistration().x, this.getRegistration().y, dist);
+			transformFlag.rotate(this.getRegistration().x, this.getRegistration().y, dist);
+			//transformTools.rotate(this.getRegistration().x, this.getRegistration().y, dist);
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -350,7 +327,7 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function moveRegPoint( item:*, x:Number=NaN, y:Number=NaN ):void
 		{
-			var rotate:* = linkedObjectList.getObjectByName( 'rotate').data;
+			var rotate:* = toolList.getObjectByName( 'ROTATE').data;
 			rotate.x = item.x2 = (x)? x : mouseX; 
 			rotate.y = item.y2 = (y)? y : mouseY;
 			changeRegistration(mouseX, mouseY);
@@ -364,25 +341,27 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function replace():void
 		{
-			var tl:* = linkedObjectList.getObjectByName( 'tlPoint').data;
-			var t:* = linkedObjectList.getObjectByName( 'tPoint').data;
-			var tr:* = linkedObjectList.getObjectByName( 'trPoint').data;
-			var r:* = linkedObjectList.getObjectByName( 'rPoint').data;
-			var br:* = linkedObjectList.getObjectByName( 'brPoint').data;
-			var b:* = linkedObjectList.getObjectByName( 'bPoint').data;
-			var bl:* = linkedObjectList.getObjectByName( 'blPoint').data;
-			var l:* = linkedObjectList.getObjectByName( 'lPoint').data;
-			var skT:* = linkedObjectList.getObjectByName( 'tBorder').data;
-			var skL:* = linkedObjectList.getObjectByName( 'lBorder').data;
-			var skR:* = linkedObjectList.getObjectByName( 'rBorder').data;
-			var skB:* = linkedObjectList.getObjectByName( 'bBorder').data;
-			var center:* = linkedObjectList.getObjectByName( 'centerPoint').data;
-			var rotate:* = linkedObjectList.getObjectByName( 'rotate').data;
+			var tl:* = toolList.getObjectByName( 'LEFT_UP').data;
+			var t:* = toolList.getObjectByName( 'UP').data;
+			var tr:* = toolList.getObjectByName( 'RIGHT_UP').data;
+			var r:* = toolList.getObjectByName( 'RIGHT').data;
+			var br:* = toolList.getObjectByName( 'RIGHT_DOWN').data;
+			var b:* = toolList.getObjectByName( 'DOWN').data;
+			var bl:* = toolList.getObjectByName( 'LEFT_DOWN').data;
+			var l:* = toolList.getObjectByName( 'LEFT').data;
+			var skT:* = toolList.getObjectByName( 'SKEW_UP').data;
+			var skL:* = toolList.getObjectByName( 'SKEW_LEFT').data;
+			var skR:* = toolList.getObjectByName( 'SKEW_RIGHT').data;
+			var skB:* = toolList.getObjectByName( 'SKEW_DOWN').data;
+			var center:* = toolList.getObjectByName( 'CENTER').data;
+			var rotate:* = toolList.getObjectByName( 'ROTATE').data;
 			
+			//regPoint/rorate
 			rotate.x = center.x2 = this.globalToLocal(transformObject.matrix.transformPoint(CENTER)).x
 			rotate.y = center.y2 = this.globalToLocal(transformObject.matrix.transformPoint(CENTER)).y;
 			this.changeRegistration(center.x2, center.y2);
 			
+			//scale tool
 			tl.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).y;
 			tl.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).x;
 			t.y2 = this.globalToLocal(transformObject.matrix.transformPoint(T)).y;
@@ -400,30 +379,44 @@ package railk.as3.transform.item {
 			l.y2 = this.globalToLocal(transformObject.matrix.transformPoint(L)).y;
 			l.x2 = this.globalToLocal(transformObject.matrix.transformPoint(L)).x;
 			
-			drawSkewBorders( skT.master, new Point(tl.x2, tl.y2 + 15), new Point(tr.x2, tr.y2 + 15), new Point(tr.x2, tr.y2), new Point(tl.x2, tl.y2) );
-			drawSkewBorders( skL.master,new Point(tl.x2-15,tl.y2),new Point(bl.x2-15,bl.y2),new Point(bl.x2,bl.y2),new Point(tl.x2,tl.y2) );
-			drawSkewBorders( skB.master, new Point(tl.x2, tl.y2 + 15), new Point(tr.x2, tr.y2 + 15), new Point(tr.x2, tr.y2), new Point(tl.x2, tl.y2));
-			drawSkewBorders( skR.master,new Point(tr.x2-15,tr.y2),new Point(br.x2-15,br.y2),new Point(br.x2,br.y2),new Point(tr.x2,tr.y2));
+			//skew tools
+			drawSkewBorders( skT, new Point(tl.x2, tl.y2 + 15), new Point(tr.x2, tr.y2 + 15), new Point(tr.x2, tr.y2), new Point(tl.x2, tl.y2) );
+			drawSkewBorders( skL, new Point(tl.x2-15,tl.y2),new Point(bl.x2-15,bl.y2),new Point(bl.x2,bl.y2),new Point(tl.x2,tl.y2) );
+			drawSkewBorders( skB, new Point(tl.x2, tl.y2 + 15), new Point(tr.x2, tr.y2 + 15), new Point(tr.x2, tr.y2), new Point(tl.x2, tl.y2));
+			drawSkewBorders( skR, new Point(tr.x2-15,tr.y2),new Point(br.x2-15,br.y2),new Point(br.x2,br.y2),new Point(tr.x2,tr.y2));
 			
 			skL.x2 = skT.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).x;
 			skB.x2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).x;
 			skR.x2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).x;
 			skR.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TR)).y;
 			skL.y2 = skT.y2 = this.globalToLocal(transformObject.matrix.transformPoint(TL)).y;
-			skB.y2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).y;
+			skB.y2 = this.globalToLocal(transformObject.matrix.transformPoint(BL)).y;	
 			
+		}
+		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					   MANAGE CHILDREN
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		private function manageChildren():void
+		{
+			walker = childList.head;
+			while (walker)
+			{
+				(walker.data as TransformItem).enableChildren();
+				walker = walker.next;
+			}
+		}
+		
+		private function enableChildren():void
+		{
+			trace( 'open');
 		}
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							 UTILITIES
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getType():String
-		{
-			if ( object is TextField ) return 'text';
-			return 'object';
-		}
-		
 		public function changeRegistration(x:Number, y:Number):void
 		{
 			this.setRegistration( x, y );
@@ -492,6 +485,12 @@ package railk.as3.transform.item {
 			editFlag = null;
 			transformItem = null;
 		}
+		
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 GETTER/SETTER
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		public function get hasChildren():Boolean { return _hasChildren; }
 		
 	}
 }

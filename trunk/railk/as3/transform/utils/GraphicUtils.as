@@ -239,7 +239,7 @@
 		{
 			var hover:GraphicShape = new GraphicShape();
 			hover.alpha = 0;
-			hover.cercle(0xFF0000, 0, 0, 18);
+			hover.cercle(0xFF0000, 0, 0, 12);
 			return hover;
 		}
 		

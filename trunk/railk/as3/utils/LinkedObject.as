@@ -38,12 +38,7 @@ package railk.as3.utils
 			_master[prop] = value;
 			for (var i:int = 0; i < linked.length; i++) 
 			{
-				if ( prop == 'x2') linked[i]['x'] = _master.x;
-				else if (prop =='y2' ) linked[i]['y'] = _master.y;
-				else if (prop =='scaleX2' ) linked[i]['scaleX'] = _master.scaleX;
-				else if (prop =='scaleY2' ) linked[i]['scaleY'] = _master.scaleY;
-				else if (prop =='rotation2' ) linked[i]['rotation'] = _master.rotattion;
-				else linked[i][prop] = value;
+				linked[i][prop] = value;
 			}
 		}
 		
