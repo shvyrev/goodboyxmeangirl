@@ -179,13 +179,13 @@ package railk.as3.data.loader {
 		 * @param	bufferSize  | 0=loading the whole before playing / XX=the number of second to buffer before playing
 		 * @param	saveAs  | allow the file to be saved by the user
 		 */
-		public function add( url:String, name:String =  "", args:Object = null, priority:int = 0, mode:String = 'sameDomain', preventCache:Boolean = false, bufferSize:int = 0, saveAs:Boolean = false ):void 
+		public function add( url:String, name:String =  "", args:Object = null, priority:int = 0, forceType:String='', mode:String = 'sameDomain', preventCache:Boolean = false, bufferSize:int = 0, saveAs:Boolean = false ):void 
 		{
 			itemURL = new URLRequest( url );
 			if ( name == "" ) { itemName = url; } else { itemName = name; } 
 			itemArgs = args;
 			itemMode = mode;
-			itemType = getItemType( url );
+			itemType = (forceType == '')?getItemType( url ):forceType;
 			itemPriority = priority;
 			itemState = MultiLoaderItem.WAITING;
 			itemPreventCache = preventCache;

@@ -19,7 +19,8 @@ package railk.as3.display {
 		
 		public var graphicsCopy:*;
 		public var copy:Boolean;
-	
+		private var _type:String;
+		
 		
 		public function GraphicShape(copy:Boolean=false)
 		{
@@ -47,6 +48,7 @@ package railk.as3.display {
 		*/
 		public function gradient(colors:Array, W:int, H:int, rotation:int, type:String, alphas:Array, ratios:Array, hide:Boolean = false):void 
 		{
+			_type = 'gradient';
 			var matrix:Matrix = new Matrix();
 			matrix.createGradientBox(W, H, rotation, 0, 0);
 			
@@ -74,6 +76,7 @@ package railk.as3.display {
 		*/
 		public function rectangle (color:uint, X:int, Y:int, W:int, H:int, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
 		{
+			_type = 'rectangle';
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
@@ -93,6 +96,7 @@ package railk.as3.display {
 		 */
 		public function triangle (A:Point, B:Point, C:Point, color:uint, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
 		{
+			_type = 'triangle';
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
@@ -118,6 +122,7 @@ package railk.as3.display {
 		*/
 		public function roundRectangle (color:uint, X:int, Y:int, W:int, H:int, cornerW:int, cornerH:int, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
 		{
+			_type = 'roundRectangle';
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
@@ -136,7 +141,9 @@ package railk.as3.display {
 		* @param	radius
 		* @return
 		*/
-		public function cercle (color:uint, X:int, Y:int, radius:Number, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void {
+		public function cercle (color:uint, X:int, Y:int, radius:Number, lineThickness:Number = NaN, lineColor:uint = 0xFFFFFF):void 
+		{
+			_type = 'cercle';
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color,alpha);
@@ -161,6 +168,7 @@ package railk.as3.display {
 		*/
 		public function camembert (color:uint, X:Number, Y:Number, radius:Number, startAngle:Number, endAngle:Number, segments:int, holeRadius:Number=NaN, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF ):void 
 		{	
+			_type = 'camembert';
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color,1);
@@ -201,6 +209,7 @@ package railk.as3.display {
 		 */
 		public function donut(  color:uint, X:Number, Y:Number, outerRadius:Number, innerRadius:Number, lineThickness:Number=NaN, lineColor:uint=0xFFFFFF):void
 		{
+			_type = 'donut';
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color, 1);
@@ -224,6 +233,7 @@ package railk.as3.display {
 		*/
 		public function arcCircle(epaisseur:int, color:uint, centerX:int, centerY:int, radius:int, startAngle:int, arcAngle:int, precision:int):void 
 		{
+			_type = 'arcCircle';
 			this.graphicsCopy.clear();
 			startAngle = startAngle/360;
 			arcAngle = arcAngle/360;
@@ -248,6 +258,7 @@ package railk.as3.display {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function arcRibbon( epaisseur:int, color:uint, radius:int, cornerRadius:int, arcAngle:int, precision:int):void 
 		{
+			_type = 'arcRibbon';
 			var X:int;
 			var Y:int;
 			var controlY:int;
@@ -365,6 +376,13 @@ package railk.as3.display {
 			return degree * 0.0174532925;
 		}
 		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					 		TO STRING
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		override public function toString():String 
+		{
+			return '[ GRAPHICSHAPE > ' + this.name.toUpperCase() + ', (type:' + this._type + ') ]';
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	GETTER/SETTER
@@ -378,5 +396,7 @@ package railk.as3.display {
 			newCol.color = value;
 			t.colorTransform = newCol;
 		}
+		
+		public function get type():String { return _type; }
 	}
 }

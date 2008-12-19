@@ -15,7 +15,7 @@ package railk.as3.display
 		public function DSprite( extra:Object = null )
 		{
 			super();
-			this._extra = extra;
+			this._extra = (extra)?extra:_extra;
 		}
 		
 		public function set extra( value:Object ):void {

@@ -8,6 +8,8 @@
 
 package railk.as3.transform.item {
 	
+	import flash.display.Stage;
+	
 	public class TransformText extends TransformItem
 	{
 		
@@ -17,7 +19,9 @@ package railk.as3.transform.item {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function TransformText( stage:Stage, name:String, object:* )
 		{	
-			
+			super( stage, name, object );
 		}
+		
+		private function skew( item:*, constraint:String='' ):void { };
 	}
 }

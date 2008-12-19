@@ -19,7 +19,9 @@ package railk.as3.transform.item
 		private var active:ObjectNode;
 		private var stage:Stage;
 		private var objects:ObjectList;
+		private var functionsState:ObjectList;
 		private var walker:ObjectNode;
+		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
@@ -28,6 +30,7 @@ package railk.as3.transform.item
 		{
 			this.stage = stage;
 			objects = new ObjectList();
+			functionsState = new ObjectList();
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -36,58 +39,60 @@ package railk.as3.transform.item
 		public function enable( name:String, object:*, type:String='mouse', hover:Function=null,out:Function=null,up:Function=null,down:Function=null,move:Function=null,click:Function=null,doubleClick:Function=null):void
 		{
 			object.name = name;
-			initListeners(object,type,(doubleClick != null)?true:false);
+			functionsState.add([name, object, null, null, { hover:(hover != null)?true:false, out:(out != null)?true:false, up:(up != null)?true:false, down:(down != null)?true:false, move:(move != null)?true:false, click:(click != null)?true:false, doubleClick:(doubleClick != null)?true:false } ])
 			objects.add([name, object,null,null,{type:type, hover:hover, out:out, up:up, down:down, move:move, click:click, dClick:doubleClick}]);
+			initListeners(object,type);
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					  MANAGE LISTENERS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function initListeners(object:*,type:String,doubleClick:Boolean):void
+		private function initListeners(object:*,type:String ):void
 		{
-			
-			if (doubleClick) 
+			var states:Object = functionsState.getObjectByName( object.name).args;
+			if (states.doubleClick) 
 			{
 				object.doubleClickEnabled = true;
-				object.addEventListener( MouseEvent.DOUBLE_CLICK, manageEvent, false, 0, true );
+				object.addEventListener( MouseEvent.DOUBLE_CLICK, manageEvent );
 			}
 			object.buttonMode = true;
-			object.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			if(states.click) object.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			if (type == 'mouse')
 			{
-				object.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
-				object.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
+				if(states.hover) object.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
+				if(states.out) object.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
 			}
 			else if (type == 'roll' )
 			{
-				object.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
-				object.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
+				if(states.hover) object.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
+				if(states.out) object.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 			}
-			object.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			object.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			if(states.down) object.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			if(states.up) object.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
 		}
 		
-		private function delListeners(object:*,type:String,doubleClick:Boolean):void
+		private function delListeners(object:*,type:String):void
 		{
-			if (doubleClick) 
+			var states:Object = functionsState.getObjectByName( object.name).args;
+			if (states.doubleClick) 
 			{
 				object.doubleClickEnabled = false;
 				object.removeEventListener( MouseEvent.DOUBLE_CLICK, manageEvent );
 			}
 			object.buttonMode = false;
-			object.removeEventListener( MouseEvent.CLICK, manageEvent );
+			if(states.click) object.removeEventListener( MouseEvent.CLICK, manageEvent );
 			if (type == 'mouse')
 			{
-				object.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent);
-				object.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );
+				if(states.hover) object.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent);
+				if(states.out) object.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );
 			}
 			else if (type == 'roll' )
 			{
-				object.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
-				object.removeEventListener( MouseEvent.ROLL_OUT, manageEvent);
+				if(states.hover) object.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
+				if(states.out) object.removeEventListener( MouseEvent.ROLL_OUT, manageEvent);
 			}
-			object.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			object.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			if(states.down) object.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			if(states.up) object.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -100,7 +105,7 @@ package railk.as3.transform.item
 			{
 				if ( walker.args.active != true )
 				{
-					initListeners( walker.data, walker.args.type, (walker.args.dClick!= null)?true:false );
+					initListeners( walker.data, walker.args.type );
 				}
 				walker = walker.next;
 			}
@@ -116,7 +121,7 @@ package railk.as3.transform.item
 			{
 				if ( walker.data != active )
 				{
-					delListeners( walker.data, walker.args.type,(walker.args.dClick!= null)?true:false  );
+					delListeners( walker.data, walker.args.type  );
 				}
 				walker = walker.next;
 			}
@@ -130,7 +135,7 @@ package railk.as3.transform.item
 			walker = objects.head;
 			while ( walker )
 			{
-				delListeners(walker.data, walker.args.type, (walker.args.dClick!= null)?true:false );
+				delListeners(walker.data, walker.args.type );
 				walker = walker.next;
 			}
 			objects.clear();
@@ -150,7 +155,7 @@ package railk.as3.transform.item
 					break;
 					
 				case MouseEvent.DOUBLE_CLICK :
-					if (f.dClick != null) f.dclick.apply();
+					if (f.dClick != null) f.dClick.apply();
 					break;	
 					
 				case MouseEvent.MOUSE_DOWN :
