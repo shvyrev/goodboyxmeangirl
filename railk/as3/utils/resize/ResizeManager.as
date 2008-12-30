@@ -148,8 +148,8 @@ package railk.as3.utils.resize {
 		
 		static public function set maxWidth(value:Number):void { _maxWidth = value; }
 		
-		static public function get maxheight():Number { return _maxheight; }
+		static public function get maxHeight():Number { return _maxheight; }
 		
-		static public function set maxheight(value:Number):void { _maxheight = value; }
+		static public function set maxHeight(value:Number):void { _maxheight = value; }
 	}
 }
