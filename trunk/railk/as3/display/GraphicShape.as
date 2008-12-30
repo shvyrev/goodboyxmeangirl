@@ -66,6 +66,25 @@ package railk.as3.display {
 		// 																						 	RECTANGLE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * 
+		 * @param	color
+		 * @param	A
+		 * @param	B
+		 * @param	thickness
+		 */
+		public function line( color:uint, A:Point, B:Point, thickness:Number=1 ):void
+		{
+			_type = 'line';
+			this.graphicsCopy.clear();
+			this.graphicsCopy.lineStyle( thickness, color, 1);
+			this.graphicsCopy.moveTo(A.x, A.y);
+			this.graphicsCopy.lineTo(B.x, B.y);
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						 	RECTANGLE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
 		* 
 		* @param	color
 		* @param	X

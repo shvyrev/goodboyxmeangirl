@@ -8,12 +8,17 @@
 package railk.as3.utils {
 	public class ObjectDumper {
 		public static function dump( o:Object ):String {
+			return toString( o )+'\n';
+		}
+		
+		private static function toString( o:Object ):String
+		{
 			var result:String = '';
 			for ( var name in o ) 
 			{
 				result += '[' + name +' => ';
-				result += o[name];
-				result += ' ]\n';
+				result += (o[name].toString() == '[object Object]')?toString(o[name]):o[name].toString();
+				result += ' ] ';
 			}
 			if ( !result ) result = '[ empty ]';
 			return result;

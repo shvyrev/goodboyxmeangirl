@@ -25,6 +25,11 @@ package railk.as3.geom
 			dy = end.y - origin.y;
 			distance = Math.sqrt( dx * dx + dy * dy);
 		}
+		
+		public function toString():String
+		{
+			return '[VECTOR 2D > (x:'+this.dx+'), (y:' + this.dy + ') ]';
+		}
 	}
 	
 }

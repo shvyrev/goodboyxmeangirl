@@ -54,5 +54,10 @@ package railk.as3.geom
 			return new Point( (vectorX.dy*dx-vectorX.dx*dy)/determinant, (-vectorY.dy*dx+vectorY.dx*dy)/determinant );
 		}
 		
+		public function toString():String
+		{
+			return '[ COORDINATE SYSTEM > (origin:' + this.origin + '), (x:' + this.x + '), (y:' + this.y + ') END ]';
+		}
+		
 	}
 }

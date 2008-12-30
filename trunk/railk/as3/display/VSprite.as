@@ -11,8 +11,8 @@ package railk.as3.display
 	import flash.geom.Matrix;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import fl.motion.MatrixTransformer
 	
+	import railk.as3.geom.Bounds;
 	import railk.as3.utils.objectList.ObjectList;
 	import railk.as3.utils.objectList.ObjectNode;
 	
@@ -21,13 +21,16 @@ package railk.as3.display
 		
 		// ________________________________________________________________________________________ VARIABLES
 		private var _name:String = 'undefined';
+		private var _parent:*;
 		private var matrix:Matrix = new Matrix();
-		private var parent:*;
 		private var childs:ObjectList=new ObjectList();
 		
 		private var origin:Point = new Point();
 		private var end:Point = new Point();
 		private var center:Point = new Point();
+		private var reg:Point = new Point();
+		private var _width:Number;
+		private var _height:Number;
 		private var _rotation:Number=0;
 		private var _rotation2:Number = 0;
 		private var _scaleX:Number=1;
@@ -41,7 +44,7 @@ package railk.as3.display
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function VSprite(parent:*)
 		{
-			this.parent = parent;
+			_parent = parent;
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -51,7 +54,7 @@ package railk.as3.display
 		{
 			this.redefine(child);
 			childs.add([child.name, child, ((scale)?'scale':'') ]);
-			parent.addChild( child );
+			_parent.addChild( child );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -68,6 +71,14 @@ package railk.as3.display
 		public function removeChild( target:* ):void
 		{
 			childs.remove( target );
+		}
+		
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						  	  TO ARRAY
+		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		public function changeRegistration(x:Number , y:Number):void
+		{
+			reg = new Point(x, y);
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -106,8 +117,11 @@ package railk.as3.display
 				if ( child.x > end.x ) end.x = child.x; 
 				if ( child.y > end.y ) end.y = child.y;
 				//center
-				center.x = (end.x-origin.x)*.5;
-				center.y = (end.y - origin.y) * .5;
+				reg.x = center.x = (end.x-origin.x)*.5;
+				reg.y = center.y = (end.y - origin.y) * .5;
+				//width/height
+				_width = end.x -origin.x;
+				_height = end.y -origin.y;
 			}
 		}
 		
@@ -227,19 +241,19 @@ package railk.as3.display
 		public function get x2():Number { return center.x; }
 		public function set x2(value:Number):void 
 		{ 
-			var dist:Number = (center.x - origin.x);
+			var dist:Number = (reg.x - origin.x);
 			this.replace((value-origin.x)-dist,'x2');
 			origin.x = value-dist;
-			center.x = value;
+			reg.x = value;
 		}
 		
 		public function get y2():Number { return center.y; }
 		public function set y2(value:Number):void 
 		{ 
-			var dist:Number = (center.y - origin.y);
+			var dist:Number = (reg.y - origin.y);
 			this.replace( (value-origin.y) - dist, 'y2');
 			origin.y = value-dist;
-			center.y = value;
+			reg.y = value;
 		}
 		
 		public function get rotation2():Number { return _rotation2; }
@@ -271,17 +285,19 @@ package railk.as3.display
 			_name = value; 
 		}
 		
-		public function get width():Number { return end.x-origin.x; }
+		public function get width():Number { return _width }
 		public function set width(value:Number):void 
 		{ 
 			//_name = value; 
 		}
 		
-		public function get height():Number { return end.y-origin.y; }
+		public function get height():Number { return _height }
 		public function set height(value:Number):void 
 		{ 
 			//_name = value; 
 		}
 		
+		public function get parent():* { return _parent; }
+				
 	}
 }

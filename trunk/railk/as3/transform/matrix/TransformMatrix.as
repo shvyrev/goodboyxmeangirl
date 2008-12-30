@@ -51,8 +51,9 @@ package railk.as3.transform.matrix
 			o = target.transform.matrix;
 			w =  new Matrix();
 			
-			wX = oX = target.x;
-			wY = oY = target.y;
+			wX = wY = 0; 
+			oX = target.x;
+			oY = target.y;
 			tWidth = target.width;
 			tHeight = target.height;
 		}
@@ -63,44 +64,40 @@ package railk.as3.transform.matrix
 		/*
 		 * scaleX 
 		 */
-		public function scaleX( dx:Number, dy:Number, constraint:String, corner:Boolean=false ):void
+		public function scaleX( dist:Number, x:Number, y:Number, constraint:String, corner:Boolean=false ):void
 		{
 			matrices.finale.scaleX.identity();
-			var dist:Number = getDistance(dx, dy).x;
-			if ( constraint == 'LEFT')
+			if ( constraint == 'L')
 			{
-				matrices.working.scaleX.a = states.last.matrix.a - (dist / tWidth);
-				transformations.scaleX.define( function(dist) {  return wX + Math.cos(angle) * dist }, function(dist){ return wY + Math.sin(angle) * dist } );
+				matrices.working.scaleX.a = states.last.matrix.a + (dist/tWidth);
+				transformations.scaleX.define( function(dist) {  return x }, function(dist){ return y} );
 			}
 			else {
-				matrices.working.scaleX.a = states.last.matrix.a + (dist / tWidth);
+				matrices.working.scaleX.a = states.last.matrix.a - (dist / tWidth);
 				transformations.scaleX.define( function(dist) { return (corner)?wX:oX }, function(dist) {  return (corner)?wY:oY } );
 			}
 			Distances.scaleX += dist;
 			transformations.current = (corner)? 'scaleXY':'scaleX';
-			transformations.scaleX.dist = dist;
 			transform();
 		}
 		
 		/*
 		 * scaleY 
 		 */
-		public function scaleY( dx:Number, dy:Number, constraint:String, corner:Boolean=false ):void
+		public function scaleY( dist:Number, x:Number, y:Number, constraint:String, corner:Boolean=false ):void
 		{
 			matrices.finale.scaleY.identity();
-			var dist:Number = getDistance(dx, dy).y;
-			if ( constraint == 'UP')
+			if ( constraint == 'T')
 			{
-				matrices.working.scaleY.d = states.last.matrix.d - (dist / tHeight);
-				transformations.scaleY.define(  function(dist) { return wX - Math.sin(angle) * dist }, function(dist) { return wY + Math.cos(angle) * dist } );
+				matrices.working.scaleY.d = states.last.matrix.d + (dist/tHeight);
+				transformations.scaleY.define(  function(dist) { return x }, function(dist) { return y } );
 			}
 			else {
-				matrices.working.scaleY.d = states.last.matrix.d + (dist / tHeight);
+				matrices.working.scaleY.d = states.last.matrix.d -(dist / tHeight);
 				transformations.scaleY.define( function(dist) { return (corner)?wX:oX }, function(dist) { return (corner)?wY:oY } );
 			}
 			Distances.scaleY += dist;
 			transformations.current = (corner)? 'scaleXY':'scaleY';
-			transformations.scaleY.dist = dist;
 			transform();
 		}
 		
@@ -109,7 +106,7 @@ package railk.as3.transform.matrix
 		 */
 		public function scaleXY( dx:Number, dy:Number, constraint:String ):void
 		{
-			switch( constraint )
+			/*switch( constraint )
 			{
 				case 'LEFT_UP':
 					scaleX( dx, 0, 'LEFT', true);
@@ -130,7 +127,7 @@ package railk.as3.transform.matrix
 					scaleX( dx, 0, 'RIGHT', true);
 					scaleY( 0, dy, 'DOWN', true);
 					break;	
-			}
+			}*/
 		}
 		
 		/*
@@ -139,7 +136,7 @@ package railk.as3.transform.matrix
 		public function skewX( dx:Number, dy:Number, constraint:String ):void
 		{
 			matrices.finale.skewX.identity();
-			var dist:Number = getDistance(dx,dy).x;
+			var dist:Number = 0;//getDistance(dx,dy).x;
 			if ( constraint == 'SKEW_UP' )
 			{
 				matrices.working.skewX.c = states.last.matrix.c - (dist / tHeight);
@@ -164,7 +161,7 @@ package railk.as3.transform.matrix
 		public function skewY( dx:Number, dy:Number, constraint:String ):void
 		{
 			matrices.finale.skewY.identity();
-			var dist:Number = getDistance(dx,dy).y;
+			var dist:Number = 0;//getDistance(dx,dy).y;
 			if ( constraint == 'SKEW_LEFT' )
 			{
 				matrices.working.skewY.b = states.last.matrix.b - (dist / tWidth);
@@ -202,15 +199,6 @@ package railk.as3.transform.matrix
 			transform();
 		}
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					  GET THE DISTANCE
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getDistance( dx:Number, dy:Number ):Point
-		{
-			var dist:Number = Math.sqrt(dx*dx + dy*dy);
-			return  new Point( ((dx < 0)? -dist:dist),((dy < 0)? -dist:dist) );
-			
-		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																			CONCAT THE MATRIX IN ORDER
@@ -238,10 +226,10 @@ package railk.as3.transform.matrix
 				if ( transformations.scaleX.activated && ( transformations.current == 'scaleX' || transformations.current == 'scaleXY' ) ) wY = (transformations.scaleX.y as Function).apply(null, [transformations.scaleX.dist]);
 				if ( transformations.scaleY.activated && ( transformations.current == 'scaleY' || transformations.current == 'scaleXY' ) ) wX = (transformations.scaleY.x as Function).apply(null, [transformations.scaleY.dist]);
 				if ( transformations.scaleY.activated && ( transformations.current == 'scaleY' || transformations.current == 'scaleXY' ) ) wY = (transformations.scaleY.y as Function).apply(null, [transformations.scaleY.dist]);
-				if ( transformations.skewX.activated && transformations.current == 'skewX') wX = (transformations.skewX.x as Function).apply(null, [transformations.skewX.dist]);
-				if ( transformations.skewX.activated && transformations.current == 'skewX' ) wY = (transformations.skewX.y as Function).apply(null, [transformations.skewX.dist]);
-				if ( transformations.skewY.activated && transformations.current == 'skewY' ) wX = (transformations.skewY.x as Function).apply(null, [transformations.skewY.dist]);
-				if ( transformations.skewY.activated && transformations.current == 'skewY' ) wY = (transformations.skewY.y as Function).apply(null, [transformations.skewY.dist]);
+				//if ( transformations.skewX.activated && transformations.current == 'skewX') wX = (transformations.skewX.x as Function).apply(null, [transformations.skewX.dist]);
+				//if ( transformations.skewX.activated && transformations.current == 'skewX' ) wY = (transformations.skewX.y as Function).apply(null, [transformations.skewX.dist]);
+				//if ( transformations.skewY.activated && transformations.current == 'skewY' ) wX = (transformations.skewY.x as Function).apply(null, [transformations.skewY.dist]);
+				//if ( transformations.skewY.activated && transformations.current == 'skewY' ) wY = (transformations.skewY.y as Function).apply(null, [transformations.skewY.dist]);
 			}
 			
 			
