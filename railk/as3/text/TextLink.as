@@ -14,6 +14,7 @@ package railk.as3.text
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
+	import flash.text.AntiAliasType;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.utils.RegistrationPoint;
@@ -132,6 +133,7 @@ package railk.as3.text
 				}
 				texte.wordWrap = wordwrap;
 				texte.mouseEnabled = selectable;
+				texte.antiAliasType = AntiAliasType.ADVANCED;
 				textLink.addChild( texte );
 			
 			addChild( textLink );	

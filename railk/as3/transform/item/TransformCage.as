@@ -14,7 +14,7 @@ package railk.as3.transform.item
 	
 	
 	import railk.as3.display.VSprite;
-	import railk.as3.geom.CoordinateSystem;
+	import railk.as3.geom.MultiCoordinateSystem;
 	import railk.as3.geom.Point2D;
 	import railk.as3.geom.Bounds;
 	import railk.as3.utils.objectList.ObjectList;
@@ -33,13 +33,13 @@ package railk.as3.transform.item
 		public var BL:Point;
 		public var L:Point;
 		public var CENTER:Point;
+		public var REG:Point;
 		public var bounds:Bounds;
 		
 		public var stage:Stage;
 		private var target:*;
 		private var transformCage:TransformCage;
-		private var handles:ObjectList;
-		private var systems:ObjectList;
+		private var cageSystem:MultiCoordinateSystem;
 		private var transform:TransformMatrix;
 		private var transformAction:TransformItemAction;
 		private var entryPoint:Point;
@@ -68,10 +68,10 @@ package railk.as3.transform.item
 			B = bounds.bottom;
 			R = bounds.right;
 			CENTER = bounds.center;
+			REG = bounds.center;
 			
 			//--handles systems and place
-			systems = this.createSystems( new ObjectList() ); 
-			handles = this.createHandles( new ObjectList() );
+			cageSystem = new MultiCoordinateSystem(TL, L, BL, B, BR, R, TR, T, CENTER, REG);
 			
 			//--transformAction
 			transform = new TransformMatrix( target );
@@ -108,41 +108,6 @@ package railk.as3.transform.item
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					COORDINATE SYSTEMS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createSystems( list:ObjectList ):ObjectList
-		{
-			list.add( ['TL',new CoordinateSystem( BR, BL,TR )] );
-			list.add( ['BR',new CoordinateSystem( TL,TR,BL )] );
-			list.add( ['TR',new CoordinateSystem( BL,BR,TL )] );
-			list.add( ['BL',new CoordinateSystem( TR,TL,BR )] );
-			list.add( ['T',new CoordinateSystem( BL,B,TL )] );
-			list.add( ['R',new CoordinateSystem( TL,TR,L )] );
-			list.add( ['B',new CoordinateSystem( TL,T,BL )] );
-			list.add( ['L',new CoordinateSystem( TR,TL,R )] );
-			list.add( ['T_invert',new CoordinateSystem(	B,BL,CENTER )] );
-			list.add( ['R_invert',new CoordinateSystem(	L,CENTER,TL )] );	
-			list.add( ['B_invert',new CoordinateSystem(	T,TL,CENTER )] );
-			list.add( ['L_invert',new CoordinateSystem( R,CENTER,TR	)] );
-			return list;
-		}
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	   BOUNDS POINT WITH THEIR SYSTEMS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createHandles( list:ObjectList ):ObjectList
-		{
-			list.add( ['TL',new Point2D(TL.x,TL.y,'TL',systems.getObjectByName('TL').data )] );
-			list.add( ['BR',new Point2D(BR.x,BR.y,'BR',systems.getObjectByName('BR').data )] );
-			list.add( ['TR',new Point2D(TR.x,TR.y,'TR',systems.getObjectByName('TR').data )] );
-			list.add( ['BL',new Point2D(BL.x,BL.y,'BL',systems.getObjectByName('BL').data )] );
-			list.add( ['T',new Point2D(T.x,T.y,'T',systems.getObjectByName('T').data,systems.getObjectByName('T_invert').data )] );
-			list.add( ['R',new Point2D(R.x,R.y,'R',systems.getObjectByName('R').data,systems.getObjectByName('R_invert').data )] );
-			list.add( ['B',new Point2D(B.x,B.y,'B',systems.getObjectByName('B').data,systems.getObjectByName('B_invert').data )] );
-			list.add( ['L',new Point2D(L.x,L.y,'L',systems.getObjectByName('L').data,systems.getObjectByName('L_invert').data )] );
-			list.add( ['CENTER',new Point2D(CENTER.x, CENTER.y, 'CENTER')] );
-			return list;
-		}
-		
-		
 		private function enableHandleActions( handle:*, type:String ):void
 		{
 			var move:Function, down:Function;
@@ -180,56 +145,33 @@ package railk.as3.transform.item
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function scale( handle:*, constraint:String='' ):void
 		{
-			var dist:Number;
-			var p:Point2D = handles.getObjectByName( handle.name ).data;
-			var inv:Point;
-			var yM:Point;
-			var xM:Point;
+			var data:Object;
 			switch( constraint )
 			{
 				case 'T' :
 				case 'B' :
-					p.x = stage.mouseX;
-					p.y = stage.mouseY;
-					
-					yM = p.yProjection;
-					inv = p.yInvertProjection;
-					handle.x2 = inv.x;
-					handle.y2 = inv.y;
-					
-					dist = getDistance(new Point(this[constraint].x, this[constraint].y), new Point(inv.x, inv.y), 'y');
-					transform.scaleY( dist, yM.x, yM.y, constraint);
+					data = cageSystem.project(constraint, new Point(stage.mouseX, stage.mouseY));
+					handle.x2 = data[constraint].x;
+					handle.y2 = data[constraint].y;
+					transform.scaleY( data.dy, data.TL.x, data.TL.y, constraint);
 					break;
 					
 				case 'L' :
 				case 'R' :
-					p.x = stage.mouseX;
-					p.y = stage.mouseY;
-					
-					yM = p.yProjection;
-					xM = p.xProjection;
-					inv = p.xInvertProjection;
-					handle.x2 = inv.x;
-					handle.y2 = inv.y;
-					
-					transform.scaleX( -getDistance(new Point(this[constraint].x,this[constraint].y),new Point(inv.x,inv.y),'x'),xM.x,xM.y, constraint);
+					data = cageSystem.project(constraint, new Point(stage.mouseX, stage.mouseY));
+					handle.x2 = data[constraint].x;
+					handle.y2 = data[constraint].y;
+					transform.scaleX( data.dx, data.TL.x, data.TL.y, constraint);
 					break;
 				
 				case 'TL' :
 				case 'BL' :
 				case 'TR' :
 				case 'BR' :
-					handle.x2  = p.x = stage.mouseX;
-					handle.y2 = p.y = stage.mouseY;
-					
-					yM = p.yProjection;
-					xM = p.xProjection;
-					target.scaleY = getDistance(new Point(p.system.origin.x,p.system.origin.y),new Point(yM.x,yM.y),'y')/150;
-					target.scaleX = getDistance(new Point(p.system.origin.x,p.system.origin.y),new Point(xM.x,xM.y),'x')/200;
-					target.x = yM.x;
-					target.y = yM.y;
-					
-					//transform.scaleXY( target.x2 - entryPoint.x, target.y2-entryPoint.y, constraint);
+					data = cageSystem.project(constraint, new Point(stage.mouseX, stage.mouseY));
+					handle.x2 = data[constraint].x;
+					handle.y2 = data[constraint].y;
+					transform.scaleXY( data.dx, 0 ,data.TL.x, data.TL.y, constraint);
 					break;
 			}
 		}
@@ -295,8 +237,7 @@ package railk.as3.transform.item
 		
 		private function updateSystem():void
 		{
-			systems = this.createSystems( new ObjectList() );
-			handles = this.createHandles( new ObjectList() );
+			//cageSystem.update();
 		}
 	}
 	

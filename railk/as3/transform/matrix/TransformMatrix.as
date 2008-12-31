@@ -104,30 +104,30 @@ package railk.as3.transform.matrix
 		/*
 		 * scaleXY 
 		 */
-		public function scaleXY( dx:Number, dy:Number, constraint:String ):void
+		public function scaleXY( dx:Number, dy:Number, x:Number, y:Number, constraint:String ):void
 		{
-			/*switch( constraint )
+			switch( constraint )
 			{
-				case 'LEFT_UP':
-					scaleX( dx, 0, 'LEFT', true);
-					scaleY( 0, dy, 'UP', true);
+				case 'TL':
+					scaleX( dx, x, y, 'L', true);
+					scaleY( dy, x, y, 'T', true);
 					break;
 				
-				case 'LEFT_DOWN':
-					scaleX( dx, 0, 'LEFT', true);
-					scaleY( 0, dy, 'DOWN', true);
+				case 'BL':
+					scaleX( dx, x, y, 'L', true);
+					scaleY( dy, x, y, 'B', true);
 					break;
 				
-				case 'RIGHT_UP':
-					scaleX( dx, 0, 'RIGHT', true);
-					scaleY( 0, dy, 'UP', true);
+				case 'TR':
+					scaleX( dx, x, y, 'R', true);
+					scaleY( dy, x, y, 'T', true);
 					break;
 					
-				case 'RIGHT_DOWN':
-					scaleX( dx, 0, 'RIGHT', true);
-					scaleY( 0, dy, 'DOWN', true);
+				case 'BR':
+					scaleX( dx, x, y, 'R', true);
+					scaleY( dy, x, y, 'B', true);
 					break;	
-			}*/
+			}
 		}
 		
 		/*
