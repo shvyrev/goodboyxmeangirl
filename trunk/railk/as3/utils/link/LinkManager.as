@@ -91,7 +91,7 @@ package railk.as3.utils.link {
 		 * @param	name                   nom du lien de type /.../.../...
 		 * @param	displayObject		   displayObject clickable
 		 * @param   type                   'mouse' | 'roll'
-		 * @param	actions                Function(type:String("hover"|"out"|"do"|"undo"),requester:*)=null
+		 * @param	actions                Function(type:String("hover"|"out"|"do"|"undo"),requester:*,data:*)=null
 		 * @param	colors                 Object {hover:,out:,click:}
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 * @param	parent       		   si swfadress on indique le parent dans la structure

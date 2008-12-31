@@ -13,6 +13,7 @@ package railk.as3.text
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
+	import flash.text.AntiAliasType;
 	
 	
 	public class  Text extends TextField
@@ -97,6 +98,7 @@ package railk.as3.text
 			super.wordWrap = wordwrap;
 			super.mouseEnabled = selectable;
 			super.multiline = true;
+			super.antiAliasType = AntiAliasType.ADVANCED;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

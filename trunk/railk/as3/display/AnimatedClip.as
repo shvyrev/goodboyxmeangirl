@@ -23,6 +23,7 @@ package railk.as3.display
 		private var _frameRate                                            :Number;
 		private var _current                                              :ObjectNode;
 		private var framesList                                            :ObjectList;
+		private var walker                                            	  :ObjectNode;
 		private var t                                                     :Timer;
 		
 		
@@ -105,7 +106,7 @@ package railk.as3.display
 		}
 		
 		public function addFrameScript( frame:int, script:Function ):void {
-			framesList.getObjectByID( frame ).script = script;
+			framesList.getObjectByID( frame ).action = script;
 		}
 		
 		
@@ -123,9 +124,11 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void {
 			t.removeEventListener( TimerEvent.TIMER, manageEvent );
-			for ( var i:int=0; i < framesList.length; i++ )
+			walker = framesList.head;
+			loop:while ( walker ) 
 			{
-				framesList.iterate( i ).dispose();
+				walker.dispose();
+				walker = walker.next;
 			}
 		}
 		

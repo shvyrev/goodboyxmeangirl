@@ -14,7 +14,7 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		  URL
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-        static public final function validateUrl( url:String ):Boolean {
+        static public function validateUrl( url:String ):Boolean {
             var reg:RegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
             return reg.test( url );
         }
@@ -22,7 +22,7 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		 NAME
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-        static public final function validateName( name:String ):Boolean {
+        static public function validateName( name:String ):Boolean {
             var reg:RegExp = /^([a-zA-z??????0-9\s-_]{3,})$/;
             return reg.test( name );
         }
@@ -30,7 +30,7 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		 PASS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-        static public final function validatePass( pass:String ):Boolean {
+        static public function validatePass( pass:String ):Boolean {
             var reg:RegExp = /^([a-zA-z??????0-9\s-_#]{3,})$/;
             return reg.test( pass );
         }
@@ -38,7 +38,7 @@ package railk.as3.utils
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		EMAIL
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-        static public final function validateEmail( email:String):Boolean {
+        static public function validateEmail( email:String):Boolean {
             var reg:RegExp = /\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*([,;]\s*\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*)*/;
             return reg.test( email );
         }
