@@ -29,6 +29,7 @@ package railk.as3.network.amfphp
 		public var currentService                            :String;
 		public var currentRequester                          :String;
 		public var persistent                                :Boolean;
+		private var mode                                     :String;
 		private var server                                   :String;
 		private var path                                     :String;
 		private var connexion                                :NetConnection;
@@ -46,11 +47,12 @@ package railk.as3.network.amfphp
 		 * 
 		 * @param	server 'http://'SERVER'/'PATH'/gateway.php'
 		 */
-		public function AmfphpClient( server:String, path:String, persistent:Boolean=false, servicePath:String = '' ):void 
+		public function AmfphpClient( server:String, path:String, persistent:Boolean=false, servicePath:String = '', ssl:Boolean=false ):void 
 		{	
 			this.server = server;
 			this.path = path;
 			this.persistent = persistent;
+			this.mode = (ssl)?'https':'http';
 			
 			open();
 			//--rootPath
@@ -70,7 +72,7 @@ package railk.as3.network.amfphp
 		{
 			connexion = new NetConnection();
 			connexion.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0 , true );
-			connexion.connect( 'http://'+server+'/'+path+'/gateway.php' );
+			connexion.connect( mode+'://'+server+'/'+path+'/gateway.php' );
 			responder = new Responder( onResult, onError );
 			connected = true;
 		}

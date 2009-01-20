@@ -48,6 +48,7 @@ package railk.as3.data.saver.xml {
 		private var _name                                 :String;
 		private var _nodes                                :Array;
 		private var _file                                 :String;
+		private var _url                                  :String;
 		private var _zip                                  :Boolean;
 		private var _updateType                           :String;
 		
@@ -65,7 +66,7 @@ package railk.as3.data.saver.xml {
 		public function XmlSaver( name:String = "undefined", server:String = '', path:String = '' ):void 
 		{
 			_name = name;
-			amf = new AmfphpClient( server, path );
+			amf = new AmfphpClient( server, path,false,'../' );
 			
 			////////////////////////////////////
 			initListeners()
@@ -78,11 +79,13 @@ package railk.as3.data.saver.xml {
 		private function initListeners():void {
 			amf.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
 			amf.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.addEventListener( AmfphpClientEvent.ON_CONNEXION_ERROR, manageEvent  );
 		}
 		
 		private function delListeners():void {
 			amf.removeEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
 			amf.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
+			amf.removeEventListener( AmfphpClientEvent.ON_CONNEXION_ERROR, manageEvent  );
 		}
 		
 		
@@ -96,8 +99,9 @@ package railk.as3.data.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function create( file:String, nodes:Array, zip:Boolean = false ):void 
+		public function create( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
 		{
+			_url = url;
 			_file = file;
 			_nodes = nodes;
 			_zip = zip;
@@ -110,8 +114,9 @@ package railk.as3.data.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function add( file:String, nodes:Array, zip:Boolean = false ):void 
+		public function add( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
 		{
+			_url = url;
 			_file = file;
 			_nodes = nodes;
 			_zip = zip;
@@ -126,8 +131,9 @@ package railk.as3.data.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function remove( file:String, nodes:Array, zip:Boolean = false ):void 
+		public function remove( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
 		{
+			_url = url;
 			_file = file;
 			_nodes = nodes;
 			_zip = zip;
@@ -142,8 +148,9 @@ package railk.as3.data.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function update( file:String, nodes:Array, zip:Boolean = false ):void 
+		public function update( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
 		{
+			_url = url;
 			_file = file;
 			_nodes = nodes;
 			_zip = zip;
@@ -160,7 +167,7 @@ package railk.as3.data.saver.xml {
 			var toCheck:String
 			if ( _zip) toCheck = _file.split('.')[0] + '.zip';
 			else toCheck = _file;
-			amf.call( new FileService().check( toCheck ), requester );
+			amf.call( new FileService().check( _url+'/'+toCheck ), requester );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -175,7 +182,7 @@ package railk.as3.data.saver.xml {
 				loader= new URLLoader();
 				loader.addEventListener( Event.COMPLETE, loadEvent, false, 0, true );
 				loader.dataFormat = 'binary';
-				loader.load(new URLRequest( toLoad ));
+				loader.load(new URLRequest( _url+'/'+toLoad ));
 			}
 			else
 			{
@@ -183,7 +190,7 @@ package railk.as3.data.saver.xml {
 				loader= new URLLoader();
 				loader.addEventListener( Event.COMPLETE, loadEvent, false, 0, true );
 				loader.dataFormat = 'text';
-				loader.load(new URLRequest( toLoad ));
+				loader.load(new URLRequest( _url+'/'+toLoad ));
 			}
 		}
 		
@@ -205,11 +212,11 @@ package railk.as3.data.saver.xml {
 				zipFile.closeEntry();
 				zipFile.finish();	
 				
-				amf.call( new FileService().saveFile( zipName+'.zip', zipFile.byteArray ), requester);
+				amf.call( new FileService().saveFile( _url+'/'+zipName+'.zip', zipFile.byteArray ), requester);
 			}
 			else 
 			{
-				amf.call( new FileService().saveXml( _file, xml.toXMLString() ), requester);
+				amf.call( new FileService().saveXml( _url+'/'+_file, xml.toXMLString() ), requester);
 			}	
 		}
 		
@@ -239,7 +246,7 @@ package railk.as3.data.saver.xml {
 						{
 							case 'check' :
 								if ( evt.data == true ) loadFile();
-								else create(_file, _nodes, _zip);
+								else create(_url, _file, _nodes, _zip);
 								///////////////////////////////////////////////////////////////
 								args = { info:"problem checking file", data:evt.data };
 								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_CHECK_COMLETE, args );
@@ -259,13 +266,21 @@ package railk.as3.data.saver.xml {
 								break;
 							
 							case 'saveXml' :
+								///////////////////////////////////////////////////////////////
+								args = { info:"saving xml complete "+evt.data };
+								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_SAVE_XML_COMPLETE, args );
+								dispatchEvent( eEvent );
+								///////////////////////////////////////////////////////////////
+								//dispose();
+								break;
+								
 							case 'saveFile' :
 								///////////////////////////////////////////////////////////////
 								args = { info:"saving file complete "+evt.data };
-								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_SAVE_COMLETE, args );
+								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_SAVE_FILE_COMPLETE, args );
 								dispatchEvent( eEvent );
 								///////////////////////////////////////////////////////////////
-								dispose();
+								//dispose();
 								break;
 						}
 						break;
@@ -277,6 +292,9 @@ package railk.as3.data.saver.xml {
 						dispatchEvent( eEvent );
 						///////////////////////////////////////////////////////////////
 						dispose();
+						break;
+						
+					case AmfphpClientEvent.ON_CONNEXION_ERROR :
 						break;
 				}
 			}	

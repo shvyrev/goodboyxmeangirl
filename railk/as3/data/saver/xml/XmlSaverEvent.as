@@ -14,7 +14,8 @@ package railk.as3.data.saver.xml {
 			
 		static public const ON_CHECK_COMLETE                  	:String = "onCheckComplete";
 		static public const ON_LOAD_COMPLETE                   	:String = "onLoadComplete";
-		static public const ON_SAVE_COMLETE                    	:String = "onSaveComplete";
+		static public const ON_SAVE_FILE_COMPLETE               :String = "onSaveFileComplete";
+		static public const ON_SAVE_XML_COMPLETE                :String = "onSaveXmlComplete";
 		static public const ON_ERROR                    		:String = "onError";
 		
 		

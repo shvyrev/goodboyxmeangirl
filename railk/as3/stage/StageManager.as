@@ -77,7 +77,7 @@ package railk.as3.stage {
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, ctMenu = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void
+		public static function init( stage:Stage, ctMenu = false, folder:String='', frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void
 		{
 			trace("                                   Stage initialise");
 			trace("---------------------------------------------------------------------------------------");
@@ -105,6 +105,7 @@ package railk.as3.stage {
 			//folder
 			folder = getAppFolder( stage.loaderInfo.loaderURL );
 			url = stage.loaderInfo.loaderURL.replace(stage.loaderInfo.loaderURL.split('/')[stage.loaderInfo.loaderURL.split('/').length - 1], "");
+			if( folder!= '') url = url.split(folder+'/')[0];
 			
 		}
 		
