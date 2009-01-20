@@ -77,7 +77,7 @@ package railk.as3.stage {
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, ctMenu = false, folder:String='', frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void
+		public static function init( stage:Stage, ctMenu = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void
 		{
 			trace("                                   Stage initialise");
 			trace("---------------------------------------------------------------------------------------");

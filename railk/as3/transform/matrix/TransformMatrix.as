@@ -136,7 +136,7 @@ package railk.as3.transform.matrix
 		public function skewX( dx:Number, dy:Number, constraint:String ):void
 		{
 			matrices.finale.skewX.identity();
-			var dist:Number = 0;//getDistance(dx,dy).x;
+			var dist:Number = 0;
 			if ( constraint == 'SKEW_UP' )
 			{
 				matrices.working.skewX.c = states.last.matrix.c - (dist / tHeight);
@@ -161,7 +161,7 @@ package railk.as3.transform.matrix
 		public function skewY( dx:Number, dy:Number, constraint:String ):void
 		{
 			matrices.finale.skewY.identity();
-			var dist:Number = 0;//getDistance(dx,dy).y;
+			var dist:Number = 0;
 			if ( constraint == 'SKEW_LEFT' )
 			{
 				matrices.working.skewY.b = states.last.matrix.b - (dist / tWidth);
