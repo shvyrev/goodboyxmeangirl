@@ -109,8 +109,8 @@ package railk.as3.transform.matrix
 			switch( constraint )
 			{
 				case 'TL':
-					scaleX( dx, x, y, 'L', true);
-					scaleY( dy, x, y, 'T', true);
+					scaleX( dx, x, y, 'L', false);
+					scaleY( dy, x, y, 'T', false);
 					break;
 				
 				case 'BL':
@@ -231,8 +231,7 @@ package railk.as3.transform.matrix
 				//if ( transformations.skewY.activated && transformations.current == 'skewY' ) wX = (transformations.skewY.x as Function).apply(null, [transformations.skewY.dist]);
 				//if ( transformations.skewY.activated && transformations.current == 'skewY' ) wY = (transformations.skewY.y as Function).apply(null, [transformations.skewY.dist]);
 			}
-			
-			
+				
 			w.tx = wX - ((transformations.rotate.activated)?transformations.rotate.x.apply():0);
 			w.ty = wY - ((transformations.rotate.activated)?transformations.rotate.y.apply():0);
 			t.matrix = w.clone();			

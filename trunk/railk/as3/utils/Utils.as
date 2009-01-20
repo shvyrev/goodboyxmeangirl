@@ -101,9 +101,26 @@ package railk.as3.utils {
 			return timeStr;
 		}
 		
+		/**
+		 * 
+		 * @return
+		 */
+		static public function date_PHP():String {
+			var d:Date = new Date();
+			return String(zero(d.date)+'/'+ zero(d.month+1)+'/09');
+		}
+		
+		/**
+		 * 
+		 * @return
+		 */
+		static public function heure_PHP():String {
+			var d:Date = new Date();
+			return String(zero(d.hours)+ ':' + zero(d.minutes) + ':' + zero(d.seconds));
+		}
 		
 		//--put a zero before
-		static private function zero( value:* ):String {
+		static public function zero( value:* ):String {
 			var tmpStr:String;
 			if ( value >= 0 && value <= 9 ) {
 				tmpStr = "0" + value;

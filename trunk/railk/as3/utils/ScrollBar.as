@@ -13,6 +13,7 @@ package railk.as3.utils {
 	import flash.display.Stage
 	import flash.events.MouseEvent;
 	import flash.events.Event;
+	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
@@ -31,6 +32,8 @@ package railk.as3.utils {
 		//________________________________________________________________________________________ VARIABLES
 		private var scrollContainer            :Sprite;
 		private var slider                     :*;
+		private var top   	                   :*;
+		private var bottom                     :*;
 		private var scrollBG                   :GraphicShape;
 		private var scrollSize                 :Object;
 		private var scrollColor                :Object; 
@@ -40,6 +43,7 @@ package railk.as3.utils {
 		private var resizeEnable               :Boolean;
 		private var autoCheckEnable            :Boolean;
 		private var autoScrollEnable           :Boolean;
+		private var fullscreenEnable           :Boolean;
 		private var content                    :Object;
 		private var contentCheck               :Object={};
 		private var multiplier                 :Number;
@@ -49,6 +53,7 @@ package railk.as3.utils {
 		private var rect                       :Rectangle;
 		private var oldStageH                  :Number;
 		private var oldStageW                  :Number;
+		private var contentPlace               :Point;
 		
 		//________________________________________________________________________________ VARIABLES CONTROLE
 		private var rollOut                    :Boolean = false;
@@ -73,18 +78,22 @@ package railk.as3.utils {
 		 * @param	autoCheck           To make the scrollBar adapt itself automaticaly when the content size change
 		 * @param	autoScroll          to follow the mouse when the mouse is hover the scrollbar.
 		 */
-		public function ScrollBar( name:String, orientation:String, toScroll:Object, colors:Object, sizes:Object, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false ):void 
+		public function ScrollBar( name:String, orientation:String, toScroll:Object, colors:Object, sizes:Object,  topObj:*= null, bottomObj:*=null, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false, fullScreen:Boolean = false ):void 
 		{
 			scrollList[name] = this;
 			wheelEnable = wheel;
 			resizeEnable = resizeAble;
 			autoCheckEnable = autoCheck;
 			autoScrollEnable = autoScroll;
+			fullscreenEnable = fullScreen;
 			content = toScroll;
 			scrollSize = sizes;
 			scrollColor = colors;
 			scrollAlpha = alphas;
 			way = orientation;
+			top = topObj;
+			bottom = bottomObj;
+			contentPlace = new Point( content.x, content.y);
 			
 			scrollContainer = new Sprite();
 			scrollContainer.alpha = 0;
@@ -108,6 +117,18 @@ package railk.as3.utils {
 				slider.name = "slider";
 				slider.buttonMode = true;
 				scrollContainer.addChild( slider );
+				
+				//--TOP/BOTTOM
+				if ( top != null )
+				{
+					top.y = scrollContainer.y -2;
+					addChild( top );
+				}
+				if ( bottom != null )
+				{
+					bottom.y = scrollContainer.height + 2;
+					addChild( bottom );
+				}
 				
 			if ( !Process.pluginEnabled ) Process.enablePlugin( ProcessPlugins );
 			this.addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
@@ -139,10 +160,10 @@ package railk.as3.utils {
 				
 			//--Scroll setup
 			if ( way == "V" ) {
-				if ( content.height > stage.stageHeight ) {
+				if ( contentPlace.y+content.height > stage.stageHeight ) {
 					showHide(1, true);
-					distance = content.height - stage.stageHeight;
-					slider.height = ( (stage.stageHeight - distance) > scrollSize.sH ) ? stage.stageHeight - distance : scrollSize.sH;
+					distance = contentPlace.y+content.height - stage.stageHeight;
+					slider.height = ( (scrollSize.fH - distance) > scrollSize.sH ) ? scrollSize.fH - distance : scrollSize.sH;
 					multiplier = distance / ( scrollSize.fH - slider.height );
 					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
@@ -155,10 +176,10 @@ package railk.as3.utils {
 				else showHide(0,false);
 			}
 			else if ( way == "H" ) {
-				if ( content.width > stage.stageWidth ) {
+				if ( contentPlace.x+content.width > stage.stageWidth ) {
 					showHide(1,true);
-					distance = content.width - stage.stageWidth;
-					slider.width = ( (stage.stageWidth - distance) > scrollSize.sW ) ? stage.stageWidth - distance : scrollSize.sW;
+					distance = contentPlace.x+content.width - stage.stageWidth;
+					slider.width = ( (scrollSize.fW - distance) > scrollSize.sW ) ? scrollSize.fW - distance : scrollSize.sW;
 					multiplier = distance / ( scrollSize.fW - slider.width );
 					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
@@ -212,21 +233,32 @@ package railk.as3.utils {
 		private function resize():void 
 		{
 			if ( way == "V" ) {
-				if ( content.height > stage.stageHeight ) {
+				if ( contentPlace.y + content.height > stage.stageHeight ) {
 					scrollContainer.visible = true;
 					showHide(1, true);
-					if ( slider.y >= oldStageH - slider.height ) { slider.y = stage.stageHeight - slider.height; }
-					else { slider.y = ( slider.y * stage.stageHeight ) / oldStageH; }
 					
-					scrollBG.height = ( scrollSize.fH * stage.stageHeight ) / oldStageH;
-					distance = content.height - stage.stageHeight;
-					slider.height = ( (stage.stageHeight - distance) > scrollSize.sH ) ? stage.stageHeight - distance : scrollSize.sH;
+					if ( fullscreenEnable )
+					{
+						if ( slider.y >= oldStageH - slider.height ) { slider.y = stage.stageHeight - slider.height; }
+						else { slider.y = ( slider.y * stage.stageHeight ) / oldStageH; }
+						scrollBG.height = ( scrollSize.fH * stage.stageHeight ) / oldStageH;
+						if ( bottom != null ) bottom.y = scrollBG.height+2;
+					}
+					else
+					{
+						scrollBG.height = scrollSize.fH;
+					}
+						
+					distance = contentPlace.y+content.height - stage.stageHeight;
+					slider.height = ( (scrollSize.fH - distance) > scrollSize.sH ) ? scrollSize.fH - distance : scrollSize.sH;
 					multiplier = distance / ( scrollBG.height - slider.height );
 					delta = baseDelta / ( multiplier*.5);
 					delta = (delta > 6)? delta : 6;
 					rect = new Rectangle(0, 0, 0, scrollBG.height - slider.height );
 					oldStageH = stage.stageHeight;
 					scrollSize.fH = scrollBG.height;
+					
+					Process.to( slider, .5, { y:0 }, { onUpdate: function() { content.y = contentPlace.y-(slider.y * multiplier); } } );
 					
 					if(!listeners){
 						////////////////////////////////////
@@ -236,7 +268,7 @@ package railk.as3.utils {
 					}	
 				}	
 				else {
-					Process.to( slider, .4, { y:0 }, { onUpdate: function() { content.y = -(slider.y * ((multiplier)? multiplier : 0) ); } } );
+					Process.to( slider, .4, { y:0 }, { onUpdate: function() { content.y = contentPlace.y -(slider.y * ((multiplier)? multiplier : 0) ); } } );
 					showHide(0, false);
 					////////////////////////////////////
 					delListeners();
@@ -245,14 +277,23 @@ package railk.as3.utils {
 				}	
 			}
 			else if ( way == "H" ) {
-				if ( content.height > stage.stageWidth) {
+				if ( contentPlace.x+content.height > stage.stageWidth) {
 					showHide(1, true);
-					if ( slider.x >= oldStageW - slider.width ) { slider.x = stage.stageWidth - slider.width; }
-					else { slider.x = ( slider.x * stage.stageWidth ) / oldStageW; }
 					
-					scrollBG.width = ( scrollSize.fW * stage.stageWidth ) / oldStageW; 
-					distance = content.height - stage.stageWidth;
-					slider.width = ( (stage.stageWidth - distance) > scrollSize.sW ) ? stage.stageWidth - distance : scrollSize.sW;
+					if ( fullscreenEnable)
+					{
+						if ( slider.x >= oldStageW - slider.width ) { slider.x = stage.stageWidth - slider.width; }
+						else { slider.x = ( slider.x * stage.stageWidth ) / oldStageW; }
+						scrollBG.width = ( scrollSize.fW * stage.stageWidth ) / oldStageW;
+						if ( bottom != null ) bottom.x = scrollBG.width +2;
+					}
+					else
+					{
+						scrollBG.width = scrollSize.fW;
+					}
+						
+					distance = contentPlace.x+content.height - stage.stageWidth;
+					slider.width = ( (scrollSize.fW - distance) > scrollSize.sW ) ? scrollSize.fWs - distance : scrollSize.sW;
 					multiplier = distance / ( scrollBG.width - slider.width  );
 					delta = baseDelta / (multiplier*.5);
 					delta = (delta > 6)? delta : 6;
@@ -268,7 +309,7 @@ package railk.as3.utils {
 					}	
 				}	
 				else {
-					Process.to( slider, .4, { x:0 } , { onUpdate: function() { content.x = -(slider.x * ((multiplier)? multiplier : 0) ); } } );
+					Process.to( slider, .4, { x:0 } , { onUpdate: function() { content.x = contentPlace.x -(slider.x * ((multiplier)? multiplier : 0) ); } } );
 					showHide(0, false);
 					////////////////////////////////////
 					delListeners();
@@ -287,7 +328,9 @@ package railk.as3.utils {
 		 */
 		public function showHide( alpha:Number, visibility:Boolean ):void {
 			if(alpha) Process.to( scrollContainer, .4, { alpha:alpha }, { onStart:function() { scrollContainer.visible = visibility; } } );
-			else Process.to( scrollContainer, .4, { alpha:alpha}, { onComplete:function() { scrollContainer.visible = visibility; } } );
+			else Process.to( scrollContainer, .4, { alpha:alpha }, { onComplete:function() { scrollContainer.visible = visibility; } } );
+			top.alpha = alpha;
+			bottom.alpha = alpha;
 		}	
 		
 		
@@ -297,6 +340,8 @@ package railk.as3.utils {
 		public function get ObjectToScroll():Object { return content; }
 		
 		public function set ObjectToScroll( value:Object ):void { content = value; }
+		
+		override public function get alpha():Number { return scrollContainer.alpha; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -324,14 +369,14 @@ package railk.as3.utils {
 						else if ( mouseY <= slider.height ) { value = 0; }
 						else { value = mouseY - slider.height / 2; }
 						Process.to( slider, .4, { y:value} );
-						Process.to( content, .6, { y: -(value * multiplier)},{rounded:true} );
+						Process.to( content, .6, { y: contentPlace.y-(value * multiplier)},{rounded:true} );
 					}
 					else if ( way == "H" ) {
 						if ( mouseX >= rect.width ) { value = rect.width; }
 						else if ( mouseX <= slider.width ) { value = 0; }
 						else { value = mouseX - slider.width / 2; }
 						Process.to( slider, .4, { x:value} );
-						Process.to( content, .6, { x: -(value * multiplier)},{rounded:true} );
+						Process.to( content, .6, { x: contentPlace.x-(value * multiplier)},{rounded:true} );
 					}
 					evt.updateAfterEvent();
 					break;
@@ -382,21 +427,21 @@ package railk.as3.utils {
 							if ( mouseY >= rect.height ) { value = rect.height; }
 							else if ( mouseY <= slider.height ) { value = 0; }
 							else { value = mouseY - slider.height / 2; }
-							Process.to( slider, 1, { y:value},{ onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, 1, { y:value }, { onUpdate: function() { content.y = contentPlace.y-(slider.y * multiplier); } } );
 						}
 						else if ( way == "H" ) {
 							if ( mouseX >= rect.width ) { value = rect.width; }
 							else if ( mouseX <= slider.width ) { value = 0; }
 							else { value = mouseX - slider.width / 2; }
-							Process.to( slider, 1, { x:value},{onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, 1, { x:value},{onUpdate: function() { content.x = contentPlace.x-(slider.x * multiplier); } } );
 						}
 					}
 					else {
-						if( way == "V" ) {
-							Process.to( content,.3, { y: -(slider.y * multiplier) }, {rounded:true} );
+						if ( way == "V" ) {
+							Process.to( content, .3, { y:contentPlace.y -(slider.y * multiplier) }, { rounded:true } );
 						}
 						else if( way == "H" ) {
-							Process.to( content,.3, { x: -(slider.x * multiplier)}, {rounded:true } );
+							Process.to( content,.3, { x:contentPlace.x -(slider.x * multiplier)}, {rounded:true } );
 						}
 					}
 					break;
@@ -405,24 +450,24 @@ package railk.as3.utils {
 					
 					if ( way == "V" ) {
 						if ( slider.y >= 0 + evt.delta*delta  && slider.y <= rect.height+ evt.delta*delta  ) {
-							Process.to( slider, .4, { y: slider.y - (evt.delta * delta)} , { onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, .4, { y: slider.y - (evt.delta * delta)} , { onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
 						}
 						else if( slider.y < 0 + evt.delta*delta ) {
-							Process.to( slider, .4, { y: 0}, {onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, .4, { y: 0}, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
 						}
 						else if ( slider.y > rect.height + evt.delta*delta ) {
-							Process.to( slider, .4, { y:rect.height }, {onUpdate: function() { content.y = -(slider.y * multiplier); } } );
+							Process.to( slider, .4, { y:rect.height }, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
 						}
 					}
 					else if ( way == "H" ) {
 						if ( slider.x >= 0 + evt.delta*delta && slider.x <= rect.width + evt.delta*delta ) {
-							Process.to( slider, .4, { x: slider.x - (evt.delta * delta)} , {onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, .4, { x: slider.x - (evt.delta * delta)} , {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
 						}
 						else if( slider.x < 0 + evt.delta*delta ) {
-							Process.to( slider, .4, { x: 0 }, {onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, .4, { x: 0 }, {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
 						}
 						else if ( slider.x > rect.height+evt.delta*delta ) {
-							Process.to( slider, .4, { x:rect.width }, { onUpdate: function() { content.x = -(slider.x * multiplier); } } );
+							Process.to( slider, .4, { x:rect.width }, { onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
 						}
 					}
 					break;

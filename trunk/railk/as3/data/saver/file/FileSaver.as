@@ -45,7 +45,7 @@ package railk.as3.data.saver.file {
 		public function FileSaver( name:String = 'undefined', server:String = '', path:String = '' )
 		{
 			_name = name;
-			amf = new AmfphpClient( server, path );
+			amf = new AmfphpClient( server, path, false,'../' );
 			downloader = new FileReference();
 			
 			////////////////////////////////////

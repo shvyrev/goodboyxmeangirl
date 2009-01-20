@@ -21,6 +21,7 @@ package railk.as3.transform.item
 	import railk.as3.utils.objectList.ObjectNode;
 	import railk.as3.transform.utils.GraphicUtils;
 	import railk.as3.transform.matrix.TransformMatrix;
+	import railk.as3.utils.ObjectDumper;
 	
 	public class TransformCage extends VSprite
 	{
@@ -43,6 +44,8 @@ package railk.as3.transform.item
 		private var transform:TransformMatrix;
 		private var transformAction:TransformItemAction;
 		private var entryPoint:Point;
+		private var handles:ObjectList;
+		private var walker:ObjectNode;
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -78,6 +81,7 @@ package railk.as3.transform.item
 			transformAction = new TransformItemAction( parent.stage );
 			
 			//--Handdles
+			handles = new ObjectList();
 			this.add( GraphicUtils.rotate(CENTER.x, CENTER.y, width*.25,width*.25-30),'ROTATE' );
 			this.add( GraphicUtils.skewBorder(TL.x, TL.y, bounds.width, 15,'TOP' ),'SKEW_UP' );
 			this.add( GraphicUtils.skewBorder(TL.x, TL.y, 15, bounds.height,'LEFT'), 'SKEW_LEFT');
@@ -88,10 +92,10 @@ package railk.as3.transform.item
 			this.add( GraphicUtils.corner(0x000000,TR.x, TR.y,90), 'TR' );
 			this.add( GraphicUtils.corner(0x000000,BR.x, BR.y,180), 'BR' );
 			this.add( GraphicUtils.regPoint(CENTER.x, CENTER.y), 'CENTER' );
-			this.add( GraphicUtils.border(T.x, T.y,90), 'T' );
+			this.add( GraphicUtils.border(T.x, T.y,0), 'T' );
 			this.add( GraphicUtils.border(L.x, L.y,0), 'L' );
-			this.add( GraphicUtils.border(R.x, R.y,180), 'R' );
-			this.add( GraphicUtils.border(B.x, B.y,-90), 'B' );
+			this.add( GraphicUtils.border(R.x, R.y,0), 'R' );
+			this.add( GraphicUtils.border(B.x, B.y,0), 'B' );
 		}
 		
 		
@@ -102,7 +106,8 @@ package railk.as3.transform.item
 		{
 			object.name = this.name + '_' + name;
 			this.addChild( object );
-			enableHandleActions( object, name )
+			handles.add([object.name,object,name])
+			enableHandleActions( object, name );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -171,9 +176,10 @@ package railk.as3.transform.item
 					data = cageSystem.project(constraint, new Point(stage.mouseX, stage.mouseY));
 					handle.x2 = data[constraint].x;
 					handle.y2 = data[constraint].y;
-					transform.scaleXY( data.dx, 0 ,data.TL.x, data.TL.y, constraint);
+					transform.scaleXY( data.dx, data.dy ,data.TL.x, data.TL.y, constraint);
 					break;
 			}
+			updateHandles(handle.name, data);
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -225,19 +231,23 @@ package railk.as3.transform.item
 			CENTER.y = this.getRegistration().y;*/
 		}
 		
-		private function getDistance(A:Point,B:Point,type:String):Number
+		private function updateHandles(moving:String,data:Object):void
 		{
-			var dx:Number = B.x-A.x; 
-			var dy:Number = B.y-A.y;
-			var dist:Number = Math.sqrt( dx*dx + dy*dy );
-			if (type =='y') dist = (dy > 0)?-dist:dist;
-			else dist = (dx < 0)? -dist:dist;
-			return dist;
+			walker = handles.head;
+			while ( walker ) 
+			{
+				if ( walker.group != moving && walker.group !='ROTATE' && walker.group !='SKEW_UP' && walker.group !='SKEW_DOWN' && walker.group !='SKEW_RIGHT' && walker.group !='SKEW_LEFT' )
+				{
+					walker.data.x2 = data[walker.group].x;
+					walker.data.y2 = data[walker.group].y;
+				}
+				walker = walker.next;
+			}
 		}
 		
 		private function updateSystem():void
 		{
-			//cageSystem.update();
+			cageSystem.update();
 		}
 	}
 	

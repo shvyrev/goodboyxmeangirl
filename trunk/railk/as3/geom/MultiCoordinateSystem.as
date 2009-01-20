@@ -117,8 +117,8 @@ package railk.as3.geom
 					result['L'] = (new Point2D(result.R.x,result.R.y, new CoordinateSystem(result.TL,result.TR,result.BL))).yProjection;
 					result['T'] = (new Point2D(result.B.x,result.B.y, new CoordinateSystem(result.TR,result.TL,BR))).xProjection;
 					result['REG'] = this.getInnerSystemPoint( REG, { n:result.TL, o:TL }, { n:result.TR, o:TR }, { n:result.BL, o:BL } );
-					result['dy'] = ((new Vector2D(result.T, T)).dy < 0)?-(new Vector2D(result.T, T)).distance:(new Vector2D(result.T, T)).distance;
-					result['dx'] = ((new Vector2D(result.L, L)).dx < 0)?-(new Vector2D(result.L, L)).distance:(new Vector2D(result.L, L)).distance;
+					result['dy'] = ((new Vector2D(result.TR, TR)).dy < 0)?-(new Vector2D(result.TR, TR)).distance:(new Vector2D(result.TR, TR)).distance;
+					result['dx'] = ((new Vector2D(result.BL, BL)).dx < 0)?-(new Vector2D(result.BL, BL)).distance:(new Vector2D(result.BL, BL)).distance;
 					break;
 					
 				case 'BL' :
@@ -131,8 +131,8 @@ package railk.as3.geom
 					result['L'] = (new Point2D(result.R.x,result.R.y, new CoordinateSystem(result.TL,TR,result.BL))).yProjection;
 					result['B'] = (new Point2D(result.T.x,result.T.y, new CoordinateSystem(result.BR,result.BL,TR))).xProjection;
 					result['REG'] = this.getInnerSystemPoint( REG, { n:result.BL, o:BL }, { n:result.TL, o:TL }, { n:result.BR, o:BR } );
-					result['dy'] = ((new Vector2D(result.B, B)).dy < 0)?-(new Vector2D(result.B, B)).distance:(new Vector2D(result.B, B)).distance;
-					result['dx'] = ((new Vector2D(result.L, L)).dx < 0)?-(new Vector2D(result.L, L)).distance:(new Vector2D(result.L, L)).distance;
+					result['dy'] = ((new Vector2D(result.BR, BR)).dy < 0)?-(new Vector2D(result.BR, BR)).distance:(new Vector2D(result.BR, BR)).distance;
+					result['dx'] = ((new Vector2D(result.TL, TL)).dx < 0)?-(new Vector2D(result.TL, TL)).distance:(new Vector2D(result.TL, TL)).distance;
 					break;
 				
 				case 'TR' :
@@ -145,8 +145,8 @@ package railk.as3.geom
 					result['R'] = (new Point2D(result.L.x,result.L.y, new CoordinateSystem(result.TR,result.TL,result.BR))).yProjection;
 					result['T'] = (new Point2D(result.B.x,result.B.y, new CoordinateSystem(result.TL,result.TR,BL))).xProjection;
 					result['REG'] = this.getInnerSystemPoint( REG, { n:result.TR, o:TR }, { n:result.TL, o:TL }, { n:result.BR, o:BR } );
-					result['dy'] = ((new Vector2D(result.T, T)).dy < 0)?-(new Vector2D(result.T, T)).distance:(new Vector2D(result.T, T)).distance;
-					result['dx'] = ((new Vector2D(result.R, R)).dx < 0)?-(new Vector2D(result.R, R)).distance:(new Vector2D(result.R, R)).distance;
+					result['dy'] = ((new Vector2D(result.TL, TL)).dy < 0)?-(new Vector2D(result.TL, TL)).distance:(new Vector2D(result.TL, TL)).distance;
+					result['dx'] = ((new Vector2D(result.BR, BR)).dx < 0)?-(new Vector2D(result.BR, BR)).distance:(new Vector2D(result.BR, BR)).distance;
 					break;
 				
 				case 'BR' :
@@ -159,9 +159,9 @@ package railk.as3.geom
 					result['R'] = (new Point2D(result.L.x,result.L.y, new CoordinateSystem(result.TR,TL,result.BR))).yProjection;
 					result['B'] = (new Point2D(result.T.x, result.T.y, new CoordinateSystem(result.BR, result.BL, result.TR))).xProjection;
 					result['REG'] = this.getInnerSystemPoint( REG, { n:result.BR, o:BR }, { n:result.BL, o:BL }, { n:result.TR, o:TR } );
-					result['dy'] = ((new Vector2D(result.B, B)).dy < 0)?-(new Vector2D(result.B, B)).distance:(new Vector2D(result.B, B)).distance;
-					result['dx'] = ((new Vector2D(result.R, R)).dx < 0)?-(new Vector2D(result.R, R)).distance:(new Vector2D(result.R, R)).distance;
-					break;	
+					result['dy'] = ((new Vector2D(result.BL, BL)).dy < 0)?-(new Vector2D(result.BL, BL)).distance:(new Vector2D(result.BL, BL)).distance;
+					result['dx'] = ((new Vector2D(result.TR, TR)).dx < 0)?-(new Vector2D(result.TR, TR)).distance:(new Vector2D(result.TR, TR)).distance;
+					break;
 			}
 			transformedPoints = { TL:((result.TL)?result.TL:TL), L:((result.L)?result.L:L), BL:((result.BL)?result.BL:BL), B:((result.B)?result.B:B), BR:((result.BR)?result.BR:BR), R:((result.R)?result.R:R), TR:((result.TR)?result.TR:TR), T:((result.T)?result.T:T), CENTER:((result.CENTER)?result.CENTER:CENTER), REG:((result.REG)?result.REG:REG), dx:((result.dx)?result.dx:0), dy:((result.dy)?result.dy:0) };
 			return transformedPoints;

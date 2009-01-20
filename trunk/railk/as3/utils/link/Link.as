@@ -156,6 +156,16 @@ package railk.as3.utils.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function deepLinkAction(root:Boolean=false, data:*=null):void
+		{
+			if ( swfAddress )
+			{
+				if (data != null) _data  = data;
+				if(root) SWFAddress.setValue('/');
+				else SWFAddress.setValue(_name);
+			}
+		}
+		
 		public function doAction():void 
 		{ 
 			var prop:String;
@@ -183,6 +193,8 @@ package railk.as3.utils.link {
 		}
 		
 		public function isActive():Boolean { return active; }
+		
+		public function change():void { active = (active)?false:true; }
 		
 		public function isSwfAddress():Boolean { return swfAddress; }
 		
