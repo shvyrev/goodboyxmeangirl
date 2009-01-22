@@ -241,6 +241,22 @@ package railk.as3.transform.item
 					walker.data.x2 = data[walker.group].x;
 					walker.data.y2 = data[walker.group].y;
 				}
+				else
+				{
+					switch( walker.group )
+					{
+						case 'ROTATE' :
+							break;
+						case 'SKEW_UP' :
+							break;
+						case 'SKEW_DOWN' :
+							break;
+						case 'SKEW_RIGHT' :
+							break;
+						case 'SKEW_LEFT' :
+							break;
+					}
+				}
 				walker = walker.next;
 			}
 		}

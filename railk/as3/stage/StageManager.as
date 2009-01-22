@@ -20,7 +20,7 @@ package railk.as3.stage {
 	import flash.utils.getTimer;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.ui.Key;
+	import railk.as3.ui.key.Key;
 	import railk.as3.stage.StageManagerEvent;	
 	
 	
