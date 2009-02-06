@@ -98,6 +98,7 @@ package railk.as3.utils {
 			scrollContainer = new Sprite();
 			scrollContainer.alpha = 0;
 			scrollContainer.name = "container";
+			scrollContainer.buttonMode = true;
 			addChild( scrollContainer );
 			
 				//--BG
@@ -242,7 +243,7 @@ package railk.as3.utils {
 						if ( slider.y >= oldStageH - slider.height ) { slider.y = stage.stageHeight - slider.height; }
 						else { slider.y = ( slider.y * stage.stageHeight ) / oldStageH; }
 						scrollBG.height = ( scrollSize.fH * stage.stageHeight ) / oldStageH;
-						if ( bottom != null ) bottom.y = scrollBG.height+2;
+						if (bottom) bottom.y = scrollBG.height+2;
 					}
 					else
 					{
@@ -285,7 +286,7 @@ package railk.as3.utils {
 						if ( slider.x >= oldStageW - slider.width ) { slider.x = stage.stageWidth - slider.width; }
 						else { slider.x = ( slider.x * stage.stageWidth ) / oldStageW; }
 						scrollBG.width = ( scrollSize.fW * stage.stageWidth ) / oldStageW;
-						if ( bottom != null ) bottom.x = scrollBG.width +2;
+						if ( bottom ) bottom.x = scrollBG.width +2;
 					}
 					else
 					{
@@ -329,8 +330,8 @@ package railk.as3.utils {
 		public function showHide( alpha:Number, visibility:Boolean ):void {
 			if(alpha) Process.to( scrollContainer, .4, { alpha:alpha }, { onStart:function() { scrollContainer.visible = visibility; } } );
 			else Process.to( scrollContainer, .4, { alpha:alpha }, { onComplete:function() { scrollContainer.visible = visibility; } } );
-			top.alpha = alpha;
-			bottom.alpha = alpha;
+			if(top) top.alpha = alpha;
+			if(bottom) bottom.alpha = alpha;
 		}	
 		
 		
