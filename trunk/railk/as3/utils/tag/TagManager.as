@@ -116,7 +116,7 @@ package railk.as3.utils.tag {
 			var txt:TextField;
 			var blocs:Array = new Array();
 			var tagSortList:ObjectList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, ObjectListSort.DESC, 'value' );
-			var grid:Grid = new Grid( "tag", H, W, minH, minW, 0, debug, debugContainer );
+			var grid:Grid = new Grid( "tag", H, W, minH, minW, 0, 0, debug, debugContainer );
 			var multiplier:Number = computeSpace( grid, minH, minW, tagSortList, blocs, fontClassName );
 			
 			//--compute blocs
