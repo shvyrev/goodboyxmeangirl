@@ -19,12 +19,14 @@ package railk.as3.utils {
 		private static var accessors:Array;
 		private static var extendClasses:Array;
 		private static var implementInterfaces:Array;
+		public static var classArgs:Array;
 		
 		public static function from( target:* ):void
 		{
 			object = target;
 			xmlInfos = describeType( object );
 			constructor = Object(object).constructor;
+			getClassArgs( xmlInfos );
 			getVariables( xmlInfos );
 			getMethods( xmlInfos );
 			getAccessors( xmlInfos );
@@ -41,6 +43,11 @@ package railk.as3.utils {
 			return has(method, methods);
 		}
 		
+		public static function hasVariable( variable:String ):Boolean
+		{
+			return has(variable, variables);
+		}
+				
 		private static function has(name:String, data:Array):Boolean
 		{
 			var result:Boolean = false;
@@ -53,6 +60,35 @@ package railk.as3.utils {
 			}
 			return result;
 		}
+		
+		public static function getAccessor( name:String ):Object
+		{
+			return getObject(name,accessors);
+		}
+		
+		public static function getMethod( name:String ):Object
+		{
+			return getObject(name,methods);
+		}
+		
+		public static function getVariable( name:String ):Object
+		{
+			return getObject(name,variables);
+		}
+		
+		private static function getObject( name:String, data:Array ):Object
+		{
+			var result:Object;
+			loop:for (var i:int = 0; i < accessors.length; i++) 
+			{
+				if ( data[i].name == name ) {
+					result = data[i]
+					break loop;
+				}
+			}
+			return result;
+		}
+		
 		
 		public static function dumpVariables():String 
 		{
@@ -83,7 +119,7 @@ package railk.as3.utils {
 			var result:String='';
 			for (var i:int = 0; i < data.length; i++) 
 			{
-				result += '( METHOD ';
+				result += '( OBJECT ';
 				for ( var prop:String in data[i] )
 				{
 					result += ' ,' + prop + ':' + data[i][prop]+'';
@@ -98,7 +134,7 @@ package railk.as3.utils {
 			accessors = new Array();
 			var propertyName:String;
 			var propertyValue:*;
-			for  each ( var a:XML in child..accessor )
+			for each ( var a:XML in child..accessor )
             {
 				propertyName = a.@name;
                 propertyValue = object[propertyName];
@@ -110,7 +146,7 @@ package railk.as3.utils {
 		{
 			methods = new Array();
 			var params:Object = {};
-			for  each ( var m:XML in child..method)
+			for each ( var m:XML in child..method)
             {
 				var nbParams:Number = 0;
 				for each ( var p:XML in m..parameter )
@@ -127,7 +163,7 @@ package railk.as3.utils {
 			variables = new Array();
 			var propertyName:String;
 			var propertyValue:*;
-			for  each ( var v:XML in child..variable )
+			for each ( var v:XML in child..variable )
             {
                 propertyName = v.@name;
                 propertyValue = object[propertyName];
@@ -135,16 +171,31 @@ package railk.as3.utils {
             }
 		}
 		
+		private static function getClassArgs( child:XML ):void
+		{
+			classArgs = new Array();
+			var index:int;
+			var type:String;
+			var optional:Boolean;
+			for each ( var a:XML in child..constructor )
+            {
+                index = a.@index;
+                type = a.@type;
+                optional = a.@optional;
+				classArgs[classArgs.length] = { index:index, type:type, optional:optional };
+            }
+		}
+		
 		private static function getExtends( child:XML ):void
 		{
 			extendClasses = new Array();
 			implementInterfaces = new Array();
-			for  each ( var e:XML in child..extendsClass )
+			for each ( var e:XML in child..extendsClass )
             {
 				extendClasses[extendClasses.length] = { type:e.@type };
             }
 			
-			for  each ( var i:XML in child..implementsInterface )
+			for each ( var i:XML in child..implementsInterface )
             {
 				implementInterfaces[implementInterfaces.length] = { type:i.@type };
             }

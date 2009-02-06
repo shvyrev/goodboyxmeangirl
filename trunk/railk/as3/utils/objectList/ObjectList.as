@@ -22,7 +22,7 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	...args    ['name',displayObject:*,'group'=null,function=null,args:Object=null],...
+		 * @param	...args    ['name',data:*,'group'=null,action:Function=null,args:Object=null],...
 		 */
 		public function ObjectList( ...args ):void 
 		{
@@ -36,7 +36,7 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
-		 * @param	...args ['name',displayObject:*,'group'=null,function=null],...
+		 * @param	...args ['name',data:*,'group'=null,action:Function=null,args:Object=null],...
 		 */
 		public function add( ...args ):void
 		{
@@ -62,18 +62,21 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   			   UPDATE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function update(name:String, data:*):void {
+		public function update(name:String, data:*=null, group:String='', action:Function=null, args:Object=null):void {
 			var o:ObjectNode = getObjectByName( name );
-			o.data = data;
+			o.data = (data != null)?data:o.data;
+			o.group = (group != '')?group:o.group;
+			o.action = (action != null)?action:o.action;
+			o.args = (args != null)?args:o.args;
 			
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		 INSERT AFTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertAfter( node:ObjectNode, name:String, object:*, group:String='', action:Function=null, args:Object=null ):void
+		public function insertAfter( node:ObjectNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
 		{
-			node.insertAfter( new ObjectNode( node.id + 1, name, object, group, action, args ) );
+			node.insertAfter( new ObjectNode( node.id + 1, name, data, group, action, args ) );
 			_length += 1;
 			if ( node === _tail ) _tail = tail.next;
 			else rebuildID();
@@ -83,9 +86,9 @@ package railk.as3.utils.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		INSERT BEFORE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertBefore( node:ObjectNode, name:String, object:*, group:String='', action:Function=null, args:Object=null ):void
+		public function insertBefore( node:ObjectNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
 		{
-			node.insertBefore( new ObjectNode( node.id - 1, name, object, group, action, args ) );
+			node.insertBefore( new ObjectNode( node.id - 1, name, data, group, action, args ) );
 			_length += 1;
 			if ( node === _head ) _head = _head.prev;
 			rebuildID();

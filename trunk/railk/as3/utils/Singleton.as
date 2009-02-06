@@ -6,18 +6,18 @@
 		private static var instance:*;
 		private static var instances:Dictionary =new Dictionary();
 		
-		public static function getInstance(clazz:Class):*
+		public static function getInstance(classe:Class):*
 		{
-			instances[clazz] = true;
-			instance = new clazz();
-			instances[clazz] = false;
+			instances[classe] = true;
+			instance = new classe();
+			instances[classe] = false;
 			return instance;
 		}
 		
-		public static function assertSingle(clazz:Class):void
+		public static function assertSingle(classe:Class):void
 		{
-			if (!instances[clazz]) {
-				throw new Error("Error: Instantiation of class "+clazz+" failed: Use "+clazz+".getInstance() instead of new.");
+			if (!instances[classe]) {
+				throw new Error("Error: Instantiation of class "+classe+" failed: Use "+classe+".getInstance() instead of new.");
 			}
 		}
 	}

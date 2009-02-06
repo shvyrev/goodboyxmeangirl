@@ -105,7 +105,7 @@ package railk.as3.stage {
 			//folder
 			folder = getAppFolder( stage.loaderInfo.loaderURL );
 			url = stage.loaderInfo.loaderURL.replace(stage.loaderInfo.loaderURL.split('/')[stage.loaderInfo.loaderURL.split('/').length - 1], "");
-			if( folder!= '') url = url.split(folder+'/')[0];
+			url = url.split('flash/')[0];
 			
 		}
 		
