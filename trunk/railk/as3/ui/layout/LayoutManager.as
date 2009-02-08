@@ -24,13 +24,7 @@ package railk.as3.ui.layout
 			}
 		}
 		
-		public function defineBloc(bloc:Number,name:String,width:Number,height:Number):void
-		{
-			layoutsList.update(bloc, null, name);
-			(layoutsList.getObjectByName(bloc).data as LayoutBloc).defineBloc(name, width, height);
-		}
-		
-		public function getBloc(name:String):void
+		public function getLayout(name:String):void
 		{
 			layoutsList.getObjectByGroup(name);
 		}
