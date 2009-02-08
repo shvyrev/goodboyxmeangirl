@@ -56,7 +56,7 @@ package railk.as3.data.serializer.foil
 			parseObjects( getData( toParse, 'Object' ), root );
 			/////////////////////////////////////////////////////
 			
-			return root.toArray();
+			return exportData( root.toArray() );
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -403,6 +403,11 @@ package railk.as3.data.serializer.foil
 				node = new TreeNode( forNode[0].replace(/[\r\t\n]/mg, ''), (new classe(forNode[1])).data, parent );
 				trace( node );
 			}
+		}
+		
+		private function exportData( data:Array ):Array
+		{
+			
 		}
 	}	
 }
