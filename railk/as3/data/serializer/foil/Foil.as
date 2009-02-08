@@ -36,7 +36,7 @@ package railk.as3.data.serializer.foil
 			Serialize.getInstance();
 		}	
 		
-		public  static function deserialize( rawData:String ):Array
+		public  static function deserialize( rawData:String ):Object
 		{	
 			return Deserialize.getInstance().feed( rawData );
 		}	

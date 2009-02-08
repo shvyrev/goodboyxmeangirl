@@ -9,6 +9,8 @@ package railk.as3.data.serializer.foil
 {
 	import railk.as3.utils.Singleton;
 	import railk.as3.utils.tree.TreeNode;
+	import railk.as3.utils.objectList.ObjectList;
+	import railk.as3.utils.objectList.ObjectNode;
 	
 	public class Deserialize
 	{
@@ -45,7 +47,7 @@ package railk.as3.data.serializer.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		 FEED
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function feed( rawData:String ):Array
+		public function feed( rawData:String ):Object
 		{
 			if( root ) root.clear();
 			this.rawData = rawData;
@@ -56,7 +58,7 @@ package railk.as3.data.serializer.foil
 			parseObjects( getData( toParse, 'Object' ), root );
 			/////////////////////////////////////////////////////
 			
-			return exportData( root.toArray() );
+			return { type:type, name:name, info:info, data:exportData( root ) };
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -68,9 +70,9 @@ package railk.as3.data.serializer.foil
 			var name:RegExp = /name[ ]{0,}:['|"][a-zA-Z0-9 -+=@#$£&%§_:,;'?\/!.~"çêéèàùïîöô\[\]()<>]{0,}['|"]/;
 			var info:RegExp = /info[ ]{0,}:['|"][a-zA-Z0-9 -+=@#$£&%§_:,;'?\/!.~"çêéèàùïîöô\[\]()<>]{0,}['|"]/;
 			
-			this.type = (data.match(type)[0] as String).split(':')[1];
-			this.name = (data.match(name)[0] as String).split(':')[1];
-			this.info = (data.match(info)[0] as String).split(':')[1];
+			this.type = (data.match(type)[0] as String).split(':')[1].replace(/["|']/g,"");
+			this.name = (data.match(name)[0] as String).split(':')[1].replace(/["|']/g,"");
+			this.info = (data.match(info)[0] as String).split(':')[1].replace(/["|']/g,"");
 			
 			///////////////////////////////////////////////////////////////////////
 			root = new TreeNode( this.name, { type:this.type, info:this.info } );
@@ -401,13 +403,49 @@ package railk.as3.data.serializer.foil
 			{
 				var forNode:Array = (data[i].data as String).split(':');
 				node = new TreeNode( forNode[0].replace(/[\r\t\n]/mg, ''), (new classe(forNode[1])).data, parent );
-				trace( node );
 			}
 		}
 		
-		private function exportData( data:Array ):Array
+		private function exportData( from:TreeNode ):Array
 		{
-			
+			var result:Array = new Array();
+			var obj:Object ={};
+			if( from.hasChildren()) {
+				var walker:ObjectNode = from.childs.head;
+				while (walker)
+				{
+					obj ={}
+					var node:TreeNode = walker.data;
+					if (node.hasChildren()) {
+						obj[node.name] =subObject( node.childs);
+						result.push( obj  );
+					}
+					else {
+						obj[node.name] = node.data;
+						result.push( obj );
+					}
+					walker = walker.next;
+				}
+			}
+			else {
+				obj[from.name] = from.data
+				result.push( obj )
+			}
+			return result;
+		}
+		
+		private function subObject( objects:ObjectList ):Object
+		{
+			var result:Object ={};
+			var walker:ObjectNode = objects.head;
+			while (walker)
+			{
+				var node:TreeNode = walker.data;
+				if (node.hasChildren()) result[node.name] =subObject( node.childs);
+				else result[node.name] = node.data;
+				walker = walker.next;
+			}
+			return result;
 		}
 	}	
 }
