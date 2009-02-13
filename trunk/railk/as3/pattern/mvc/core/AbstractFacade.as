@@ -28,8 +28,9 @@ package railk.as3.pattern.mvc.core
 			this.controller = new Controller(this.model);
 		}
 		
-		protected function registerView( name:String, view:IView ):void
+		protected function registerView( name:String, viewClass:Class ):void
 		{
+			var view:IView = new viewClass( model, controller );
 			viewsList.add( [name, view] );
 		}
 		
@@ -38,24 +39,24 @@ package railk.as3.pattern.mvc.core
 			viewsList.remove( name );
 		}
 		
-		protected function getView( name:String ):void
+		protected function getView( name:String ):IView
 		{
-			viewsList.getObjectByName( name );
+			viewsList.getObjectByName( name ).data;
 		}
 		
-		protected function registerCommand( name:String, commandClass:Class ):void
+		protected function registerCommand( view:String, type:String, commandClass:Class ):void
 		{
-			controller.registerCommand( name, commandClass );
+			controller.registerCommand( view, type, commandClass );
 		}
 		
-		protected function removeCommand( name:String ):void
+		protected function removeCommand( type:String ):void
 		{
-			controller.removeCommand( name );
+			controller.removeCommand( type );
 		}
 		
-		protected function hasCommand( name:String ):Boolean
+		protected function hasCommand( type:String ):Boolean
 		{
-			controller.hasCommand( name );
+			controller.hasCommand( type );
 		}
 	}
 }

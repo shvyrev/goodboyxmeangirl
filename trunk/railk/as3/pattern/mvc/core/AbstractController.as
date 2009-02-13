@@ -8,6 +8,7 @@
 package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.*;
+	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.data.objectList.ObjectList;
 	
 	public class AbstractController implements IController
@@ -15,8 +16,14 @@ package railk.as3.pattern.mvc.core
 		protected var model:IModel;
 		protected var commands:ObjectList;
 		
-		public function AbstractController()
+		public static function getInstance():AbstractController
 		{
+			return Singleton.getInstance(AbstractController);
+		}
+		
+		public function AbstractController() 
+		{ 
+			Singleton.assertSingle(AbstractController);
 			commands = new ObjectList();
 		}
 		
@@ -25,24 +32,29 @@ package railk.as3.pattern.mvc.core
 			this.model = model;
 		}
 		
-		public function registerCommand( name:String, commandClass:Class ):void
+		public function registerCommand( view:String, type:String, commandClass:Class, actions:Array ):void
 		{
-			
+			commands.add([type, new CommandClass(view, model)];
+			for (var i:int = 0; i < actions; i++) 
+			{
+				(commands.tail.data as ICommand).addAction( actions[i].type, actions[i].action, actions[i].actionParams );
+			}
+
 		}
 		
-		public function executeCommand( name:String ):void
+		public function executeCommand( type:String, action:String ):void
 		{
-			
+			(commands.getObjectByName( type ).data as ICommand).execute( action );
 		}
 		
-		public function removeCommand( name:String ):void
+		public function removeCommand( type:String ):void
 		{
-			
+			commands.remove( type );
 		}
 		
-		public function hasCommand( name:String ):Boolean
+		public function hasCommand( type:String ):Boolean
 		{
-			
+			( commands.getObjectByName(type) )?true:false;
 		}
 	}
 }
