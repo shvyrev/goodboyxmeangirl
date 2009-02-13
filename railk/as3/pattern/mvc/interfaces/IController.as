@@ -1,0 +1,1 @@
+/*** *  Icontroller* * @author Richard Rodney* @version 0.1*/package railk.as3.pattern.mvc.interfaces{	public interface IController 	{		function registerCommand( name:String, commandClass:Class ):void;		function executeCommand( name:String ):void;		function removeCommand( name:String ):void;		function hasCommand( name:String ):Boolean;	}}
