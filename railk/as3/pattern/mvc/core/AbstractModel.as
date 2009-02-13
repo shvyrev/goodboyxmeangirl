@@ -10,14 +10,21 @@ package railk.as3.pattern.mvc.core
 {
 	import flash.events.EventDispatcher;
 	import railk.as3.pattern.mvc.interfaces.IModel;
+	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.data.objectList.ObjectList;
 		
 	public class AbstractModel extends EventDispatcher implements IModel
 	{
 		protected var data:ObjectList;
 		
-		public function AbstractModel()
+		public static function getInstance():AbstractModel 
 		{
+			return Singleton.getInstance(AbstractModel);
+		}
+		
+		public function AbstractModel() 
+		{ 
+			Singleton.assertSingle(AbstractModel);
 			data = new ObjectList();
 		}
 		
