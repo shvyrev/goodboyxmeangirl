@@ -8,10 +8,10 @@
 package 
 {
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.preloader.MainPreloader;
-	import railk.as3.utils.Loading;
+	import railk.as3.net.preloader.MainPreloader;
+	import railk.as3.ui.Loading;
 	import railk.as3.display.GraphicShape;
-	import railk.as3.utils.DynamicRegistration;
+	import railk.as3.display.DSprite;
 	
 
 	public class ApplicationPreloader extends MainPreloader
@@ -27,27 +27,27 @@ package
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 		CREATE BG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		override protected function createBackground():DynamicRegistration
+		override protected function createBackground():DSprite
 		{
-			return new DynamicRegistration();
+			return new DSprite();
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					CREATE FOREGROUND
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		override protected function createForeground():DynamicRegistration
+		override protected function createForeground():DSprite
 		{
-			return new DynamicRegistration();
+			return new DSprite();
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					CREATE FOREGROUND
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		override protected function createMask():DynamicRegistration
+		override protected function createMask():DSprite
 		{
-			var s:DynamicRegistration= new DynamicRegistration();
+			var s:DSprite= new DSprite();
 			
 				var m:GraphicShape = new GraphicShape();
 				m.rectangle( 0xFF0000, 0, 0, 220, 2 );

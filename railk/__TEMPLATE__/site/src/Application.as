@@ -11,20 +11,19 @@ package {
 	import flash.display.Sprite;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.pattern.mvc.interfaces.IApplication;
-	import railk.as3.root.Current;
+	import railk.as3.TopLevel;
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
 	import railk.as3.stage.FullScreenMode;
 	import railk.as3.utils.Logger;
-	import railk.as3.utils.link.LinkManager;
+	import railk.as3.ui.link.LinkManager;
 	import railk.as3.tween.process.*;
 	
 	// _________________________________________________________________________________ IMPORT MACMOUSEWHEEL
 	import com.pixelbreaker.ui.osx.MacMouseWheel;
 	
 	
-	public class Application extends Sprite implements IApplication {
+	public class Application extends Sprite {
 		
 		// _______________________________________________________________________________________ CONSTANTES
 		private static var __PATH__            :String;
@@ -36,11 +35,11 @@ package {
 		public function Application():void {
 			
 			//--flashVars
-			__PATH__ = Current.root.loaderInfo.parameters.path;
+			__PATH__ = TopLevel.root.loaderInfo.parameters.path;
 			__PATH__ = ( __PATH__ ) ? __PATH__ : '';
 			
 			//--stage
-			StageManager.init( Current.stage );
+			StageManager.init( TopLevel.stage );
 			StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );
@@ -48,10 +47,10 @@ package {
 			StageManager.GlobalVars.title = 'title';
 			
 			//--fullscreenMode
-			FullScreenMode.init( Current.stage );
+			FullScreenMode.init( TopLevel.stage );
 			
 			//--Mac Mouse Wheel
-			MacMouseWheel.setup( Current.stage );
+			MacMouseWheel.setup( TopLevel.stage );
 			
 			//--Process
 			Process.enablePlugin( ProcessPlugins );
