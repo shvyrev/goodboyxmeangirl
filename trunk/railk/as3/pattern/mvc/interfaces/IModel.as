@@ -1,8 +1,9 @@
 ﻿/**
 * 
-* Imodel
+* MVC Imodel
 * 
 * @author Richard Rodney
+* @version 0.1
 */
 
 package railk.as3.pattern.mvc.interfaces
@@ -11,8 +12,8 @@ package railk.as3.pattern.mvc.interfaces
 	
 	public interface IModel extends IEventDispatcher
 	{
-		function updateView(info:String, type:String, data:Object = null ):void;
-		function getData( name:String ):*;
-		function clearData():void;
+		function registerProxy( proxyClass:Class ):void;
+		function removeProxy( name:String ):void;
+		function hasProxy( name:String ):Boolean;
 	}
 }

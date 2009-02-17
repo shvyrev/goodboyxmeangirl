@@ -1,8 +1,9 @@
 ﻿/**
 * 
-* Abstract View
+* MVC Abstract View
 * 
 * @author Richard Rodney
+* @version 0.1
 */
 
 package railk.as3.pattern.mvc.core
@@ -13,6 +14,8 @@ package railk.as3.pattern.mvc.core
 	
 	public class AbstractView extends RegistrationPoint implements IView
 	{
+		static public const NAME:String = 'view';
+		
 		protected var model:IModel;
 		protected var controller:IController;
 		
@@ -20,6 +23,21 @@ package railk.as3.pattern.mvc.core
 		{
 			this.model = model;
 			this.controller = controller;
+		}
+		
+		public function getName():String
+		{
+			return NAME;
+		}
+		
+		public function show():void
+		{
+			
+		}
+		
+		public function hide():void
+		{
+			
 		}
 		
 		public function dispose():void

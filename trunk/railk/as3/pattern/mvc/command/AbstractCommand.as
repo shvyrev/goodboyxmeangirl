@@ -5,23 +5,20 @@
 * @author Richard Rodney
 */
 
-package railk.as3.pattern.mvc.commands
+package railk.as3.pattern.mvc.command
 {
 	import railk.as3.data.objectList.ObjectNode;
 	import railk.as3.data.objectList.ObjectList
 	import railk.as3.pattern.mvc.interfaces.*;
-	import railk.as3.pattern.mvc.commands.*;
 	
 	public class AbstractCommand implements ICommand
 	{
 		protected var actions:ObjectList;
-		protected var view:IView;
-		protected var model:IModel;
+		protected var proxy:IProxy;
 		
-		public function AbstractCommand( view:IView, model:IModel )
+		public function AbstractCommand( proxy:IProxy )
 		{
-			this.view = view;
-			this.model = model;
+			this.proxy = proxy;
 			actions = new ObjectList();
 		}
 		

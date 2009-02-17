@@ -1,6 +1,6 @@
 ﻿/**
 * 
-* Abstract Model
+* MVC Abstract Model
 * 
 * @author Richard Rodney
 * @version 0.1
@@ -8,14 +8,13 @@
 
 package railk.as3.pattern.mvc.core
 {
-	import flash.events.EventDispatcher;
 	import railk.as3.pattern.mvc.interfaces.IModel;
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.data.objectList.ObjectList;
 		
-	public class AbstractModel extends EventDispatcher implements IModel
+	public class AbstractModel implements IModel
 	{
-		protected var data:ObjectList;
+		protected var proxys:ObjectList = new ObjectList();
 		
 		public static function getInstance():AbstractModel 
 		{
@@ -25,36 +24,21 @@ package railk.as3.pattern.mvc.core
 		public function AbstractModel() 
 		{ 
 			Singleton.assertSingle(AbstractModel);
-			data = new ObjectList();
 		}
 		
-		public function updateView(info:String, type:String, data:Object=null):void
+		public function registerProxy( proxyClass:Class ):void
 		{
-			var args:Object= {};
-			args.info = info;
-			if (data ) for ( var d:String in data) { args[d] = data[d]; }
-			dispatchEvent( new ModelEvent( type, args ) );
+			proxys.add([proxyClass.NAME,new proxyClass() ])
 		}
-		
-		public function getData( name:String ):*
-		{
-			return data.getObjectByName( name ).data;
-		}
-		
-		public function clearData():void {
-			data.clear();
-		}
-		
-	}
-}
 
-import flash.events.Event;
-dynamic class ModelEvent extends Event {
-	
-	public function ModelEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
-			super(type, bubbles, cancelable) ;
-			for(var name:String in data) {
-				this[name] = data[name];
-			}	
+		public function removeProxy( name:String ):void
+		{
+			proxys.remove(name);
+		}
+		
+		public function hasProxy( name:String ):Boolean
+		{
+			( proxys.getObjectByName(name) )?true:false;
+		}
 	}
 }

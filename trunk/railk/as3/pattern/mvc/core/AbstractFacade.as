@@ -1,62 +1,97 @@
 ﻿/**
 * 
-* Abstract Controller
+* MVC Abstract Facade
 * 
 * @author Richard Rodney
+* @version 0.1
 */
 
 package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.commands.*;
+	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.data.objectList.ObjectList
 	
 	public class AbstractFacade implements IFacade
 	{
 		protected var model:IModel;
 		protected var controller:IController;
-		protected var viewsList:ObjectList;
+		protected var viewsList:ObjectList = new ObjectList();
+		
+		public static function getInstance():AbstractFacade
+		{
+			return Singleton.getInstance(AbstractFacade);
+		}
 		
 		public function AbstractFacade()
 		{
-			views = new ObjectList();
+			Singleton.assertSingle(AbstractFacade);
 		}
 		
-		protected function init( modelClass:Class, controllerClass:Class ):void
+		public function init( modelClass:Class, controllerClass:Class, viewClasses:Array=null, commands:Array=null ):void
 		{
 			this.model = new model();
 			this.controller = new Controller(this.model);
+			var i:int = 0;
+			if ( viewClasses )for ( i = 0; i < viewClasses.length ; i++) { registerView( viewClasses[i].NAME, viewClasses[i] ) }
+			if ( commands ) for ( i = 0; i < commands.length ; i++) { registerCommand( commands[i].proxy, commands[i].type, commands[i].classe, commands[i].actions ) }
 		}
 		
-		protected function registerView( name:String, viewClass:Class ):void
+		public function registerView( name:String, viewClass:Class ):void
 		{
 			var view:IView = new viewClass( model, controller );
 			viewsList.add( [name, view] );
 		}
 		
-		protected function removeView( name:String ):void
+		public function removeView( name:String ):void
 		{
 			viewsList.remove( name );
 		}
 		
-		protected function getView( name:String ):IView
+		public function getView( name:String ):IView
 		{
 			viewsList.getObjectByName( name ).data;
 		}
 		
-		protected function registerCommand( view:String, type:String, commandClass:Class ):void
+		public function registerCommand( proxyClass:Class, type:String, commandClass:Class, actions:Array ):void
 		{
-			controller.registerCommand( view, type, commandClass );
+			this.registerProxy( proxyClass );
+			controller.registerCommand( proxyClass, type, commandClass, actions );
 		}
 		
-		protected function removeCommand( type:String ):void
+		public function executeCommand(  type:String, action:String ):void
+		{
+			controller.executeCommand( type, action );
+		}
+		
+		public function removeCommand( type:String ):void
 		{
 			controller.removeCommand( type );
 		}
 		
-		protected function hasCommand( type:String ):Boolean
+		public function hasCommand( type:String ):Boolean
 		{
 			controller.hasCommand( type );
+		}
+		
+		public function registerProxy( proxyClass:Class ):void
+		{
+			model.registerProxy( proxyClass );
+		}
+
+		public function removeProxy( name:String ):void
+		{
+			model.removeProxy( name );
+		}
+		
+		public function hasProxy( name:String ):Boolean
+		{
+			model.hasProxy( name );
+		}
+		
+		public function start():void
+		{
 		}
 	}
 }
