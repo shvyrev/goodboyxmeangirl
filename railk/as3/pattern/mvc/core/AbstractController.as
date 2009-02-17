@@ -1,8 +1,9 @@
 ﻿/**
 * 
-* Abstract Controller
+* MVC Abstract Controller
 * 
 * @author Richard Rodney
+* @version 0.1
 */
 
 package railk.as3.pattern.mvc.core
@@ -14,7 +15,7 @@ package railk.as3.pattern.mvc.core
 	public class AbstractController implements IController
 	{
 		protected var model:IModel;
-		protected var commands:ObjectList;
+		protected var commands:ObjectList = new ObjectList();
 		
 		public static function getInstance():AbstractController
 		{
@@ -24,7 +25,6 @@ package railk.as3.pattern.mvc.core
 		public function AbstractController() 
 		{ 
 			Singleton.assertSingle(AbstractController);
-			commands = new ObjectList();
 		}
 		
 		public function initializeController( model:IModel ):void 
@@ -32,14 +32,13 @@ package railk.as3.pattern.mvc.core
 			this.model = model;
 		}
 		
-		public function registerCommand( view:String, type:String, commandClass:Class, actions:Array ):void
+		public function registerCommand( proxy:IProxy, type:String, commandClass:Class, actions:Array ):void
 		{
-			commands.add([type, new CommandClass(view, model)];
+			commands.add([type, new CommandClass(proxy)];
 			for (var i:int = 0; i < actions; i++) 
 			{
 				(commands.tail.data as ICommand).addAction( actions[i].type, actions[i].action, actions[i].actionParams );
 			}
-
 		}
 		
 		public function executeCommand( type:String, action:String ):void
