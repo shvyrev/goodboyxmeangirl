@@ -100,8 +100,8 @@ package railk.as3.data.foil
 		private function parseContent( data:String, parent:TreeNode ):void
 		{
 			var type:String;
-			var content:Array = ['Object', 'String', 'Array', 'Number', 'Custom', 'Boolean'];
-			var classes:Array = [ FoilObject, FoilString, FoilArray, FoilNumber, FoilCustom, FoilBoolean];
+			var content:Array = ['Object', 'Function', 'String', 'Array', 'Number', 'Custom', 'Boolean'];
+			var classes:Array = [ FoilObject, FoilFunction, FoilString, FoilArray, FoilNumber, FoilCustom, FoilBoolean];
 			for (var i:int = 0; i < content.length ; i++) 
 			{
 				type = content[i];
@@ -277,18 +277,19 @@ package railk.as3.data.foil
 			var pos:int = data.search(reg);
 			var beginPos:int = pos;
 			
-			var bChar:RegExp = /[new]/;
+			var bChar:RegExp = /new/;
 			var eChar:RegExp = /\)[,|\r]/;
 			var isCustom:Boolean = false;
 			
-			var char:String;
+			var char:String, toCheck:String ;
 			loop:while ( pos < data.length )
 			{
 				char = data.charAt(pos);
-				if ( !char.search(bChar) ) isCustom = true;
+				toCheck = data.substr(pos, 3);
+				if ( !toCheck.search(bChar) ) isCustom = true;
 				if ( isCustom )
 				{
-					var toCheck:String = char + data.charAt(pos + 1);
+					toCheck = char + data.charAt(pos + 1);
 					if ( !toCheck.search(eChar) ) 
 					{
 						result.push( { data: data.slice(beginPos, pos + 1 ), begin:beginPos, end:pos+1 } );
@@ -301,7 +302,44 @@ package railk.as3.data.foil
 				}
 				pos++;
 			}
+			return result;
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																						  GET CUSTOMS
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function getFunctions( data:String ):Array
+		{
+			var result:Array = [];
+			var reg:RegExp = /[a-zA-Z0-9 ]{1,}:[ ]{0,}function\(\)/;
+			var pos:int = data.search(reg);
+			var beginPos:int = pos;
 			
+			var bChar:RegExp = /function\(\)/;
+			var eChar:RegExp = /\}[,|\r]/;
+			var isFunction:Boolean = false;
+			
+			var char:String, toCheck:String;
+			loop:while ( pos < data.length )
+			{
+				char = data.charAt(pos);
+				toCheck = data.substr(pos, 10);
+				if ( !toCheck.search(bChar) ) isFunction = true;
+				if ( isFunction )
+				{
+					toCheck = char + data.charAt(pos + 1);
+					if ( !toCheck.search(eChar) ) 
+					{
+						result.push( { data: data.slice(beginPos, pos + 1 ), begin:beginPos, end:pos+1 } );
+						isFunction = false;
+						
+						var found:Number = data.slice(pos + 1, data.length - 1).search(reg);
+						if ( found == -1 ) beginPos = pos;
+						else beginPos = pos = pos + found;	
+					}
+				}
+				pos++;
+			}
 			return result;
 		}
 		

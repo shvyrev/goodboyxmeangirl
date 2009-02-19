@@ -12,6 +12,7 @@ package railk.as3.pattern.mvc.proxy
 	import railk.as3.data.objectList.ObjectNode;
 	import railk.as3.data.objectList.ObjectList
 	import railk.as3.pattern.mvc.interfaces.*;
+	import railk.as3.pattern.mvc.event.ModelEvent;
 	
 	public class AbstractProxy extends EventDispatcher implements IProxy
 	{
@@ -43,16 +44,5 @@ package railk.as3.pattern.mvc.proxy
 		public function clearData():void {
 			datas.clear();
 		}
-	}
-}
-
-import flash.events.Event;
-dynamic class ModelEvent extends Event {
-	
-	public function ModelEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
-			super(type, bubbles, cancelable) ;
-			for(var name:String in data) {
-				this[name] = data[name];
-			}	
 	}
 }
