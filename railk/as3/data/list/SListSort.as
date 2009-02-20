@@ -1,5 +1,5 @@
 ﻿/**
-* Doubly linked List Sort class
+* Single linked List Sort class
 * 
 * @author Richard Rodney
 * @version 0.1
@@ -12,7 +12,7 @@
 package railk.as3.data.list
 {	
 	
-	public class  DListSort
+	public class  SListSort
 	{
 		// _______________________________________________________________________________________ CONSTANTES
 		public static const NUMERIC                         :String = 'numeric';
@@ -21,8 +21,8 @@ package railk.as3.data.list
 		public static const ASC                             :String = 'asc';
 		
 		// ____________________________________________________________________________ VARIABLES OBJECT LIST
-		private static var sortedList                       :DLinkedList;	
-		private static var walker                           :DListNode;	
+		private static var sortedList                       :SLinkedList;	
+		private static var walker                           :SListNode;	
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -36,9 +36,9 @@ package railk.as3.data.list
 		 * @param	sortValue
 		 * @return
 		 */
-		public static function sort( list:DLinkedList, sortType:String, sortMode:String, sortValue:String ):DLinkedList 
+		public static function sort( list:SLinkedList, sortType:String, sortMode:String, sortValue:String ):SLinkedList 
 		{
-			var result:DLinkedList;
+			var result:SLinkedList;
 			switch( sortType )
 			{
 				case NUMERIC:
@@ -56,11 +56,13 @@ package railk.as3.data.list
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 NUMERICAL SORT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function numericSort(list:DLinkedList, mode:String, value:String):DLinkedList
+		private static function numericSort(list:SLinkedList, mode:String, value:String):SLinkedList
 		{
 			var currentValue = list.head.data[value];
-			var currentNode:DListNode;
-			sortedList = new DLinkedList();
+			var currentNode:SListNode;
+			var previousNode:SListNode = null;
+			
+			sortedList = new SLinkedList();
 			walker = list.head;
 			
 			switch( mode )
@@ -76,11 +78,12 @@ package railk.as3.data.list
 							currentNode = currentNode.next;
 						}
 						else {
-							sortedList.insertBefore( currentNode, walker.name, walker.data, walker.group, walker.action );
-							currentNode = currentNode.prev;
+							sortedList.insertAfter( previousNode, walker.name, walker.data, walker.group, walker.action );
+							currentNode = previousNode;
 						}
 						
 						currentValue = walker.data[value];
+						previousNode = walker;
 						walker = walker.next;
 					}
 					break
@@ -92,8 +95,8 @@ package railk.as3.data.list
 							currentNode = sortedList.head;
 						}
 						else if ( walker.data[value] <= currentValue ) {
-							sortedList.insertBefore( currentNode, walker.name, walker.data, walker.group, walker.action );
-							currentNode = currentNode.prev;
+							sortedList.insertAfter( previousNode, walker.name, walker.data, walker.group, walker.action );
+							currentNode = previousNode;
 						}
 						else {
 							sortedList.insertAfter( currentNode, walker.name, walker.data, walker.group, walker.action );
@@ -101,6 +104,7 @@ package railk.as3.data.list
 						}
 						
 						currentValue = walker.data[value];
+						previousNode = walker;
 						walker = walker.next;
 					}
 					break;
@@ -111,9 +115,9 @@ package railk.as3.data.list
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					ALPHABETICAL SORT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function alphaSort(list:DLinkedList, mode:String, value:String):DLinkedList
+		private static function alphaSort(list:SLinkedList, mode:String, value:String):SLinkedList
 		{
-			sortedList = new DLinkedList();
+			sortedList = new SLinkedList();
 			switch( mode )
 			{
 				case DESC :
