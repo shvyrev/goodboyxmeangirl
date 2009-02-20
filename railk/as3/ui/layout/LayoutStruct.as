@@ -7,7 +7,7 @@
 
 package railk.as3.ui.layout
 {
-	import railk.as3.data.serializer.foil.Foil;
+	import railk.as3.data.foil.Foil;
 	import railk.as3.data.parser.Parser;
 	
 	public class LayoutStruct
@@ -15,7 +15,7 @@ package railk.as3.ui.layout
 		private var dataType:String;
 		private var _blocs:Array;
 				
-		public function LayoutStruct( data:String ):void
+		public function LayoutStruct( data:String )
 		{
 			dataType = getType( data );
 			_blocs = parse( data, dataType );

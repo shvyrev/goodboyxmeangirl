@@ -34,7 +34,7 @@ package railk.as3.data.grid {
 		 * @param	width
 		 * @param	height
 		 */
-		public function Bloc( id:String, beginX:int, beginY:int, endX:int, endY:int, width:int, height:int ):void 
+		public function Bloc( id:String, beginX:int, beginY:int, endX:int, endY:int, width:int, height:int )
 		{	
 			_id = id;
 			_beginX = beginX;

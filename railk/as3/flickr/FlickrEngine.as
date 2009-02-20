@@ -17,10 +17,6 @@ package railk.as3.flickr {
 	import flash.events.EventDispatcher;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
-
-	// __________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.objectList.*;
-
 	
 	
 	public class FlickrEngine extends EventDispatcher
@@ -47,7 +43,6 @@ package railk.as3.flickr {
 		private var photoSetsList                    :Array;
 		private var photosList                       :Array;
 		private var photoSizesList                   :Array;
-		private var walker                           :ObjectNode;
 		private var photo                            :Object;
 		
 		// ___________________________________________________________________________________ VARIABLES EVENT
@@ -59,7 +54,7 @@ package railk.as3.flickr {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		//                                                                                        CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function FlickrEngine( API_Key:String, API_Secret:String ):void 
+		public function FlickrEngine( API_Key:String, API_Secret:String )
 		{
 			flickr = new FlickrService( API_Key );
 			flickr.secret = API_Secret;

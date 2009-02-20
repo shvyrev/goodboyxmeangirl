@@ -5,9 +5,9 @@
 * @version 0.1
 */
 
-package railk.as3.data.objectList
+package railk.as3.data.list
 {
-	public class ObjectNode
+	public class DListNode
 	{
 		// _____________________________________________________________________________ VARIABLES OBJECTNODE
 		private var _id                            :int;
@@ -16,8 +16,8 @@ package railk.as3.data.objectList
 		private var _group                         :String;
 		private var _action                        :Function;
 		private var _args                          :Object;
-		private var _prev                          :ObjectNode;
-		private var _next                          :ObjectNode;
+		private var _prev                          :DListNode;
+		private var _next                          :DListNode;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -31,7 +31,7 @@ package railk.as3.data.objectList
 		 * @param	group
 		 * @param	action
 		 */
-		public function ObjectNode( id:int, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void {
+		public function DListNode( id:int, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void {
 			_name = name;
 			_data = data;
 			_group = group;
@@ -45,7 +45,7 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 INSERT AFTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertAfter( node:ObjectNode ):void
+		public function insertAfter( node:DListNode ):void
 		{
 			node.next = _next;
 			node.prev = this;
@@ -56,7 +56,7 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						INSERT BEFORE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertBefore( node:ObjectNode ):void
+		public function insertBefore( node:DListNode ):void
 		{
 			node.next = this;
 			node.prev = _prev;
@@ -71,7 +71,7 @@ package railk.as3.data.objectList
 			var g:String;
 			if ( ! _group ) g = 'no group';
 			else g = _group;
-			return '[ ObjectNode/'+_id+' -> '+ g +', '+ _name + ', ' + String( _data )+' ]';
+			return '[ DListNode/'+_id+' -> '+ g +', '+ _name + ', ' + String( _data )+' ]';
 		}
 		
 		
@@ -100,13 +100,13 @@ package railk.as3.data.objectList
 		
 		public function set data(value:*):void { _data = value; }
 		
-		public function get prev():ObjectNode { return _prev; }
+		public function get prev():DListNode { return _prev; }
 		
-		public function set prev(value:ObjectNode):void { _prev = value; }
+		public function set prev(value:DListNode):void { _prev = value; }
 		
-		public function get next():ObjectNode { return _next; }
+		public function get next():DListNode { return _next; }
 		
-		public function set next(value:ObjectNode):void { _next = value; }
+		public function set next(value:DListNode):void { _next = value; }
 		
 		public function get action():Function { return _action; }
 		

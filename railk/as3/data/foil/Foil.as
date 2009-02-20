@@ -25,9 +25,6 @@
 
 package railk.as3.data.foil
 {
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.tree.TreeNode;
-	
 	public class Foil
 	{	
 		

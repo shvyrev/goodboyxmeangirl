@@ -9,18 +9,18 @@ package railk.as3.ui.layout
 {
 	import railk.as3.display.VSprite;
 	import railk.as3.ui.depth.DepthManager;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class Layout
 	{
-		private var blocsList:ObjectList;
+		private var blocsList:DLinkedList;
 		private var blocsDepth:DepthManager;
 				
-		public function Layout( parent:Object,structure:LayoutStruct ):void
+		public function Layout( parent:Object,structure:LayoutStruct )
 		{
 			blocsDepth = new DepthManager(parent);
-			blocsList = new ObjectList();
+			blocsList = new DLinkedList();
 			
 			var baseBlocs:Array = structure.blocs
 			for ( var i:int = 0; i < baseBlocs.length; i++)
@@ -33,12 +33,12 @@ package railk.as3.ui.layout
 		
 		public function getBloc(name:String):void
 		{
-			blocsList.getObjectByGroup(name);
+			blocsList.getNodeByGroup(name);
 		}
 		
-		private function placeBlocs( itemName ):void
+		private function placeBlocs( itemName:String ):void
 		{
-			var item:ObjectNode = itemList.getObjectByName( itemName );
+			var item:DListNode = itemList.getNodeByName( itemName );
 			if ( item == itemList.head )
 			{
 				walker = itemList.head.next;

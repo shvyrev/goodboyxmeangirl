@@ -9,13 +9,13 @@
 package railk.as3.tween.process.plugin.sequence
 {
 	import railk.as3.tween.process.Process;
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 	
 	public class  Sequence implements ISequence 
 	{
-		private var itemList:ObjectList;
+		private var itemList:DLinkedList;
 		
-		public function Sequence():void { itemList = new ObjectList(); }
+		public function Sequence():void { itemList = new DLinkedList(); }
 		public function getType():String { return 'sequence'; }
 		public function add( name:String, tween:Process, group:String = '', action:Function=null ):void 
 		{
@@ -34,7 +34,7 @@ package railk.as3.tween.process.plugin.sequence
 		}
 		public function play():void 
 		{
-			itemList.getObjectByName('p1').data.play();
+			itemList.getNodeByName('p1').data.play();
 		}
 		public function play():void {}
 	}

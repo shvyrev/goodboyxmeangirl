@@ -9,10 +9,10 @@
 */
 
 
-package railk.as3.data.objectList
+package railk.as3.data.list
 {	
 	
-	public class  ObjectListSort
+	public class  DListSort
 	{
 		// _______________________________________________________________________________________ CONSTANTES
 		public static const NUMERIC                         :String = 'numeric';
@@ -21,8 +21,8 @@ package railk.as3.data.objectList
 		public static const ASC                             :String = 'asc';
 		
 		// ____________________________________________________________________________ VARIABLES OBJECT LIST
-		private static var sortedList                       :ObjectList;	
-		private static var walker                           :ObjectNode;	
+		private static var sortedList                       :DLinkedList;	
+		private static var walker                           :DListNode;	
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -36,9 +36,9 @@ package railk.as3.data.objectList
 		 * @param	sortValue
 		 * @return
 		 */
-		public static function sort( list:ObjectList, sortType:String, sortMode:String, sortValue:String ):ObjectList 
+		public static function sort( list:DLinkedList, sortType:String, sortMode:String, sortValue:String ):DLinkedList 
 		{
-			var result:ObjectList;
+			var result:DLinkedList;
 			switch( sortType )
 			{
 				case NUMERIC:
@@ -56,11 +56,11 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 NUMERICAL SORT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function numericSort(list:ObjectList, mode:String, value:String):ObjectList
+		private static function numericSort(list:DLinkedList, mode:String, value:String):DLinkedList
 		{
 			var currentValue = list.head.data[value];
-			var currentNode:ObjectNode;
-			sortedList = new ObjectList();
+			var currentNode:DListNode;
+			sortedList = new DLinkedList();
 			walker = list.head;
 			
 			switch( mode )
@@ -111,9 +111,9 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					ALPHABETICAL SORT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function alphaSort(list:ObjectList, mode:String, value:String):ObjectList
+		private static function alphaSort(list:DLinkedList, mode:String, value:String):DLinkedList
 		{
-			sortedList = new ObjectList();
+			sortedList = new DLinkedList();
 			switch( mode )
 			{
 				case DESC :

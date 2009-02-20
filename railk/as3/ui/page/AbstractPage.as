@@ -9,18 +9,18 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.IView;
 	import railk.as3.ui.layout.Layout;
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 	
 	public class AbstractPage extends AbstractView implements IPage, IView
 	{
 		private var _name:String;
 		private var _parent:AbstractPage;
-		private var _childs:ObjectList;
+		private var _childs:DLinkedList;
 		
 		public function AbstractPage(parent:AbstractPage=null)
 		{
 			_parent = parent;
-			_childs = new ObjectList();
+			_childs = new DLinkedList();
 		}
 		
 		public function setlayout( layout:Layout ):void
@@ -58,9 +58,9 @@ package railk.as3.ui.page
 			_parent = value;
 		}
 		
-		public function get childs():ObjectList { return _childs; }
+		public function get childs():DLinkedList { return _childs; }
 		
-		public function set childs(value:ObjectList):void 
+		public function set childs(value:DLinkedList):void 
 		{
 			_childs = value;
 		}

@@ -14,14 +14,14 @@ package railk.as3.ui.drag
 	import flash.events.EventDispatcher;
 	
 	import railk.as3.event.CustomEvent;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class DragAndThrow extends EventDispatcher
 	{
 		private static var _stage:Stage;
-		private static var itemsList:ObjectList;
-		private static var walker:ObjectNode
+		private static var itemsList:DLinkedList;
+		private static var walker:DListNode;
 		protected static var disp:EventDispatcher;
 		
 		
@@ -50,7 +50,7 @@ package railk.as3.ui.drag
 		public static function init( stage:Stage )
 		{
 			_stage = stage;
-			itemsList = new ObjectList();
+			itemsList = new DLinkedList();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -72,8 +72,8 @@ package railk.as3.ui.drag
 		
 		public static function disable( name:String  )
 		{
-			itemsList.getObjectByName(name).data.removeEventListener( 'onScrollListDrag', manageEvent);
-			itemsList.getObjectByName( name ).data.dispose();
+			itemsList.getNodeByName(name).data.removeEventListener( 'onScrollListDrag', manageEvent);
+			itemsList.getNodeByName( name ).data.dispose();
 			itemsList.remove( name );
 		}
 		
@@ -83,7 +83,7 @@ package railk.as3.ui.drag
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function drag( name:String, x:Number, y:Number ):void
 		{
-			var from:ObjectNode = itemsList.getObjectByName( name );
+			var from:DListNode = itemsList.getNodeByName( name );
 			if ( from == itemsList.head )
 			{
 				walker = from.next;
@@ -102,13 +102,13 @@ package railk.as3.ui.drag
 			}
 			else
 			{
-				var prev:ObjectNode = from.prev;
+				var prev:DListNode = from.prev;
 				while ( prev ) {
 					move( prev.data,x,y );
 					prev = prev.prev;
 				}
 				
-				var next:ObjectNode = from.next;
+				var next:DListNode = from.next;
 				while ( next ) {
 					move( next.data,x,y );
 					next = next.next;
@@ -137,7 +137,7 @@ package railk.as3.ui.drag
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function remove( name:String ):void
 		{
-			itemsList.getObjectByName( name ).data.dispose();
+			itemsList.getNodeByName( name ).data.dispose();
 			itemsList.remove( name );
 		}
 		

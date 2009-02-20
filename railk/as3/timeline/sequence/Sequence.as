@@ -13,16 +13,16 @@ package railk.as3.timeline.sequence
 	import flash.events.TimerEvent;
 	import flash.utils.Timer;
 	
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	 
 	public class Sequence extends EventDispatcher
 	{
 		
 		public var name:String;
 		public var state:String = 'pause';
-		private var stepsList:ObjectList;
-		private var walker:ObjectNode;
+		private var stepsList:DLinkedList=new DLinkedList();
+		private var walker:DListNode;
 		
 		public function Sequence( name:String ):void
 		{

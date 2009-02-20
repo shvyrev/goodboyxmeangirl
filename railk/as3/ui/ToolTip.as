@@ -73,7 +73,7 @@ package railk.as3.ui
 		 * @param	triPlace       place of the marker top | bottom | left | right
 		 * 
 		 */
-		public function ToolTip( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int = 0, dropShadow:Boolean = false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' ):void 
+		public function ToolTip( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int = 0, dropShadow:Boolean = false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' )
 		{
 			_type = type;
 			_thickness = thickness;

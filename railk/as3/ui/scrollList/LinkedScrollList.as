@@ -20,8 +20,8 @@ package railk.as3.ui.scrollList {
 	import flash.geom.Rectangle;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	import railk.as3.ui.drag.DragAndThrow;
 	import railk.as3.event.CustomEvent;
 	
@@ -34,9 +34,9 @@ package railk.as3.ui.scrollList {
 		private var espacement                                  :int;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
-		private var walker                                       :ObjectNode;
-		private var objects                                      :ObjectList;
-		private var scrollLists                                  :ObjectList;
+		private var walker                                       :DListNode;
+		private var objects                                      :DLinkedList;
+		private var scrollLists                                  :DLinkedList;
 		private var currentScrollList                            :int = 0;
 		private var currentSize                                  :Number = 0;
 		private var activeScrollList                             :String;
@@ -61,8 +61,8 @@ package railk.as3.ui.scrollList {
 			this.espacement = espacement;
 			this.size = size;
 						
-			objects = new ObjectList();
-			scrollLists = new ObjectList();
+			objects = new DLinkedList();
+			scrollLists = new DLinkedList();
 			
 			this.addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
 		}
@@ -129,7 +129,7 @@ package railk.as3.ui.scrollList {
 			currentScrollList += 1;
 			scrollLists.add( [scrollLists.length,  new ScrollList( String(currentScrollList), orientation, size, espacement,true,false )] );
 			initScrollListeners( currentScroll() );
-			return scrollLists.getObjectByName( String(currentScrollList) ).data as ScrollList;
+			return scrollLists.getNodeByName( String(currentScrollList) ).data as ScrollList;
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -137,7 +137,7 @@ package railk.as3.ui.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function currentScroll():ScrollList
 		{
-			return scrollLists.getObjectByName( String(currentScrollList) ).data as ScrollList;
+			return scrollLists.getNodeByName( String(currentScrollList) ).data as ScrollList;
 		}
 		
 		
@@ -234,20 +234,20 @@ package railk.as3.ui.scrollList {
 			var tail:Number = (orientation == 'V')? y : x;
 			if ( head  <= 0  )
 			{
-				if ( scrollLists.getObjectByName( scrollname ) ==  scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+				if ( scrollLists.getNodeByName( scrollname ) ==  scrollLists.head && scrollLists.getNodeByName( scrollname ) == scrollLists.tail )
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data
+					scroll = scrollLists.getNodeByName( scrollname ).data
 					tailScroll = scrollLists.tail.data;
 					if ( scroll.remove( item.name ) ) {
 						tailScroll.update( item.name, item.o);
 						tailScroll.enableClones( item.o,scroll.objects.head.data.o,true)
 					}
 				}
-				else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head )
+				else if ( scrollLists.getNodeByName( scrollname ) == scrollLists.head )
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data;
+					scroll = scrollLists.getNodeByName( scrollname ).data;
 					tailScroll = scrollLists.tail.data;
-					nextScroll =  scrollLists.getObjectByName( scrollname ).next.data;
+					nextScroll =  scrollLists.getNodeByName( scrollname ).next.data;
 					if ( scroll.remove( item.name ) ) 
 					{
 						if ( tailScroll.full ) {
@@ -259,10 +259,10 @@ package railk.as3.ui.scrollList {
 						}
 					}	
 				}
-				else if (scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+				else if (scrollLists.getNodeByName( scrollname ) == scrollLists.tail )
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data;
-					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					scroll = scrollLists.getNodeByName( scrollname ).data;
+					prevScroll = scrollLists.getNodeByName( scrollname ).prev.data;
 					if ( scroll.remove( item.name ) ) 
 					{
 						if (prevScroll == scrollLists.head.data )
@@ -278,14 +278,14 @@ package railk.as3.ui.scrollList {
 						else
 						{
 							prevScroll.update( item.name, item.o );
-							prevScroll.enableClones( scrollLists.getObjectByName( scrollname ).prev.prev.data.objects.tail.data.o, scroll.objects.head.data.o, true );
+							prevScroll.enableClones( scrollLists.getNodeByName( scrollname ).prev.prev.data.objects.tail.data.o, scroll.objects.head.data.o, true );
 						}
 					}
 				}
 				else 
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data;
-					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					scroll = scrollLists.getNodeByName( scrollname ).data;
+					prevScroll = scrollLists.getNodeByName( scrollname ).prev.data;
 					tailScroll = scrollLists.tail.data;
 					if ( scroll.remove( item.name ) ) 
 					{
@@ -297,26 +297,26 @@ package railk.as3.ui.scrollList {
 						}
 						else
 						{
-							prevScroll.enableClones( scrollLists.getObjectByName( scrollname ).prev.prev.data.objects.tail.data.o, scroll.objects.head.data.o );
+							prevScroll.enableClones( scrollLists.getNodeByName( scrollname ).prev.prev.data.objects.tail.data.o, scroll.objects.head.data.o );
 						}
 					}
 				}
 			}
 			else if ( tail > size )
 			{
-				if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head && scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+				if ( scrollLists.getNodeByName( scrollname ) == scrollLists.head && scrollLists.getNodeByName( scrollname ) == scrollLists.tail )
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data;
+					scroll = scrollLists.getNodeByName( scrollname ).data;
 					headScroll = scrollLists.head.data;
 					if ( scroll.remove( item.name ) ) {
 						headScroll.update( item.name, item.o, null, null, true );
 						headScroll.enableClones( scroll.objects.tail.data.o, item.o,true );
 					}
 				}
-				else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.head )
+				else if ( scrollLists.getNodeByName( scrollname ) == scrollLists.head )
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data;
-					nextScroll = scrollLists.getObjectByName( scrollname ).next.data;
+					scroll = scrollLists.getNodeByName( scrollname ).data;
+					nextScroll = scrollLists.getNodeByName( scrollname ).next.data;
 					tailScroll = scrollLists.tail.data;
 					if ( scroll.remove( item.name ) ) 
 					{
@@ -330,7 +330,7 @@ package railk.as3.ui.scrollList {
 							else 
 							{
 								nextScroll.update( item.name, item.o, null, null, true );
-								nextScroll.enableClones( scroll.objects.tail.data.o, scrollLists.getObjectByName( scrollname ).next.next.data.objects.head.data.o, true );
+								nextScroll.enableClones( scroll.objects.tail.data.o, scrollLists.getNodeByName( scrollname ).next.next.data.objects.head.data.o, true );
 								scroll.removeClones();
 								if ( scroll.full && tailScroll.full ) scroll.enableClones(tailScroll.objects.tail.data.o, nextScroll.objects.head.data.o, true );
 								else scroll.enableClones(null, nextScroll.objects.head.data.o );
@@ -343,12 +343,12 @@ package railk.as3.ui.scrollList {
 						}	
 					}
 				}
-				else if ( scrollLists.getObjectByName( scrollname ) == scrollLists.tail )
+				else if ( scrollLists.getNodeByName( scrollname ) == scrollLists.tail )
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data;
+					scroll = scrollLists.getNodeByName( scrollname ).data;
 					headScroll = scrollLists.head.data;
 					tailScroll = scrollLists.tail.data;
-					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					prevScroll = scrollLists.getNodeByName( scrollname ).prev.data;
 					if ( scroll.remove( item.name ) )
 					{
 						if ( tailScroll.full ) 
@@ -370,9 +370,9 @@ package railk.as3.ui.scrollList {
 				}
 				else 
 				{
-					scroll = scrollLists.getObjectByName( scrollname ).data;
-					nextScroll = scrollLists.getObjectByName( scrollname ).next.data;
-					prevScroll = scrollLists.getObjectByName( scrollname ).prev.data;
+					scroll = scrollLists.getNodeByName( scrollname ).data;
+					nextScroll = scrollLists.getNodeByName( scrollname ).next.data;
+					prevScroll = scrollLists.getNodeByName( scrollname ).prev.data;
 					if ( scroll.remove( item.name ) ) {
 						if ( nextScroll.full ) nextScroll.update( item.name, item.o, scroll.objects.tail.data.o, nextScroll.objects.head.data.o, true );
 						else nextScroll.update( item.name, item.o, scroll.objects.tail.data.o, null, true );

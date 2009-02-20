@@ -15,7 +15,7 @@ package railk.as3.ui
 		private var _master:*;
 		private var linked:Array;
 		
-		public function LinkedObject( master:*, ...args ):void
+		public function LinkedObject( master:*, ...args )
 		{
 			_master = master;
 			linked = args;

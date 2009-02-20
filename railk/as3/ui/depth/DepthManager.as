@@ -7,13 +7,13 @@
 
 package railk.as3.ui.depth
 {
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class DepthManager
 	{
 		private var target:*;
-		private var childList:ObjectList;
+		private var childList:DLinkedList;
 		
 		public function DepthManager( target:* ):void
 		{
@@ -22,7 +22,7 @@ package railk.as3.ui.depth
 		
 		public function sync():void
 		{
-			childList = new ObjectList();
+			childList = new DLinkedList();
 			for (var i:int = 0; i <target.numChildren ; i++) 
 			{
 				var child:* = target.getChildAt(i);
@@ -32,7 +32,7 @@ package railk.as3.ui.depth
 		
 		public function changeDepth( name:String, depth:int ):void
 		{
-			target.swapChildren( childList.getObjectByName( name ).data, childList.getObjectByID(depth).data ):
+			target.swapChildren( childList.getNodeByName( name ).data, childList.getNodeByID(depth).data ):
 		}
 		
 		public function dispose():void

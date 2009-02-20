@@ -14,8 +14,8 @@ package railk.as3.ui.resize {
 	import flash.events.EventDispatcher;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	
 	public class ResizeManager {
@@ -24,8 +24,8 @@ package railk.as3.ui.resize {
 		protected static var disp                             :EventDispatcher;
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var itemList                           :ObjectList;
-		private static var walker                             :ObjectNode;
+		private static var itemList                           :DLinkedList;
+		private static var walker                             :DListNode;
 		
 		//____________________________________________________________________________________ VARIABLES ITEM
 		private static var _maxWidth                          :Number=0;
@@ -60,7 +60,7 @@ package railk.as3.ui.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function init():void 
 		{
-			itemList = new ObjectList();
+			itemList = new DLinkedList();
 		}
 		
 		
@@ -87,7 +87,7 @@ package railk.as3.ui.resize {
 		{
 			_maxheight = height;
 			_maxWidth = width;
-			itemList.getObjectByName( name ).action.apply();
+			itemList.getNodeByName( name ).action.apply();
 		}
 		
 		
@@ -131,7 +131,7 @@ package railk.as3.ui.resize {
 			///////////////////////////////////////////////////////////////
 		}
 		
-		public static function getItemContent( name:String ):* { return itemList.getObjectByName( name ).data; }
+		public static function getItemContent( name:String ):* { return itemList.getNodeByName( name ).data; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————

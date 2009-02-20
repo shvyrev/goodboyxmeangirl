@@ -11,13 +11,13 @@ package railk.as3.pattern.mvc.core
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.commands.*;
 	import railk.as3.pattern.singleton.Singleton;
-	import railk.as3.data.objectList.ObjectList
+	import railk.as3.data.list.DLinkedList;
 	
 	public class AbstractFacade implements IFacade
 	{
 		protected var model:IModel;
 		protected var controller:IController;
-		protected var viewsList:ObjectList = new ObjectList();
+		protected var viewsList:DLinkedList = new DLinkedList();
 		
 		public static function getInstance():AbstractFacade
 		{
@@ -51,7 +51,7 @@ package railk.as3.pattern.mvc.core
 		
 		public function getView( name:String ):IView
 		{
-			viewsList.getObjectByName( name ).data;
+			viewsList.getNodeByName( name ).data;
 		}
 		
 		public function registerCommand( proxyClass:Class, type:String, commandClass:Class, actions:Array ):void

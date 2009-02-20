@@ -11,8 +11,8 @@ package railk.as3.timeline.sequence
 	import flash.events.EventDispatcher;
 	import railk.as3.event.CustomEvent;
 	
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	 
 	public class SequenceManager extends EventDispatcher
 	{
@@ -20,8 +20,8 @@ package railk.as3.timeline.sequence
 		protected static var disp                      :EventDispatcher;
 		
 		// ______________________________________________________________________________ VARIABLES SEQUENCES
-		private static var sequencesList               :ObjectList;
-		private static var walker		               :ObjectNode;
+		private static var sequencesList               :DLinkedList=new DLinkedList();
+		private static var walker		               :DListNode;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -47,9 +47,9 @@ package railk.as3.timeline.sequence
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function addStep( id:Number, target:*, action:Function, listenTo:String, sequence:String='', args:Object=null ):void
 		{
-			if ( sequencesList.getObjectByName( sequence ) )
+			if ( sequencesList.getNodeByName( sequence ) )
 			{
-				(sequencesList.getObjectByName( sequence ).data as Sequence).addStep( id, target, action, listenTo, args );
+				(sequencesList.getNodeByName( sequence ).data as Sequence).addStep( id, target, action, listenTo, args );
 			}
 			else
 			{
@@ -61,7 +61,7 @@ package railk.as3.timeline.sequence
 		
 		public static function removeStepByID( sequence:String, id:Number ):void
 		{
-			(sequencesList.getObjectByName( sequence ).data as Sequence).removeStep( id );
+			(sequencesList.getNodeByName( sequence ).data as Sequence).removeStep( id );
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -69,19 +69,19 @@ package railk.as3.timeline.sequence
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function removeSequence( name:String ):void
 		{
-			(sequencesList.getObjectByName( name ).data as Sequence).removeEventListener( Event.COMPLETE, manageEvent );
-			(sequencesList.getObjectByName( name ).data as Sequence).dispose();
+			(sequencesList.getNodeByName( name ).data as Sequence).removeEventListener( Event.COMPLETE, manageEvent );
+			(sequencesList.getNodeByName( name ).data as Sequence).dispose();
 			sequencesList.remove( name );
 		}
 		
 		public static function start( name:String='' ):void
 		{
-			(sequencesList.getObjectByName(name).data as Sequence).start();
+			(sequencesList.getNodeByName(name).data as Sequence).start();
 		}
 		
 		public static function pause( name:String='' ):void
 		{
-			(sequencesList.getObjectByName(name).data as Sequence).pause();
+			(sequencesList.getNodeByName(name).data as Sequence).pause();
 		}
 		
 		

@@ -6,15 +6,15 @@
 
 package railk.as3.data.tree
 {
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class TreeNode 
 	{
 		public var parent:TreeNode;
 		public var name:String;
 		public var data:*;
-		public var childs:ObjectList;
+		public var childs:DLinkedList;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
@@ -25,9 +25,9 @@ package railk.as3.data.tree
 		 * @param	obj
 		 * @param	parent
 		 */
-		public function TreeNode(name:String, obj:*= null, parent:TreeNode=null):void {
+		public function TreeNode(name:String, obj:*= null, parent:TreeNode=null) {
 			data = obj;
-			childs = new ObjectList();
+			childs = new DLinkedList();
 			this.name = name;
 			
 			if (parent)
@@ -42,7 +42,7 @@ package railk.as3.data.tree
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function get size():int {
 			var c:int = 1;
-			var node:ObjectNode = childs.head;
+			var node:DListNode = childs.head;
 			while (node)
 			{
 				c += TreeNode(node.data).size;
@@ -135,7 +135,7 @@ package railk.as3.data.tree
 		
 		private function subTreePlanner( t:TreeNode ):Array {
 			var result:Array = new Array();
-			var walker:ObjectNode = t.childs.head;
+			var walker:DListNode = t.childs.head;
 			loop:while ( walker ) {
 				result.push( walker.data );
 				if ( walker.data.hasChildren() ) result = result.concat( subTreePlanner( walker.data ) );
@@ -151,7 +151,7 @@ package railk.as3.data.tree
 			while (childs.head)
 			{
 				var node:TreeNode = childs.head.data;
-				childs.removeObjectNode(childs.head);
+				childs.removeNode(childs.head);
 				node.clear();
 			}
 		}

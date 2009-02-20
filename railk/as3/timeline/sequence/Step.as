@@ -7,20 +7,20 @@
 
 package railk.as3.timeline.sequence
 {	 
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class Step
 	{
 		public var id:Number;
-		public var targetsList:ObjectList
-		private var walker:ObjectNode;
+		public var targetsList:DLinkedList;
+		private var walker:DListNode;
 		public var state:String;
 		
 		public function Step( id:Number )
 		{
 			this.id = id;
-			this.targetsList = new ObjectList();
+			this.targetsList = new DLinkedList();
 		}
 		
 		public function addTarget( name:String, target:*, action:Function, listenTo:String, args:Object = null ):void

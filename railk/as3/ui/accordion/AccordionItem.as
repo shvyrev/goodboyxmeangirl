@@ -31,7 +31,7 @@ package railk.as3.ui.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function AccordionItem( name:String, type:String, content:Object, separator:Number ):void 
+		public function AccordionItem( name:String, type:String, content:Object, separator:Number )
 		{
 			_name = name;
 			_type = type;

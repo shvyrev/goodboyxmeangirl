@@ -14,7 +14,7 @@ package railk.as3.ui.accordion {
 	import flash.geom.Rectangle;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.objectList.*;	
+	import railk.as3.data.list.*;	
 	
 	
 	public class  Accordion extends EventDispatcher {
@@ -22,10 +22,10 @@ package railk.as3.ui.accordion {
 		// _________________________________________________________________________ VARIABLES ACCORDION ITEM
 		private var _type                                   :String;
 		private var acItem                                  :AccordionItem;
-		private var itemList                         		:ObjectList;
-		private var prev                                    :ObjectNode;
-		private var next                                    :ObjectNode;
-		private var walker                                  :ObjectNode;		
+		private var itemList                         		:DLinkedList;
+		private var prev                                    :DListNode;
+		private var next                                    :DListNode;
+		private var walker                                  :DListNode;		
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -35,10 +35,9 @@ package railk.as3.ui.accordion {
 		 * 
 		 * @param	type	'V'|'H'
 		 */
-		public function Accordion( type:String = 'V' ):void {
+		public function Accordion( type:String = 'V' ) {
 			_type = type;
-			itemList = new ObjectList();
-			
+			itemList = new DLinkedList();
 		}
 		
 		
@@ -71,9 +70,9 @@ package railk.as3.ui.accordion {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				PLACE ITEMS ON CHANGE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function placeItemFrom( itemName ):void
+		private function placeItemFrom( itemName:String ):void
 		{
-			var item:ObjectNode = itemList.getObjectByName( itemName );
+			var item:DListNode = itemList.getNodeByName( itemName );
 			if ( item == itemList.head )
 			{
 				walker = itemList.head.next;
@@ -112,7 +111,7 @@ package railk.as3.ui.accordion {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function getItem( name:String ):* 
 		{
-			return itemList.getObjectByName( name ).data.content;
+			return itemList.getNodeByName( name ).data.content;
 		}
 		
 		public function get items():Array 

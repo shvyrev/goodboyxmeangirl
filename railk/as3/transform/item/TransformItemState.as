@@ -19,7 +19,7 @@
 		public var format:TextFormat;
 		public var _group:String;
 		
-		public function TransformItemState(item:*, group = ''):void 
+		public function TransformItemState(item:*, group = '')
 		{
 			this.x = item.x;
 			this.y = item.y;

@@ -10,18 +10,18 @@ package railk.as3.event {
 	import flash.events.EventDispatcher;  
 	import flash.events.IEventDispatcher;
 	import flash.utils.Dictionary;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class EventManager {
 		
 		private static var objects:Dictionary = new Dictionary();
-		private static var listenerslist:ObjectList;
-		private static var walker:ObjectNode; 
+		private static var listenerslist:DLinkedList;
+		private static var walker:DListNode; 
 		
 		public static function add( o:IEventDispatcher, type:String, action:Function,  useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = true ):void
 		{
-			if ( !objects[o] ) objects[o] = new ObjectList();
+			if ( !objects[o] ) objects[o] = new DLinkedList();
 			objects[o].add( [type, o, null, action] );
 			o.addEventListener( type, action, useCapture, priority, useWeakReference );
 		}
@@ -31,9 +31,9 @@ package railk.as3.event {
 			if ( objects[o] )
 			{
 				listenerslist = objects[o];
-				if ( listenerslist.getObjectByName( type ) )
+				if ( listenerslist.getNodeByName( type ) )
 				{
-					o.removeEventListener( type, listenerslist.getObjectByName( type ).action );
+					o.removeEventListener( type, listenerslist.getNodeByName( type ).action );
 					listenerslist.remove( type );
 					return true;
 				}	

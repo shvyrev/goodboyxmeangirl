@@ -12,17 +12,17 @@ package railk.as3.display
 	import flash.events.TimerEvent;
 	
 	// _________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class AnimatedClip extends RegistrationPoint
 	{
 		// ________________________________________________________________________________________ VARIABLES
 		private var _frames                                               :int = 0;
 		private var _frameRate                                            :Number;
-		private var _current                                              :ObjectNode;
-		private var framesList                                            :ObjectList;
-		private var walker                                            	  :ObjectNode;
+		private var _current                                              :DListNode;
+		private var framesList                                            :DLinkedList;
+		private var walker                                            	  :DListNode;
 		private var t                                                     :Timer;
 		
 		
@@ -32,7 +32,7 @@ package railk.as3.display
 		public function AnimatedClip( frames:int = 1 ):void {
 			super();
 			_frames = frames;
-			framesList = new ObjectList();
+			framesList = new DLinkedList();
 			for ( var i:int=0; i < frames; i++ )
 			{
 				framesList.add( [String(i),null] );
@@ -63,7 +63,7 @@ package railk.as3.display
 		// 																					  FRAME SELECTION
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function goToFrame( frame:int ):void {
-			_current = framesList.getObjectByID( frame );
+			_current = framesList.getNodeByID( frame );
 			pushFrameOnScreen();
 		}
 		
@@ -82,7 +82,7 @@ package railk.as3.display
 		// 																						 MANAGE FRAME
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function addFrameContent( frame:int, data:*, script:Function = null ):void {
-			framesList.getObjectByID( frame ).data = data;
+			framesList.getNodeByID( frame ).data = data;
 			pushFrameOnScreen();
 		}
 		
@@ -94,8 +94,8 @@ package railk.as3.display
 		 * @param	script
 		 */
 		public function addFrame( type:String, place:int, data:*= null, script:Function = null ):void {
-			if ( type == 'before' ) framesList.insertBefore( framesList.getObjectByID( place ), String(place - 1), data, "", script );
-			else if ( type == 'after' ) framesList.insertAfter( framesList.getObjectByID( place ), String(place + 1), data, "", script );
+			if ( type == 'before' ) framesList.insertBefore( framesList.getNodeByID( place ), String(place - 1), data, "", script );
+			else if ( type == 'after' ) framesList.insertAfter( framesList.getNodeByID( place ), String(place + 1), data, "", script );
 			_frames += 1;
 		}
 		
@@ -105,7 +105,7 @@ package railk.as3.display
 		}
 		
 		public function addFrameScript( frame:int, script:Function ):void {
-			framesList.getObjectByID( frame ).action = script;
+			framesList.getNodeByID( frame ).action = script;
 		}
 		
 		
@@ -148,7 +148,7 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get currentFrame():ObjectNode { return _current; }
+		public function get currentFrame():DListNode { return _current; }
 		
 		public function get frames():int { return _frames; }
 		

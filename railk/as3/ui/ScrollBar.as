@@ -77,7 +77,7 @@ package railk.as3.ui {
 		 * @param	autoCheck           To make the scrollBar adapt itself automaticaly when the content size change
 		 * @param	autoScroll          to follow the mouse when the mouse is hover the scrollbar.
 		 */
-		public function ScrollBar( name:String, orientation:String, toScroll:Object, colors:Object, sizes:Object,  topObj:*= null, bottomObj:*=null, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false, fullScreen:Boolean = false ):void 
+		public function ScrollBar( name:String, orientation:String, toScroll:Object, colors:Object, sizes:Object,  topObj:*= null, bottomObj:*=null, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false, fullScreen:Boolean = false )
 		{
 			scrollList[name] = this;
 			wheelEnable = wheel;

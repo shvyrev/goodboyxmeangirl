@@ -17,14 +17,14 @@ package railk.as3.ui.tag {
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.grid.Grid;
 	import railk.as3.data.grid.Cell;
-	import railk.as3.data.objectList.*;
+	import railk.as3.data.list.*;
 	
 	
 	public class TagManager {
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var tagList                            :ObjectList;
-		private static var walker                             :ObjectNode;
+		private static var tagList                            :DLinkedList;
+		private static var walker                             :DListNode;
 	
 		//_____________________________________________________________________________________ VARIABLES TAG
 		private static var tag                                :Tag;
@@ -35,7 +35,7 @@ package railk.as3.ui.tag {
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function init():void {
-			 tagList = new ObjectList();
+			 tagList = new DLinkedList();
 		}
 		
 		
@@ -58,11 +58,11 @@ package railk.as3.ui.tag {
 		public static function remove( name:String ):Boolean 
 		{
 			var result:Boolean;
-			var t:ObjectNode = tagList.getObjectByName( name );
+			var t:DListNode = tagList.getNodeByName( name );
 			if ( t )
 			{
 				t.data.dispose();
-				tagList.removeObjectNode( t );
+				tagList.removeNode( t );
 				result = true;
 			}
 			else result = false;
@@ -71,7 +71,7 @@ package railk.as3.ui.tag {
 		
 		public static function getTag( name:String ):Tag {
 			var result:Tag;
-			if ( tagList.getObjectByName( name ) ) result = tagList.getObjectByName( name ).data;
+			if ( tagList.getNodeByName( name ) ) result = tagList.getNodeByName( name ).data;
 			else result = null;
 			return result;
 		}
@@ -113,7 +113,7 @@ package railk.as3.ui.tag {
 			var format:TextFormat;
 			var txt:TextField;
 			var blocs:Array = new Array();
-			var tagSortList:ObjectList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, ObjectListSort.DESC, 'value' );
+			var tagSortList:DLinkedList = DListSort.sort( tagList, DListSort.NUMERIC, DListSort.DESC, 'value' );
 			var grid:Grid = new Grid( "tag", H, W, minH, minW, 0, 0, debug, debugContainer );
 			var multiplier:Number = computeSpace( grid, minH, minW, tagSortList, blocs, fontClassName );
 			
@@ -209,12 +209,12 @@ package railk.as3.ui.tag {
 		public static function tagListArray( file:String = '', sorted:Boolean = false, sortMode:String = 'desc' ):Array 
 		{
 			var result:Array = new Array();
-			var tagSortList:ObjectList;
+			var tagSortList:DLinkedList;
 			
 			if ( !file )
 			{
 				if (sorted) {
-					tagSortList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, sortMode, 'value' );
+					tagSortList = DListSort.sort( tagList, DListSort.NUMERIC, sortMode, 'value' );
 					result = tagSortList.toArray();
 				}
 				else { result = tagList.toArray(); }
@@ -222,7 +222,7 @@ package railk.as3.ui.tag {
 			else 
 			{
 				if (sorted) {
-					tagSortList = ObjectListSort.sort( tagList, ObjectListSort.NUMERIC, sortMode, 'value' );
+					tagSortList = DListSort.sort( tagList, DListSort.NUMERIC, sortMode, 'value' );
 					walker = tagSortList.head;
 				}
 				else { walker = tagList.head }

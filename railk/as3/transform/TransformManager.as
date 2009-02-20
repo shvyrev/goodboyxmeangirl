@@ -19,8 +19,8 @@ package railk.as3.transform {
 	import railk.as3.transform.utils.*;
 	import railk.as3.display.MarchingAntsSelect;
 	import railk.as3.display.RegistrationPoint;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	import railk.as3.ui.LinkedObject;
 	import railk.as3.ui.key.*;
 	import railk.as3.utils.Clone;
@@ -29,8 +29,8 @@ package railk.as3.transform {
 	public class TransformManager
 	{
 		private static var _stage:Stage;
-		private static var itemsList:ObjectList;
-		private static var walker:ObjectNode;
+		private static var itemsList:DLinkedList;
+		private static var walker:DListNode;
 		private static var select:MarchingAntsSelect;
 		
 		private static var itemInteracting:Boolean=false;
@@ -42,7 +42,7 @@ package railk.as3.transform {
 		public static function init( stage:Stage ):void
 		{
 			_stage = stage;
-			itemsList = new ObjectList();
+			itemsList = new DLinkedList();
 			if ( !Key.initialized ) Key.initialize( stage );
 		}
 		
@@ -118,9 +118,9 @@ package railk.as3.transform {
 			}
 		}
 		
-		public static function manageChilds(name:String, object:*):ObjectList
+		public static function manageChilds(name:String, object:*):DLinkedList
 		{
-			var childList:ObjectList = new ObjectList();
+			var childList:DLinkedList = new DLinkedList();
 			if (object.numChildren > 0 )
 			{
 				for (var i:int = 0; i <object.numChildren ; i++) 
@@ -161,7 +161,7 @@ package railk.as3.transform {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function duplicate( name:String ):*
 		{
-			return Clone.deep( itemsList.getObjectByName(name).data );
+			return Clone.deep( itemsList.getNodeByName(name).data );
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -198,7 +198,7 @@ package railk.as3.transform {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function remove( name:String ):void 
 		{
-			itemsList.getObjectByName( name).data.master.dispose();
+			itemsList.getNodeByName( name).data.master.dispose();
 			itemsList.remove( name );
 		}
 		
@@ -214,7 +214,7 @@ package railk.as3.transform {
 		
 		public static function getItem( name:String ):*
 		{
-			return itemsList.getObjectByName(name).data;
+			return itemsList.getNodeByName(name).data;
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————

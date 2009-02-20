@@ -7,6 +7,16 @@
 
 package railk.as3.data.foil
 {
+	import flash.display.Loader;
+	import flash.system.LoaderContext;
+	import flash.display.LoaderInfo;
+	import flash.utils.ByteArray;
+	import flash.events.Event;
+	import flash.system.ApplicationDomain;
+	
+	import railk.as3.eval.core.CompiledExpression;
+	import railk.as3.eval.core.Parser;
+	import railk.as3.eval.core.Scanner;
 	
 	public class FoilFunction
 	{
@@ -14,16 +24,29 @@ package railk.as3.data.foil
 		
 		public function FoilFunction( data:String )
 		{
-			trace( data );
-			/*var dataExplode:Array, content:Array;
-			dataExplode = data.replace(/[ ]{0,}function[ ]{0,}/g, "").split('(){');
-			content = dataExplode[1].replace(/[\)]/g, "").split(';');*/
-			
+			//var expression:String = data.replace(/function\(/, '');
+			//trace( expression );
+			var expression: String = "sin( x / ( 4 / 2 * 2 - 2 + 2 * x / x ) ) * 100";
+			var scanner: Scanner = new Scanner( expression );
+			var parser: Parser = new Parser( scanner );
+			var compiled: CompiledExpression = parser.parse();
+			var bytes: ByteArray = compiled.compile();
+			var loader: Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener( Event.COMPLETE, manageEvent );
+			loader.loadBytes( bytes, new LoaderContext( false, new ApplicationDomain( ApplicationDomain.currentDomain ) ) );
 			_data = new Function();
-			/*for (var i:int = 0; i < content.length ; i++) 
-			{
-				trace( content[i] );
-			}*/
+		}
+		
+		private function manageEvent( evt:Event ):void
+		{
+			var info: LoaderInfo = ( evt.target as LoaderInfo );
+			var klass: Class = ( info.applicationDomain.getDefinition( "CompiledExpression" ) as Class );
+			
+			var cp: Object = new klass();
+			cp.x = 10;
+			cp.sin = Math.sin;				
+			
+			trace( "compiled", cp.execute());
 		}
 		
 		public function get data():Function { return _data; }

@@ -17,8 +17,8 @@ package railk.as3.transform.item
 	import railk.as3.geom.MultiCoordinateSystem;
 	import railk.as3.geom.Point2D;
 	import railk.as3.geom.Bounds;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	import railk.as3.transform.utils.GraphicUtils;
 	import railk.as3.transform.matrix.TransformMatrix;
 
@@ -39,13 +39,13 @@ package railk.as3.transform.item
 		
 		public var stage:Stage;
 		private var target:*;
-		private var transformCage:TransformCage;
+		private var transformItem:TransformItem;
 		private var cageSystem:MultiCoordinateSystem;
 		private var transform:TransformMatrix;
 		private var transformAction:TransformItemAction;
 		private var entryPoint:Point;
-		private var handles:ObjectList;
-		private var walker:ObjectNode;
+		private var handles:DLinkedList;
+		private var walker:DListNode;
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -54,7 +54,7 @@ package railk.as3.transform.item
 		public function TransformItem( name:String, parent:*, target:* )
 		{
 			//--Vsprite init
-			transformCage = this;
+			transformItem = this;
 			super(parent);
 			this.name = name;
 			this.stage = parent.stage;
@@ -81,7 +81,7 @@ package railk.as3.transform.item
 			transformAction = new TransformItemAction( parent.stage );
 			
 			//--Handdles
-			handles = new ObjectList();
+			handles = new DLinkedList();
 			this.add( GraphicUtils.rotate(CENTER.x, CENTER.y, width*.25,width*.25-30),'ROTATE' );
 			this.add( GraphicUtils.skewBorder(TL.x, TL.y, bounds.width, 15,'TOP' ),'SKEW_UP' );
 			this.add( GraphicUtils.skewBorder(TL.x, TL.y, 15, bounds.height,'LEFT'), 'SKEW_LEFT');
@@ -139,7 +139,7 @@ package railk.as3.transform.item
 				default :
 					move = function() { scale(handle, type); };
 					down = function() { entryPoint = new Point(handle.x2, handle.y2); };
-					transformAction.enable( type, handle, 'mouse', null, null , function() { transformCage[type].x = handle.x2; transformCage[type].y = handle.y2; transform.apply(); updateSystem(); }, down, move);
+					transformAction.enable( type, handle, 'mouse', null, null , function() { transformItem[type].x = handle.x2; transformItem[type].y = handle.y2; transform.apply(); updateSystem(); }, down, move);
 					break;	
 			}
 		}

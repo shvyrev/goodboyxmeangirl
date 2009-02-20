@@ -13,8 +13,8 @@ package railk.as3.display
 	import flash.events.EventDispatcher;
 	
 	import railk.as3.geom.Bounds;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class VSprite extends EventDispatcher
 	{
@@ -23,7 +23,7 @@ package railk.as3.display
 		private var _name:String = 'undefined';
 		private var _parent:*;
 		private var matrix:Matrix = new Matrix();
-		private var childs:ObjectList=new ObjectList();
+		private var childs:DLinkedList=new DLinkedList();
 		
 		private var origin:Point = new Point();
 		private var end:Point = new Point();
@@ -62,7 +62,7 @@ package railk.as3.display
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function getChildByName( name:String ):*
 		{
-			return childs.getObjectByName( name ).data;
+			return childs.getNodeByName( name ).data;
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -128,7 +128,7 @@ package railk.as3.display
 		private function replace(value:Number,type:String):void
 		{
 			var save:Point;
-			var walker:ObjectNode = childs.head;
+			var walker:DListNode = childs.head;
 			while (walker) 
 			{
 				switch( type )

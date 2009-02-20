@@ -9,8 +9,8 @@
 package railk.as3.tween.process
 {
 	import railk.as3.tween.process.Process;
-	import railk.as3.utils.objectPool.ObjectPoolFactory;
-	public class ProcessPoolFactory implements ObjectPoolFactory 
+	import railk.as3.data.pool.PoolFactory;
+	public class ProcessPoolFactory implements PoolFactory 
 	{
 		public function initObject( object:*, ...args ):void 
 		{
