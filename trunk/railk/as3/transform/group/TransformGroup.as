@@ -8,22 +8,22 @@
 
 package railk.as3.transform.group 
 {
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	import railk.as3.display.RegistrationPoint;
 	import railk.as3.transform.item.TransformItem;
 	
 	public class TransformGroup extends RegistrationPoint
 	{	
-		private var itemsList:ObjectList;
-		private var parentsList:ObjectList;
-		private var walker:ObjectNode;
+		private var itemsList:DLinkedList;
+		private var parentsList:DLinkedList;
+		private var walker:DListNode;
 		private var t:TransformItem;
 		
 		public function TransformGroup()
 		{
-			itemsList = new ObjectList();
-			parentsList = new ObjectList();
+			itemsList = new DLinkedList();
+			parentsList = new DLinkedList();
 		}
 		
 		public function create( name:String, objectArray:Array ):TransformItem
@@ -54,7 +54,7 @@ package railk.as3.transform.group
 			var name:String = getObjectName( object );
 			itemsList.remove( name );
 			this.removeChild( object );
-			parentsList.getObjectByName(name).data.addChild( object );
+			parentsList.getNodeByName(name).data.addChild( object );
 			t.dispose();
 			t = new TransformItem( name, this );
 			return t;
@@ -69,7 +69,7 @@ package railk.as3.transform.group
 				var name:String = getObjectName( object );
 				itemsList.remove( name );
 				this.removeChild( object );
-				parentsList.getObjectByName(name).data.addChild( object );
+				parentsList.getNodeByName(name).data.addChild( object );
 				walker = walker.next;
 			}
 			itemsList.clear();

@@ -19,8 +19,8 @@ package railk.as3.ui.scrollList {
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
 	import railk.as3.event.CustomEvent;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	import railk.as3.tween.process.*;
 	import railk.as3.utils.Clone;
 	
@@ -38,8 +38,8 @@ package railk.as3.ui.scrollList {
 		public var content                                      :Sprite;
 		private var fond   										:GraphicShape;
 		public var objectsSize                             		:Number;
-		public var objects                                     	:ObjectList;
-		private var walker                                      :ObjectNode;
+		public var objects                                     	:DLinkedList;
+		private var walker                                      :DListNode;
 		private var rectSize                                    :Number = 1;
 		private var delta                                       :Number = 70;
 		private var oldX	                                	:Number;
@@ -74,7 +74,7 @@ package railk.as3.ui.scrollList {
 			this.bound = bound;
 			this.linked = linked;
 			
-			objects = new ObjectList();			
+			objects = new DLinkedList();			
 			content = new Sprite();
 			addChild( content );
 			
@@ -94,14 +94,14 @@ package railk.as3.ui.scrollList {
 		public function add( name:String,  o:* ):void 
 		{ 
 			objects.add( [ name, new ScrollListItem( name, o, this.name ) ] );
-			objects.getObjectByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
+			objects.getNodeByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
 			lastTail = { x:objects.tail.data.x + objects.tail.data.width + espacement, y:objects.tail.data.y + objects.tail.data.height + espacement };
 		}
 		
 		public function insertBefore( name:String, o:*):void
 		{
 			objects.insertBefore( objects.head, name, new ScrollListItem( name, o, this.name ));
-			objects.getObjectByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
+			objects.getNodeByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
 			lastTail = { x:objects.tail.data.x + objects.tail.data.width + espacement, y:objects.tail.data.y + objects.tail.data.height + espacement };
 		}
 		
@@ -114,8 +114,8 @@ package railk.as3.ui.scrollList {
 		 */
 		public function remove( name:String):Boolean 
 		{ 
-			objectsSize -= objects.getObjectByName( name ).data.height + espacement;
-			objects.getObjectByName( name ).data.removeEventListener( 'onScrollItemChange', manageEvent);
+			objectsSize -= objects.getNodeByName( name ).data.height + espacement;
+			objects.getNodeByName( name ).data.removeEventListener( 'onScrollItemChange', manageEvent);
 			return  objects.remove( name );
 		}	
 		

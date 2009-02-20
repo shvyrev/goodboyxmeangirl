@@ -14,7 +14,7 @@ package railk.as3.ui.link {
 	import flash.events.EventDispatcher;
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.objectList.*;
+	import railk.as3.data.list.*;
 	
 	// ____________________________________________________________________________________ IMPORT SWFADRESS
 	import com.asual.swfaddress.SWFAddress;
@@ -27,8 +27,8 @@ package railk.as3.ui.link {
 		protected static var disp                             :EventDispatcher;
 		
 		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var linkList                           :ObjectList;
-		private static var walker                             :ObjectNode;
+		private static var linkList                           :DLinkedList;
+		private static var walker                             :DListNode;
 		
 		//_____________________________________________________________________________ VARIABLES LINKMANAGER
 		private static var _inited                            :Boolean = false;
@@ -75,7 +75,7 @@ package railk.as3.ui.link {
 				swfAdress = swfAdressEnable;
 			}
 			updateTitle = updateTitleEnabled;
-			linkList = new ObjectList();
+			linkList = new DLinkedList();
 			_inited = true;
 		}
 		
@@ -102,7 +102,7 @@ package railk.as3.ui.link {
 			
 			var dummy:Boolean = (displayObject)? false : true;
 			link = Link.getInstance().create( name, displayObject, type, actions, colors, enable, dummy, data );
-			if ( !linkList.getObjectByName( name ) || dummy || linkList.getObjectByName( name ).data.isDummy() ) linkList.add( [name, link] );
+			if ( !linkList.getNodeByName( name ) || dummy || linkList.getNodeByName( name ).data.isDummy() ) linkList.add( [name, link] );
 			else linkList.update( name, link );
 			
 			return link;
@@ -114,7 +114,7 @@ package railk.as3.ui.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function remove( name:String ):Boolean { return linkList.remove( name ); }
 		
-		public static function getLink( name:String ):Link { return linkList.getObjectByName( name ).data; }
+		public static function getLink( name:String ):Link { return linkList.getNodeByName( name ).data; }
 		
 		public static function getLinkContent( name:String ):* { return getLink( name ).object; }
 		

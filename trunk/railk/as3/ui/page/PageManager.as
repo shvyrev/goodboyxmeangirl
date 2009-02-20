@@ -12,7 +12,6 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.interfaces.IFacade;
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.ui.layout.Layout;
-	import railk.as3.data.objectList.ObjectList;
 	import railk.as3.data.tree.TreeNode;
 	import railk.as3.ui.link.LinkManager;
 	

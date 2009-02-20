@@ -9,7 +9,7 @@
 package railk.as3.ui.tag {
 	
 	// ___________________________________________________________________________________ IMPORT OBJECT LIST
-	import railk.as3.data.objectList.*;
+	import railk.as3.data.list.*;
 	
 
 	public class Tag {
@@ -19,8 +19,8 @@ package railk.as3.ui.tag {
 		private var occurences                              :Number = 0;
 		
 		// _________________________________________________________________________________ VARIABLES LISTES
-		private var fileAssociated                			:ObjectList;
-		private var walker                                  :ObjectNode;
+		private var fileAssociated                			:DLinkedList;
+		private var walker                                  :DListNode;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -29,7 +29,7 @@ package railk.as3.ui.tag {
 		public function Tag( name:String, displayObjectName:String ):void {
 			occurences +=  1;
 			_name = name;
-			fileAssociated = new ObjectList();
+			fileAssociated = new DLinkedList();
 			fileAssociated.add( [displayObjectName,displayObjectName] );
 		}
 		
@@ -65,7 +65,7 @@ package railk.as3.ui.tag {
 		
 		public function file( file:String ):Boolean {
 			var result:Boolean;
-			if ( fileAssociated.getObjectByName( file ) ) result = true;
+			if ( fileAssociated.getNodeByName( file ) ) result = true;
 			else result = false;
 			return result;
 		}

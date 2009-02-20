@@ -24,7 +24,7 @@
 		protected var _hasFilter:Boolean = false;
 		protected var _tweens:Array;
 		
-		public function ProcessPlugins():void {}
+		public function ProcessPlugins() {}
 		public function setTarget( target:Object ):void { _target = target; }
 		public function init(tweens:Array,prop:Object,alpha:Number,reverse:Boolean):Array {
 			_matrix = _idMatrix.slice();

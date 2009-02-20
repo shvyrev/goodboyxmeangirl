@@ -28,7 +28,7 @@ package railk.as3.sound.mp3player {
 	import railk.as3.display.GraphicShape;
 	import railk.as3.display.RegistrationPoint;
 	import railk.as3.data.parser.Parser;
-	import railk.as3.data.objectList.*;
+	import railk.as3.data.list.*;
 	import railk.as3.data.tag.TagManager;
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
@@ -71,8 +71,8 @@ package railk.as3.sound.mp3player {
 		private var mask                                :DSprite;
 		
 		private var components                          :DSprite;
-		private var currentNode                         :ObjectNode;
-		private var interfaceItemList                   :ObjectList = {
+		private var currentNode                         :DListNode;
+		private var interfaceItemList                   :DLinkedList = {
 																	['bg', component],
 																	['playList',component],
 																	['bufferBar',component],
@@ -173,22 +173,22 @@ package railk.as3.sound.mp3player {
 		{
 			containerMask = _config.createMask();
 			///////////////////////////////
-			interfaceItemList.getObjectByName( 'bg' ).data = _config.createBG();
-			interfaceItemList.getObjectByName( 'playPauseButton').data = _config.createPlayPauseButton();
-			interfaceItemList.getObjectByName( 'bufferBar').data = _config.createBufferBar();
-			interfaceItemList.getObjectByName( 'seekBar').data = _config.createSeekBar();
-			interfaceItemList.getObjectByName( 'seeker').data = _config.createSeeker();
-			interfaceItemList.getObjectByName( 'volumeBarBG').data = _config.createVolumeBarBG();
-			interfaceItemList.getObjectByName( 'volumeBar').data = _config.createVolumeBar();
-			interfaceItemList.getObjectByName( 'volumeButton').data = _config.createVolumeButton();
-			interfaceItemList.getObjectByName( 'volumeSeeker').data = _config.createVolumeSeeker();
-			interfaceItemList.getObjectByName( 'sharePanel').data = _config.createSharePanel();
-			interfaceItemList.getObjectByName( 'shareButton').data = _config.createShareButton();
-			interfaceItemList.getObjectByName( 'downloadButton').data = _config.createDownloadButton();
-			interfaceItemList.getObjectByName( 'playListButton').data = _config.createPlayListButton();
-			interfaceItemList.getObjectByName( 'playList').data = _config.createPlayList();
-			interfaceItemList.getObjectByName( 'time').data = _config.createTime();
-			interfaceItemList.getObjectByName( 'bulle').data = _config.createBulle();
+			interfaceItemList.getNodeByName( 'bg' ).data = _config.createBG();
+			interfaceItemList.getNodeByName( 'playPauseButton').data = _config.createPlayPauseButton();
+			interfaceItemList.getNodeByName( 'bufferBar').data = _config.createBufferBar();
+			interfaceItemList.getNodeByName( 'seekBar').data = _config.createSeekBar();
+			interfaceItemList.getNodeByName( 'seeker').data = _config.createSeeker();
+			interfaceItemList.getNodeByName( 'volumeBarBG').data = _config.createVolumeBarBG();
+			interfaceItemList.getNodeByName( 'volumeBar').data = _config.createVolumeBar();
+			interfaceItemList.getNodeByName( 'volumeButton').data = _config.createVolumeButton();
+			interfaceItemList.getNodeByName( 'volumeSeeker').data = _config.createVolumeSeeker();
+			interfaceItemList.getNodeByName( 'sharePanel').data = _config.createSharePanel();
+			interfaceItemList.getNodeByName( 'shareButton').data = _config.createShareButton();
+			interfaceItemList.getNodeByName( 'downloadButton').data = _config.createDownloadButton();
+			interfaceItemList.getNodeByName( 'playListButton').data = _config.createPlayListButton();
+			interfaceItemList.getNodeByName( 'playList').data = _config.createPlayList();
+			interfaceItemList.getNodeByName( 'time').data = _config.createTime();
+			interfaceItemList.getNodeByName( 'bulle').data = _config.createBulle();
 		}
 		
 		
@@ -218,29 +218,29 @@ package railk.as3.sound.mp3player {
 		private function initListeners():void 
 		{
 			channel.addEventListener(  Event.SOUND_COMPLETE, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('seeker' ).data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('seeker' ).data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeSeeker' ).data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeSeeker' ).data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('playPauseButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeBar' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('shareButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('downloadButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('seeker' ).data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('seeker' ).data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeSeeker' ).data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeSeeker' ).data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('playPauseButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeBar' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('shareButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('downloadButton' ).data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 		}
 		
 		private function delListeners():void 
 		{
 			channel.removeEventListener(  Event.SOUND_COMPLETE, manageEvent );
-			interfaceItemList.getObjectByName('seeker' ).data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			interfaceItemList.getObjectByName('seeker' ).data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			interfaceItemList.getObjectByName('volumeSeeker' ).data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			interfaceItemList.getObjectByName('volumeSeeker' ).data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			interfaceItemList.getObjectByName('volumeButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('playPauseButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('volumeBar' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('shareButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('downloadButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('seeker' ).data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getNodeByName('seeker' ).data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getNodeByName('volumeSeeker' ).data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getNodeByName('volumeSeeker' ).data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getNodeByName('volumeButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('playPauseButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('volumeBar' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('shareButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('downloadButton' ).data.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
 		

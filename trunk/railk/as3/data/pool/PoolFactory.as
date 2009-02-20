@@ -1,14 +1,14 @@
 ﻿/**
 * 
-* Object Pool factory Class
+* Pool factory Class
 * 
 * @author Richard Rodney
 * @version 0.1
 */
 
-package railk.as3.data.objectPool {
+package railk.as3.data.pool {
 	
-	public interface ObjectPoolFactory
+	public interface PoolFactory
 	{
 		function initObject( object:*, ...args ):void;
 	}

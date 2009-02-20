@@ -11,26 +11,26 @@ package railk.as3.transform.item
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class TransformItemAction 
 	{
-		private var active:ObjectNode;
+		private var active:DListNode;
 		private var stage:Stage;
-		private var objects:ObjectList;
-		private var functionsState:ObjectList;
-		private var walker:ObjectNode;
+		private var objects:DLinkedList;
+		private var functionsState:DLinkedList;
+		private var walker:DListNode;
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function TransformItemAction(stage:Stage):void
+		public function TransformItemAction(stage:Stage)
 		{
 			this.stage = stage;
-			objects = new ObjectList();
-			functionsState = new ObjectList();
+			objects = new DLinkedList();
+			functionsState = new DLinkedList();
 		}
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
@@ -49,7 +49,7 @@ package railk.as3.transform.item
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function initListeners(object:*,type:String ):void
 		{
-			var states:Object = functionsState.getObjectByName( object.name).args;
+			var states:Object = functionsState.getNodeByName( object.name).args;
 			if (states.doubleClick) 
 			{
 				object.doubleClickEnabled = true;
@@ -73,7 +73,7 @@ package railk.as3.transform.item
 		
 		private function delListeners(object:*,type:String):void
 		{
-			var states:Object = functionsState.getObjectByName( object.name).args;
+			var states:Object = functionsState.getNodeByName( object.name).args;
 			if (states.doubleClick) 
 			{
 				object.doubleClickEnabled = false;
@@ -156,7 +156,7 @@ package railk.as3.transform.item
 		private function manageEvent( evt:* ):void
 		{
 			var target:* = evt.currentTarget;
-			if( target != stage ) var f:Object = objects.getObjectByName(target.name).args;
+			if( target != stage ) var f:Object = objects.getNodeByName(target.name).args;
 			switch(evt.type)
 			{
 				case MouseEvent.CLICK :

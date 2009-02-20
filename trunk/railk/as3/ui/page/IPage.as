@@ -7,7 +7,7 @@
 package railk.as3.ui.page
 {
 	import railk.as3.ui.page.AbstractPage
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 	import railk.as3.ui.layout.Layout;
 	
 	public interface IPage
@@ -20,8 +20,8 @@ package railk.as3.ui.page
 		function set name():String;
 		function get parent():AbstractPage;
 		function set parent():AbstractPage;
-		function get childs():ObjectList;
-		function set childs():ObjectList;
+		function get childs():DLinkedList;
+		function set childs():DLinkedList;
 	}
 	
 }

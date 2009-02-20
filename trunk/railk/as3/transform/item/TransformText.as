@@ -13,10 +13,6 @@ package railk.as3.transform.item {
 	public class TransformText extends TransformItem
 	{
 		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		public function TransformText( stage:Stage, name:String, object:* )
 		{	
 			super( stage, name, object );

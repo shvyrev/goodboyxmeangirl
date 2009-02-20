@@ -9,12 +9,12 @@ package railk.as3.ui.layout
 {
 	import flash.events.Event;
 	import railk.as3.display.VSprite;
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 	
 	public class LayoutBloc
 	{
 		private var bloc:VSprite;
-		private var subBlocs:ObjectList;
+		private var subBlocs:DLinkedList;
 		
 		private var _name:String;
 		private var _height:Number;
@@ -27,9 +27,9 @@ package railk.as3.ui.layout
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function LayoutBloc(parent:Object, name:String ):void
+		public function LayoutBloc(parent:Object, name:String )
 		{
-			subBlocs = new ObjectList();
+			subBlocs = new DLinkedList();
 			bloc = new VSprite(parent);
 			bloc.addEventListener( Event.ENTER_FRAME, resize, false, 0, true);
 		}

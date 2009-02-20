@@ -10,12 +10,12 @@ package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.singleton.Singleton;
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 	
 	public class AbstractController implements IController
 	{
 		protected var model:IModel;
-		protected var commands:ObjectList = new ObjectList();
+		protected var commands:DLinkedList = new DLinkedList();
 		
 		public static function getInstance():AbstractController
 		{
@@ -43,7 +43,7 @@ package railk.as3.pattern.mvc.core
 		
 		public function executeCommand( type:String, action:String ):void
 		{
-			(commands.getObjectByName( type ).data as ICommand).execute( action );
+			(commands.getNodeByName( type ).data as ICommand).execute( action );
 		}
 		
 		public function removeCommand( type:String ):void
@@ -53,7 +53,7 @@ package railk.as3.pattern.mvc.core
 		
 		public function hasCommand( type:String ):Boolean
 		{
-			( commands.getObjectByName(type) )?true:false;
+			( commands.getNodeByName(type) )?true:false;
 		}
 	}
 }

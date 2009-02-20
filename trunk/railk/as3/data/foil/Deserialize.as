@@ -9,8 +9,8 @@ package railk.as3.data.foil
 {
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.data.tree.TreeNode;
-	import railk.as3.data.objectList.ObjectList;
-	import railk.as3.data.objectList.ObjectNode;
+	import railk.as3.data.list.DLinkedList;
+	import railk.as3.data.list.DListNode;
 	
 	public class Deserialize
 	{
@@ -311,11 +311,11 @@ package railk.as3.data.foil
 		private function getFunctions( data:String ):Array
 		{
 			var result:Array = [];
-			var reg:RegExp = /[a-zA-Z0-9 ]{1,}:[ ]{0,}function\(\)/;
+			var reg:RegExp = /[a-zA-Z0-9 ]{1,}:[ ]{0,}function\(/;
 			var pos:int = data.search(reg);
 			var beginPos:int = pos;
 			
-			var bChar:RegExp = /function\(\)/;
+			var bChar:RegExp = /function\(/;
 			var eChar:RegExp = /\}[,|\r]/;
 			var isFunction:Boolean = false;
 			
@@ -323,7 +323,7 @@ package railk.as3.data.foil
 			loop:while ( pos < data.length )
 			{
 				char = data.charAt(pos);
-				toCheck = data.substr(pos, 10);
+				toCheck = data.substr(pos, 9);
 				if ( !toCheck.search(bChar) ) isFunction = true;
 				if ( isFunction )
 				{
@@ -446,13 +446,13 @@ package railk.as3.data.foil
 			var result:Array = new Array();
 			var obj:Object ={};
 			if( from.hasChildren()) {
-				var walker:ObjectNode = from.childs.head;
+				var walker:DListNode = from.childs.head;
 				while (walker)
 				{
 					obj ={}
 					var node:TreeNode = walker.data;
 					if (node.hasChildren()) {
-						obj[node.name] =subObject( node.childs);
+						obj[node.name] =subObject( node.childs );
 						result.push( obj  );
 					}
 					else {
@@ -469,14 +469,14 @@ package railk.as3.data.foil
 			return result;
 		}
 		
-		private function subObject( objects:ObjectList ):Object
+		private function subObject( objects:DLinkedList ):Object
 		{
 			var result:Object ={};
-			var walker:ObjectNode = objects.head;
+			var walker:DListNode = objects.head;
 			while (walker)
 			{
 				var node:TreeNode = walker.data;
-				if (node.hasChildren()) result[node.name] =subObject( node.childs);
+				if (node.hasChildren()) result[node.name] =subObject( node.childs );
 				else result[node.name] = node.data;
 				walker = walker.next;
 			}

@@ -9,14 +9,14 @@
 package railk.as3.pattern.mvc.binding 
 {
 	
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 	import railk.as3.pattern.mvc.event.ModelEvent;
 	import railk.as3.pattern.mvc.interfaces.*;
 
 
     public class Binding 
 	{
-		static public var bindings:ObjectList = new ObjectList();
+		static public var bindings:DLinkedList = new DLinkedList();
 		
 	   	private var _proxy:IProxy;
 		private var _eventType:String;
@@ -38,7 +38,7 @@ package railk.as3.pattern.mvc.binding
 		
 		static public function getBinding( view:IView ) : void 
 		{
-			bindings.getObjectByName( view.getName() );
+			bindings.getNodeByName( view.getName() );
 		}
 	
 		

@@ -53,7 +53,7 @@ package railk.as3.video.flvplayer {
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.Loading;
 	import railk.as3.utils.Logger;
-	import railk.as3.data.objectList.*;
+	import railk.as3.data.list.*;
 	import railk.as3.ui.resize.ResizeManager;
 	import railk.as3.data.tag.TagManager;
 	import railk.as3.utils.Utils;
@@ -96,7 +96,7 @@ package railk.as3.video.flvplayer {
 		private var _standalone                         :Boolean;
 		private var _playListContent                    :Array;
 		private var _config                             :*;
-		private var _interfaceZindexList                :ObjectList;
+		private var _interfaceZindexList                :DLinkedList;
 		
 		// _______________________________________________________________________________ VARIABLES CONTRÔLE
 		private var _enableMask                         :Boolean;
@@ -117,8 +117,8 @@ package railk.as3.video.flvplayer {
 		private var containerMask                       :DSprite;
 		
 		private var component                           :DSprite = new DSprite();
-		protected var currentNode                       :ObjectNode;
-		protected var interfaceItemList                 :ObjectList = new ObjectList(
+		protected var currentNode                       :DListNode;
+		protected var interfaceItemList                 :DLinkedList = new DLinkedList(
 																	['bg', component],
 																	['bgImage',component],
 																	['videoContainer',component],
@@ -245,11 +245,11 @@ package railk.as3.video.flvplayer {
 			addChild( container );
 			
 			//--attach video
-			interfaceItemList.getObjectByName('videoContainer').data = new DSprite( { x:0, y:0, alpha:1, resize:function(){} } );
+			interfaceItemList.getNodeByName('videoContainer').data = new DSprite( { x:0, y:0, alpha:1, resize:function(){} } );
 			
 				video = new Video( videoWidth, videoHeight );
 				video.attachNetStream ( stream );
-				interfaceItemList.getObjectByName('videoContainer').data.addChild( video );	
+				interfaceItemList.getNodeByName('videoContainer').data.addChild( video );	
 				
 			//--enable volume modification
 			volume = new SoundTransform();
@@ -275,29 +275,29 @@ package railk.as3.video.flvplayer {
 		{
 			containerMask = _config.createMask();
 			///////////////////////////////
-			interfaceItemList.getObjectByName('bg').data = _config.createBG();
-			if( _backgroundImage ) interfaceItemList.getObjectByName('bgImage').data = _config.createBGimage();
-			interfaceItemList.getObjectByName('loading').data = _config.createLoading();
-			interfaceItemList.getObjectByName('playPauseButton').data = _config.createPlayPauseButton();
-			interfaceItemList.getObjectByName('replayButton').data = _config.createReplayButton();
-			interfaceItemList.getObjectByName('bufferBar').data = _config.createBufferBar();
-			interfaceItemList.getObjectByName('seekBar').data = _config.createSeekBar();
-			interfaceItemList.getObjectByName('seeker').data =_config. createSeeker();
-			interfaceItemList.getObjectByName('volumeBarBG').data = _config.createVolumeBarBG();
-			interfaceItemList.getObjectByName('volumeBar').data = _config.createVolumeBar();
-			interfaceItemList.getObjectByName('volumeButton').data = _config.createVolumeButton();
-			interfaceItemList.getObjectByName('volumeSeeker').data = _config.createVolumeSeeker();
-			interfaceItemList.getObjectByName('fullscreenButton').data = _config.createFullscreenButton();
-			interfaceItemList.getObjectByName('x2Button').data = _config.createX2Button();
-			interfaceItemList.getObjectByName('resizeButton').data = _config.createResizeButton();
-			interfaceItemList.getObjectByName('shareButton').data = _config.createShareButton();
-			interfaceItemList.getObjectByName('sharePanel').data = _config.createSharePanel(share);
-			interfaceItemList.getObjectByName('downloadButton').data = _config.createDownloadButton();
-			interfaceItemList.getObjectByName('screenshotButton').data = _config.createScreenshotButton();
-			interfaceItemList.getObjectByName('playListButton').data = _config.createPlayListButton();
-			interfaceItemList.getObjectByName('playList').data = _config.createPlayList();
-			interfaceItemList.getObjectByName('bulle').data = _config.createBulle();
-			interfaceItemList.getObjectByName('time').data = _config.createTime();
+			interfaceItemList.getNodeByName('bg').data = _config.createBG();
+			if( _backgroundImage ) interfaceItemList.getNodeByName('bgImage').data = _config.createBGimage();
+			interfaceItemList.getNodeByName('loading').data = _config.createLoading();
+			interfaceItemList.getNodeByName('playPauseButton').data = _config.createPlayPauseButton();
+			interfaceItemList.getNodeByName('replayButton').data = _config.createReplayButton();
+			interfaceItemList.getNodeByName('bufferBar').data = _config.createBufferBar();
+			interfaceItemList.getNodeByName('seekBar').data = _config.createSeekBar();
+			interfaceItemList.getNodeByName('seeker').data =_config. createSeeker();
+			interfaceItemList.getNodeByName('volumeBarBG').data = _config.createVolumeBarBG();
+			interfaceItemList.getNodeByName('volumeBar').data = _config.createVolumeBar();
+			interfaceItemList.getNodeByName('volumeButton').data = _config.createVolumeButton();
+			interfaceItemList.getNodeByName('volumeSeeker').data = _config.createVolumeSeeker();
+			interfaceItemList.getNodeByName('fullscreenButton').data = _config.createFullscreenButton();
+			interfaceItemList.getNodeByName('x2Button').data = _config.createX2Button();
+			interfaceItemList.getNodeByName('resizeButton').data = _config.createResizeButton();
+			interfaceItemList.getNodeByName('shareButton').data = _config.createShareButton();
+			interfaceItemList.getNodeByName('sharePanel').data = _config.createSharePanel(share);
+			interfaceItemList.getNodeByName('downloadButton').data = _config.createDownloadButton();
+			interfaceItemList.getNodeByName('screenshotButton').data = _config.createScreenshotButton();
+			interfaceItemList.getNodeByName('playListButton').data = _config.createPlayListButton();
+			interfaceItemList.getNodeByName('playList').data = _config.createPlayList();
+			interfaceItemList.getNodeByName('bulle').data = _config.createBulle();
+			interfaceItemList.getNodeByName('time').data = _config.createTime();
 		}
 		
 		
@@ -322,7 +322,7 @@ package railk.as3.video.flvplayer {
 			}
 			
 			if ( _enableMask ) container.mask = containerMask;	
-			if ( _standalone && _enablefullscreen ) FullScreenMode.Activate( interfaceItemList.getObjectByName('fullscreenButton').data, Current.stage );
+			if ( _standalone && _enablefullscreen ) FullScreenMode.Activate( interfaceItemList.getNodeByName('fullscreenButton').data, Current.stage );
 		}
 		
 		
@@ -338,20 +338,20 @@ package railk.as3.video.flvplayer {
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('seeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('seeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('playPauseButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('replayButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('volumeBar').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('fullscreenButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('x2Button').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('resizeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('shareButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('downloadButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
-			interfaceItemList.getObjectByName('screenshotButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('seeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('seeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('playPauseButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('replayButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('volumeBar').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('fullscreenButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('x2Button').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('resizeButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('shareButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('downloadButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+			interfaceItemList.getNodeByName('screenshotButton').data.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 		}
 		
 		private function delListeners():void 
@@ -363,20 +363,20 @@ package railk.as3.video.flvplayer {
 			StageManager.removeEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent );
 			StageManager.removeEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent );
 			StageManager.removeEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent );
-			interfaceItemList.getObjectByName('seeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			interfaceItemList.getObjectByName('seeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			interfaceItemList.getObjectByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-			interfaceItemList.getObjectByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			interfaceItemList.getObjectByName('volumeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('playPauseButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('replayButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('volumeBar').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('fullscreenButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('x2Button').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('resizeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('shareButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('downloadButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
-			interfaceItemList.getObjectByName('screenshotButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('seeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getNodeByName('seeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getNodeByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
+			interfaceItemList.getNodeByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
+			interfaceItemList.getNodeByName('volumeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('playPauseButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('replayButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('volumeBar').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('fullscreenButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('x2Button').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('resizeButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('shareButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('downloadButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
+			interfaceItemList.getNodeByName('screenshotButton').data.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
 		
@@ -424,7 +424,7 @@ package railk.as3.video.flvplayer {
 			var bmp:BitmapData = new BitmapData( _videoWidth, _videoHeight );
 			var saveImg:FileSaver = new FileSaver( name );
 			
-			bmp.draw( interfaceItemList.getObjectByName('videoContainer').data );
+			bmp.draw( interfaceItemList.getNodeByName('videoContainer').data );
 			toSave = PNGEncoder.encode( bmp );
 			saveImg.create( 'local','assets\images',name, 'png', toSave, true );
 		}
@@ -493,9 +493,9 @@ package railk.as3.video.flvplayer {
 						played = stream.time / streamMetadata.duration;
 						loaded = stream.bytesLoaded / stream.bytesTotal;
 						
-						interfaceItemList.getObjectByName( 'bufferBar' ).data.width = interfaceItemList.getObjectByName( 'bufferBar' ).data.extra.size * loaded;
-						interfaceItemList.getObjectByName( 'seekBar' ).data.width = interfaceItemList.getObjectByName( 'seekBar' ).data.extra.size * played;
-						interfaceItemList.getObjectByName( 'seeker' ).data.x2 = interfaceItemList.getObjectByName( 'seekBar' ).data.width+interfaceItemList.getObjectByName( 'seekBar' ).data.x;
+						interfaceItemList.getNodeByName( 'bufferBar' ).data.width = interfaceItemList.getNodeByName( 'bufferBar' ).data.extra.size * loaded;
+						interfaceItemList.getNodeByName( 'seekBar' ).data.width = interfaceItemList.getNodeByName( 'seekBar' ).data.extra.size * played;
+						interfaceItemList.getNodeByName( 'seeker' ).data.x2 = interfaceItemList.getNodeByName( 'seekBar' ).data.width+interfaceItemList.getNodeByName( 'seekBar' ).data.x;
 						
 						
 						////////////////////////////////////////////////buffer//////////////////////////////////////////////////////////
@@ -530,11 +530,11 @@ package railk.as3.video.flvplayer {
 				case MouseEvent.MOUSE_UP :
 					switch( evt.currentTarget.name ){
 						case 'seeker':
-							interfaceItemList.getObjectByName('seeker').data.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
+							interfaceItemList.getNodeByName('seeker').data.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
 							break;
 							
 						case 'volumeseeker':
-							interfaceItemList.getObjectByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
+							interfaceItemList.getNodeByName('volumeSeeker').data.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
 							break;	
 					}
 					break;
@@ -542,11 +542,11 @@ package railk.as3.video.flvplayer {
 				case MouseEvent.MOUSE_DOWN :
 					switch( evt.currentTarget.name ){
 						case 'seeker':
-							interfaceItemList.getObjectByName('seeker').data.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
+							interfaceItemList.getNodeByName('seeker').data.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
 							break;
 							
 						case 'volumeseeker':
-							interfaceItemList.getObjectByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
+							interfaceItemList.getNodeByName('volumeSeeker').data.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
 							break;	
 					}
 					break;
@@ -554,11 +554,11 @@ package railk.as3.video.flvplayer {
 				case MouseEvent.MOUSE_MOVE :
 					switch( evt.currentTarget.name ){
 						case 'seeker':
-							stream.seek( (interfaceItemList.getObjectByName('seeker').data.extra.pos*streamMetadata.duration)/interfaceItemList.getObjectByName('seekBar').data.extra.size );
+							stream.seek( (interfaceItemList.getNodeByName('seeker').data.extra.pos*streamMetadata.duration)/interfaceItemList.getNodeByName('seekBar').data.extra.size );
 							break;
 							
 						case 'volumeseeker':
-							volume.volume = (interfaceItemList.getObjectByName('volumeSeeker').data.extra.pos*100)/interfaceItemList.getObjectByName('volumeBar').data.extra.size;
+							volume.volume = (interfaceItemList.getNodeByName('volumeSeeker').data.extra.pos*100)/interfaceItemList.getNodeByName('volumeBar').data.extra.size;
 							stream.soundTransform = volume;
 							break;	
 					}
@@ -647,7 +647,7 @@ package railk.as3.video.flvplayer {
 		public function set enableShare(value:Boolean):void 
 		{
 			_enableShare = value;
-			interfaceItemList.getObjectByName('shareButton').data.visible = value;
+			interfaceItemList.getNodeByName('shareButton').data.visible = value;
 		}
 		
 		public function get enableDownload():Boolean { return _enableDownload; }
@@ -655,7 +655,7 @@ package railk.as3.video.flvplayer {
 		public function set enableDownload(value:Boolean):void 
 		{
 			_enableDownload = value;
-			interfaceItemList.getObjectByName('downloadButton').data.visible = value;
+			interfaceItemList.getNodeByName('downloadButton').data.visible = value;
 		}
 		
 		public function get enablefullscreen():Boolean { return _enablefullscreen; }
@@ -663,7 +663,7 @@ package railk.as3.video.flvplayer {
 		public function set enablefullscreen(value:Boolean):void 
 		{
 			_enablefullscreen = value;
-			interfaceItemList.getObjectByName('fullscreenButton').data.visible = value;
+			interfaceItemList.getNodeByName('fullscreenButton').data.visible = value;
 		}
 		
 		public function get enablePlaylist():Boolean { return _enablePlaylist; }
@@ -671,8 +671,8 @@ package railk.as3.video.flvplayer {
 		public function set enablePlaylist(value:Boolean):void 
 		{
 			_enablePlaylist = value;
-			interfaceItemList.getObjectByName('playList').data.visible = value;
-			interfaceItemList.getObjectByName('playListButton').data.visible = value;
+			interfaceItemList.getNodeByName('playList').data.visible = value;
+			interfaceItemList.getNodeByName('playListButton').data.visible = value;
 		}
 		
 		public function get enableResize():Boolean { return _enableResize; }
@@ -684,7 +684,7 @@ package railk.as3.video.flvplayer {
 		public function set enableX2(value:Boolean):void 
 		{
 			_enableX2 = value;
-			interfaceItemList.getObjectByName('x2Button').data.visible = value;
+			interfaceItemList.getNodeByName('x2Button').data.visible = value;
 		}
 		
 		public function get enableScreenshot():Boolean { return _enableScreenshot; }
@@ -692,7 +692,7 @@ package railk.as3.video.flvplayer {
 		public function set enableScreenshot(value:Boolean):void 
 		{
 			_enableScreenshot = value;
-			interfaceItemList.getObjectByName('screenshotButton').data.visible = value;
+			interfaceItemList.getNodeByName('screenshotButton').data.visible = value;
 		}
 		
 		public function get enableMask():Boolean { return _enableMask; }
@@ -703,9 +703,9 @@ package railk.as3.video.flvplayer {
 		
 		public function set playListContent(value:Array):void { _playListContent = value; }
 		
-		public function get interfaceZindexList():ObjectList { return _interfaceZindexList; }
+		public function get interfaceZindexList():DLinkedList { return _interfaceZindexList; }
 		
-		public function set interfaceZindexList(value:ObjectList):void 
+		public function set interfaceZindexList(value:DLinkedList):void 
 		{
 			_interfaceZindexList = value;
 			sortZindex( _interfaceZindexList );

@@ -28,7 +28,7 @@ package railk.as3.net.loader {
 		static public const ONSTREAMBUFFERING               :String = "onStreamBuffering";
 		static public const ONSTREAMPLAYED                  :String = "onStreamPlayed";
 		
-		static public const ONERRORLOADINGITEM           :String = "onErrorLoadingItem"
+		static public const ONERRORLOADINGITEM              :String = "onErrorLoadingItem"
 		
 		
 		public function MultiLoaderEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {

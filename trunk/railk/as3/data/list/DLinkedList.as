@@ -1,20 +1,20 @@
 ﻿/**
-* Object List
+* Doubly linked List
 * 
 * @author Richard Rodney
 * @version 0.2
 */
 
 
-package railk.as3.data.objectList
+package railk.as3.data.list
 {
-	public class  ObjectList
+	public class DLinkedList
 	{
 		// ____________________________________________________________________________ VARIABLES OBJECT LIST
-		private var _head                                   :ObjectNode;
-		private var _tail                                   :ObjectNode;
+		private var _head                                   :DListNode;
+		private var _tail                                   :DListNode;
 		private var _length                                 :int;
-		private var node                                    :ObjectNode;
+		private var node                                    :DListNode;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -24,7 +24,7 @@ package railk.as3.data.objectList
 		 * 
 		 * @param	...args    ['name',data:*,'group'=null,action:Function=null,args:Object=null],...
 		 */
-		public function ObjectList( ...args ):void 
+		public function DLinkedList( ...args ):void 
 		{
 			_head = _tail = null;
 			if ( args.length > 0) add.apply( this, args );
@@ -40,10 +40,10 @@ package railk.as3.data.objectList
 		 */
 		public function add( ...args ):void
 		{
-			if ( ! _head ) _head = _tail = new ObjectNode( 0, args[0][0], args[0][1], args[0][2], args[0][3], args[0][4] );
+			if ( ! _head ) _head = _tail = new DListNode( 0, args[0][0], args[0][1], args[0][2], args[0][3], args[0][4] );
 			else 
 			{ 
-				_tail.insertAfter( new ObjectNode( _tail.id + 1, args[0][0], args[0][1], args[0][2], args[0][3], args[0][4] ) ); 
+				_tail.insertAfter( new DListNode( _tail.id + 1, args[0][0], args[0][1], args[0][2], args[0][3], args[0][4] ) ); 
 				_tail = _tail.next; 
 			}
 			
@@ -51,7 +51,7 @@ package railk.as3.data.objectList
 			{
 				for ( var i:int = 1; i < args.length; i++)
 				{
-					node = new ObjectNode( _tail.id+1, args[i][0], args[i][1], args[i][2], args[i][3], args[i][4] );
+					node = new DListNode( _tail.id+1, args[i][0], args[i][1], args[i][2], args[i][3], args[i][4] );
 					_tail.insertAfter(node);
 					_tail = _tail.next;
 				}
@@ -63,20 +63,20 @@ package railk.as3.data.objectList
 		// 																				   			   UPDATE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function update(name:String, data:*=null, group:String='', action:Function=null, args:Object=null):void {
-			var o:ObjectNode = getObjectByName( name );
-			o.data = (data != null)?data:o.data;
-			o.group = (group != '')?group:o.group;
-			o.action = (action != null)?action:o.action;
-			o.args = (args != null)?args:o.args;
+			var n:DListNode = getNodeByName( name );
+			n.data = (data != null)?data:n.data;
+			n.group = (group != '')?group:n.group;
+			n.action = (action != null)?action:n.action;
+			n.args = (args != null)?args:n.args;
 			
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		 INSERT AFTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertAfter( node:ObjectNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
+		public function insertAfter( node:DListNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
 		{
-			node.insertAfter( new ObjectNode( node.id + 1, name, data, group, action, args ) );
+			node.insertAfter( new DListNode( node.id + 1, name, data, group, action, args ) );
 			_length += 1;
 			if ( node === _tail ) _tail = tail.next;
 			else rebuildID();
@@ -86,9 +86,9 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		INSERT BEFORE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertBefore( node:ObjectNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
+		public function insertBefore( node:DListNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
 		{
-			node.insertBefore( new ObjectNode( node.id - 1, name, data, group, action, args ) );
+			node.insertBefore( new DListNode( node.id - 1, name, data, group, action, args ) );
 			_length += 1;
 			if ( node === _head ) _head = _head.prev;
 			rebuildID();
@@ -107,7 +107,7 @@ package railk.as3.data.objectList
 		{
 			var result:Boolean;
 			var type:String;
-			var current:ObjectNode = _head;
+			var current:DListNode = _head;
 			loop:while ( current )
 			{
 				if ( value is String ) type = 'name';
@@ -116,7 +116,7 @@ package railk.as3.data.objectList
 				
 				if (current[type] == value )
 				{ 
-					removeObjectNode( current );
+					removeNode( current );
 					result = true;
 					break loop; 
 				}	
@@ -129,31 +129,31 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		DIRECT REMOVE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function removeObjectNode( o:ObjectNode ):void
+		public function removeNode( n:DListNode ):void
 		{
 			if ( _length > 1 )
 			{
-				if ( o == _head )
+				if ( n == _head )
 				{
 					_head = _head.next;
 					_head.prev = null;
 				}
-				else if (o == _tail )
+				else if ( n == _tail )
 				{
 					_tail = _tail.prev;
 					_tail.next = null;
 				}
 				else
 				{
-					o.prev.next = o.next;
-					o.next.prev = o.prev;
+					n.prev.next = n.next;
+					n.next.prev = n.prev;
 				}
 			}
 			else 
 			{ 
 				_tail = _head = null; 
 			}
-			o.dispose();
+			n.dispose();
 			_length -= 1;
 			rebuildID();
 		}
@@ -163,7 +163,7 @@ package railk.as3.data.objectList
 		// 																				   		   REBUILD ID
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function rebuildID():void {
-			var current:ObjectNode = _head;
+			var current:DListNode = _head;
 			var id:int = 0;
 			loop:while ( current )
 			{
@@ -179,8 +179,8 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function clear():void
 		{
-			var next:ObjectNode;
-			var current:ObjectNode = _head;
+			var next:DListNode;
+			var current:DListNode = _head;
 			_head = null;
 			while ( current )
 			{
@@ -196,10 +196,10 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   GET OBJECT BY NAME
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getObjectByName( name:String ):ObjectNode
+		public function getNodeByName( name:String ):DListNode
 		{
 			var result:*;
-			var current:ObjectNode = _head;
+			var current:DListNode = _head;
 			loop:while ( current )
 			{
 				if (current.name == name ){ result = current; break loop; }	
@@ -213,10 +213,10 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   	 GET OBJECT BY ID
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getObjectByID( id:int ):ObjectNode
+		public function getNodeByID( id:int ):DListNode
 		{
-			var result:ObjectNode;
-			var current:ObjectNode = _head;
+			var result:DListNode;
+			var current:DListNode = _head;
 			loop:while ( current )
 			{
 				if (current.id == id ){ result = current;  break loop; }	
@@ -230,10 +230,10 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  GET OBJECT BY GROUP
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getObjectByGroup( name:String ):Array
+		public function getNodeByGroup( name:String ):Array
 		{
 			var result:Array = new Array();
-			var current:ObjectNode = _head;
+			var current:DListNode = _head;
 			loop:while ( current )
 			{
 				if (current.group == name ){ result.push( current ); break loop; }	
@@ -249,7 +249,7 @@ package railk.as3.data.objectList
 		public function toString():String 
 		{
 			var result:String = '';
-			var current:ObjectNode = _head;
+			var current:DListNode = _head;
 			while ( current )
 			{
 				result += current.toString()+'\n';
@@ -265,7 +265,7 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function toArray():Array {
 			var result:Array = new Array();
-			var current:ObjectNode = _head;
+			var current:DListNode = _head;
 			while ( current )
 			{
 				result.push( current.data );
@@ -277,9 +277,9 @@ package railk.as3.data.objectList
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get head():ObjectNode { return _head; }
+		public function get head():DListNode { return _head; }
 		
-		public function get tail():ObjectNode { return _tail; }
+		public function get tail():DListNode { return _tail; }
 		
 		public function get length():int { return _length; }
 	}

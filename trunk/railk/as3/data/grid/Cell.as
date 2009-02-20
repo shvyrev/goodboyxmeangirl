@@ -51,7 +51,7 @@ package railk.as3.data.grid {
 		 * @param	debug
 		 * @param	debugContainer
 		 */
-		public function Cell( id:String, X:Number, Y:Number, centerX:Number, centerY:Number, H:Number, W:Number, ligne:Number, colonne:Number, debug:Boolean = false, debugContainer:*= null ):void 
+		public function Cell( id:String, X:Number, Y:Number, centerX:Number, centerY:Number, H:Number, W:Number, ligne:Number, colonne:Number, debug:Boolean = false, debugContainer:*= null )
 		{	
 			_id = id;
 			_X = X;

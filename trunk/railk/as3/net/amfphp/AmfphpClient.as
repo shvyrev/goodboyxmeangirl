@@ -1,6 +1,6 @@
 /**
 * 
-* Form for comments
+* AMFPHP client
 * 
 * @author Richard Rodney
 * @version 0.1
@@ -46,7 +46,7 @@ package railk.as3.net.amfphp
 		 * 
 		 * @param	server 'http://'SERVER'/'PATH'/gateway.php'
 		 */
-		public function AmfphpClient( server:String, path:String, persistent:Boolean=false, servicePath:String = '', ssl:Boolean=false ):void 
+		public function AmfphpClient( server:String, path:String, persistent:Boolean=false, servicePath:String = '', ssl:Boolean=false )
 		{	
 			this.server = server;
 			this.path = path;

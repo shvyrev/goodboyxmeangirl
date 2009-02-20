@@ -13,7 +13,7 @@ package railk.as3.data.grid {
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.grid.Cell;
 	import railk.as3.data.grid.Bloc;
-	import railk.as3.data.objectList.*;
+	import railk.as3.data.list.*;
 	import railk.as3.utils.ObjectDumper;
 	import railk.as3.utils.Utils;
 	
@@ -30,18 +30,18 @@ package railk.as3.data.grid {
 		private var _height                                  :int;
 		private var _width                                   :int;
 		private var count                                    :int = 0;
-		private var sortedBloc                               :ObjectList;                                 
+		private var sortedBloc                               :DLinkedList;                                 
 		
 		//____________________________________________________________________________________ VARIABLES CELL
 		private var cell                                     :Cell;
 		private var cellWidth                                :int;
 		private var cellHeight                               :int;
-		private var cellList                                 :ObjectList;
-		private var walker                                   :ObjectNode;
+		private var cellList                                 :DLinkedList;
+		private var walker                                   :DListNode;
 		
 		//____________________________________________________________________________________ VARIABLES BLOC
 		private var bloc                                     :Bloc;
-		private var blocList                                 :ObjectList;
+		private var blocList                                 :DLinkedList;
 		
 		
 		
@@ -57,7 +57,7 @@ package railk.as3.data.grid {
 		 * @param	cellW
 		 * @param	espace
 		 */
-		public function Grid( name:String, gridW:Number, gridH:Number, cellW:Number, cellH:Number, espaceW:Number, espaceH:Number, debug:Boolean = false, debugContainer:*= null ):void 
+		public function Grid( name:String, gridW:Number, gridH:Number, cellW:Number, cellH:Number, espaceW:Number, espaceH:Number, debug:Boolean = false, debugContainer:*= null )
 		{
 			gridList[name] = this;
 			_height = gridH;
@@ -74,8 +74,8 @@ package railk.as3.data.grid {
 			var j:int = 0;
 			var m:Boolean = true;
 			var pos:int;
-			cellList = new ObjectList();
-			blocList = new ObjectList();
+			cellList = new DLinkedList();
+			blocList = new DLinkedList();
 			
 			while (true) {
 				pos = m ? i++ : --i;
@@ -236,8 +236,8 @@ package railk.as3.data.grid {
 		{
 			var result:Array = new Array();
 			var currentWidth:Number = 0;
-			var currentNode:ObjectNode;
-			sortedBloc = new ObjectList();
+			var currentNode:DListNode;
+			sortedBloc = new DLinkedList();
 			
 			//--sort the bloc by width
 			var i:int = blocs.length;

@@ -10,11 +10,11 @@ package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.IModel;
 	import railk.as3.pattern.singleton.Singleton;
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 		
 	public class AbstractModel implements IModel
 	{
-		protected var proxys:ObjectList = new ObjectList();
+		protected var proxys:DLinkedList = new DLinkedList();
 		
 		public static function getInstance():AbstractModel 
 		{
@@ -38,7 +38,7 @@ package railk.as3.pattern.mvc.core
 		
 		public function hasProxy( name:String ):Boolean
 		{
-			( proxys.getObjectByName(name) )?true:false;
+			( proxys.getNodeByName(name) )?true:false;
 		}
 	}
 }

@@ -9,18 +9,17 @@
 package railk.as3.pattern.mvc.proxy
 {
 	import flash.events.EventDispatcher;
-	import railk.as3.data.objectList.ObjectNode;
-	import railk.as3.data.objectList.ObjectList
+	import railk.as3.data.list.DLinkedList;
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.event.ModelEvent;
 	
 	public class AbstractProxy extends EventDispatcher implements IProxy
 	{
-		protected var datas:ObjectList;
+		protected var datas:DLinkedList;
 		
 		public function AbstractProxy()
 		{
-			datas = new ObjectList();
+			datas = new DLinkedList();
 		}
 		
 		public function updateView(info:String, type:String, data:Object=null):void
@@ -33,12 +32,12 @@ package railk.as3.pattern.mvc.proxy
 		
 		public function getData( name:String ):*
 		{
-			return datas.getObjectByName( name ).data;
+			return datas.getNodeByName( name ).data;
 		}
 		
 		public function removeData( name:String ):*
 		{
-			datas.remove( name ).data;
+			datas.remove( name );
 		}
 		
 		public function clearData():void {

@@ -44,7 +44,7 @@ package railk.as3.transform.matrix
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																								  INIT
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function TransformMatrix(target:*):void
+		public function TransformMatrix(target:*)
 		{
 			this.target = target;
 			t = new Transform(target);

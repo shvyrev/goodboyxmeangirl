@@ -35,7 +35,7 @@ package railk.as3.net.tcpClient {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function TcpClient():void {
+		public function TcpClient() {
 			sc = new Socket();
 			sc.addEventListener( ProgressEvent.SOCKET_DATA, manageEvent, false, 0, true );
 			sc.addEventListener( Event.CONNECT, manageEvent, false, 0, true  );

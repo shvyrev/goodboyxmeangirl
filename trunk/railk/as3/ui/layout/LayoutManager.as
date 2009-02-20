@@ -7,16 +7,16 @@
 
 package railk.as3.ui.layout
 {
-	import railk.as3.data.objectList.ObjectList;
+	import railk.as3.data.list.DLinkedList;
 	
 	public class LayoutManager
 	{
 		
-		private var layoutsList:ObjectList;
+		private var layoutsList:DLinkedList;
 		
 		public static function init():void
 		{
-			layoutsList = new ObjectList();
+			layoutsList = new DLinkedList();
 		}
 		
 		public static function addLayout( name:String, group:String, parent:Object, structure:LayoutStruct, isDynamic:Boolean=true ):void
@@ -31,7 +31,7 @@ package railk.as3.ui.layout
 		
 		public function getLayout(name:String):void
 		{
-			layoutsList.getObjectByGroup(name);
+			layoutsList.getNodeByGroup(name);
 		}
 	}
 	

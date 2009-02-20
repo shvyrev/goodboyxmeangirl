@@ -24,7 +24,7 @@ package railk.as3.net.loader {
 	
 	// __________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.net.loader.loaderItems.MultiLoaderItem;
-	import railk.as3.data.objectList.*;
+	import railk.as3.data.list.*;
 	
 
 	public class MultiLoader extends EventDispatcher {
@@ -42,8 +42,8 @@ package railk.as3.net.loader {
 		private var _state                                   :String = "stop";
 		
 		// _________________________________________________________________________________ ITEMLIST VARIABLES
-		private var itemsList                                :ObjectList;
-		private var walker                                   :ObjectNode;
+		private var itemsList                                :DLinkedList;
+		private var walker                                   :DListNode;
 		
 		// _____________________________________________________________________________________ ITEM VRAIABLES
 		private var item                                     :MultiLoaderItem;
@@ -93,7 +93,7 @@ package railk.as3.net.loader {
 			MloaderName = name;
 			MloaderRole = role;
 			//--
-			itemsList = new ObjectList();
+			itemsList = new DLinkedList();
 		}
 		
 		
@@ -242,14 +242,14 @@ package railk.as3.net.loader {
 		 */
 		public function removeByName( name:String ):Boolean {
 			var result:Boolean;
-			var t:ObjectNode = itemsList.getObjectByName( name );
+			var t:DListNode = itemsList.getNodeByName( name );
 			if ( t )
 			{
 				var file:MultiLoaderItem = t.data;
 				delItemListeners( file );
 				file.dispose();
 				file = null;
-				itemsList.removeObjectNode( t );
+				itemsList.removeNode( t );
 				result = true;
 			}
 			else result = false;
@@ -273,7 +273,7 @@ package railk.as3.net.loader {
 					delItemListeners( file );
 					file.dispose();
 					file = null;
-					itemsList.removeObjectNode( walker );
+					itemsList.removeNode( walker );
 					result = true;
 					break loop;
 				}
@@ -294,9 +294,9 @@ package railk.as3.net.loader {
 				file.dispose();
 				file = null;
 				//--
-				var currentNode:ObjectNode = walker;
+				var currentNode:DListNode = walker;
 				walker = walker.next;
-				itemsList.removeObjectNode( currentNode );
+				itemsList.removeNode( currentNode );
 			}
 		}
 		
@@ -583,7 +583,7 @@ package railk.as3.net.loader {
 		
 		public function set role( role:String ):void { MloaderRole = role; }
 		
-		public function getItemByName( name:String ):MultiLoaderItem { return itemsList.getObjectByName( name ).data; }
+		public function getItemByName( name:String ):MultiLoaderItem { return itemsList.getNodeByName( name ).data; }
 		
 		public function getItemByArgs( type:String, name:String ):MultiLoaderItem {
 			walker = itemsList.head;
