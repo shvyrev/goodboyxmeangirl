@@ -38,7 +38,7 @@ package railk.as3.pattern.mvc.core
 		
 		public function hasProxy( name:String ):Boolean
 		{
-			( proxys.getNodeByName(name) )?true:false;
+			return ( proxys.getNodeByName(name) )?true:false;
 		}
 	}
 }
