@@ -16,6 +16,7 @@ package railk.as3.pattern.mvc.core
 	{
 		protected var model:IModel;
 		protected var commands:DLinkedList = new DLinkedList();
+		protected var commandStack:DLinkedList = new DLinkedList();
 		
 		public static function getInstance():AbstractController
 		{
@@ -44,6 +45,7 @@ package railk.as3.pattern.mvc.core
 		public function executeCommand( type:String, action:String ):void
 		{
 			(commands.getNodeByName( type ).data as ICommand).execute( action );
+			commandStack.add([String(commandStack.length+1),type,'',action]);
 		}
 		
 		public function removeCommand( type:String ):void
