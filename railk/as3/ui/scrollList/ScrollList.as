@@ -21,7 +21,6 @@ package railk.as3.ui.scrollList {
 	import railk.as3.event.CustomEvent;
 	import railk.as3.data.list.DLinkedList;
 	import railk.as3.data.list.DListNode;
-	import railk.as3.tween.process.*;
 	import railk.as3.utils.Clone;
 	
 	
@@ -33,6 +32,7 @@ package railk.as3.ui.scrollList {
 		public var oldSize	                                    :Number=0;
 		public var espacement                                   :int;
 		public var full                                         :Boolean = false;
+		public var engine                                       :Class;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
 		public var content                                      :Sprite;
@@ -65,7 +65,7 @@ package railk.as3.ui.scrollList {
 		 * @param	height
 		 * @param	espacement
 		 */
-		public function ScrollList( name:String='', orientation:String='V', size:Number=1, espacement:int=1, linked=false, bound=true ):void 
+		public function ScrollList( name:String='', engine:Class=null, orientation:String='V', size:Number=1, espacement:int=1, linked=false, bound=true ):void 
 		{	
 			this.name = name;
 			this.orientation = orientation;
@@ -73,6 +73,7 @@ package railk.as3.ui.scrollList {
 			this.size = this.oldSize = size;
 			this.bound = bound;
 			this.linked = linked;
+			this.engine = engine;
 			
 			objects = new DLinkedList();			
 			content = new Sprite();
@@ -383,25 +384,25 @@ package railk.as3.ui.scrollList {
 					if ( !bound )
 					{
 						if ( orientation == "V" ) {
-							if ( evt.delta != 0) { Process.to( rect, 1, { y:rect.y + evt.delta * delta }, { onUpdate:function(){ content.scrollRect = rect; } } ); }
+							if ( evt.delta != 0) { engine.to( rect, 1, { y:rect.y + evt.delta * delta }, { onUpdate:function(){ content.scrollRect = rect; } } ); }
 						}
 						else if ( orientation == "H" ) {
-							if ( evt.delta != 0) { Process.to( rect, 1, { x:rect.x + evt.delta * delta }, { onUpdate:function(){ content.scrollRect = rect; } } ); }
+							if ( evt.delta != 0) { engine.to( rect, 1, { x:rect.x + evt.delta * delta }, { onUpdate:function(){ content.scrollRect = rect; } } ); }
 						}
 					}
 					else
 					{
 						if (orientation == "V" ) 
 						{
-							if ( rect.y >= 0 + evt.delta * delta  && rect.y <= rect.height + evt.delta * delta  ) Process.to( rect, .4, { y: rect.y - (evt.delta * delta)} , {  onUpdate:function(){ content.scrollRect = rect; } } );
-							else if ( rect.y < 0 + evt.delta * delta ) Process.to( rect, .4, { y: 0}, { onUpdate:function(){ content.scrollRect = rect; } } );
-							else if ( rect.y > rect.height + evt.delta * delta ) Process.to( rect, .4, { y:rect.height }, { onUpdate:function(){ content.scrollRect = rect; } } );
+							if ( rect.y >= 0 + evt.delta * delta  && rect.y <= rect.height + evt.delta * delta  ) engine.to( rect, .4, { y: rect.y - (evt.delta * delta)} , {  onUpdate:function(){ content.scrollRect = rect; } } );
+							else if ( rect.y < 0 + evt.delta * delta ) engine.to( rect, .4, { y: 0}, { onUpdate:function(){ content.scrollRect = rect; } } );
+							else if ( rect.y > rect.height + evt.delta * delta ) engine.to( rect, .4, { y:rect.height }, { onUpdate:function(){ content.scrollRect = rect; } } );
 						}
 						else if (orientation == "H" ) 
 						{
-							if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) Process.to( rect, .4, { x: rect.x - (evt.delta * delta)} , { onUpdate:function(){ content.scrollRect = rect; } } );
-							else if( rect.x < 0 + evt.delta*delta ) Process.to( rect, .4, { x: 0 }, { onUpdate:function(){ content.scrollRect = rect; } } );
-							else if ( rect.x > rect.height+evt.delta*delta ) Process.to( rect, .4, { x:rect.width }, { onUpdate:function(){ content.scrollRect = rect; } } );
+							if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) engine.to( rect, .4, { x: rect.x - (evt.delta * delta)} , { onUpdate:function(){ content.scrollRect = rect; } } );
+							else if( rect.x < 0 + evt.delta*delta ) engine.to( rect, .4, { x: 0 }, { onUpdate:function(){ content.scrollRect = rect; } } );
+							else if ( rect.x > rect.height+evt.delta*delta ) engine.to( rect, .4, { x:rect.width }, { onUpdate:function(){ content.scrollRect = rect; } } );
 						}
 					}
 					break;

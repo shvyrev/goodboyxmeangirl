@@ -9,14 +9,11 @@
 
 package railk.as3.ui.link {
 	
-	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.list.*;
 	
-	// ____________________________________________________________________________________ IMPORT SWFADRESS
 	import com.asual.swfaddress.SWFAddress;
 	import com.asual.swfaddress.SWFAddressEvent;
 	
@@ -32,6 +29,7 @@ package railk.as3.ui.link {
 		
 		//_____________________________________________________________________________ VARIABLES LINKMANAGER
 		private static var _inited                            :Boolean = false;
+		private static var _engine                            :Class;
 		private static var siteTitre                          :String;
 		private static var swfAdress                          :Boolean = false;
 		private static var updateTitle                        :Boolean = false;
@@ -67,7 +65,7 @@ package railk.as3.ui.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
+		public static function init( titre:String, engine:Class, swfAdressEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
@@ -77,6 +75,7 @@ package railk.as3.ui.link {
 			updateTitle = updateTitleEnabled;
 			linkList = new DLinkedList();
 			_inited = true;
+			_engine = engine;
 		}
 		
 		
@@ -101,7 +100,7 @@ package railk.as3.ui.link {
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
 			var dummy:Boolean = (displayObject)? false : true;
-			link = new Link( name, displayObject, type, actions, colors, enable, dummy, data );
+			link = new Link( name, _engine, displayObject, type, actions, colors, enable, dummy, data );
 			if ( !linkList.getNodeByName( name ) || dummy || linkList.getNodeByName( name ).data.isDummy() ) linkList.add( [name, link] );
 			else linkList.update( name, link );
 			

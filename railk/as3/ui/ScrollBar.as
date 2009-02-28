@@ -6,29 +6,24 @@
 * @version 0.1
 */
 
-package railk.as3.ui {
-	
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.ui 
+{	
 	import flash.display.Sprite;
 	import flash.display.Stage
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	
-	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.GraphicShape;
-	import railk.as3.tween.process.*;
+	import railk.as3.display.RegistrationPoint;
 	
 	
-	
-	public class ScrollBar extends RegistrationPoint  {
+	public class ScrollBar extends RegistrationPoint {
 		
-		//______________________________________________________________________________ VARIABLES STATIQUES
 		public static var scrollList           :Object = { };
 		private static var baseDelta           :Number = 14;
 		
-		//________________________________________________________________________________________ VARIABLES
+		private var engine                     :Class;
 		private var scrollContainer            :Sprite;
 		private var slider                     :*;
 		private var top   	                   :*;
@@ -53,8 +48,7 @@ package railk.as3.ui {
 		private var oldStageH                  :Number;
 		private var oldStageW                  :Number;
 		private var contentPlace               :Point;
-		
-		//________________________________________________________________________________ VARIABLES CONTROLE
+	
 		private var rollOut                    :Boolean = false;
 		private var listeners                  :Boolean = false;
 		
@@ -77,8 +71,9 @@ package railk.as3.ui {
 		 * @param	autoCheck           To make the scrollBar adapt itself automaticaly when the content size change
 		 * @param	autoScroll          to follow the mouse when the mouse is hover the scrollbar.
 		 */
-		public function ScrollBar( name:String, orientation:String, toScroll:Object, colors:Object, sizes:Object,  topObj:*= null, bottomObj:*=null, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false, fullScreen:Boolean = false )
+		public function ScrollBar( name:String, orientation:String, toScroll:Object, colors:Object, sizes:Object,  engine:Class, topObj:*= null, bottomObj:*=null, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false, fullScreen:Boolean = false )
 		{
+			this.engine = engine;
 			scrollList[name] = this;
 			wheelEnable = wheel;
 			resizeEnable = resizeAble;
@@ -130,7 +125,6 @@ package railk.as3.ui {
 					addChild( bottom );
 				}
 				
-			if ( !Process.pluginEnabled ) Process.enablePlugin( ProcessPlugins );
 			this.addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
 		}
 		
@@ -375,23 +369,23 @@ package railk.as3.ui {
 						if ( mouseX >= rect.width ) { value = rect.width; }
 						else if ( mouseX <= slider.width ) { value = 0; }
 						else { value = mouseX - slider.width / 2; }
-						Process.to( slider, .4, { x:value} );
-						Process.to( content, .6, { x: contentPlace.x-(value * multiplier)},{rounded:true} );
+						engine.to( slider, .4, { x:value} );
+						engine.to( content, .6, { x: contentPlace.x-(value * multiplier)},{rounded:true} );
 					}
 					evt.updateAfterEvent();
 					break;
 				
 				case MouseEvent.ROLL_OVER :
-					Process.to( scrollBG, .6, { color:scrollColor.fondOver } );
+					engine.to( scrollBG, .6, { color:scrollColor.fondOver } );
 					if( !customSlider ){
-						Process.to( slider, .6, { color:scrollColor.sliderOver} );
+						engine.to( slider, .6, { color:scrollColor.sliderOver} );
 					}	
 					break;
 					
 				case MouseEvent.ROLL_OUT :
-					Process.to( scrollBG, .6, { color:scrollColor.fond} );
+					engine.to( scrollBG, .6, { color:scrollColor.fond} );
 					if( !customSlider ){
-						Process.to( slider, .6, { color:scrollColor.slider} );
+						engine.to( slider, .6, { color:scrollColor.slider} );
 					}	
 					break;
 					
@@ -427,21 +421,21 @@ package railk.as3.ui {
 							if ( mouseY >= rect.height ) { value = rect.height; }
 							else if ( mouseY <= slider.height ) { value = 0; }
 							else { value = mouseY - slider.height / 2; }
-							Process.to( slider, 1, { y:value }, { onUpdate: function() { content.y = contentPlace.y-(slider.y * multiplier); } } );
+							engine.to( slider, 1, { y:value }, { onUpdate: function() { content.y = contentPlace.y-(slider.y * multiplier); } } );
 						}
 						else if ( way == "H" ) {
 							if ( mouseX >= rect.width ) { value = rect.width; }
 							else if ( mouseX <= slider.width ) { value = 0; }
 							else { value = mouseX - slider.width / 2; }
-							Process.to( slider, 1, { x:value},{onUpdate: function() { content.x = contentPlace.x-(slider.x * multiplier); } } );
+							engine.to( slider, 1, { x:value},{onUpdate: function() { content.x = contentPlace.x-(slider.x * multiplier); } } );
 						}
 					}
 					else {
 						if ( way == "V" ) {
-							Process.to( content, .3, { y:contentPlace.y -(slider.y * multiplier) }, { rounded:true } );
+							engine.to( content, .3, { y:contentPlace.y -(slider.y * multiplier) }, { rounded:true } );
 						}
 						else if( way == "H" ) {
-							Process.to( content,.3, { x:contentPlace.x -(slider.x * multiplier)}, {rounded:true } );
+							engine.to( content,.3, { x:contentPlace.x -(slider.x * multiplier)}, {rounded:true } );
 						}
 					}
 					break;
@@ -450,24 +444,24 @@ package railk.as3.ui {
 					
 					if ( way == "V" ) {
 						if ( slider.y >= 0 + evt.delta*delta  && slider.y <= rect.height+ evt.delta*delta  ) {
-							Process.to( slider, .4, { y: slider.y - (evt.delta * delta)} , { onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
+							engine.to( slider, .4, { y: slider.y - (evt.delta * delta)} , { onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
 						}
 						else if( slider.y < 0 + evt.delta*delta ) {
-							Process.to( slider, .4, { y: 0}, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
+							engine.to( slider, .4, { y: 0}, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
 						}
 						else if ( slider.y > rect.height + evt.delta*delta ) {
-							Process.to( slider, .4, { y:rect.height }, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
+							engine.to( slider, .4, { y:rect.height }, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
 						}
 					}
 					else if ( way == "H" ) {
 						if ( slider.x >= 0 + evt.delta*delta && slider.x <= rect.width + evt.delta*delta ) {
-							Process.to( slider, .4, { x: slider.x - (evt.delta * delta)} , {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
+							engine.to( slider, .4, { x: slider.x - (evt.delta * delta)} , {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
 						}
 						else if( slider.x < 0 + evt.delta*delta ) {
-							Process.to( slider, .4, { x: 0 }, {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
+							engine.to( slider, .4, { x: 0 }, {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
 						}
 						else if ( slider.x > rect.height+evt.delta*delta ) {
-							Process.to( slider, .4, { x:rect.width }, { onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
+							engine.to( slider, .4, { x:rect.width }, { onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
 						}
 					}
 					break;

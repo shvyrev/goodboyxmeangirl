@@ -11,7 +11,6 @@
 package railk.as3.display.drawingShape
 {
 	import flash.geom.Point;
-	
 	public class Shapes
 	{
 		public static function arrow(size:int=1):Array { return [new Point(0,0),new Point(1,0),new Point(4,3),new Point(1,6),new Point(0,6),new Point(3,3)  ]; }
