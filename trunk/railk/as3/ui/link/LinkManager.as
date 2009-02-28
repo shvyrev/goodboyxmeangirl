@@ -101,7 +101,7 @@ package railk.as3.ui.link {
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
 			var dummy:Boolean = (displayObject)? false : true;
-			link = Link.getInstance().create( name, displayObject, type, actions, colors, enable, dummy, data );
+			link = new Link( name, displayObject, type, actions, colors, enable, dummy, data );
 			if ( !linkList.getNodeByName( name ) || dummy || linkList.getNodeByName( name ).data.isDummy() ) linkList.add( [name, link] );
 			else linkList.update( name, link );
 			
