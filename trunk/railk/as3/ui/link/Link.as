@@ -9,22 +9,17 @@
 
 package railk.as3.ui.link {
 	
-	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.tween.process.*;
-	
-	// ___________________________________________________________________________________ IMPORT SWFADDRESS
 	import com.asual.swfaddress.SWFAddress;
 	
 	
 	public class Link  
 	{	
-		//________________________________________________________________________________________ VARIABLES		
 		private var _name                                       :String;
+		private var _engine                                     :Class;
 		private var _displayObject                              :Object;
 		private var _content                                    :Object;
 		private var _actions                                    :Function;
@@ -32,8 +27,6 @@ package railk.as3.ui.link {
 		private var _type                                       :String;
 		private var _dummy                                      :Boolean;
 		private var _data                                       :*;
-		
-		//___________________________________________________________________________________ VARIABLES ETATS
 		private var swfAddress                                  :Boolean;     
 		private var active                                      :Boolean = false;
 		
@@ -51,7 +44,7 @@ package railk.as3.ui.link {
 		 * @param	swfAddressEnable
 		 * @param	dummy
 		 */
-		public function Link( name:String, displayObject:Object = null, type:String = 'mouse', actions:Function = null, colors:Object = null, swfAddressEnable:Boolean = false, dummy:Boolean = false, data:*=null ):Link
+		public function Link( name:String, engine:Class, displayObject:Object = null, type:String = 'mouse', actions:Function = null, colors:Object = null, swfAddressEnable:Boolean = false, dummy:Boolean = false, data:*=null ):Link
 		{
 			_content = new Object();
 			_name = name;
@@ -61,6 +54,7 @@ package railk.as3.ui.link {
 			_type = type;
 			_dummy = dummy;
 			_data = data;
+			_engine = engine;
 			
 			//--swfaddress ?
 			swfAddress = swfAddressEnable;
@@ -208,15 +202,15 @@ package railk.as3.ui.link {
 				case MouseEvent.ROLL_OVER :
 					if ( swfAddress ) SWFAddress.setStatus(_name);
 					if ( _colors ) {
-						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.hover } );
-						else if( type == 'sprite') Process.to( _displayObject, .2, { color:_colors.hover} );
+						if ( type == 'text') _engine.to( _displayObject, .2, {textColor:_colors.hover } );
+						else if( type == 'sprite') _engine.to( _displayObject, .2, { color:_colors.hover} );
 					}
 					if ( _actions != null ) _actions( 'hover', _displayObject, (_data is Function)? _data.call() : _data );
 					//--content
 					for ( prop in _content ) {
 						if( _content[prop].colors != null ) {
-							if ( _content[prop].type == "text" ) Process.to( _content[prop].object, .2, {text_color:_content[prop].colors.hover } );
-							else if ( _content[prop].type == "sprite" ) Process.to( _content[prop].object, .2, { color:_content[prop].colors.hover} );
+							if ( _content[prop].type == "text" ) _engine.to( _content[prop].object, .2, {text_color:_content[prop].colors.hover } );
+							else if ( _content[prop].type == "sprite" ) _engine.to( _content[prop].object, .2, { color:_content[prop].colors.hover} );
 						}	
 						if ( _content[prop].actions != null ) _content[prop].actions("hover", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data );
 					}
@@ -226,15 +220,15 @@ package railk.as3.ui.link {
 				case MouseEvent.ROLL_OUT :
 					if ( swfAddress ) SWFAddress.resetStatus();
 					if ( _colors ) {
-						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.out } );
-						else if( type == 'sprite') Process.to( _displayObject, .2, { color:_colors.out} );
+						if ( type == 'text') _engine.to( _displayObject, .2, {text_color:_colors.out } );
+						else if( type == 'sprite') _engine.to( _displayObject, .2, { color:_colors.out} );
 					}
 					if ( _actions != null ) _actions( 'out', _displayObject, (_data is Function)? _data.call() : _data );
 					//--content
 					for ( prop in _content ) {
 						if( _content[prop].colors != null ) {
-							if( _content[prop].type == "text" ) Process.to( _content[prop].object, .2, { text_color:_content[prop].colors.out } );
-							else if ( _content[prop].type == "sprite" ) Process.to( _content[prop].object, .2, { color:_content[prop].colors.out } );
+							if( _content[prop].type == "text" ) _engine.to( _content[prop].object, .2, { text_color:_content[prop].colors.out } );
+							else if ( _content[prop].type == "sprite" ) _engine.to( _content[prop].object, .2, { color:_content[prop].colors.out } );
 						}
 						if ( _content[prop].actions != null ) _content[prop].actions("out", _content[prop].object, (_content[prop].data is Function)? _content[prop].data.call() : _content[prop].data );
 					}	
@@ -247,14 +241,14 @@ package railk.as3.ui.link {
 						else{ active = true; if( _actions != null ){ _actions("do", _displayObject, (_data is Function)? _data.call() : _data); } }
 					}
 					if ( _colors ) {
-						if ( type == 'text') Process.to( _displayObject, .2, {text_color:_colors.click } );
-						else if( type == 'sprite') Process.to( _displayObject, .2, { color:_colors.click} );
+						if ( type == 'text') _engine.to( _displayObject, .2, {text_color:_colors.click } );
+						else if( type == 'sprite') _engine.to( _displayObject, .2, { color:_colors.click} );
 					}
 					//--content
 					for ( prop in _content ) {
 						if( _content[prop].colors != null ) {
-							if( _content[prop].type == "text" ) Process.to( _content[prop].object, .2, { text_color:_content[prop].colors.click } );
-							else if ( _content[prop].type == "sprite" ) Process.to( _content[prop].object, .2, { color:_content[prop].colors.click } );
+							if( _content[prop].type == "text" ) _engine.to( _content[prop].object, .2, { text_color:_content[prop].colors.click } );
+							else if ( _content[prop].type == "sprite" ) _engine.to( _content[prop].object, .2, { color:_content[prop].colors.click } );
 						}
 						if ( _content[prop].actions != null  ) 
 						{ 

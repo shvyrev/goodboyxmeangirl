@@ -57,7 +57,7 @@ package railk.as3.data.grid {
 		 * @param	cellW
 		 * @param	espace
 		 */
-		public function Grid( name:String, gridW:Number, gridH:Number, cellW:Number, cellH:Number, espaceW:Number, espaceH:Number, debug:Boolean = false, debugContainer:*= null )
+		public function Grid( name:String, gridW:Number, gridH:Number, cellW:Number, cellH:Number, espaceW:Number, espaceH:Number )
 		{
 			gridList[name] = this;
 			_height = gridH;
@@ -79,7 +79,7 @@ package railk.as3.data.grid {
 			
 			while (true) {
 				pos = m ? i++ : --i;
-				cell = new Cell( String(count), X, Y, X + (cellW/2), Y+(cellH/2), cellH, cellW, pos, j, debug, debugContainer );
+				cell = new Cell( String(count), X, Y, X + (cellW/2), Y+(cellH/2), cellH, cellW, pos, j );
 				contiguous( j, pos, nbCol-1, nbLigne-1 );
 				cellList.add( [String(count),cell] );
 				X+= cellW+espaceW;

@@ -18,8 +18,6 @@ package railk.as3.display
 	
 	public class VSprite extends EventDispatcher
 	{
-		
-		// ________________________________________________________________________________________ VARIABLES
 		private var _name:String = 'undefined';
 		private var _parent:*;
 		private var matrix:Matrix = new Matrix();

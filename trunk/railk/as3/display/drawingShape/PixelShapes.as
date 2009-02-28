@@ -9,7 +9,6 @@
 package railk.as3.display.drawingShape
 {
 	import flash.geom.Point;
-	
 	public class PixelShapes {
 		public static function cam():Object { return { width:21, height:17, points:[ 
 		{A:new Point(9, 0) , B:new Point(14, 0) },

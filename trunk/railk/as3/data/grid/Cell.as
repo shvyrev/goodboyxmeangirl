@@ -6,19 +6,11 @@
 * @version 0.2
 */
 
-package railk.as3.data.grid {
-	
-	// ________________________________________________________________________________________ IMPORT FLASH
-	import flash.events.MouseEvent;
-	
-	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.display.GraphicShape;
-	import railk.as3.tween.process.*;
-	
-	
+package railk.as3.data.grid 
+{
+	import flash.events.MouseEvent;	
 	public class Cell 
 	{	
-		//____________________________________________________________________________________ VARIABLES CELL
 		private var _id                                      :String;
 		private var _contiguous                              :Object={};
 		private var _X                                       :Number;
@@ -48,10 +40,8 @@ package railk.as3.data.grid {
 		 * @param	W
 		 * @param	ligne
 		 * @param	colonne
-		 * @param	debug
-		 * @param	debugContainer
 		 */
-		public function Cell( id:String, X:Number, Y:Number, centerX:Number, centerY:Number, H:Number, W:Number, ligne:Number, colonne:Number, debug:Boolean = false, debugContainer:*= null )
+		public function Cell( id:String, X:Number, Y:Number, centerX:Number, centerY:Number, H:Number, W:Number, ligne:Number, colonne:Number )
 		{	
 			_id = id;
 			_X = X;
@@ -62,13 +52,6 @@ package railk.as3.data.grid {
 			_W = W;
 			_ligne = ligne;
 			_colonne = colonne;
-			_debug = debug;
-			
-			if ( debug ) {
-				gCell = new GraphicShape();
-				gCell.rectangle( 0x000000, X, Y, W, H);
-				debugContainer.addChild( gCell );
-			}
 		}
 		
 		
@@ -79,8 +62,6 @@ package railk.as3.data.grid {
 		
 		public function set isUsed( state:Boolean ):void {
 			used = state;
-			if ( _debug && used ) { Process.to( gCell, .3, { color:0xFF0000 } ); }
-			else if ( _debug && !used ) { Process.to( gCell, .3, { color:0x000000 } ); }
 		}
 		
 		public function get id():String { return _id; }

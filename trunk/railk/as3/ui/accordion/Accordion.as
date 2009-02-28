@@ -7,19 +7,16 @@
 */
 
 
-package railk.as3.ui.accordion {
-	
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.ui.accordion 
+{	
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.list.*;	
 	
 	
-	public class  Accordion extends EventDispatcher {
-		
-		// _________________________________________________________________________ VARIABLES ACCORDION ITEM
+	public class  Accordion extends EventDispatcher 
+	{
 		private var _type                                   :String;
 		private var acItem                                  :AccordionItem;
 		private var itemList                         		:DLinkedList;

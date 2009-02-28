@@ -32,6 +32,7 @@ package railk.as3.ui.scrollList {
 		private var orientation                                 :String;
 		private var size                                        :Number
 		private var espacement                                  :int;
+		private var engine                                      :Class;
 		
 		// _______________________________________________________________________________ VARIABLES CONTENT
 		private var walker                                       :DListNode;
@@ -54,13 +55,14 @@ package railk.as3.ui.scrollList {
 		 * @param	size
 		 * @param	espacement
 		 */
-		public function LinkedScrollList( name:String, orientation:String, size:Number, espacement:int ):void 
+		public function LinkedScrollList( name:String, orientation:String, size:Number, espacement:int, engine:Class ):void 
 		{
 			this.name = name;
 			this.orientation = orientation;
 			this.espacement = espacement;
 			this.size = size;
-						
+			this.engine = engine;
+			
 			objects = new DLinkedList();
 			scrollLists = new DLinkedList();
 			
@@ -116,7 +118,7 @@ package railk.as3.ui.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function firstScroll():void
 		{
-			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), orientation, size, espacement,true,false )] );
+			scrollLists.add( [currentScrollList,  new ScrollList( String(currentScrollList), engine, orientation, size, espacement,true,false )] );
 			initScrollListeners( currentScroll() );
 			DragAndThrow.enable( String(currentScrollList), currentScroll(), orientation, true );
 		}
@@ -127,7 +129,7 @@ package railk.as3.ui.scrollList {
 		private function newScroll():ScrollList 
 		{
 			currentScrollList += 1;
-			scrollLists.add( [scrollLists.length,  new ScrollList( String(currentScrollList), orientation, size, espacement,true,false )] );
+			scrollLists.add( [scrollLists.length,  new ScrollList( String(currentScrollList), engine, orientation, size, espacement,true,false )] );
 			initScrollListeners( currentScroll() );
 			return scrollLists.getNodeByName( String(currentScrollList) ).data as ScrollList;
 		}

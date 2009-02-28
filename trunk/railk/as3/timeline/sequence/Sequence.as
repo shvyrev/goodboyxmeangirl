@@ -18,7 +18,6 @@ package railk.as3.timeline.sequence
 	 
 	public class Sequence extends EventDispatcher
 	{
-		
 		public var name:String;
 		public var state:String = 'pause';
 		private var stepsList:DLinkedList=new DLinkedList();
