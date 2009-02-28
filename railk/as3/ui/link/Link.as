@@ -16,7 +16,6 @@ package railk.as3.ui.link {
 	
 	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.tween.process.*;
-	import railk.as3.pattern.singleton.Singleton;
 	
 	// ___________________________________________________________________________________ IMPORT SWFADDRESS
 	import com.asual.swfaddress.SWFAddress;
@@ -40,20 +39,7 @@ package railk.as3.ui.link {
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 GET INSTANCE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function getInstance():Link 
-		{
-			return Singleton.getInstance(Link);
-		}
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	SINGLETON
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function Link() { Singleton.assertSingle(Link); }
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	   CREATE
+		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
@@ -65,7 +51,7 @@ package railk.as3.ui.link {
 		 * @param	swfAddressEnable
 		 * @param	dummy
 		 */
-		public function create( name:String, displayObject:Object = null, type:String = 'mouse', actions:Function = null, colors:Object = null, swfAddressEnable:Boolean = false, dummy:Boolean = false, data:*=null ):Link
+		public function Link( name:String, displayObject:Object = null, type:String = 'mouse', actions:Function = null, colors:Object = null, swfAddressEnable:Boolean = false, dummy:Boolean = false, data:*=null ):Link
 		{
 			_content = new Object();
 			_name = name;
