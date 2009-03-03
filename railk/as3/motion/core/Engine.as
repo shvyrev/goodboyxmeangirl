@@ -11,7 +11,7 @@ package railk.as3.motion.core
 	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.utils.getTimer;
-	import railk.as3.motion.IRTween;
+	import railk.as3.motion.tween.LiteTween;
 	import railk.as3.pattern.singleton.Singleton;
 	
 	public class Engine
@@ -21,8 +21,8 @@ package railk.as3.motion.core
 		
 		private var inTick:Boolean = false;
 		private var ticker:Shape = new Shape();
-		private var last:IRTween = null;
-		private var first:IRTween = null;
+		private var last:LiteTween = null;
+		private var first:LiteTween = null;
 		
 		public static function getInstance():Engine { return Singleton.getInstance(Engine); }
 		
@@ -31,8 +31,7 @@ package railk.as3.motion.core
 			Singleton.assertSingle(Engine); 
 		}
 		
-		
-		public function add( tween:IRTween ):int
+		public function add( tween:LiteTween ):int 
 		{
 			if (!last){
 				first = last = tween;
@@ -47,7 +46,7 @@ package railk.as3.motion.core
 			return ++length;
 		}
 		
-		public function remove( tween:IRTween ):void
+		public function remove( tween:LiteTween ):void 
 		{
 			if ( tween.head && tween.tail ) first = last = null;
 			else if ( tween.head && !tween.tail ){
@@ -65,7 +64,7 @@ package railk.as3.motion.core
 			length--;
 		}
 		
-		private function start( tween:IRTween ):void 
+		private function start( tween:LiteTween ):void 
 		{
 			tween.startTime = getTimer();
 			if (!inTick){
@@ -80,15 +79,12 @@ package railk.as3.motion.core
 			ticker.removeEventListener(Event.ENTER_FRAME, tick );
 		}
 		
-		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number 
-		{
-			return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
-		}
+		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return c * ((t = t / d - 1) * t * t * t * t + 1) + b; }
 		
 		private function tick(evt:Event):void 
 		{
 			if ( first != null ) {
-				var walker:IRTween = first;
+				var walker:LiteTween = first;
 				while ( walker ) {
 					walker.update( (getTimer()-walker.startTime)*.001 );
 					walker = walker.next;

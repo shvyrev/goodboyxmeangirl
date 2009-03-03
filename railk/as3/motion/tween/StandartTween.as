@@ -12,6 +12,7 @@ package railk.as3.motion.tween
 	import flash.events.Event;
 	import flash.utils.getDefinitionByName;
 	import flash.filters.BitmapFilter;
+	
 	public class StandartTween extends LiteTween implements IRTween
 	{
 		static public const YOYO:String = 'yoyo';
@@ -32,58 +33,38 @@ package railk.as3.motion.tween
 		static public function to( target:Object, duration:Number, props:Object, options:Object = null ):StandartTween { return new StandartTween( target, duration, props, options); }
 		public function StandartTween( target:Object, duration:Number, props:Object, options:Object = null ) { super(target, duration, props, options); }
 		
-		override public function pause():void {
-			engine.remove( tween );
-			if ( delay - elapsedTime <= 0) delay -= elapsedTime;
-			else {
-				duration -= elapsedTime-delay;
-				delay = 0;
-			}
-			overlap();
-		}
+		override protected function setProperties():void {}
 		
-		override public function overlap():void {
-			var i:int = 0;
-			while ( i < this.props.length) {
-				this.props[i][2] = props[i][1];
-				i++;
-			}
-		}
-		
-		override protected function stripProps(props:Object):void {
+		override protected function stripProps(ps:Object):void {
 			var p:String, cf:Boolean=false, colorFilters:Object={};
-			for ( p in props ) {
+			for ( p in ps ) {
 				switch( p ) {
-					case 'bezier': this.props.push([p,null,null,props[p]]); break;
-					case 'volume': this.props.push([p,null,_target.soundTransform.volume,props[p]]); break;
-					case 'pan': this.props.push([p,null,_target.soundTransform.pan,props[p]]); break;
-					case 'text': this.props.push([p,null,_target.text,props[p]]); break;
-					case 'textColor': this.props.push([p, null, _target.textColor, props[p]]); break;
-					case 'color': this.props.push([p,null,_target.transform.colorTransform,props[p]]); break;
-					case 'hexColor': this.props.push([p,null,_target,props[p]]); break;
-					case 'glow': case 'blur': case 'bevel': case 'dropShadow':  this.props.push([p, null, filter(p), props[p]]); break;
-					case 'tint': case 'brightness': case 'contrast': case 'hue': case 'saturation': case 'threshold': colorFilters[p] = [p, null, _target.filters, props[p]]; cf=true; break;
-					default : this.props.push( (( autoRotateHash.hasOwnProperty(p) )?[p, null, _target[p] % 360 + ((Math.abs(_target[p] % 360 - props[p] % 360)<180)?0:(_target[p]%360>props[p]%360)?-360:360), props[p]%360]:[p,null,_target[p],props[p]]) ); break;
+					case 'bezier': this.props.push([p,null,null,ps[p],'bezier']); break;
+					case 'volume': this.props.push([p,null,target.soundTransform.volume,ps[p],'sound']); break;
+					case 'pan': this.props.push([p,null,target.soundTransform.pan,ps[p],'sound']); break;
+					case 'text': this.props.push([p,null,target.text,props[p],'text']); break;
+					case 'textColor': this.props.push([p, null, target.textColor, ps[p],'text']); break;
+					case 'color': this.props.push([p,null,target.transform.colorTransform,ps[p],'color']); break;
+					case 'hexColor': this.props.push([p,null,target,ps[p],'hexColor']); break;
+					case 'glow': case 'blur': case 'bevel': case 'dropShadow':  this.props.push([p, null, filter(p), ps[p],'filter']); break;
+					case 'tint': case 'brightness': case 'contrast': case 'hue': case 'saturation': case 'threshold': colorFilters[p] = [p, null, target.filters, ps[p]]; cf=true; break;
+					default : this.props.push( (( autoRotateHash.hasOwnProperty(p) )?[p, null, target[p] % 360 + ((Math.abs(target[p] % 360 - ps[p] % 360)<180)?0:(target[p]%360>ps[p]%360)?-360:360), ps[p]%360]:[p,null,target[p],ps[p]]) ); break;
 				}
 			}
-			if(cf) this.props.push(['cf',colorFilters]);
+			if(cf) this.props.push(['cf',null,null,colorFilters,'colorFilter']);
 		}
 		
-		override public function updateProperties(ratio:Number):void {
+		override protected function updateProperties(ratio:Number):void {
 			var i:int = 0, value:Number;
 			if ( ratio != 0 && target!=null ){
 				while ( i < props.length ) {
-					switch( props[i][0] ) {
-						case 'bezier': props[i] = getDefinitionByName(mods.bezier).update( _target, props[i], ratio ); break;
-						case 'volume': case 'pan': props[i] = getDefinitionByName(mods.sound).update( _target, props[i], ratio ); break;
-						case 'text': case 'textColor': props[i] = getDefinitionByName(mods.text).update( _target, props[i], ratio ); break;
-						case 'color': props[i] = getDefinitionByName(mods.color).update( _target, props[i], ratio ); break;
-						case 'hexColor': props[i] = getDefinitionByName(mods.hexColor).update( _target, props[i], ratio ); break;
-						case 'glow': case 'blur': case 'bevel': case 'dropShadow': props[i] = getDefinitionByName(mods.filter).update( _target, props[i], ratio ); break;
-						case 'cf': props[i][1] = getDefinitionByName(mods.colorFilter).update( _target, props[i][1], ratio ); break;
+					switch( props[i][4] ) {
+						case 'sound': case 'text': case 'color': case 'hexColor': case 'colorFilter': case 'filter': case 'bezier': 
+							props[i] = getDefinitionByName(mods[props[i][4]]).update( target, props[i], ratio ); 
+							break;
 						default :
-							value = props[i][2] + (props[i][3] - props[i][2]) * ratio;
-							_target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
+							value = props[i][2] + (props[i][3] - props[i][2])*ratio;
+							target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
 							break;
 					}
 					i++;
@@ -94,12 +75,9 @@ package railk.as3.motion.tween
 		}
 		
 		private function filter( type:String ):BitmapFilter {
-			var f:Array = _target.filters, i:int = 0, count:int = f.length, result:BitmapFilter;
-			l:for ( i = 0; i < count; i++) {
-				if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; }
-			}
+			var f:Array = target.filters, i:int = 0, count:int = f.length, result:BitmapFilter;
+			l:for ( i = 0; i < count; i++) { if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; } }
 			return result;
 		}
 	}
-	
 }
