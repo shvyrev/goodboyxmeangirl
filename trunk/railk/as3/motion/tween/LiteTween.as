@@ -105,7 +105,7 @@ package railk.as3.motion.tween
 			if ( ratio != 0 && _target!=null ){
 				while ( i < props.length ) {
 					value = props[i][2]+(props[i][3]-props[i][2])*ratio;
-					_target[props[i][0]] = props[i][1] = (rounded)?int(value):value;
+					_target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
 					if(onUpdate!=null) onUpdate.apply(null,onUpdateParams);
 					if (hasEventListener(Event.CHANGE)) dispatchEvent(new Event(Event.CHANGE));
 					i++;
