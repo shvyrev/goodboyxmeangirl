@@ -16,13 +16,7 @@ package railk.as3.motion.tween
 	
 	public class StandartTween extends LiteTween implements IRTween
 	{
-		static public const YOYO:String = 'yoyo';
-		static public const LOOP:String = 'loop';
-		static public const REPLAY:String = 'replay';
-		static public const NONE:String = 'none';
-		
-		public var repeat:String = NONE;
-		
+		public var repeat:String='none';
 		private var _proxy:Object;
 		private var mods:Object = {	color:'railk.as3.motion.modules::ColorModule', 
 									hexColor:'railk.as3.motion.modules::HexColorModule', 
