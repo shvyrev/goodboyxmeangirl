@@ -12,11 +12,6 @@ package railk.as3.motion
 	public class RTweeny
 	{
 		/**
-		 * version
-		 */
-		static public const VERSION:String = '0.1';
-		
-		/**
 		 * actions
 		 */
 		static public function to( target:*, duration:Number=NaN, props:Object=null, options:Object=null ):IRTween { return LiteTween.to(target, duration, props, options); }

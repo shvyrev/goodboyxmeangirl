@@ -4,6 +4,9 @@
  * 
  * @author Richard Rodney
  * @version 0.1
+ * 
+ * TODO/ISSUE : make reflect work with colorFilters, Bezier and Filters;
+ * 
  */
 
 package railk.as3.motion.tween
@@ -16,7 +19,10 @@ package railk.as3.motion.tween
 	
 	public class StandartTween extends LiteTween implements IRTween
 	{
-		public var repeat:String='none';
+		public var data:*;
+		public var repeat:int=0;
+		public var reflect:Boolean;
+		
 		private var _proxy:Object;
 		private var mods:Object = {	color:'railk.as3.motion.modules::ColorModule', 
 									hexColor:'railk.as3.motion.modules::HexColorModule', 
@@ -104,6 +110,26 @@ package railk.as3.motion.tween
 				}
 				if (onUpdate != null) onUpdate.apply(null, onUpdateParams);
 				if (hasEventListener(Event.CHANGE)) dispatchEvent(new Event(Event.CHANGE));
+			}
+		}
+		
+		override public function update( time:Number ):void {
+			super.update(time);
+			var i:int = 0;
+			if ( time >= duration ) {
+				if (repeat>1 || repeat==-1) {
+					if (reflect) {
+						while ( i < props.length) {
+							var start:*= props[i][2], end:*= props[i][3];
+							props[i][2] = end;
+							props[i][3] = start;
+							i++;
+						}
+					}
+					engine.reset(this);
+					this.start();
+					if(repeat!=-1) repeat--;
+				}
 			}
 		}
 		
