@@ -8,19 +8,16 @@
 
 package railk.as3.data.pool {
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.list.*;
 
 	public class Pool
 	{
-		// ____________________________________________________________________________ VARIABLES RAPATRIEES
 		private var _growth_rate                                     :int = 0x10;
 		private var _capacity                                        :int = _growth_rate << 1;
 		private var _max_capacity                                    :int = _capacity * 10;
 		private var _object                                          :Class;
 		private var _factory                                         :PoolFactory;
 		
-		// __________________________________________________________________________________ VARIABLES POOL
 		private var freeObject                                       :int=0;
 		private var pool                                             :DLinkedList;
 		private var walker                                           :DListNode;

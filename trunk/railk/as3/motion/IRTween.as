@@ -13,6 +13,6 @@ package railk.as3.motion
 		function start():void;
 		function pause():void;
 		function dispose():void;
-		function get proxy():Object;
+		function get proxy():*;
 	}
 }	
