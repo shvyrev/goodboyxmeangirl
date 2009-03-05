@@ -12,7 +12,7 @@ package railk.as3.motion.utils
 	import flash.utils.flash_proxy;
 	import railk.as3.motion.tween.StandartTween;
 	
-	public dynamic class TweenProxy extends Proxy 
+	public class TweenProxy extends Proxy 
 	{
 		private var t:StandartTween;
 		public function TweenProxy(t:StandartTween):void { this.t = t; }

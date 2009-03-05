@@ -19,7 +19,6 @@ package railk.as3.motion.core
 		public var defaultEase:Function = easeOut;
 		public var length:int = 0;
 		
-		private var inTick:Boolean;
 		private var ticker:Shape = new Shape();
 		private var last:LiteTween = null;
 		private var first:LiteTween = null;
@@ -64,16 +63,12 @@ package railk.as3.motion.core
 		
 		private function start( tween:LiteTween ):void {
 			tween.startTime = getTimer();
-			if (!inTick) { 
-				ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true ); 
-				inTick=false;
-			}
+			if (!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true ); 
 		}
-
-		private function stop():void {
-			ticker.removeEventListener(Event.ENTER_FRAME, tick );
-			inTick=true;
-		}
+		
+		public function reset(tween:LiteTween):void { tween.startTime = getTimer(); }; 
+		
+		private function stop():void { ticker.removeEventListener(Event.ENTER_FRAME, tick ); }
 		
 		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return c * ((t = t / d - 1) * t * t * t * t + 1) + b; }
 		
@@ -87,5 +82,4 @@ package railk.as3.motion.core
 			} else  this.stop();
 		}
 	}
-	
 }

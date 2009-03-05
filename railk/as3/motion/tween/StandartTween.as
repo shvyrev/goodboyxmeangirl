@@ -1,6 +1,6 @@
 /**
  * 
- * Single Tween
+ * Standart Tween
  * 
  * @author Richard Rodney
  * @version 0.1
@@ -8,10 +8,10 @@
 
 package railk.as3.motion.tween
 {
-	import railk.as3.motion.IRTween
 	import flash.events.Event;
 	import flash.utils.getDefinitionByName;
 	import flash.filters.BitmapFilter;
+	import railk.as3.motion.IRTween
 	import railk.as3.motion.utils.TweenProxy;
 	
 	public class StandartTween extends LiteTween implements IRTween
@@ -38,13 +38,19 @@ package railk.as3.motion.tween
 		
 		
 		public function setProp(name:String, value:*):void {
-			var i:int = 0;
+			var i:int = 0, o:Object = { };
+			engine.reset(this);
 			if ( this.hasOwnProperty(name) ) this[name]=value;
 			else {
 				while ( i < props.length ) {
-					if (props[i][0] == name) props[i][3]=value;
+					if (props[i][0] == name) { 
+						props[i][3] = value; 
+						props[i][2] = props[i][1];
+						return; 
+					}
 					i++;
 				}
+				o[name]=value; stripProps(o);
 			}
 		}
 		
@@ -80,10 +86,10 @@ package railk.as3.motion.tween
 					case 'hexColor': this.props.push([p,null,target,ps[p],'hexColor']); break;
 					case 'glow': case 'blur': case 'bevel': case 'dropShadow':  this.props.push([p, null, filter(p), ps[p],'filter']); break;
 					case 'tint': case 'brightness': case 'contrast': case 'hue': case 'saturation': case 'threshold': colorFilters[p] = [p, null, target.filters, ps[p]]; cf=true; break;
-					default : this.props.push( (( autoRotateHash.hasOwnProperty(p) )?[p, null, target[p] % 360 + ((Math.abs(target[p] % 360 - ps[p] % 360)<180)?0:(target[p]%360>ps[p]%360)?-360:360), ps[p]%360]:[p,null,target[p],ps[p]]) ); break;
+					default : this.props.push( (( autoRotateH.hasOwnProperty(p) )?[p, null, target[p] % 360 + ((Math.abs(target[p] % 360 - ps[p] % 360)<180)?0:(target[p]%360>ps[p]%360)?-360:360), ps[p]%360]:[p,null,target[p],ps[p]]) ); break;
 				}
 			}
-			if(cf) this.props.push(['cf',null,null,colorFilters,'colorFilter']);
+			if (cf) this.props.push(['cf', null, null, colorFilters, 'colorFilter']);
 		}
 		
 		override protected function updateProperties(ratio:Number):void {
@@ -113,6 +119,6 @@ package railk.as3.motion.tween
 			return result;
 		}
 		
-		override public function get proxy():Object{ return (_proxy)?_proxy:new TweenProxy(this); }
+		override public function get proxy():* { return (_proxy)?_proxy:new TweenProxy(this); }
 	}
 }
