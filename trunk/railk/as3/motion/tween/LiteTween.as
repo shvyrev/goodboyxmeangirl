@@ -16,16 +16,14 @@ package railk.as3.motion.tween
 	public class LiteTween extends EventDispatcher implements IRTween
 	{	
 		protected var engine:Engine = Engine.getInstance();
-		protected var tween:LiteTween;
-		protected var target:Object;
 		
-		public var id:int;
+		public var target:Object;
+		public var id:int=0;
 		public var startTime:Number;
 		public var head:Boolean = false;
 		public var tail:Boolean = true;
 		public var next:LiteTween = null;
 		public var prev:LiteTween = null;
-		
 		public var duration:Number;
 		public var elapsedTime:Number=0;
 		public var props:Array = [];
@@ -38,7 +36,6 @@ package railk.as3.motion.tween
 		public var autoRotate:Boolean = false;
 		public var autoAlpha:Boolean = false;
 		public var rounded:Boolean = false;
-		
 		public var onBegin:Function;
 		public var onBeginParams:Array=[];
 		public var onUpdate:Function;
@@ -50,7 +47,6 @@ package railk.as3.motion.tween
 		static public function to( target:Object, duration:Number, props:Object, options:Object = null ):LiteTween { return new LiteTween( target, duration, props, options); }
 		
 		public function LiteTween( target:Object, duration:Number, props:Object, options:Object = null ) {
-			this.tween = this;
 			this.target = target;
 			this.duration = duration;
 			this.stripProps( props );
@@ -59,38 +55,36 @@ package railk.as3.motion.tween
 		}
 		
 		public function start():void { 
-			id = engine.add( tween );
-			if(onBegin!=null) onBegin.apply(null,onBeginParams);
-			if (hasEventListener(Event.INIT)) dispatchEvent(new Event(Event.INIT));
+			if (!id) {
+				id = engine.add( this );
+				if(onBegin!=null) onBegin.apply(null,onBeginParams);
+				if (hasEventListener(Event.INIT)) dispatchEvent(new Event(Event.INIT));
+			}
 		}
 		
 		public function pause():void {
-			engine.remove( tween );
+			id = engine.remove( this );
 			delay -= elapsedTime;
 		}
 		
 		public function dispose():void {
 			prev = next = null;
 			target = null;
-			tween = null;
 		}
-		
-		protected function setProperties():void{}
 		
 		public function update( time:Number ):void {
 			var ratio:Number;
 			elapsedTime = time;
 			time -= delay;
-			trace( time );
 			if( time >= duration ){
 				time = duration;
 				ratio = 1;
 				if(onComplete!=null) onComplete.apply(null,onCompleteParams);
 				if (hasEventListener(Event.COMPLETE)) dispatchEvent(new Event(Event.COMPLETE));
-				engine.remove( tween );
+				engine.remove( this );
 				if(autoDispose) dispose();
 			}
-			else ratio = (time <= 0)?0:ease( time, 0, 1, duration );
+			else ratio = (time <= 0)?0:ease(time,0,1,duration);
 			updateProperties( ratio );
 		}
 		
@@ -101,6 +95,7 @@ package railk.as3.motion.tween
 				while ( i < props.length ) {
 					value = props[i][2]+(props[i][3]-props[i][2])*ratio;
 					target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
+					if( autoAlpha && props[i][0]=='alpha' && value == 0 ) target.visible = false;
 					i++;
 				}
 				if(onUpdate!=null) onUpdate.apply(null,onUpdateParams);
@@ -115,7 +110,9 @@ package railk.as3.motion.tween
 		
 		protected function stripOptions( os:Object ):void {
 			var o:String;
-			for ( o in os ) { if ( this[o] != undefined || this[o]==null) this[o] = os[o]; }
+			for ( o in os ) { if ( this.hasOwnProperty(o) || this[o]==null) this[o] = os[o]; }
 		}
+		
+		public function get proxy():Object { return null; }
 	}
 }
