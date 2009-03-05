@@ -12,6 +12,7 @@ package railk.as3.motion.tween
 	import flash.events.Event;
 	import flash.utils.getDefinitionByName;
 	import flash.filters.BitmapFilter;
+	import railk.as3.motion.utils.TweenProxy;
 	
 	public class StandartTween extends LiteTween implements IRTween
 	{
@@ -21,6 +22,8 @@ package railk.as3.motion.tween
 		static public const NONE:String = 'none';
 		
 		public var repeat:String = NONE;
+		
+		private var _proxy:Object;
 		private var mods:Object = {	color:'railk.as3.motion.modules::ColorModule', 
 									hexColor:'railk.as3.motion.modules::HexColorModule', 
 									sound:'railk.as3.motion.modules::SoundModule',
@@ -33,7 +36,36 @@ package railk.as3.motion.tween
 		static public function to( target:Object, duration:Number, props:Object, options:Object = null ):StandartTween { return new StandartTween( target, duration, props, options); }
 		public function StandartTween( target:Object, duration:Number, props:Object, options:Object = null ) { super(target, duration, props, options); }
 		
-		override protected function setProperties():void {}
+		
+		public function setProp(name:String, value:*):void {
+			var i:int = 0;
+			if ( this.hasOwnProperty(name) ) this[name]=value;
+			else {
+				while ( i < props.length ) {
+					if (props[i][0] == name) props[i][3]=value;
+					i++;
+				}
+			}
+		}
+		
+		public function getProp(name:String):* {
+			var i:int = 0;
+			if ( this.hasOwnProperty(name) ) return this[name];
+			else {
+				while ( i < props.length ) {
+					if (props[i][0] == name) return props[i][1];
+					i++;
+				}
+			}
+		}
+		
+		public function delProp(name:String):* {
+			var i:int = 0;
+			while ( i < props.length ) {
+				if (props[i][0] == name) props.splice(i,1);
+				i++;
+			}
+		}
 		
 		override protected function stripProps(ps:Object):void {
 			var p:String, cf:Boolean=false, colorFilters:Object={};
@@ -65,6 +97,7 @@ package railk.as3.motion.tween
 						default :
 							value = props[i][2] + (props[i][3] - props[i][2])*ratio;
 							target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
+							if( autoAlpha && props[i][0]=='alpha' && value == 0 ) target.visible = false;
 							break;
 					}
 					i++;
@@ -79,5 +112,7 @@ package railk.as3.motion.tween
 			l:for ( i = 0; i < count; i++) { if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; } }
 			return result;
 		}
+		
+		override public function get proxy():Object{ return (_proxy)?_proxy:new TweenProxy(this); }
 	}
 }
