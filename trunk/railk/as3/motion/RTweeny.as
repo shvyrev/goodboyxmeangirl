@@ -12,7 +12,7 @@ package railk.as3.motion
 	public class RTweeny
 	{
 		/**
-		 * vars
+		 * version
 		 */
 		static public const VERSION:String = '0.1';
 		
@@ -20,6 +20,5 @@ package railk.as3.motion
 		 * actions
 		 */
 		static public function to( target:*, duration:Number=NaN, props:Object=null, options:Object=null ):IRTween { return LiteTween.to(target, duration, props, options); }
-		static public function from( target:*, duration:Number=NaN, props:Object=null, options:Object=null ):IRTween { return LiteTween.to(target, duration, props, options); }
 	}	
 }
