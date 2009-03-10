@@ -30,7 +30,8 @@ package railk.as3.motion
 		private var ticker:Shape = new Shape();
 		private var startTime:Number;
 		private var time:Number;
-		private var paused:Boolean = false;
+		private var paused:Boolean=false;
+		private var currentPos:int=-1;
 		
 		public function RTweenTimeline( size:int=10, growthRate:int=10 ) {
 			this.growthRate = growthRate;
@@ -52,8 +53,8 @@ package railk.as3.motion
 		}
 		
 		public function remove( posLabel:* ):void {
-			tweens--;
 			delete( timeline[((posLabel is String)?labels[posLabel]:posLabel)] );
+			tweens--;
 		}
 		
 		public function getTweenAt( pos:Number ):Object {
@@ -102,7 +103,6 @@ package railk.as3.motion
 		
 		public function stop():void {
 			ticker.removeEventListener( Event.ENTER_FRAME, tick );
-			trace('stop');
 		}
 		
 		public function reset():void {
@@ -112,10 +112,10 @@ package railk.as3.motion
 		
 		private function tick(evt:Event):void {
 			time = (getTimer() - startTime)*.001;
-			var pos:Number = int(time * 100) * .01, p:Array;
-			trace( pos );
-			if ( timeline[pos] != undefined) {
+			var pos:Number = int(time), p:Array;
+			if ( timeline[pos] != undefined && pos != currentPos) {
 				p = timeline[pos];
+				currentPos = pos;
 				(pick() as StandartTween).init( p[0],p[1],p[2],p[4] );
 				if (--tweens == 0) stop();
 			}
