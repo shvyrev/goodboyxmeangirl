@@ -33,9 +33,9 @@ package railk.as3.motion.tween
 									bezier:'railk.as3.motion.modules::BezierModule'};
 		
 		
-		static public function to( target:Object, duration:Number, props:Object, options:Object = null ):StandartTween { return new StandartTween( target, duration, props, options); }
-		public function StandartTween( target:Object, duration:Number, props:Object, options:Object = null ) { super(target, duration, props, options); }
+		public function StandartTween( target:Object=null, duration:Number=NaN, props:Object=null, options:Object=null ) { super(target, duration, props, options); }
 		
+		public function setProps( os:Object ):void { for ( var o:String in os ) setProp( o, os[o] ); }
 		
 		public function setProp(name:String, value:*):void {
 			var i:int = 0, o:Object = { };

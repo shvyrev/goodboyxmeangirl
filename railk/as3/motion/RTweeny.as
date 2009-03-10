@@ -14,6 +14,6 @@ package railk.as3.motion
 		/**
 		 * actions
 		 */
-		static public function to( target:*, duration:Number=NaN, props:Object=null, options:Object=null ):IRTween { return LiteTween.to(target, duration, props, options); }
+		static public function to( target:*=null, duration:Number=NaN, props:Object=null, options:Object=null ):IRTween { return new LiteTween(target, duration, props, options); }
 	}	
 }
