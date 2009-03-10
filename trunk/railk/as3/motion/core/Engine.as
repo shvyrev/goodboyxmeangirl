@@ -18,10 +18,9 @@ package railk.as3.motion.core
 	{	
 		public var defaultEase:Function = easeOut;
 		public var length:int = 0;
-		
+		public var last:LiteTween=null;
+		public var first:LiteTween=null;
 		private var ticker:Shape = new Shape();
-		private var last:LiteTween = null;
-		private var first:LiteTween = null;
 		
 		public static function getInstance():Engine { return Singleton.getInstance(Engine); }
 		
@@ -72,7 +71,7 @@ package railk.as3.motion.core
 		
 		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return c * ((t = t / d - 1) * t * t * t * t + 1) + b; }
 		
-		private function tick(evt:Event):void {
+		protected function tick(evt:Event):void {
 			if ( first != null ) {
 				var walker:LiteTween = first;
 				while ( walker ) {

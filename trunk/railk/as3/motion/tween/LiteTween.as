@@ -44,14 +44,14 @@ package railk.as3.motion.tween
 		public var onCompleteParams:Array=[];
 		
 		
-		static public function to( target:Object, duration:Number, props:Object, options:Object = null ):LiteTween { return new LiteTween( target, duration, props, options); }
+		public function LiteTween( target:Object=null, duration:Number=NaN, props:Object=null, options:Object=null ) { init( target, duration, props, options ); }
 		
-		public function LiteTween( target:Object, duration:Number, props:Object, options:Object = null ) {
+		public function init( target:Object=null, duration:Number=NaN, props:Object=null, options:Object=null ):void {
 			this.target = target;
 			this.duration = duration;
 			this.stripProps( props );
 			this.stripOptions( options );
-			if ( autoStart ) start();
+			if ( autoStart && target ) start();
 		}
 		
 		public function start():void {
@@ -69,6 +69,7 @@ package railk.as3.motion.tween
 		
 		public function dispose():void {
 			prev = next = null;
+			props = null;
 			target = null;
 		}
 		
