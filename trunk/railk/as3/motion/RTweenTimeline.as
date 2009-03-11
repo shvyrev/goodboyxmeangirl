@@ -13,6 +13,7 @@ package railk.as3.motion
 	import flash.utils.getTimer;
 	import railk.as3.motion.tween.TimelineTween;
 	import railk.as3.motion.core.Engine;
+	import railk.as3.utils.ObjectDumper;
 	
 	public class RTweenTimeline
 	{	
@@ -30,8 +31,8 @@ package railk.as3.motion
 		private var ticker:Shape = new Shape();
 		private var startTime:Number;
 		private var time:Number;
+		private var currentPos:Number=-1;
 		private var paused:Boolean=false;
-		private var currentPos:int=-1;
 		
 		public function RTweenTimeline( size:int=10, growthRate:int=10 ) {
 			this.growthRate = growthRate;
@@ -50,7 +51,8 @@ package railk.as3.motion
 		public function add( pos:Number, target:Object, duration:Number, props:Object, options:Object=null ):void {
 			if (options) options['onDispose'] = release;
 			else options = { onDispose:release };
-			timeline[pos] = [target, duration, props, options];
+			if ( timeline[pos] != undefined) timeline[pos].push([target, duration, props, options]);
+			else timeline[pos] = [[target, duration, props, options]];
 			tweens++;
 		}
 		
@@ -113,14 +115,19 @@ package railk.as3.motion
 		}
 		
 		private function tick(evt:Event):void {
-			time = (getTimer() - startTime)*.001;
-			var pos:Number = int(time), p:Array;
-			if ( timeline[pos] != undefined && pos != currentPos) {
-				p = timeline[pos];
-				currentPos = pos;
-				(pick() as TimelineTween).init( p[0],p[1],p[2],p[3] );
-				if (--tweens == 0) stop();
-			}
+			var i:int=0, p:Array, t:String, pos:Number;
+			time = (getTimer()-startTime)*.001;
+			for ( t in timeline ) {
+				pos = Number(t);
+				if ( time > pos && pos > currentPos) {
+					p = timeline[t];
+					for(i;i<p.length;i++){
+						(pick() as TimelineTween).init( p[i][0],p[i][1],p[i][2],p[i][3] );
+						if (--tweens == 0) stop();
+					}
+					currentPos = pos;
+				}
+			}	
 		}
 		
 		
