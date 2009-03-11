@@ -5,8 +5,6 @@
  * @author Richard Rodney
  * @version 0.1
  * 
- * TODO/ISSUE : make reflect work with colorFilters, Bezier and Filters;
- * 
  */
 
 package railk.as3.motion.tween

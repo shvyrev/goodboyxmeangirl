@@ -11,7 +11,7 @@ package railk.as3.motion
 	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.utils.getTimer;
-	import railk.as3.motion.tween.StandartTween;
+	import railk.as3.motion.tween.TimelineTween;
 	import railk.as3.motion.core.Engine;
 	
 	public class RTweenTimeline
@@ -48,6 +48,8 @@ package railk.as3.motion
 		 * Timeline management
 		 */
 		public function add( pos:Number, target:Object, duration:Number, props:Object, options:Object=null ):void {
+			if (options) options['onDispose'] = release;
+			else options = { onDispose:release };
 			timeline[pos] = [target, duration, props, options];
 			tweens++;
 		}
@@ -116,7 +118,7 @@ package railk.as3.motion
 			if ( timeline[pos] != undefined && pos != currentPos) {
 				p = timeline[pos];
 				currentPos = pos;
-				(pick() as StandartTween).init( p[0],p[1],p[2],p[4] );
+				(pick() as TimelineTween).init( p[0],p[1],p[2],p[3] );
 				if (--tweens == 0) stop();
 			}
 		}
@@ -157,10 +159,10 @@ package railk.as3.motion
 			var i:int=0;
 			for (i; i < n; i++) {
 				if ( !first ) {
-					first = last = new StandartTween();
+					first = last = new TimelineTween();
 					first.head = true;
 				} 
-				else addTweenNode( new StandartTween() );
+				else addTweenNode( new TimelineTween() );
 				size++;
 				free++
 			}
@@ -188,7 +190,11 @@ package railk.as3.motion
 			last = null;
 			size = 0;
 		}
-
+		
+		
+		/**
+		 * dispose
+		 */
 		public function dispose():void {
 			pause();
 			purge();
