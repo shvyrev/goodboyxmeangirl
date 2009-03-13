@@ -20,7 +20,8 @@ package railk.as3.motion.tween
 		public var target:Object;
 		public var id:int=0;
 		public var startTime:Number;
-		public var head:Boolean = false;
+		public var position:Number=0;
+		public var head:Boolean;
 		public var tail:Boolean = true;
 		public var next:LiteTween = null;
 		public var prev:LiteTween = null;
@@ -29,13 +30,13 @@ package railk.as3.motion.tween
 		public var props:Array = [];
 		public var autoRotateH:Object = {rotation:true,rotation2:true,rotationX:true,rotationY:true,rotationZ:true};
 		
-		public var delay:Number = 0;
+		public var delay:Number=0;
 		public var ease:Function = engine.defaultEase;
-		public var autoDispose:Boolean = true;
-		public var autoStart:Boolean = true;
-		public var autoRotate:Boolean = false;
-		public var autoAlpha:Boolean = false;
-		public var rounded:Boolean = false;
+		public var autoDispose:Boolean=true;
+		public var autoStart:Boolean=true;
+		public var autoRotate:Boolean;
+		public var autoAlpha:Boolean;
+		public var rounded:Boolean;
 		public var onBegin:Function;
 		public var onBeginParams:Array=[];
 		public var onUpdate:Function;
@@ -64,7 +65,7 @@ package railk.as3.motion.tween
 		
 		public function pause():void {
 			id = engine.remove( this );
-			delay -= elapsedTime;
+			position += elapsedTime;
 		}
 		
 		public function dispose():void {
@@ -73,12 +74,16 @@ package railk.as3.motion.tween
 			target = null;
 		}
 		
+		public function setPosition(p:Number):void {
+			position=p;
+			update(0);
+		}
+		
 		public function update( time:Number ):void {
 			var ratio:Number;
 			elapsedTime = time;
-			time -= delay;
+			time -= delay-position;
 			if( time >= duration ){
-				time = duration;
 				ratio = 1;
 				id = engine.remove( this );
 				if(onComplete!=null) onComplete.apply(null,onCompleteParams);
@@ -95,7 +100,7 @@ package railk.as3.motion.tween
 				while ( i < props.length ) {
 					value = props[i][2]+(props[i][3]-props[i][2])*ratio;
 					target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
-					if( autoAlpha && props[i][0]=='alpha' && value == 0 ) target.visible = false;
+					if ( autoAlpha && props[i][0]=='alpha' && value==0 ) target.visible = false;
 					i++;
 				}
 				if(onUpdate!=null) onUpdate.apply(null,onUpdateParams);
