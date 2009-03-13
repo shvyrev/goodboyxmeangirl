@@ -75,23 +75,14 @@ package railk.as3.motion.tween
 		}
 		
 		public function update( time:Number ):void {
-			var ratio:Number;
 			elapsedTime = time;
 			time -= delay-position;
-			if( time >= duration ){
-				ratio = 1;
-				id = engine.remove( this );
-				if(onComplete!=null) onComplete.apply(null,onCompleteParams);
-				if (hasEventListener(Event.COMPLETE)) dispatchEvent(new Event(Event.COMPLETE));
-				if(autoDispose) dispose();
-			}
-			else ratio = (time <= 0)?0:ease(time,0,1,duration);
-			updateProperties( ratio );
+			if ( updateProperties( ((time >= duration)?1:((time <= 0)?0:ease(time,0,1,duration))) ) == 1 ) complete();
 		}
 		
-		protected function updateProperties( ratio:Number ):void {
+		protected function updateProperties( ratio:Number ):Number {
 			var i:int = 0, value:Number;
-			if ( ratio != 0 && target!=null ){
+			if ( ratio!=0 && target!=null ){
 				while ( i < props.length ) {
 					value = props[i][2]+(props[i][3]-props[i][2])*ratio;
 					target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
@@ -100,7 +91,15 @@ package railk.as3.motion.tween
 				}
 				if(onUpdate!=null) onUpdate.apply(null,onUpdateParams);
 				if (hasEventListener(Event.CHANGE)) dispatchEvent(new Event(Event.CHANGE));
-			}	
+			}
+			return ratio;
+		}
+		
+		protected function complete():void {
+			id = engine.remove( this );
+			if(onComplete!=null) onComplete.apply(null,onCompleteParams);
+			if(hasEventListener(Event.COMPLETE)) dispatchEvent(new Event(Event.COMPLETE));
+			if(autoDispose) dispose();
 		}
 		
 		protected function stripProps( ps:Object ):void {

@@ -76,11 +76,25 @@ package railk.as3.motion
 		}
 
 		public function goToAndPlay( posLabel:* ):void {
-			var pos:Number = (posLabel is String)?labels[posLabel]:posLabel;
+			goTo( ((posLabel is String)?labels[posLabel]:posLabel) );
 		}
 		
 		public function goToAndStop( posLabel:* ):void {
-			var pos:Number = (posLabel is String)?labels[posLabel]:posLabel;
+			pause();
+			goTo( ((posLabel is String)?labels[posLabel]:posLabel) );
+		}
+		
+		private function goTo( pos:Number ):void {
+			var t:String, p:Array, i:int;
+			for ( t in timeline ) {
+				p = timeline[t];
+				for(i=0;i<p.length;i++){
+					trace( Number(t) + p[i][1], Number(t)+pos);
+				}
+				/*if( t+pos < t+p[1] ){
+					
+				}*/
+			}
 		}
 		
 		public function start():void {
@@ -117,7 +131,7 @@ package railk.as3.motion
 		}
 		
 		private function tick(evt:Event):void {
-			var i:int=0, p:Array, t:String, pos:Number;
+			var i:int, p:Array, t:String, pos:Number;
 			time = (getTimer()-startTime)*.001;
 			for ( t in timeline ) {
 				pos = Number(t);
