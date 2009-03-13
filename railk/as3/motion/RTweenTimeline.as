@@ -4,6 +4,9 @@
  * 
  * @author Richard Rodney
  * @version 0.1
+ * 
+ * Think on the timeline acces to certain point (GOTO)
+ * 
  */
 
 package railk.as3.motion
@@ -13,7 +16,6 @@ package railk.as3.motion
 	import flash.utils.getTimer;
 	import railk.as3.motion.tween.TimelineTween;
 	import railk.as3.motion.core.Engine;
-	import railk.as3.utils.ObjectDumper;
 	
 	public class RTweenTimeline
 	{	
@@ -70,15 +72,15 @@ package railk.as3.motion
 		}
 		
 		public function removeLabel( name:String ):void {
-			delete labels[name]
+			delete labels[name];
 		}
 
 		public function goToAndPlay( posLabel:* ):void {
-			
+			var pos:Number = (posLabel is String)?labels[posLabel]:posLabel;
 		}
 		
 		public function goToAndStop( posLabel:* ):void {
-			pause();
+			var pos:Number = (posLabel is String)?labels[posLabel]:posLabel;
 		}
 		
 		public function start():void {
@@ -96,7 +98,7 @@ package railk.as3.motion
 		}
 		
 		public function pause():void {
-			ticker.removeEventListener( Event.ENTER_FRAME, tick );
+			stop();
 			paused = true;
 			var walker:* = engine.first;
 			while ( walker ) {
@@ -183,7 +185,7 @@ package railk.as3.motion
 		
 		private function release(tween:*):void {
 			addTweenNode( tween );
-			free++
+			free++;
 		}
 		
 		private function purge():void {

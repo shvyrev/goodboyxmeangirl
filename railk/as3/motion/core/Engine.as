@@ -69,7 +69,7 @@ package railk.as3.motion.core
 		
 		private function stop():void { ticker.removeEventListener(Event.ENTER_FRAME, tick ); }
 		
-		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return c * ((t = t / d - 1) * t * t * t * t + 1) + b; }
+		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return c*t/d+b; }
 		
 		protected function tick(evt:Event):void {
 			if ( first != null ) {
