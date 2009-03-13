@@ -92,18 +92,18 @@ package railk.as3.motion.tween
 			if (cf) this.props.push(['cf', null, null, colorFilters, 'colorFilter']);
 		}
 		
-		override protected function updateProperties(ratio:Number):void {
+		override protected function updateProperties(ratio:Number):Number {
 			var i:int = 0, value:Number;
-			if ( ratio != 0 && target!=null ){
+			if ( ratio!=0 && target!=null ) {
 				while ( i < props.length ) {
 					switch( props[i][4] ) {
 						case 'sound': case 'text': case 'color': case 'hexColor': case 'colorFilter': case 'filter': case 'bezier': 
 							props[i] = getDefinitionByName(mods[props[i][4]]).update( target, props[i], ratio ); 
 							break;
 						default :
-							value = props[i][2] + (props[i][3] - props[i][2])*ratio;
+							value = props[i][2]+(props[i][3] - props[i][2])*ratio;
 							target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
-							if( autoAlpha && props[i][0]=='alpha' && value == 0 ) target.visible = false;
+							if( autoAlpha && props[i][0]=='alpha' && value==0 ) target.visible = false;
 							break;
 					}
 					i++;
@@ -111,26 +111,24 @@ package railk.as3.motion.tween
 				if (onUpdate != null) onUpdate.apply(null, onUpdateParams);
 				if (hasEventListener(Event.CHANGE)) dispatchEvent(new Event(Event.CHANGE));
 			}
+			return ratio;
 		}
 		
-		override public function update( time:Number ):void {
-			super.update(time);
-			var i:int = 0;
-			if ( time >= duration ) {
-				if (repeat>1 || repeat==-1) {
-					if (reflect) {
-						while ( i < props.length) {
-							var start:*= props[i][2], end:*= props[i][3];
-							props[i][2] = end;
-							props[i][3] = start;
-							i++;
-						}
+		override protected function complete():void {
+			if (repeat>1 || repeat==-1) {
+				if (reflect) {
+					var i:int=0;
+					while ( i < props.length) {
+						var start:*= props[i][2], end:*= props[i][3];
+						props[i][2] = end;
+						props[i][3] = start;
+						i++;
 					}
-					engine.reset(this);
-					this.start();
-					if(repeat!=-1) repeat--;
 				}
-			}
+				engine.reset(this);
+				if(repeat!=-1) repeat--;
+			} 
+			else super.complete();
 		}
 		
 		private function filter( type:String ):BitmapFilter {
