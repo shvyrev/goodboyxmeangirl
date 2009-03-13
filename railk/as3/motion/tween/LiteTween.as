@@ -74,11 +74,6 @@ package railk.as3.motion.tween
 			target = null;
 		}
 		
-		public function setPosition(p:Number):void {
-			position=p;
-			update(0);
-		}
-		
 		public function update( time:Number ):void {
 			var ratio:Number;
 			elapsedTime = time;
