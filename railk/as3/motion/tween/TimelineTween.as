@@ -13,12 +13,6 @@ package railk.as3.motion.tween
 	public class TimelineTween extends StandartTween implements IRTween
 	{
 		public var onDispose:Function;
-		
-		public function setPosition(p:Number):void {
-			position=p;
-			update(0);
-		}
-		
 		override public function dispose():void {
 			super.dispose();
 			props = [];
@@ -26,6 +20,5 @@ package railk.as3.motion.tween
 			tail = true;
 			onDispose.apply(null, [this]);
 		}
-		
 	}		
 }
