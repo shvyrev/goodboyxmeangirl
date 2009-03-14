@@ -19,7 +19,7 @@ package railk.as3.motion
 		/**
 		 * actions
 		 */
-		static public function to( target:*=null, duration:Number=NaN, props:Object=null, options:Object=null ):IRTween { return new StandartTween(target, duration, props, options); }
+		static public function to( target:*=null, duration:Number=NaN, props:Object=null, options:Object=null, position:Number=0 ):IRTween { return new StandartTween(target, duration, props, options, position); }
 		static public function alphaTo( target:*, duration:Number, alpha:Number, ease:Function=null ):IRTween { return new StandartTween(target, duration, {alpha:alpha}, {ease:ease}); }
 		static public function scaleTo( target:*, duration:Number, scaleX:Number, scaleY:Number, ease:Function=null ):IRTween { return new StandartTween(target, duration, {scaleX:scaleX, scaleY:scaleY}, {ease:ease}); }
 		static public function moveTo( target:*, duration:Number, x:Number, y:Number, ease:Function=null ):IRTween { return new StandartTween(target, duration, {x:x, y:y}, {ease:ease}); }

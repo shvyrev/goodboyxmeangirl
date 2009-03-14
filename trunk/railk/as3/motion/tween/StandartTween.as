@@ -33,7 +33,7 @@ package railk.as3.motion.tween
 									bezier:'railk.as3.motion.modules::BezierModule'};
 		
 		
-		public function StandartTween( target:Object=null, duration:Number=NaN, props:Object=null, options:Object=null ) { super(target, duration, props, options); }
+		public function StandartTween( target:Object=null, duration:Number=NaN, props:Object=null, options:Object=null, position:Number=0 ) { super(target,duration,props,options,position); }
 		
 		public function setProps( os:Object ):void { for ( var o:String in os ) setProp( o, os[o] ); }
 		
@@ -115,16 +115,17 @@ package railk.as3.motion.tween
 		}
 		
 		override protected function complete():void {
-			if (repeat>1 || repeat==-1) {
+			if (repeat>=1 || repeat==-1) {
 				if (reflect) {
 					var i:int=0;
 					while ( i < props.length) {
-						var start:*= props[i][2], end:*= props[i][3];
-						props[i][2] = end;
+						var start:*= props[i][2];
+						props[i][2] = props[i][3];
 						props[i][3] = start;
 						i++;
 					}
 				}
+				position = 0;
 				engine.reset(this);
 				if(repeat!=-1) repeat--;
 			} 

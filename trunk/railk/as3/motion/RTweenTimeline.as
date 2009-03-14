@@ -124,14 +124,18 @@ package railk.as3.motion
 		}
 		
 		private function tick(evt:Event):void {
-			var i:int, p:Array, t:String, pos:Number;
 			time = (getTimer()-startTime)*.001;
+			update( time );
+		}
+		
+		private function update( time:Number ):void {
+			var i:int, p:Array, t:String, pos:Number;
 			for ( t in timeline ) {
 				pos = Number(t);
 				if ( time > pos && pos > currentPos) {
 					p = timeline[t];
 					for(i;i<p.length;i++){
-						(pool.pick() as TimelineTween).init( p[i][0],p[i][1],p[i][2],p[i][3] );
+						(pool.pick() as TimelineTween).init( p[i][0], p[i][1], p[i][2], p[i][3], pos-time );
 						if (--tweens == 0) stop();
 					}
 					currentPos = pos;
