@@ -52,7 +52,7 @@ package railk.as3.motion.tween
 			stripProps( props );
 			stripOptions( options );
 			if (position) setPosition( position );
-			if (autoStart && target) start();
+			if (autoStart && this.target ) start();
 		}
 		
 		public function start():void {
@@ -76,13 +76,13 @@ package railk.as3.motion.tween
 		
 		public function setPosition(pos:Number):void {
 			position = elapsedTime = pos;
-			update(0);
+			if ( updateProperties(ease(pos,0,1,duration)) == 1) dispose();
 		}
 		
 		public function update( time:Number ):void {
 			elapsedTime = time;
 			time -= delay-position;
-			if ( updateProperties( ((time >= duration)?1:((time <= 0)?0:ease(time,0,1,duration))) ) == 1 && elapsedTime ) complete();
+			if ( updateProperties( ((time >= duration)?1:((time <= 0)?0:ease(time,0,1,duration))) ) == 1 ) complete();
 		}
 		
 		protected function updateProperties( ratio:Number ):Number {
