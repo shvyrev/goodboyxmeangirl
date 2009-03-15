@@ -11,8 +11,8 @@ package railk.as3.data.pool
 	
 	public class Pool
 	{
-		private var first:*=null;
-		private var last:*= null;
+		private var first:*;
+		private var last:*;
 		
 		public var growthRate:int=10;
 		public var size:int=0;
@@ -60,7 +60,7 @@ package railk.as3.data.pool
 			} else first = last = null;
 			
 			node.prev = node.next = null;
-			node.head = false;
+			node.head = false; 
 			node.tail = true;
 			return node;
 		}

@@ -20,7 +20,7 @@ package railk.as3.motion
 	public class RTweenTimeline
 	{	
 		private var timeline:Object={};
-		private var labels:Object = { };
+		private var labels:Object={};
 		private var pool:Pool;
 		private var tweens:int=0;
 		
@@ -30,6 +30,7 @@ package railk.as3.motion
 		private var time:Number;
 		private var currentPos:Number=-1;
 		private var paused:Boolean=false;
+		private var pausedTweens:Array=[];
 		
 		public function RTweenTimeline( size:int=10, growthRate:int=10 ) {
 			pool = new Pool( TimelineTween, size, growthRate);
@@ -73,21 +74,27 @@ package railk.as3.motion
 		}
 		
 		public function goToAndStop( posLabel:* ):void {
-			//pause();
-			goTo( ((posLabel is String)?labels[posLabel]:posLabel) );
+			goTo( ((posLabel is String)?labels[posLabel]:posLabel),true );
 		}
 		
-		private function goTo( pos:Number ):void {
-			var t:String, p:Array, i:int, tn:Number;
+		private function goTo( time:Number, paused:Boolean=false ):void {
+			var t:String, p:Number, a:Array, b:Array=[], e:Array=[], i:int;
 			for ( t in timeline ) {
-				p = timeline[t];
-				tn = Number(t);
-				for (i = 0; i < p.length; i++) {
-					if( pos < tn+p[i][1] ){
-						trace(tn+p[i][1], tn+pos);
+				p = Number(t);
+				a = timeline[t]
+				for (i=0; i < a.length; i++) {
+					if ( p + a[i][1] > time ) {
+						if ( p < time) {
+							e.push([a[i], p]);
+							currentPos = p;
+						}
 					}
-				}
+					else b.push([a[i],a[i][1]]);
+				}	
 			}
+			for(i=0;i<b.length;i++) (pool.pick() as TimelineTween).init( b[i][0][0], b[i][0][1], b[i][0][2], b[i][0][3], b[i][1] );
+			for(i=0;i<e.length;i++) (pool.pick() as TimelineTween).init( e[i][0][0], e[i][0][1], e[i][0][2], e[i][0][3], time-e[i][1] );
+			if (paused) pause();
 		}
 		
 		public function start():void {
@@ -95,13 +102,9 @@ package railk.as3.motion
 			if (paused){
 				startTime = getTimer()-time;
 				paused = false;
-				var walker:* = engine.first;
-				while ( walker ) {
-					walker.start();
-					walker = walker.next;
-				}
-			}
-			else startTime = getTimer();
+				for ( var i:int = 0; i < pausedTweens.length; i++ ) pausedTweens[i].start();
+				pausedTweens=[];
+			} else startTime = getTimer();
 		}
 		
 		public function pause():void {
@@ -110,6 +113,7 @@ package railk.as3.motion
 			var walker:* = engine.first;
 			while ( walker ) {
 				walker.pause();
+				pausedTweens.push( walker );
 				walker = walker.next;
 			}
 		}
@@ -135,7 +139,7 @@ package railk.as3.motion
 				if ( time > pos && pos > currentPos) {
 					p = timeline[t];
 					for(i;i<p.length;i++){
-						(pool.pick() as TimelineTween).init( p[i][0], p[i][1], p[i][2], p[i][3], pos-time );
+						(pool.pick() as TimelineTween).init( p[i][0], p[i][1], p[i][2], p[i][3] );
 						if (--tweens == 0) stop();
 					}
 					currentPos = pos;
