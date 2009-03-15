@@ -17,9 +17,9 @@ package railk.as3.motion.core
 	public class Engine
 	{	
 		public var defaultEase:Function = easeOut;
-		public var length:int = 0;
-		public var last:LiteTween=null;
-		public var first:LiteTween=null;
+		public var length:int=0;
+		public var last:LiteTween;
+		public var first:LiteTween;
 		private var ticker:Shape = new Shape();
 		
 		public static function getInstance():Engine { return Singleton.getInstance(Engine); }

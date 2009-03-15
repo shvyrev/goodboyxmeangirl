@@ -21,16 +21,16 @@ package railk.as3.motion.tween
 		public var startTime:Number;
 		public var position:Number=0;
 		public var head:Boolean;
-		public var tail:Boolean = true;
-		public var next:LiteTween = null;
-		public var prev:LiteTween = null;
+		public var tail:Boolean=true;
+		public var next:LiteTween;
+		public var prev:LiteTween;
 		public var duration:Number;
 		public var elapsedTime:Number=0;
-		public var props:Array = [];
-		public var autoRotateH:Object = {rotation:true,rotation2:true,rotationX:true,rotationY:true,rotationZ:true};
+		public var props:Array=[];
+		public var autoRotateH:Object={rotation:true,rotation2:true,rotationX:true,rotationY:true,rotationZ:true};
 		
 		public var delay:Number=0;
-		public var ease:Function = engine.defaultEase;
+		public var ease:Function=engine.defaultEase;
 		public var autoDispose:Boolean=true;
 		public var autoStart:Boolean=true;
 		public var autoRotate:Boolean;
@@ -51,8 +51,8 @@ package railk.as3.motion.tween
 			this.duration = duration;
 			stripProps( props );
 			stripOptions( options );
-			setPosition( position );
-			if ( autoStart && target ) start();
+			if (position) setPosition( position );
+			if (autoStart && target) start();
 		}
 		
 		public function start():void {
@@ -82,7 +82,7 @@ package railk.as3.motion.tween
 		public function update( time:Number ):void {
 			elapsedTime = time;
 			time -= delay-position;
-			if ( updateProperties( ((time >= duration)?1:((time <= 0)?0:ease(time,0,1,duration))) ) == 1 ) complete();
+			if ( updateProperties( ((time >= duration)?1:((time <= 0)?0:ease(time,0,1,duration))) ) == 1 && elapsedTime ) complete();
 		}
 		
 		protected function updateProperties( ratio:Number ):Number {
