@@ -8,25 +8,25 @@
 
 package railk.as3.motion
 {
-	import railk.as3.motion.utils.TweenPool;
-	public class RTweens
+	import railk.as3.motion.tween.PoolTween;
+	import railk.as3.motion.utils.Pool;
+	public class RTweens extends PoolTween
 	{	
-		static private var pool:TweenPool;
-		
 		/**
 		 * init pool and tweenClass and module if claas permit it;
 		 */
+		static private var pool:Pool;
 		static public function init( size:Number=10, growthRate:Number=10, ...modules ):void {
-			pool = new TweenPool( size, growthRate);
+			pool = new Pool( size, growthRate);
 		}
 		
 		/**
 		 * actions
 		 */
-		static public function to( target:*= null, duration:Number = NaN, props:Object = null, options:Object = null, position:Number=0 ):IRTween {
+		static public function to( target:*= null, duration:Number = NaN, props:Object = null, options:Object = null, position:Number=0 ):RTweens {
 			if ( options ) options['onDispose'] = pool.release;
 			else options = { onDispose:pool.release };
-			return pool.pick(target, duration, props, options, position); 
+			return pool.pick(target, duration, props, options, position) as RTweens; 
 		}
 	}
 }

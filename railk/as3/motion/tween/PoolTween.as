@@ -9,9 +9,8 @@
 
 package railk.as3.motion.tween
 {
-	import railk.as3.motion.IRTween;
 	import railk.as3.motion.tween.StandartTween;
-	public class PoolTween extends StandartTween implements IRTween
+	public class PoolTween extends StandartTween
 	{
 		public var onDispose:Function;
 		override public function dispose():void {

@@ -10,10 +10,9 @@ package railk.as3.motion.tween
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import railk.as3.motion.IRTween
 	import railk.as3.motion.core.Engine;
 	
-	public class LiteTween extends EventDispatcher implements IRTween
+	public class LiteTween extends EventDispatcher
 	{	
 		protected var engine:Engine = Engine.getInstance();
 		public var target:Object;
@@ -64,10 +63,7 @@ package railk.as3.motion.tween
 			position += elapsedTime;
 		}
 		
-		public function dispose():void {
-			props = null;
-			target = null;
-		}
+		public function dispose():void { target = props = null; }
 		
 		public function setPosition(pos:Number):void {
 			position = elapsedTime = pos;
@@ -111,7 +107,5 @@ package railk.as3.motion.tween
 			var o:String;
 			for ( o in os ) { if ( this.hasOwnProperty(o) || this[o]==null) this[o] = os[o]; }
 		}
-		
-		public function get proxy():* {}
 	}
 }

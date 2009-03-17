@@ -12,12 +12,10 @@
 package railk.as3.motion.tween
 {
 	import flash.events.Event;
-	import flash.utils.getDefinitionByName;
 	import flash.filters.BitmapFilter;
-	import railk.as3.motion.IRTween
-	import railk.as3.motion.utils.TweenProxy;
+	import flash.utils.getDefinitionByName;
 	
-	public class StandartTween extends LiteTween implements IRTween
+	public class StandartTween extends LiteTween
 	{
 		public var data:*;
 		public var repeat:int=0;
@@ -137,7 +135,5 @@ package railk.as3.motion.tween
 			l:for ( i = 0; i < count; i++) { if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; } }
 			return result;
 		}
-		
-		override public function get proxy():* { return (_proxy)?_proxy:new TweenProxy(this); }
 	}
 }
