@@ -20,10 +20,6 @@ package railk.as3.motion.tween
 		public var id:int=0;
 		public var startTime:Number;
 		public var position:Number=0;
-		public var head:Boolean;
-		public var tail:Boolean=true;
-		public var next:LiteTween;
-		public var prev:LiteTween;
 		public var duration:Number;
 		public var elapsedTime:Number=0;
 		public var props:Array=[];
@@ -69,7 +65,6 @@ package railk.as3.motion.tween
 		}
 		
 		public function dispose():void {
-			prev = next = null;
 			props = null;
 			target = null;
 		}
