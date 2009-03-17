@@ -5,6 +5,7 @@
  * @author Richard Rodney
  * @version 0.1
  * 
+ * GOTO to test and try to find a better implementation for the whole class
  * 
  */
 
@@ -12,28 +13,29 @@ package railk.as3.motion
 {
 	import flash.display.Shape;
 	import flash.events.Event;
+	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-	import railk.as3.motion.tween.TimelineTween;
 	import railk.as3.motion.core.Engine;
-	import railk.as3.data.pool.Pool;
+	import railk.as3.motion.utils.TweenPool;
+	import railk.as3.motion.tween.PoolTween;
 	
 	public class RTweenTimeline
 	{	
 		private var timeline:Object={};
 		private var labels:Object={};
-		private var pool:Pool;
+		private var pool:TweenPool;
 		private var tweens:int=0;
 		
 		private var engine:Engine = Engine.getInstance();
 		private var ticker:Shape = new Shape();
-		private var startTime:Number;
-		private var time:Number;
+		private var startTime:Number=0;
+		private var time:Number=0;
 		private var currentPos:Number=-1;
 		private var paused:Boolean=false;
-		private var pausedTweens:Array=[];
+		private var pausedTweens:Dictionary=new Dictionary(true);
 		
 		public function RTweenTimeline( size:int=10, growthRate:int=10 ) {
-			pool = new Pool( TimelineTween, size, growthRate);
+			pool = new TweenPool( size, growthRate);
 		}
 		
 		/**
@@ -57,28 +59,16 @@ package railk.as3.motion
 			tweens--;
 		}
 		
-		public function getTweenAt( pos:Number ):Object {
-			return timeline[pos];
-		}
+		public function addLabel( pos:Number, name:String ):void { labels[name] = pos; }
 		
-		public function addLabel( pos:Number, name:String ):void {
-			labels[name] = pos;
-		}
-		
-		public function removeLabel( name:String ):void {
-			delete labels[name];
-		}
+		public function removeLabel( name:String ):void { delete labels[name]; }
 
-		public function goToAndPlay( posLabel:* ):void {
-			goTo( ((posLabel is String)?labels[posLabel]:posLabel) );
-		}
+		public function goToAndPlay( posLabel:* ):void { goTo( ((posLabel is String)?labels[posLabel]:posLabel) ); }
 		
-		public function goToAndStop( posLabel:* ):void {
-			goTo( ((posLabel is String)?labels[posLabel]:posLabel),true );
-		}
+		public function goToAndStop( posLabel:* ):void { goTo( ((posLabel is String)?labels[posLabel]:posLabel),true ); }
 		
 		private function goTo( time:Number, paused:Boolean=false ):void {
-			var t:String, p:Number, a:Array, b:Array=[], e:Array=[], i:int;
+			var t:String, p:Number, a:Array, b:Array=[], e:Array=[], i:int, tween:PoolTween;
 			for ( t in timeline ) {
 				p = Number(t);
 				a = timeline[t]
@@ -92,64 +82,64 @@ package railk.as3.motion
 					else b.push([a[i],a[i][1]]);
 				}	
 			}
-			for(i=0;i<b.length;i++) (pool.pick() as TimelineTween).init( b[i][0][0], b[i][0][1], b[i][0][2], b[i][0][3], b[i][1] );
-			for(i=0;i<e.length;i++) (pool.pick() as TimelineTween).init( e[i][0][0], e[i][0][1], e[i][0][2], e[i][0][3], time-e[i][1] );
+			
+			var key:Object;
+			for ( key in pausedTweens ) { pausedTweens[key].dispose(); delete pausedTweens[key]; }
+			for ( key in tweens ) tweens[key].complete()
+			
+			for (i = 0; i < b.length; i++) pool.pick( b[i][0][0], b[i][0][1], b[i][0][2], b[i][0][3], b[i][1] );
+			for (i = 0; i < e.length; i++) pool.pick( e[i][0][0], e[i][0][1], e[i][0][2], e[i][0][3], time-e[i][1] );
 			if (paused) pause();
+			tweens -= b.length + e.length;
+			this.time = time;
 		}
 		
 		public function start():void {
-			if(!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener( Event.ENTER_FRAME, tick, false, 0, true);
-			if (paused){
-				startTime = getTimer()-time;
+			if (paused) {
+				startTime = getTimer()-time*1000;
+				for ( var key:Object in pausedTweens ) {
+					pausedTweens[key].start();
+					delete pausedTweens[key];
+				}
 				paused = false;
-				for ( var i:int = 0; i < pausedTweens.length; i++ ) pausedTweens[i].start();
-				pausedTweens=[];
-			} else startTime = getTimer();
+			} 
+			else startTime = getTimer();
+			if(!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener( Event.ENTER_FRAME, tick, false, 0, true);
 		}
 		
 		public function pause():void {
 			stop();
 			paused = true;
-			var walker:* = engine.first;
-			while ( walker ) {
-				walker.pause();
-				pausedTweens.push( walker );
-				walker = walker.next;
-			}
+			for( var o:Object in tweens ) tweens[o].pause()
 		}
 		
-		public function stop():void {
-			ticker.removeEventListener( Event.ENTER_FRAME, tick );
-		}
+		public function stop():void { ticker.removeEventListener( Event.ENTER_FRAME, tick ); }
 		
-		public function reset():void {
-			startTime = getTimer();
-			time = 0;
+		public function reset():void { 
+			startTime = getTimer(); 
+			currentPos = -1;
 		}
 		
 		private function tick(evt:Event):void {
 			time = (getTimer()-startTime)*.001;
-			update( time );
-		}
-		
-		private function update( time:Number ):void {
 			var i:int, p:Array, t:String, pos:Number;
 			for ( t in timeline ) {
 				pos = Number(t);
 				if ( time > pos && pos > currentPos) {
 					p = timeline[t];
 					for(i;i<p.length;i++){
-						(pool.pick() as TimelineTween).init( p[i][0], p[i][1], p[i][2], p[i][3] );
+						pool.pick( p[i][0], p[i][1], p[i][2], p[i][3] );
 						if (--tweens == 0) stop();
 					}
 					currentPos = pos;
 				}
-			}	
+			}
 		}
 		
 		public function dispose():void {
 			pause();
 			pool.purge();
+			pausedTweens = null;
 		}
 	}
 }

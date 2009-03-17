@@ -10,6 +10,7 @@ package railk.as3.motion.core
 {
 	import flash.display.Shape;
 	import flash.events.Event;
+	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	import railk.as3.motion.tween.LiteTween;
 	import railk.as3.pattern.singleton.Singleton;
@@ -18,8 +19,7 @@ package railk.as3.motion.core
 	{	
 		public var defaultEase:Function = easeOut;
 		public var length:int=0;
-		public var last:LiteTween;
-		public var first:LiteTween;
+		private var tweens:Dictionary = new Dictionary(true);
 		private var ticker:Shape = new Shape();
 		
 		public static function getInstance():Engine { return Singleton.getInstance(Engine); }
@@ -29,33 +29,13 @@ package railk.as3.motion.core
 		}
 		
 		public function add( tween:LiteTween ):int {
-			if (!last){
-				first = last = tween;
-				tween.head = true;
-			} else {
-				last.next = tween;
-				last.tail = false;
-				tween.prev = last;
-				last = tween;
-			}
+			tweens[tween]= tween;
 			this.start( tween );
 			return ++length;
 		}
 		
 		public function remove( tween:LiteTween ):int {
-			if ( tween.head && tween.tail ) first = last = null;
-			else if ( tween.head && !tween.tail ){
-				tween.next.prev = null;
-				tween.next.head = true;
-				first = tween.next;
-			} else if ( !tween.head && tween.tail ){
-				tween.prev.next = null;
-				tween.prev.tail = true;
-				last = tween.prev;
-			} else {
-				tween.prev.next = tween.next;
-				tween.next.prev = tween.prev;
-			}
+			delete tweens[tween];
 			length--;
 			return 0;
 		}
@@ -72,13 +52,9 @@ package railk.as3.motion.core
 		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return c*t/d+b; }
 		
 		protected function tick(evt:Event):void {
-			if ( first != null ) {
-				var walker:LiteTween = first;
-				while ( walker ) {
-					walker.update( (getTimer()-walker.startTime)*.001 );
-					walker = walker.next;
-				}
-			} else  this.stop();
+			var o:Object;
+			if ( length > 0 ) for(o in tweens ) tweens[o].update( (getTimer()-tweens[o].startTime)*.001 );
+			else  this.stop();
 		}
 	}
 }
