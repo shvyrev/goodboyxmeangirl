@@ -3,10 +3,7 @@
  * RTween Timeline
  * 
  * @author Richard Rodney
- * @version 0.1
- * 
- * GOTO to test and try to find a better implementation for the whole class
- * 
+ * @version 0.1 
  */
 
 package railk.as3.motion
@@ -16,15 +13,14 @@ package railk.as3.motion
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	import railk.as3.motion.core.Engine;
-	import railk.as3.motion.utils.TweenPool;
-	import railk.as3.motion.tween.PoolTween;
+	import railk.as3.motion.tween.*;
 	
 	public class RTweenTimeline
 	{	
 		private var timeline:Object={};
 		private var labels:Object={};
-		private var pool:TweenPool;
 		private var tweens:int=0;
+		private var tweensList:Dictionary=new Dictionary(true);
 		
 		private var engine:Engine = Engine.getInstance();
 		private var ticker:Shape = new Shape();
@@ -32,10 +28,11 @@ package railk.as3.motion
 		private var time:Number=0;
 		private var currentPos:Number=-1;
 		private var paused:Boolean=false;
-		private var pausedTweens:Dictionary=new Dictionary(true);
 		
-		public function RTweenTimeline( size:int=10, growthRate:int=10 ) {
-			pool = new TweenPool( size, growthRate);
+		
+		public function RTweenTimeline() {
+			var last:StandartTween = new StandartTween();
+			for (var i:int=0;i<size;i++) tweensList[last]=last;
 		}
 		
 		/**

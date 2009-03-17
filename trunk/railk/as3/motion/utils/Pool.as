@@ -10,7 +10,7 @@ package railk.as3.motion.utils
 {
 	import flash.utils.Dictionary;
 	import railk.as3.motion.tween.PoolTween;
-	public class TweenPool
+	public class Pool
 	{
 		public var growthRate:int=10;
 		public var size:int=0;
@@ -18,7 +18,7 @@ package railk.as3.motion.utils
 		public var tweens:Array = [];
 		public var last:PoolTween;
 		
-		public function TweenPool( size:int = 10, growthRate:int = 10 ) {
+		public function Pool( size:int = 10, growthRate:int = 10 ) {
 			this.growthRate = growthRate;
 			this.populate(size);
 		}
