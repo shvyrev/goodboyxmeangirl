@@ -8,9 +8,8 @@
 
 package railk.as3.motion
 {
-	import railk.as3.motion.tween.PoolTween;
 	import railk.as3.motion.utils.Pool;
-	public class RTweens extends PoolTween
+	public class RTweens extends RTween
 	{	
 		/**
 		 * init pool and tweenClass and module if claas permit it;
@@ -26,7 +25,17 @@ package railk.as3.motion
 		static public function to( target:*= null, duration:Number = NaN, props:Object = null, options:Object = null, position:Number=0 ):RTweens {
 			if ( options ) options['onDispose'] = pool.release;
 			else options = { onDispose:pool.release };
-			return pool.pick(target, duration, props, options, position) as RTweens; 
+			return pool.pick(target, duration, props, options, position); 
+		}
+		
+		/**
+		 * Class
+		 */
+		public var onDispose:Function;
+		override public function dispose():void {
+			super.dispose();
+			props=[];
+			onDispose.apply(null, [this]);
 		}
 	}
 }

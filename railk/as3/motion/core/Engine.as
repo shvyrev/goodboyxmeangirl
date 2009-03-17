@@ -12,7 +12,7 @@ package railk.as3.motion.core
 	import flash.events.Event;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
-	import railk.as3.motion.tween.LiteTween;
+	import railk.as3.motion.RTweeny;
 	import railk.as3.pattern.singleton.Singleton;
 	
 	public class Engine
@@ -28,24 +28,24 @@ package railk.as3.motion.core
 			Singleton.assertSingle(Engine); 
 		}
 		
-		public function add( tween:LiteTween ):int {
+		public function add( tween:RTweeny ):int {
 			tweens[tween]= tween;
 			this.start( tween );
 			return ++length;
 		}
 		
-		public function remove( tween:LiteTween ):int {
+		public function remove( tween:RTweeny ):int {
 			delete tweens[tween];
 			length--;
 			return 0;
 		}
 		
-		private function start( tween:LiteTween ):void {
+		private function start( tween:RTweeny ):void {
 			tween.startTime = getTimer();
 			if (!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true ); 
 		}
 		
-		public function reset(tween:LiteTween):void { tween.startTime = getTimer(); }; 
+		public function reset(tween:RTweeny):void { tween.startTime = getTimer(); }; 
 		
 		private function stop():void { ticker.removeEventListener(Event.ENTER_FRAME, tick ); }
 		
