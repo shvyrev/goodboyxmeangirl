@@ -23,14 +23,6 @@ package railk.as3.motion
 		 * actions
 		 */
 		static public function to( target:*=null, duration:Number=NaN, props:Object=null, options:Object=null, position:Number=0 ):RTween { return new RTween(target, duration, props, options, position); }
-		static public function alphaTo( target:*, duration:Number, alpha:Number, ease:Function=null ):RTween { return new RTween(target, duration, {alpha:alpha}, {ease:ease}); }
-		static public function scaleTo( target:*, duration:Number, scaleX:Number, scaleY:Number, ease:Function=null ):RTween { return new RTween(target, duration, {scaleX:scaleX, scaleY:scaleY}, {ease:ease}); }
-		static public function moveTo( target:*, duration:Number, x:Number, y:Number, ease:Function=null ):RTween { return new RTween(target, duration, {x:x, y:y}, {ease:ease}); }
-		static public function rotateTo( target:*, duration:Number, rotation:Number, ease:Function=null ):RTween { return new RTween(target, duration, {rotation:rotation}, {ease:ease}); }
-		static public function volumeTo( target:*, duration:Number, volume:Number, ease:Function=null):RTween { return new RTween(target, duration, {volume:volume }, {ease:ease}); }
-		static public function colorTo( target:*, duration:Number, color:uint, ease:Function=null ):RTween { return new RTween(target, duration, {color:color}, {ease:ease}); }
-		static public function contrastTo( target:*, duration:Number, contrast:Number, ease:Function=null ):RTween { return new RTween(target, duration, {contrast:contrast}, {ease:ease}); }
-		static public function brightnessTo( target:*, duration:Number, brightness:Number, ease:Function=null ):RTween { return new RTween(target, duration, {brightness:brightness}, {ease:ease}); }
 		
 		/**
 		 * Class
@@ -39,7 +31,6 @@ package railk.as3.motion
 		public var repeat:int=0;
 		public var reflect:Boolean;
 		
-		private var _proxy:Object;
 		private var mods:Object = {	color:'railk.as3.motion.modules::ColorModule', 
 									hexColor:'railk.as3.motion.modules::HexColorModule', 
 									sound:'railk.as3.motion.modules::SoundModule',
