@@ -100,9 +100,9 @@ package railk.as3.motion
 		}
 		
 		override protected function updateProperties(ratio:Number):Number {
-			var i:int = 0, value:Number;
-			if ( ratio!=0 && target!=null ) {
-				while ( i < props.length ) {
+			var i:int=-1, value:Number;
+			if ( target ) {
+				while ( ++i < props.length ) {
 					switch( props[i][4] ) {
 						case 'sound': case 'text': case 'color': case 'hexColor': case 'colorFilter': case 'filter': case 'bezier': 
 							props[i] = getDefinitionByName(mods[props[i][4]]).update( target, props[i], ratio ); 
@@ -110,10 +110,9 @@ package railk.as3.motion
 						default :
 							value = props[i][2]+(props[i][3] - props[i][2])*ratio;
 							target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
-							if( autoAlpha && props[i][0]=='alpha' && value==0 ) target.visible = false;
+							if( autoVisible && props[i][0]=='alpha' ) target.visible = value > 0 ;
 							break;
 					}
-					i++;
 				}
 				if (onUpdate != null) onUpdate.apply(null, onUpdateParams);
 				if (hasEventListener(Event.CHANGE)) dispatchEvent(new Event(Event.CHANGE));

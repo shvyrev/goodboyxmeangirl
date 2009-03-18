@@ -19,7 +19,7 @@ package railk.as3.motion.core
 	{	
 		public var defaultEase:Function = easeOut;
 		public var length:int=0;
-		private var tweens:Dictionary = new Dictionary(true);
+		public var tweens:Dictionary = new Dictionary(true);
 		private var ticker:Shape = new Shape();
 		
 		public static function getInstance():Engine { return Singleton.getInstance(Engine); }
@@ -45,7 +45,7 @@ package railk.as3.motion.core
 			if (!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true ); 
 		}
 		
-		public function reset(tween:RTweeny):void { tween.startTime = getTimer(); }; 
+		public function reset(tween:RTweeny):void { tween.startTime = getTimer(); }
 		
 		private function stop():void { ticker.removeEventListener(Event.ENTER_FRAME, tick ); }
 		
