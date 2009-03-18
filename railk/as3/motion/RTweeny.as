@@ -38,7 +38,7 @@ package railk.as3.motion
 		public var autoDispose:Boolean=true;
 		public var autoStart:Boolean=true;
 		public var autoRotate:Boolean;
-		public var autoAlpha:Boolean;
+		public var autoVisible:Boolean;
 		public var rounded:Boolean;
 		public var onBegin:Function;
 		public var onBeginParams:Array=[];
@@ -60,7 +60,7 @@ package railk.as3.motion
 		}
 		
 		public function start():void {
-			if (!id) {
+			if (!id && target) {
 				id = engine.add( this );
 				if(onBegin!=null) onBegin.apply(null,onBeginParams);
 				if (hasEventListener(Event.INIT)) dispatchEvent(new Event(Event.INIT));
@@ -68,15 +68,17 @@ package railk.as3.motion
 		}
 		
 		public function pause():void {
-			id = engine.remove( this );
-			position += elapsedTime;
+			if(id && target){
+				id = engine.remove( this );
+				position += elapsedTime;
+			}	
 		}
 		
 		public function dispose():void { target = props = null; }
 		
 		public function setPosition(pos:Number):void {
 			position = elapsedTime = pos;
-			if ( updateProperties(ease(pos,0,1,duration)) == 1) dispose();
+			if ( updateProperties(ease(pos,0,1,duration)) == 1 && autoDispose ) dispose();
 		}
 		
 		public function update( time:Number ):void {
@@ -86,13 +88,12 @@ package railk.as3.motion
 		}
 		
 		protected function updateProperties( ratio:Number ):Number {
-			var i:int = 0, value:Number;
-			if ( ratio!=0 && target!=null ){
-				while ( i < props.length ) {
+			var i:int=-1, value:Number;
+			if ( target ){
+				while ( ++i < props.length ) {
 					value = props[i][2]+(props[i][3]-props[i][2])*ratio;
 					target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
-					if ( autoAlpha && props[i][0]=='alpha' && value==0 ) target.visible = false;
-					i++;
+					if ( autoVisible && props[i][0] == 'alpha' ) target.visible = value > 0;
 				}
 				if(onUpdate!=null) onUpdate.apply(null,onUpdateParams);
 				if (hasEventListener(Event.CHANGE)) dispatchEvent(new Event(Event.CHANGE));
