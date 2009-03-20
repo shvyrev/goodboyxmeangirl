@@ -8,8 +8,6 @@
  * TODO:
  * 	_callbacks apply
  * 	_gotoandplay correct bug
- * 	_reverse
- * 
  */
 
 package railk.as3.motion
@@ -32,9 +30,11 @@ package railk.as3.motion
 		
 		private var ticker:Shape = new Shape();
 		private var startTime:Number=0;
-		private var time:Number=0;
+		private var time:Number = 0;
+		private var duration:Number = 0;
 		private var currentPos:Number=-1;
-		private var paused:Boolean=false;
+		private var paused:Boolean;
+		private var reversed:Boolean;
 		private var length:int=0;
 		
 		/**
@@ -53,6 +53,7 @@ package railk.as3.motion
 			else timeline[pos] = [t];
 			tweens[t] = new classe();
 			tweens[t].addEventListener( Event.COMPLETE, manageEvent, false, 0, true );
+			this.duration += (pos+duration) - this.duration;
 			length++;
 		}
 		
@@ -84,9 +85,7 @@ package railk.as3.motion
 			currentPos = -1;
 		}
 		
-		public function reverse():void {
-			
-		}
+		public function reverse():void { reversed = (reversed)?false:true; }
 		
 		public function stop():void {
 			paused = true;
@@ -136,7 +135,10 @@ package railk.as3.motion
 				}	
 			}
 			
-			if ( e.length < 1 && b.length < 1 ) trace( 'non pris en compte' );
+			if ( e.length < 1 && b.length < 1 ) {
+				for( tween in pausedTweens ) pausedTweens[tween].setPosition(0);
+				for( tween in activeTweens ) activeTweens[tween].setPosition(0);
+			}
 			else {
 				replace(b);
 				replace(e);
@@ -165,8 +167,7 @@ package railk.as3.motion
 		 * Ticker
 		 */
 		private function tick(evt:Event):void {
-			trace( length );
-			time = (getTimer()-startTime)*.001;
+			time = (!reversed)?((getTimer()-startTime)*.001):(duration-((getTimer()-startTime)*.001));
 			var i:int, p:Array, t:String, pos:Number;
 			for ( t in timeline ) {
 				pos = Number(t);

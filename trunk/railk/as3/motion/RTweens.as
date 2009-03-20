@@ -23,19 +23,16 @@ package railk.as3.motion
 		 * actions
 		 */
 		static public function to( target:*= null, duration:Number = NaN, props:Object = null, options:Object = null, position:Number=0 ):RTweens {
-			if ( options ) options['onDispose'] = pool.release;
-			else options = { onDispose:pool.release };
 			return pool.pick(target, duration, props, options, position); 
 		}
 		
 		/**
 		 * Class
 		 */
-		public var onDispose:Function;
 		override public function dispose():void {
 			super.dispose();
 			props=[];
-			onDispose.apply(null, [this]);
+			pool.release(this);
 		}
 	}
 }

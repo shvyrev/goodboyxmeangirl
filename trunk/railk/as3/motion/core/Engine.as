@@ -41,7 +41,7 @@ package railk.as3.motion.core
 		}
 		
 		private function start( tween:RTweeny ):void {
-			tween.startTime = getTimer();
+			tween.startTime = getTimer()*.001;
 			if (!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true ); 
 		}
 		
@@ -52,8 +52,7 @@ package railk.as3.motion.core
 		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return c*t/d+b; }
 		
 		protected function tick(evt:Event):void {
-			var o:Object;
-			if ( length > 0 ) for(o in tweens ) tweens[o].update( (getTimer()-tweens[o].startTime)*.001 );
+			if ( length > 0 ) for (var v:Object in tweens) tweens[v].update( getTimer()*.001 );
 			else  this.stop();
 		}
 	}
