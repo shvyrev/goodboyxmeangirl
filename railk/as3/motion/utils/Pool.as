@@ -38,7 +38,6 @@ package railk.as3.motion.utils
 		}
 		
 		public function remove( tween:RTweens, options:Array ):RTweens {
-			tweens.pop();
 			last = tweens[--free-1];
 			tween.init.apply(null,options)
 			return tween;

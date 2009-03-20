@@ -11,6 +11,7 @@ package railk.as3.motion
 	import flash.events.Event;
 	import flash.filters.BitmapFilter;
 	import flash.utils.getDefinitionByName;
+	import railk.as3.motion.utils.Prop;
 	
 	public class RTween extends RTweeny
 	{
@@ -22,7 +23,7 @@ package railk.as3.motion
 		/**
 		 * actions
 		 */
-		static public function to( target:*=null, duration:Number=NaN, props:Object=null, options:Object=null, position:Number=0 ):RTween { return new RTween(target, duration, props, options, position); }
+		static public function to( target:Object=null, duration:Number=NaN, props:Object=null, options:Object=null, position:Number=0 ):RTween { return new RTween(target, duration, props, options, position); }
 		
 		/**
 		 * Class
@@ -45,72 +46,63 @@ package railk.as3.motion
 		public function setProps( os:Object ):void { for ( var o:String in os ) setProp( o, os[o] ); }
 		
 		public function setProp(name:String, value:*):void {
-			var i:int = 0, o:Object = { };
+			var i:int=0, o:Object={}, l:int=props.length, p:Prop;
 			engine.reset(this);
 			if ( this.hasOwnProperty(name) ) this[name]=value;
 			else {
-				while ( i < props.length ) {
-					if (props[i][0] == name) { 
-						props[i][3] = value; 
-						props[i][2] = props[i][1];
+				for (;i<l;i++) {
+					p=props[i];
+					if (p.type == name) { 
+						p.end = value; 
+						p.start = p.current;
 						return; 
 					}
-					i++;
 				}
 				o[name]=value; stripProps(o);
 			}
 		}
 		
 		public function getProp(name:String):* {
-			var i:int = 0;
+			var i:int = 0, l:int=props.length;
 			if ( this.hasOwnProperty(name) ) return this[name];
-			else {
-				while ( i < props.length ) {
-					if (props[i][0] == name) return props[i][1];
-					i++;
-				}
-			}
+			else for (;i<l;i++) if (props[i].type == name) return props[i].current;
 		}
 		
 		public function delProp(name:String):* {
-			var i:int = 0;
-			while ( i < props.length ) {
-				if (props[i][0] == name) props.splice(i,1);
-				i++;
-			}
+			var i:int = 0, l:int=props.length;
+			for (;i<l;i++) if (props[i].type == name) props.splice(i,1);
 		}
 		
 		override protected function stripProps(ps:Object):void {
 			var p:String, cf:Boolean=false, colorFilters:Object={};
 			for ( p in ps ) {
 				switch( p ) {
-					case 'bezier': this.props.push([p,null,null,ps[p],'bezier']); break;
-					case 'volume': this.props.push([p,null,target.soundTransform.volume,ps[p],'sound']); break;
-					case 'pan': this.props.push([p,null,target.soundTransform.pan,ps[p],'sound']); break;
-					case 'text': this.props.push([p,null,target.text,props[p],'text']); break;
-					case 'textColor': this.props.push([p, null, target.textColor, ps[p],'text']); break;
-					case 'color': this.props.push([p,null,target.transform.colorTransform,ps[p],'color']); break;
-					case 'hexColor': this.props.push([p,null,target,ps[p],'hexColor']); break;
-					case 'glow': case 'blur': case 'bevel': case 'dropShadow':  this.props.push([p, null, filter(p), ps[p],'filter']); break;
-					case 'tint': case 'brightness': case 'contrast': case 'hue': case 'saturation': case 'threshold': colorFilters[p] = [p, null, target.filters, ps[p]]; cf=true; break;
-					default : this.props.push( (( autoRotateH.hasOwnProperty(p) )?[p, null, target[p] % 360 + ((Math.abs(target[p] % 360 - ps[p] % 360)<180)?0:(target[p]%360>ps[p]%360)?-360:360), ps[p]%360]:[p,null,target[p],ps[p]]) ); break;
+					case 'bezier': props[props.length] = new Prop(p,p,null,ps[p]); break;
+					case 'volume': case 'pan': props[props.length] = new Prop('sound',p,target.soundTransform[p],ps[p]); break;
+					case 'text': case 'textColor': props[props.length] = new Prop('text',p,target[p],ps[p]); break;
+					case 'color': props[props.length] = new Prop(p,p,target.transform.colorTransform,ps[p]); break;
+					case 'hexColor': props[props.length] = new Prop(p,p,target,ps[p]); break;
+					case 'glow': case 'blur': case 'bevel': case 'dropShadow':  props[props.length] = new Prop('filter',p,filter(p),ps[p]); break;
+					case 'tint': case 'brightness': case 'contrast': case 'hue': case 'saturation': case 'threshold': colorFilters[p] = [p,null,target.filters,ps[p]]; cf=true; break;
+					default : props[props.length] = new Prop(p,p,target[p], ps[p],autoRotateH.hasOwnProperty(p)); break;
 				}
 			}
-			if (cf) this.props.push(['cf', null, null, colorFilters, 'colorFilter']);
+			if (cf) props[props.length] = new Prop('colorFilter','', null, colorFilters);
 		}
 		
 		override protected function updateProperties(ratio:Number):Number {
-			var i:int=-1, value:Number;
+			var i:int = 0, value:Number, l:int = props.length, p:Prop;
 			if ( target ) {
-				while ( ++i < props.length ) {
-					switch( props[i][4] ) {
+				for (i;i<l;i++) {
+					p=props[i];
+					switch( p.type ) {
 						case 'sound': case 'text': case 'color': case 'hexColor': case 'colorFilter': case 'filter': case 'bezier': 
-							props[i] = getDefinitionByName(mods[props[i][4]]).update( target, props[i], ratio ); 
+							props[i] = getDefinitionByName(mods[p.type]).update( target, p, ratio ); 
 							break;
 						default :
-							value = props[i][2]+(props[i][3] - props[i][2])*ratio;
-							target[props[i][0]] = props[i][1] = (rounded)?Math.round(value):value;
-							if( autoVisible && props[i][0]=='alpha' ) target.visible = value > 0 ;
+							value = Number(p.start)+Number(p.end-p.start)*ratio;
+							target[p.type] = p.current = (rounded)?Math.round(value):value;
+							if ( autoVisible && p.type == 'alpha' ) target.visible = value > 0;
 							break;
 					}
 				}
@@ -123,12 +115,12 @@ package railk.as3.motion
 		override protected function complete():void {
 			if (repeat>=1 || repeat==-1) {
 				if (reflect) {
-					var i:int=0;
-					while ( i < props.length) {
-						var start:*= props[i][2];
-						props[i][2] = props[i][3];
-						props[i][3] = start;
-						i++;
+					var i:int=0, l:int=props.length, p:Prop, start:*;
+					for (;i<l;i++) {
+						p=props[i];
+						start = p.start;
+						p.start = p.end;
+						p.end = start;
 					}
 				}
 				position = 0;
@@ -140,7 +132,7 @@ package railk.as3.motion
 		
 		private function filter( type:String ):BitmapFilter {
 			var f:Array = target.filters, i:int = 0, count:int = f.length, result:BitmapFilter;
-			l:for ( i = 0; i < count; i++) { if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; } }
+			l:for (i;i<count;i++) { if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; } }
 			return result;
 		}
 	}

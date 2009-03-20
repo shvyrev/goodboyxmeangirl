@@ -6,20 +6,19 @@
  * @version 0.1
  */
 
-package railk.as3.motion.modules
-{
+package railk.as3.motion.modules{
 	import flash.geom.Point;
-	public class BezierModule 
-	{
+	import railk.as3.motion.utils.Prop;
+	public class BezierModule {
 		static private var curve:Array;
 		static private var distance:Number = 0;
 		static private var radsDegree:Number = 57.3248407;
 		
 		
-		static public function update( target:Object, props:Array, ratio:Number):Array {
-			var autoRotate:Boolean = (props[3].autoRotate)?props[3].autoRotate:false;
-			var through:Boolean = (props[3].through)?props[3].through:false; 
-			updatePosition(through,props[3].points);
+		static public function update( target:Object, props:Prop, ratio:Number):Prop {
+			var autoRotate:Boolean = (props.end.autoRotate)?props.end.autoRotate:false;
+			var through:Boolean = (props.end.through)?props.end.through:false; 
+			updatePosition(through,props.end.points);
 			move(target, ratio, autoRotate );
 			return props;
 		}
