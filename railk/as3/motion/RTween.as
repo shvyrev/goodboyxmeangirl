@@ -113,14 +113,13 @@ package railk.as3.motion
 		}
 		
 		override protected function complete():void {
-			if (repeat>=1 || repeat==-1) {
+			if (repeat>1 || repeat==-1) {
 				if (reflect) {
-					var i:int=0, l:int=props.length, p:Prop, start:*;
+					var i:int=0, l:int=props.length, start:*;
 					for (;i<l;i++) {
-						p=props[i];
-						start = p.start;
-						p.start = p.end;
-						p.end = start;
+						start = props[i].start;
+						props[i].start = props[i].end;
+						props[i].end = start;
 					}
 				}
 				position = 0;
