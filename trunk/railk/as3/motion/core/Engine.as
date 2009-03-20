@@ -45,7 +45,7 @@ package railk.as3.motion.core
 			if (!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true ); 
 		}
 		
-		public function reset(tween:RTweeny):void { tween.startTime = getTimer(); }
+		public function reset(tween:RTweeny):void { tween.startTime = getTimer()*.001; }
 		
 		private function stop():void { ticker.removeEventListener(Event.ENTER_FRAME, tick ); }
 		
