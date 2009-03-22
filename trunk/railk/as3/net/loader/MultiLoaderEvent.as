@@ -6,30 +6,24 @@
 * @version 0.1
 */
 
-package railk.as3.net.loader {
-
-	import flash.events.Event;
-	
-	public dynamic class MultiLoaderEvent extends Event{
-			
-		static public const ONMULTILOADERBEGIN              :String = "onMultiLoaderBegin";
-		static public const ONMULTILOADERPROGRESS           :String = "onMultiLoaderProgress";
-		static public const ONMULTILOADERCOMPLETE           :String = "onMultiLoaderComplete";
-		static public const ONMULTILOADERSTOPPED            :String = "onMultiLoaderStopped";
-		static public const ONMULTILOADERLOADNEXT           :String = "onMultiLoaderLoadNext";
+package railk.as3.net.loader 
+{
+	import flash.events.Event;	
+	public dynamic class MultiLoaderEvent extends Event
+	{	
+		static public const ON_MULTILOADER_BEGIN:String = "onMultiLoaderBegin";
+		static public const ON_MULTILOADER_PROGRESS:String = "onMultiLoaderProgress";
+		static public const ON_MULTILOADER_COMPLETE:String = "onMultiLoaderComplete";
+		static public const ON_MULTILOADER_LOADNEXT:String = "onMultiLoaderLoadNext";
 		
-		static public const ONITEMBEGIN                     :String = "onItemBegin";
-		static public const ONITEMPROGRESS                  :String = "onItemProgress";
-		static public const ONITEMCOMPLETE                  :String = "onItemComplete";
-		static public const ONITEMHTTPSTATUS                :String = "onItemHttpStatus";
-		static public const ONITEMNETSTATUS                 :String = "onItemNetStatus";
+		static public const ON_ITEM_BEGIN:String = "onItemBegin";
+		static public const ON_ITEM_PROGRESS:String = "onItemProgress";
+		static public const ON_ITEM_COMPLETE:String = "onItemComplete";
+		static public const ON_ITEM_ERROR:String = "onItemError"
 		
-		static public const ONSTREAMREADY                   :String = "onStreamReady";
-		static public const ONSTREAMBUFFERING               :String = "onStreamBuffering";
-		static public const ONSTREAMPLAYED                  :String = "onStreamPlayed";
-		
-		static public const ONERRORLOADINGITEM              :String = "onErrorLoadingItem"
-		
+		static public const ON_STREAM_READY:String = "onStreamReady";
+		static public const ON_STREAM_BUFFERING:String = "onStreamBuffering";
+		static public const ON_STREAM_PLAYED:String = "onStreamPlayed";
 		
 		public function MultiLoaderEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;
