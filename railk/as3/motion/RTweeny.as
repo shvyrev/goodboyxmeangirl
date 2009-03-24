@@ -88,11 +88,11 @@ package railk.as3.motion
 		}
 		
 		protected function updateProperties( ratio:Number ):Number {
-			var i:int=0, value:Number, l:int=props.length, p:Prop;
+			var i:int=props.length;
 			if ( target ) {
-				for (;i<l;i++) {
-					p = props[i];
-					value = Number(p.start)+Number(p.end-p.start)*ratio;
+				while( --i > -1 ) {
+					var p:Prop = props[i];
+					var value:Number=Number(p.start)+Number(p.end-p.start)*ratio+1e-18-1e-18;
 					target[p.type] = p.current = (rounded)?Math.round(value):value;
 					if ( autoVisible && p.type == 'alpha' ) target.visible = value > 0;
 				}
