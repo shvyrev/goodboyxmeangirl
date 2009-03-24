@@ -33,7 +33,7 @@ package railk.as3.motion
 			dr = _dr;
 			d = _d;
 			e = (_e!=null)?_e:de;
-			for ( var p in _ps ) ps[ps.length] = [p,t[p],_ps[p]]; 
+			for ( var p in _ps ) ps[ps.length] = [p,((t.hasOwnProperty(p))?t[p]:((p=='color')?t.transform.colorTransform.color:((p=='volume')?t.soundTransform.volume:t))),_ps[p]];
 			t.addEventListener('enterFrame', tk );
 		}
 		
@@ -46,27 +46,18 @@ package railk.as3.motion
 		}
 
 		private function u( r:* ):* {
-			var i=ps.length, tr=t.transform.colorTransform, ts=t.soundTransform;
+			var i=ps.length;
 			while( --i > -1 ) {
-				var p:*=ps[i];
-				if(p[0]=='volume') ts=new SoundTransform(p[2]-(1-r),ts.pan)
+				var p:*= ps[i];
+				if(p[0]=='volume') t.soundTransform=new SoundTransform(p[2]-(1-r),t.soundTransform.pan)
 				else if(p[0]=='text') t.text = txt(r,p[1],p[2]);
-				else if(p[0]=='textColor') t.textColor = clr(r,p[1],p[2]).color;
-				else if(p[0]=='color') tr=clr(r,tr,p[2]);
-				else if(p[0]=='hexColor') t=mx(r,p[1],p[2]);
+				else if(p[0]=='textColor') t.textColor = clr(r,p[1],p[2]);
+				else if (p[0] == 'color') { var c = new ColorTransform(); c.color=clr(r,p[1],p[2]); t.transform.colorTransform=c; }
+				else if(p[0]=='hexColor') t=clr(r,p[1],p[2]);
 				else t[p[0]] = p[1]+(p[2]-p[1])*r+1e-18-1e-18;
-				if(p[0]=='alpha') t.visible=false;
-				
+				if(p[0]=='alpha' && !t[p[0]]) t.visible=false;
 			}
 			return r;
-		}
-		
-		private function clr( r:*,bc:*,ec:*):* {
-			var b, e=new ColorTransform(), r=1-r;
-			e.color = ec;
-			if ( bc is ColorTransform){ b=bc; b.alphaMultiplier = t.a; }
-			else { b=new ColorTransform(); b.color=bc; }
-			return (new ColorTransform( b.redMultiplier*r+e.redMultiplier*r, b.greenMultiplier*r+e.greenMultiplier*r, b.blueMultiplier*r+e.blueMultiplier*r, b.alphaMultiplier*r+e.alphaMultiplier*r, b.redOffset*r+e.redOffset*r, b.greenOffset*r+e.greenOffset*r, b.blueOffset*r+e.blueOffset*r, b.alphaOffset*r+e.alphaOffset*r ));
 		}
 		
 		private function txt(r:*,b:*,e:*):* {
@@ -77,7 +68,7 @@ package railk.as3.motion
 			return curL.toString().replace(reg, '');
 		}
 		
-		private function mx(r:*,b:*,e:*):* {
+		private function clr(r:*,b:*,e:*):* {
 			var q=1-r;
 			return  (((b>>24)&0xFF)*q+((e>>24)&0xFF)*r)<<24|(((b>>16)&0xFF)*q+((e>>16)&0xFF)*r)<<16|(((b>>8)&0xFF)*q+((e>>8)&0xFF)*r)<<8|(b&0xFF)*q+(e&0xFF)*r;
 		}
