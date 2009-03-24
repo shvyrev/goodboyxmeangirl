@@ -10,18 +10,18 @@ package railk.as3.motion.utils
 {
 	public class CallBack
 	{
-		public var position:Number;
+		public var pos:Number;
 		public var onCallBack:Function;
 		public var onCallBackParams:Array;
 		
-		public function CallBack(position:Number=NaN,onCallBack:Function=null,onCallBackParams:Array=null) {
-			this.position = position
+		public function CallBack(pos:Number=NaN,onCallBack:Function=null,onCallBackParams:Array=null) {
+			this.pos = pos;
 			this.onCallBack = onCallBack;
 			this.onCallBackParams = onCallBackParams;
 		}
 		
-		public function apply():void {
-			if(onCallBack!=null) onCallBack.apply(null,onCallBackParams)
+		public function apply(...overrideParams):void {
+			if(onCallBack!=null) onCallBack.apply(null,((overrideParams)?overrideParams:onCallBackParams));
 		}
 	}
 }

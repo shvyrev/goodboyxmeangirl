@@ -46,12 +46,11 @@ package railk.as3.motion
 		public function setProps( os:Object ):void { for ( var o:String in os ) setProp( o, os[o] ); }
 		
 		public function setProp(name:String, value:*):void {
-			var i:int=0, o:Object={}, l:int=props.length, p:Prop;
-			engine.reset(this);
+			var o:Object={}, i:int=props.length;
 			if ( this.hasOwnProperty(name) ) this[name]=value;
 			else {
-				for (;i<l;i++) {
-					p=props[i];
+				while( --i > -1 ){
+					var p:Prop= props[i];
 					if (p.type == name) { 
 						p.end = value; 
 						p.start = p.current;
@@ -60,22 +59,25 @@ package railk.as3.motion
 				}
 				o[name]=value; stripProps(o);
 			}
+			position = 0;
+			engine.reset(this);
+			if(!id) start();
 		}
 		
 		public function getProp(name:String):* {
-			var i:int = 0, l:int=props.length;
+			var i:int=props.length;
 			if ( this.hasOwnProperty(name) ) return this[name];
-			else for (;i<l;i++) if (props[i].type == name) return props[i].current;
+			else while( --i > -1 ) if (props[i].type == name) return props[i].current;
 		}
 		
 		public function delProp(name:String):* {
-			var i:int = 0, l:int=props.length;
-			for (;i<l;i++) if (props[i].type == name) props.splice(i,1);
+			var i:int = props.length;
+			while( --i > -1 ) if (props[i].type == name) props.splice(i,1);
 		}
 		
 		override protected function stripProps(ps:Object):void {
-			var p:String, cf:Boolean=false, colorFilters:Object={};
-			for ( p in ps ) {
+			var cf:Boolean=false, colorFilters:Object={};
+			for ( var p:String in ps ) {
 				switch( p ) {
 					case 'bezier': props[props.length] = new Prop(p,p,null,ps[p]); break;
 					case 'volume': case 'pan': props[props.length] = new Prop('sound',p,target.soundTransform[p],ps[p]); break;
@@ -91,16 +93,16 @@ package railk.as3.motion
 		}
 		
 		override protected function updateProperties(ratio:Number):Number {
-			var i:int = 0, value:Number, l:int = props.length, p:Prop;
+			var i:int=props.length;
 			if ( target ) {
-				for (i;i<l;i++) {
-					p=props[i];
+				while( --i > -1 ) {
+					var p:Prop=props[i];
 					switch( p.type ) {
 						case 'sound': case 'text': case 'color': case 'hexColor': case 'colorFilter': case 'filter': case 'bezier': 
 							props[i] = getDefinitionByName(mods[p.type]).update( target, p, ratio ); 
 							break;
 						default :
-							value = Number(p.start)+Number(p.end-p.start)*ratio;
+							var value:Number = value = Number(p.start)+Number(p.end-p.start)*ratio+ 1e-18-1e-18;
 							target[p.type] = p.current = (rounded)?Math.round(value):value;
 							if ( autoVisible && p.type == 'alpha' ) target.visible = value > 0;
 							break;
@@ -115,8 +117,8 @@ package railk.as3.motion
 		override protected function complete():void {
 			if (repeat>1 || repeat==-1) {
 				if (reflect) {
-					var i:int=0, l:int=props.length, start:*;
-					for (;i<l;i++) {
+					var i:int=props.length, start:*;
+					while( --i > -1 ) {
 						start = props[i].start;
 						props[i].start = props[i].end;
 						props[i].end = start;
@@ -130,8 +132,8 @@ package railk.as3.motion
 		}
 		
 		private function filter( type:String ):BitmapFilter {
-			var f:Array = target.filters, i:int = 0, count:int = f.length, result:BitmapFilter;
-			l:for (i;i<count;i++) { if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; } }
+			var f:Array = target.filters, i:int=f.length, result:BitmapFilter;
+			l:while( --i > -1 ) { if (f[i].toString()=='[object '+type.charAt(0).toUpperCase()+type.substr(1,type.length)+'Filter]') { result=f[i]; break l; } }
 			return result;
 		}
 	}
