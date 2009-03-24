@@ -4,10 +4,6 @@
  * 
  * @author Richard Rodney
  * @version 0.1 
- * 
- * TODO:
- * 	_callbacks apply
- * 	_gotoandplay correct bug
  */
 
 package railk.as3.motion
