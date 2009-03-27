@@ -114,9 +114,9 @@ package railk.as3.motion
 		/**
 		 * CallBacks
 		 */
-		public function addCallBack( tween:RTween, pos:Number, action:Function, params:Array = null ):void { 
-			if ( callBacks[pos] ) callBacks[pos].push(new CallBack(tween,pos,action,params));
-			else callBacks[pos] = [new CallBack(tween,pos,action,params)];
+		public function addCallBack( pos:Number, action:Function, params:Array = null ):void { 
+			if ( callBacks[pos] ) callBacks[pos].push(new CallBack(pos,action,params));
+			else callBacks[pos] = [new CallBack(pos,action,params)];
 		}
 		
 		public function removeCallBack( pos:Number ):void { delete callBacks[pos]; }
