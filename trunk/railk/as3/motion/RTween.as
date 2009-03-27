@@ -61,7 +61,6 @@ package railk.as3.motion
 			}
 			position = 0;
 			engine.reset(this);
-			if(!id) start();
 		}
 		
 		public function getProp(name:String):* {
@@ -127,7 +126,7 @@ package railk.as3.motion
 				position = 0;
 				engine.reset(this);
 				if(repeat!=-1) repeat--;
-			} 
+			}
 			else super.complete();
 		}
 		

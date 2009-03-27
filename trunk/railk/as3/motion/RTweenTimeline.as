@@ -3,19 +3,21 @@
  * RTween Timeline
  * 
  * @author Richard Rodney
- * @version 0.1 
+ * @version 0.1  
  */
 
 package railk.as3.motion
 {
 	import flash.display.Shape;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	import railk.as3.motion.utils.CallBack;
+	import railk.as3.motion.utils.Composite;
 	import railk.as3.utils.ObjectMerger;
 	
-	public class RTweenTimeline
+	public class RTweenTimeline extends EventDispatcher
 	{	
 		private var timeline:Object={};
 		private var labels:Object={};
@@ -27,6 +29,7 @@ package railk.as3.motion
 		private var startTime:Number=0;
 		private var elapsedTime:Number = 0;
 		private var duration:Number = 0;
+		private var position:Number = 0;
 		private var currentPos:Number=-1;
 		private var paused:Boolean;
 		private var reversed:Boolean;
@@ -41,15 +44,16 @@ package railk.as3.motion
 		 * Timeline append
 		 */
 		public function append( pos:Number, target:Object, duration:Number, props:Object, options:Object = null ):void {
-			if ( !willOverwrite(target, pos, ObjectMerger.merge(props, options, { duration:duration, delay:0 } )) ) {
-				var t:Array = [target, duration, props, options];
-				if ( timeline[pos] ) timeline[pos].push(t);
-				else timeline[pos] = [t];
-				tweens[t] = new RTween();
-				tweens[t].target = target;
-				tweens[t].autoDispose = false;
-				tweens[t].delay = pos;
-				tweens[t].addEventListener( Event.COMPLETE, manageEvent, false, 0, true );
+			var merged:Object = ObjectMerger.merge(props, options, { duration:duration, delay:0 } );
+			if ( !willOverwrite(target, pos, merged) ) {
+				merged.delay = pos;
+				tweens[target] = new Composite(target, new RTween());
+				tweens[target].tween.autoDispose = false;
+				tweens[target].tween.delay = pos;
+				tweens[target].add(pos, merged);
+				tweens[target].tween.addEventListener( Event.COMPLETE, manageEvent, false, 0, true );
+				if ( timeline[pos] ) timeline[pos].push(target);
+				else timeline[pos] = [target];
 			}
 			this.duration += (pos + duration) - this.duration;
 			length++;
@@ -61,15 +65,11 @@ package railk.as3.motion
 		public function start():void {
 			if (paused) {
 				startTime = getTimer()-elapsedTime*1000;
-				for ( tween in tweens ) tweens[tween].start();
+				for ( tween in tweens ) if(tweens[tween].state!='end') { tweens[tween].start(); }
 				paused = false;
 			} else {
 				startTime = getTimer();
-				var i:int, p:Array, t:String;
-				for ( t in timeline ) {
-					p = timeline[t];
-					for (i=0;i<p.length;i++) tweens[p[i]].init( p[i][0], p[i][1], p[i][2], p[i][3] );
-				}
+				for ( tween in tweens ) if (tweens[tween].state == 'wait') { tweens[tween].start(); }
 			}
 			ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true );
 		}
@@ -77,7 +77,7 @@ package railk.as3.motion
 		public function pause():void {
 			stop();
 			paused = true;
-			for ( tween in tweens ) tweens[tween].pause();
+			for ( tween in tweens ) if( tweens[tween].state!='end'){ tweens[tween].pause(); tweens[tween].state='pause'; }
 		}
 		
 		public function reset():void { 
@@ -85,17 +85,22 @@ package railk.as3.motion
 			currentPos = -1;
 		}
 		
-		public function reverse():void { 
+		public function reverse():void {
+			startTime = getTimer();
 			reversed = (reversed)?false:true; 
 		}
 		
 		public function stop():void {
 			ticker.removeEventListener( Event.ENTER_FRAME, tick );
+			if( hasEventListener(Event.COMPLETE) ) dispatchEvent(new Event(Event.COMPLETE) );
 		}
 		
 		public function dispose():void {
 			pause();
-			for ( tween in tweens ) tweens[tween].dispose();
+			for ( tween in tweens ) {
+				tweens[tween].dispose();
+				tweens[tween].tween.removeEventListener( Event.COMPLETE, manageEvent);
+			}
 			tweens = null;
 		}
 		
@@ -109,9 +114,9 @@ package railk.as3.motion
 		/**
 		 * CallBacks
 		 */
-		public function addCallBack( pos:Number, action:Function, params:Array = null ):void { 
-			if ( callBacks[pos] ) callBacks[pos].push(new CallBack(pos, action, params));
-			else callBacks[pos] = [new CallBack(pos, action, params)];
+		public function addCallBack( tween:RTween, pos:Number, action:Function, params:Array = null ):void { 
+			if ( callBacks[pos] ) callBacks[pos].push(new CallBack(tween,pos,action,params));
+			else callBacks[pos] = [new CallBack(tween,pos,action,params)];
 		}
 		
 		public function removeCallBack( pos:Number ):void { delete callBacks[pos]; }
@@ -119,21 +124,26 @@ package railk.as3.motion
 		/**
 		 * Gotos
 		 */
-		public function goToAndPlay( posLabel:* ):void { goTo( ((posLabel is String)?labels[posLabel]:posLabel) ); }
+		public function gotoAndPlay( posLabel:* ):void { goto( ((posLabel is String)?labels[posLabel]:posLabel) ); }
 		
-		public function goToAndStop( posLabel:* ):void { goTo( ((posLabel is String)?labels[posLabel]:posLabel),true ); }
+		public function gotoAndStop( posLabel:* ):void { goto( ((posLabel is String)?labels[posLabel]:posLabel),true ); }
 		
-		private function goTo( pos:Number, paused:Boolean = false ):void {
-			for ( var o:Object in tweens) tweens[o].setPosition(pos);
-			if (paused) pause();
-			else start();
+		private function goto( pos:Number, stop:Boolean=false ):void {
+			if (!stop) start();
+			else {
+				if (!paused) pause();
+			}
+			for ( tween in tweens) {
+				tweens[tween].goto(pos);
+				position = pos;
+			}
 		}
 		
 		/**
 		 * willOverwrite
 		 */
 		private function willOverwrite( target:*, pos:Number, props:Object ):Boolean {
-			for ( var o:Object in tweens ) if (tweens[o].target == target ) { addCallBack( pos, function(paused:Boolean) { if(!paused) tweens[o].setProps(props); } ); return true; }
+			for ( var o:Object in tweens ) if ( o == target ) { tweens[o].add(pos, props); return true; }
 			return false;
 		}
 		
@@ -141,7 +151,7 @@ package railk.as3.motion
 		 * Event
 		 */
 		private function manageEvent( evt:Event ):void {
-			evt.target.removeEventListener(Event.COMPLETE, manageEvent);
+			tweens[evt.target.target].state = 'end';
 			--length;
 		}
 		
@@ -149,7 +159,7 @@ package railk.as3.motion
 		 * Tick
 		 */
 		private function tick( evt:Event ):void {
-			elapsedTime = (!reversed)?((getTimer() - startTime) * .001):(duration - ((getTimer() - startTime) * .001));
+			elapsedTime = position + ((!reversed)?((getTimer()-startTime)*.001):(duration-((getTimer()-startTime)*.001)));
 			for ( var o:Object in callBacks ) {
 				for ( var i:int = 0; i < callBacks[o].length; i++) {
 					if ( elapsedTime >= callBacks[o][i].pos && callBacks[o][i].pos > currentPos ) {
@@ -159,7 +169,9 @@ package railk.as3.motion
 				}
 				
 			}
+			for ( tween in tweens ) tweens[tween].update(elapsedTime);
 			if ( elapsedTime >= duration) stop();
+			if( hasEventListener(Event.CHANGE) ) dispatchEvent(new Event(Event.CHANGE));
 		}
 	}
 }
