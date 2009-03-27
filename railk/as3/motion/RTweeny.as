@@ -76,14 +76,14 @@ package railk.as3.motion
 		
 		public function dispose():void { target = props = null; }
 		
-		public function setPosition(pos:Number):void {
-			position = elapsedTime = pos;
-			if ( updateProperties(ease(pos,0,1,duration)) == 1 && autoDispose ) dispose();
+		public function setPosition(pos:Number):void { 
+			update(pos, true); 
+			position=pos; 
 		}
 		
-		public function update( time:Number ):void {
-			elapsedTime = time = time-startTime;
-			time -= delay-position;
+		public function update( time:Number, manual:Boolean=false ):void {
+			elapsedTime=time=(manual)?time:time-startTime;
+			time -= delay - ((manual)?0:position);
 			if ( updateProperties( ((time >= duration)?1:((time <= 0)?0:ease(time,0,1,duration))) ) == 1 ) complete();
 		}
 		
@@ -103,7 +103,7 @@ package railk.as3.motion
 		}
 		
 		protected function complete():void {
-			id = engine.remove( this );
+			if(id) id = engine.remove( this );
 			if(onComplete!=null) onComplete.apply(null,onCompleteParams);
 			if(hasEventListener(Event.COMPLETE)) dispatchEvent(new Event(Event.COMPLETE));
 			if(autoDispose) dispose();
