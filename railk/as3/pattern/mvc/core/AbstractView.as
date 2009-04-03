@@ -19,29 +19,22 @@ package railk.as3.pattern.mvc.core
 		protected var model:IModel;
 		protected var controller:IController;
 		
-		public function AbstractView( model:IModel, controller:IController )
-		{
+		public function AbstractView( model:IModel, controller:IController ) {
 			this.model = model;
 			this.controller = controller;
 		}
 		
-		public function getName():String
-		{
+		public function getName():String {
 			return NAME;
 		}
 		
-		public function show():void
-		{
-			
+		public function show():void {
 		}
 		
-		public function hide():void
-		{
-			
+		public function hide():void {
 		}
 		
-		public function dispose():void
-		{
+		public function dispose():void {
 		}
 	}	
 }

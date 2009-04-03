@@ -11,12 +11,12 @@ package railk.as3.data.pool
 	
 	public class Pool
 	{
-		private var first:*;
-		private var last:*;
-		
 		public var growthRate:int=10;
 		public var size:int=0;
 		public var free:int=0;
+		public var os:Array = [];
+		public var last:*;
+		public var picked:*;
 		public var classe:Class;
 		
 		public function Pool( classe:Class, size:int = 10, growthRate:int = 10 ) {
@@ -25,66 +25,30 @@ package railk.as3.data.pool
 			this.populate(size);
 		}
 		
-		private function populate(n:int):void {
-			var i:int=0;
-			for (i; i < n; i++) {
-				if ( !first ) {
-					first = last = new classe();
-					first.head = true;
-				} 
-				else add( new classe() );
+		private function populate(i:int):void {
+			while( --i > -1 ) {
+				last = classe();
+				os[free++] = last;
 				size++;
-				free++
 			}
-		}
-		
-		public function add( node:* ):void {
-			last.next = node;
-			last.tail = false;
-			node.prev = last;
-			last = node;
-		}
-		
-		public function remove( node:* ):* {
-			if ( size > 1 ) {
-				if ( node == first ){
-					first = first.next;
-					first.prev = null;
-				} else if ( node == last ) {
-					last = last.prev;
-					last.next = null;
-				} else {
-					node.prev.next = node.next;
-					node.next.prev = node.prev;
-				}
-			} else first = last = null;
-			
-			node.prev = node.next = null;
-			node.head = false; 
-			node.tail = true;
-			return node;
 		}
 		
 		public function pick():* {
-			if (free == 0) populate(growthRate);
-			free--;
-			return remove(last);
+			if (free < 1) populate(growthRate);
+			picked = last;
+			last = os[--free-1];
+			return picked;
 		}
 		
-		public function release(node:*):void {
-			add( node );
-			free++;
+		public function release( o:* ):void { 
+			os[free++] = o;
+			last = o;
 		}
 		
 		public function purge():void {
-			var next:*, current:* = first;
-			first = null;
-			while ( current ) {
-				next = current.next;
-				current.next = current.prev = null;
-				current = next;
-			}
-			last = null;
+			var i:int=tweens.length;
+			while( --i > -1 ) os[i].dispose();
+			os = [];
 			size = 0;
 		}
 	}

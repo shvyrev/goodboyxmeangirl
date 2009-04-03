@@ -5,9 +5,8 @@
 * @version 0.1
 */
 
-package railk.as3.net.uploader {
-
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.net.uploader 
+{
 	import flash.net.FileFilter;
 	import flash.net.FileReference;
 	import flash.net.URLRequest;
@@ -18,23 +17,17 @@ package railk.as3.net.uploader {
 
 	public class UpLoader extends EventDispatcher {
 		
-		//___________________________________________________________________________________ VARIABLES UPLOAD
 		private var uploadURL              :URLRequest;
 		private var uploadVAR              :URLVariables;
 		private var fileRef                :FileReference;
 		private var fileType               :String;
-		
 		private var uploadBT               :Object;
-		
-		//________________________________________________________________________________ VARIABLES EVENEMENT
-		private var eEvent                 :UpLoaderEvent;
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function UpLoader( uploadFilePath:String )
-		{
+		public function UpLoader( uploadFilePath:String ) {
 			uploadURL = new URLRequest( uploadFilePath );
 			uploadURL.method = URLRequestMethod.POST;
 			uploadVAR = new URLVariables();
@@ -75,78 +68,48 @@ package railk.as3.net.uploader {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		  FILEREF LISTERNERS FONCTIONS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function onCancel( evt:Event ):void 
-		{
-			var args:Object = { info:"upload annule" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_CANCEL, args );
-			dispatchEvent( eEvent );
+		private function onCancel( evt:Event ):void {
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_CANCEL, { info:"upload annule" } ) );
 		}
 		
-		private function onSelect( evt:Event ):void 
-		{
+		private function onSelect( evt:Event ):void {
             fileRef.upload( uploadURL );
-			
-			var args:Object = { info: fileRef.name };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_SELECT, args );
-			dispatchEvent( eEvent );
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_SELECT, { info: fileRef.name } ) );
 		}
 		
-		private function onBegin( evt:Event ):void 
-		{
-			var args:Object = { info:"debut du transfert" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_BEGIN, args );
-			dispatchEvent( eEvent );
+		private function onBegin( evt:Event ):void {
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_BEGIN, { info:"debut du transfert" } ) );
 		}
 		
-		private function onProgress( evt:ProgressEvent ):void 
-		{
-			try
-			{
+		private function onProgress( evt:ProgressEvent ):void {
+			try {
 				var percent:Number = Math.floor(evt.bytesLoaded * 100 / evt.bytesTotal);
-				var args:Object = { info:percent };
-				eEvent = new UpLoaderEvent( UpLoaderEvent.ON_PROGRESS, args );
-				dispatchEvent( eEvent );
+				dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_PROGRESS, { info:percent } ) );
 				
-			} catch(e:Error)
-			{
+			} catch(e:Error) {
 				trace("Error: " + e.message)
 				return;
 			}	
 		}
 		
-		private function onComplete( evt:Event ):void 
-		{
-			var args:Object = { info:"transfert termine" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_COMPLETE, args );
-			dispatchEvent( eEvent );
+		private function onComplete( evt:Event ):void {
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_COMPLETE, { info:"transfert termine" } ) );
 		}
 		
-		private function onDataUploaded( evt:DataEvent ):void 
-		{
-			var args:Object = { info:"data uploaded" };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_DATA_UPLOADED, args );
-			dispatchEvent( eEvent );
+		private function onDataUploaded( evt:DataEvent ):void {
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_DATA_UPLOADED, { info:"data uploaded" } ) );
 		}
 		
-		private function onHttpStatus( evt:HTTPStatusEvent ):void 
-		{
-			var args:Object = { info:evt };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_HTTP_STATUS, args );
-			dispatchEvent( eEvent );
+		private function onHttpStatus( evt:HTTPStatusEvent ):void {
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_HTTP_STATUS, { info:evt } ) );
 		}
 		
-		private function onIOError( evt:IOErrorEvent ):void 
-		{
-			var args:Object = { info:evt };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_IOERROR, args );
-			dispatchEvent( eEvent );
+		private function onIOError( evt:IOErrorEvent ):void {
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_IOERROR, { info:evt } ) );
 		}
 		
-		private function onSecurityError( evt:SecurityErrorEvent ):void 
-		{
-			var args:Object = { info:evt };
-			eEvent = new UpLoaderEvent( UpLoaderEvent.ON_SECURITY_ERROR, args );
-			dispatchEvent( eEvent );
+		private function onSecurityError( evt:SecurityErrorEvent ):void {
+			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_SECURITY_ERROR, { info:evt }) );
 		}
 		
 		
@@ -159,8 +122,7 @@ package railk.as3.net.uploader {
 		 * @param	type UpLoaderFilters.IMGFILE/TXTFILE/SWFFILE/XMLFILE/
 		 * @param	url the folder where to save the file
 		 */
-		public function create( button:Object, type:String, urlFolder:String ):void 
-		{
+		public function create( button:Object, type:String, urlFolder:String ):void {
 			fileType = type;
 			uploadBT = button;
 			uploadVAR.folder = urlFolder;

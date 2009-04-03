@@ -14,6 +14,9 @@ package railk.as3.ui.scrollList
 	
 	public class ScrollListItem extends EventDispatcher
 	{
+		public var next:ScrollListItem;
+		public var prev:ScrollListItem;
+		
 		public var name:String;
 		public var o:Object;
 		public var height:Number;
@@ -22,8 +25,7 @@ package railk.as3.ui.scrollList
 		public var oldY:Number;
 		public var scrollName:String;
 		
-		public function ScrollListItem( name:String, o:Object, scrollName:String ) 
-		{
+		public function ScrollListItem( name:String, o:Object, scrollName:String ) {
 			this.name = name;
 			this.o = o;
 			this.height = o.height;
@@ -34,8 +36,7 @@ package railk.as3.ui.scrollList
 			initListeners();
 		}
 		
-		public function initListeners():void
-		{
+		public function initListeners():void {
 			o.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 		}
 		
@@ -44,37 +45,29 @@ package railk.as3.ui.scrollList
 			o = null;
 		}
 		
-		override public function toString():String
-		{
+		override public function toString():String {
 			return '[ SCROLLITEM > ' + name + ' FROM '+scrollName+', ( x:' + globalXY.x + ' ), ( y:' + globalXY.y + ' ) ]';
 		}
 		
-		private function manageEvent( evt:Event ):void
-		{
-			if ( oldY != globalXY.y || oldX != globalXY.x ) 
-			{
+		private function manageEvent( evt:Event ):void {
+			if ( oldY != globalXY.y || oldX != globalXY.x ) {
 				oldX = globalXY.x;
 				oldY = globalXY.y;
 				dispatchEvent( new CustomEvent( 'onScrollItemChange', { item:this }) );
 			}
 		}
 		
-		public function get globalXY():Point
-		{
+		public function get globalXY():Point {
 			return o.parent.localToGlobal(new Point(x,y));
 		}
 		
 		public function get x():Number { return o.x; }
-		
-		public function set x(value:Number):void 
-		{
+		public function set x(value:Number):void {
 			o.x = value;
 		}
 		
 		public function get y():Number { return o.y; }
-		
-		public function set y(value:Number):void 
-		{
+		public function set y(value:Number):void {
 			o.y = value;
 		}
 		

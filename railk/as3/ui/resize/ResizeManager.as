@@ -7,34 +7,18 @@
 */
 
 
-package railk.as3.ui.resize {
-	
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.ui.resize 
+{	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.data.list.DLinkedList;
-	import railk.as3.data.list.DListNode;
-	
-	
-	public class ResizeManager {
-		
-		// ______________________________________________________________________________ VARIABLES PROTEGEES
-		protected static var disp                             :EventDispatcher;
-		
-		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var itemList                           :DLinkedList;
-		private static var walker                             :DListNode;
-		
-		//____________________________________________________________________________________ VARIABLES ITEM
-		private static var _maxWidth                          :Number=0;
-		private static var _maxheight                         :Number=0;
-		
-		// _______________________________________________________________________________ VARIABLE EVENEMENT
-		private static var eEvent                             :ResizeManagerEvent;
-		
-		
+	public class ResizeManager 
+	{		
+		protected static var disp:EventDispatcher;		
+		private static var firstItem:Item;
+		private static var lastItem:Item;		
+		private static var _width:Number=0;
+		private static var _height:Number=0;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   LISTENERS DE CLASS
@@ -54,16 +38,6 @@ package railk.as3.ui.resize {
       			disp.dispatchEvent(p_event);
       	}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  				 INIT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init():void 
-		{
-			itemList = new DLinkedList();
-		}
-		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			 ADD ITEM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -74,35 +48,36 @@ package railk.as3.ui.resize {
 		 * @param	action
 		 * @param	group
 		 */
-		public static function add( name:String, displayObject:Object, action:Function = null, group:String = 'main' ):void 
-		{
-			itemList.add( [name,displayObject,group,action] );
+		public static function add( name:String, displayObject:Object, action:Function = null, group:String = 'main' ):void {
+			var i:Item = new Item(name, displayObject, group, action);
+			if (!firstItem) firstItem = lastItem = i;
+			else {
+				lastItem.next = i;
+				i.prev = lastItem;
+				lastItem = i;
+			}
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			MOVE ITEM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function itemAction( name:String, width:Number, height:Number ):void 
-		{
-			_maxheight = height;
-			_maxWidth = width;
-			itemList.getNodeByName( name ).action.apply();
+		public static function action( name:String, width:Number, height:Number ):void {
+			_height = height;
+			_width = width;
+			getItem( name ).action.apply();
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		MOVE ALL ITEM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function groupAction( width:Number, height:Number, group:String = 'main' ):void 
-		{
-			_maxheight = height;
-			_maxWidth = width;
-			walker = itemList.head;
-			loop:while ( walker ) {
-				if ( walker.group == group ) {
-					walker.action.apply();
-				}
+		public static function groupAction( width:Number, height:Number, group:String = 'main' ):void {
+			_height = height;
+			_width = width;
+			var walker:Item = firstItem;
+			while ( walker ) {
+				if ( walker.group == group ) walker.action.apply();
 				walker = walker.next;
 			}
 		}
@@ -111,44 +86,71 @@ package railk.as3.ui.resize {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE ITEMS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function remove( name:String ):void 
-		{
-			itemList.remove( name );
-			///////////////////////////////////////////////////////////////
-			var args:Object = { info:'removed'+ name +'item' };
-			eEvent = new ResizeManagerEvent( ResizeManagerEvent.ON_REMOVE_ONE, args );
-			dispatchEvent( eEvent );
-			///////////////////////////////////////////////////////////////
+		public static function remove( name:String ):void {
+			var walker:Item = firstItem;
+			while ( walker ) {
+				walker.action = null;
+				walker.target = null;
+				walker = walker.next;
+			}
+			dispatchEvent( new ResizeManagerEvent( ResizeManagerEvent.ON_REMOVE_ONE, { info:'removed'+ name +'item' } ));
 		}
 		
-		public static function removeAll():void 
-		{
-			itemList.clear();
-			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"removed all item" };
-			eEvent = new ResizeManagerEvent( ResizeManagerEvent.ON_REMOVE_ALL, args );
-			dispatchEvent( eEvent );
-			///////////////////////////////////////////////////////////////
+		public static function removeAll():void {
+			var walker:Item = firstItem;
+			firstItem = null;
+			while ( walker ) {
+				walker.action = null;
+				walker.target = null;
+				walker = walker.next;
+			}
+			lastItem = null;
+			dispatchEvent( new ResizeManagerEvent( ResizeManagerEvent.ON_REMOVE_ALL, { info:"removed all item" } ));
 		}
 		
-		public static function getItemContent( name:String ):* { return itemList.getNodeByName( name ).data; }
+		public static function getItem( name:String ):Item {
+			var walker:Item = firstItem;
+			while ( walker ) {
+				if (walker.name == name ) return walker;
+				walker = walker.next;
+			}
+			return null;
+		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function toString():String { return itemList.toString(); }
-		
+		public static function toString():String {
+			var result:String = '[ RESIZE ITEM >';
+			var walker:Item = firstItem;
+			while ( walker ) {
+				result+= walker.name.toUpperCase()+','+ walker.group.toUpperCase()+' GROUP';
+				walker = walker.next;
+			}
+			result += ' ]'
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		static public function get maxWidth():Number { return _maxWidth; }
-		
-		static public function set maxWidth(value:Number):void { _maxWidth = value; }
-		
-		static public function get maxHeight():Number { return _maxheight; }
-		
-		static public function set maxHeight(value:Number):void { _maxheight = value; }
+		static public function get width():Number { return _width; }
+		static public function get height():Number { return _height; }
+	}
+}
+
+internal class Item {
+	public var next:Item;
+	public var prev:Item;
+	public var name:String;
+	public var target:Object;
+	public var group:String;
+	public var action:Function;
+	
+	public function Item(name:String,target:Object,group:String,action:Function) {
+		this.name = name;
+		this.action = action;
+		this.target = target;
+		this.group = group;
 	}
 }

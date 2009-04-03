@@ -12,20 +12,21 @@ package railk.as3.ui.accordion
 	import flash.events.EventDispatcher;
 	import flash.events.Event	
 	
-	
-	public class  AccordionItem extends EventDispatcher {
+	public class  AccordionItem extends EventDispatcher 
+	{
+		public var next:AccordionItem;
+		public var prev:AccordionItem;
 		
-		// ______________________________________________________________________________ VARIABLES ACCORDION
-		private var _name                                   :String;
-		private var _type                                   :String;
-		private var _X                                      :int;
-		private var _Y                                      :int;
-		private var _nextX                                  :int;
-		private var _nextY                                  :int;
-		private var _content                                :Object;
-		private var _oldH                                   :Number;
-		private var _oldW                                   :Number;
-		private var _separator                              :Number;
+		public var name      :String;
+		public var nextX     :Number;
+		public var nextY     :Number;
+		private var type     :String;
+		private var X        :Number;
+		private var Y        :Number;
+		private var oldH     :Number;
+		private var oldW     :Number;
+		private var separator:Number;
+		private var _content :Object;
 			
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -33,16 +34,16 @@ package railk.as3.ui.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function AccordionItem( name:String, type:String, content:Object, separator:Number )
 		{
-			_name = name;
-			_type = type;
-			_X = content.x;
-			_Y = content.y;
-			_oldH = content.height;
-			_oldW = content.width;
-			_nextX = _oldW+_X+separator;
-			_nextY = _oldH+_Y+separator;
+			this.name = name;
+			this.type = type;
+			this.X = content.x;
+			this.Y = content.y;
+			this.oldH = content.height;
+			this.oldW = content.width;
+			this.nextX = this.oldW+this.X+separator;
+			this.nextY = this.oldH+this.Y+separator;
+			this.separator = separator;
 			_content = content;
-			_separator = separator;
 			content.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 		}
 		
@@ -50,8 +51,7 @@ package railk.as3.ui.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   		  DESTROY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose():void 
-		{	
+		public function dispose():void {	
 			_content.removeEventListener( Event.ENTER_FRAME, manageEvent );
 		}
 		
@@ -59,75 +59,47 @@ package railk.as3.ui.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get x():int { return _X; }
-		
-		public function set x(value:int):void 
+		public function get x():Number { return X; }
+		public function set x(value:Number):void 
 		{
-			_X = value;
-			_nextX = _Y + _oldW + _separator;
+			X = value;
+			nextX = Y+oldW+separator;
 			_content.x = value;
 		}
 		
-		public function get y():int { return _Y; }
-		
-		public function set y(value:int):void 
+		public function get y():Number { return Y; }
+		public function set y(value:Number):void 
 		{
-			_Y = value;
-			_nextY = _Y + _oldH + _separator;
+			Y = value;
+			nextY = Y+oldH+separator;
 			_content.y = value;
 		}
 		
 		public function get content():* { return _content; }
-		
 		public function set content(value:*):void 
 		{
 			_content = value;
-			_oldH = value.height;
-			_oldW = value.width;
+			oldH = value.height;
+			oldW = value.width;
 		}
-		
-		public function get name():String { return _name; }
-		
-		public function get nextX():int { return _nextX; }
-		
-		public function get nextY():int { return _nextY; }
-		
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					     MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ):void 
-		{
-			var args:Object;
-			var eEvent:AccordionEvent;
+		private function manageEvent( evt:* ):void {
 			switch( evt.type ){
 				case Event.ENTER_FRAME :
-					if ( _content.width != _oldW && _type == 'H' )
-					{
-						_oldW = _content.width;
-						_nextX = _X + _oldW + _separator;
-						///////////////////////////////////////////////////////////////
-						args = { info:name+' width change', data:name };
-						eEvent = new AccordionEvent( AccordionEvent.ON_WIDTH_CHANGE, args );
-						dispatchEvent( eEvent );
-						///////////////////////////////////////////////////////////////
+					if ( _content.width != oldW && type == 'H' ) {
+						oldW = _content.width;
+						nextX = X+oldW+separator;
+						dispatchEvent( new AccordionEvent( AccordionEvent.ON_WIDTH_CHANGE, { info:name+' width change', data:name } ) );
+					} else if ( _content.height != oldH && type == 'V' ) {
+						oldH = _content.height;
+						nextY = Y+oldH+separator;
+						dispatchEvent( new AccordionEvent( AccordionEvent.ON_HEIGHT_CHANGE, { info:name+' height change', data:name } ) );
 					}
-					else if ( _content.height != _oldH && _type == 'V' )
-					{
-						_oldH = content.height;
-						_nextY = _Y + _oldH + _separator;
-						///////////////////////////////////////////////////////////////
-						args = { info:name+' height change', data:name };
-						eEvent = new AccordionEvent( AccordionEvent.ON_HEIGHT_CHANGE, args );
-						dispatchEvent( eEvent );
-						///////////////////////////////////////////////////////////////
-					}
-					break;
-				
+					break;	
 			}
 		}
-		
 	}
-	
 }

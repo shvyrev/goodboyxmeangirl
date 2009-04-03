@@ -8,7 +8,6 @@
 
 package railk.as3.text
 {
-	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize;
@@ -18,19 +17,14 @@ package railk.as3.text
 	
 	public class  Text extends TextField
 	{
-		//________________________________________________________________________________________ CONSTANTES
 		public static const AUTOSIZE_LEFT                         :String = TextFieldAutoSize.LEFT;
 		public static const AUTOSIZE_RIGHT                        :String = TextFieldAutoSize.RIGHT;
 		public static const AUTOSIZE_CENTER                       :String = TextFieldAutoSize.CENTER;
-		
 		public static const DYNAMIC_TYPE                          :String = TextFieldType.DYNAMIC;
 		public static const INPUT_TYPE                            :String = TextFieldType.INPUT;
 		
-		//_________________________________________________________________________________________ VARIABLES
 		private var format                                        :TextFormat;
 		private var texte                                         :TextField;
-		
-		//________________________________________________________________________________ VARIABLES TEXTLINK
 		private var _hasAutoSize                                  :Boolean; 
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -63,25 +57,19 @@ package railk.as3.text
 			format.size = size;
 			format.align = align;
 			super.type = type;
-			if ( !htmlText )
-			{
+			if ( !htmlText ) {
 				super.text = (text) ? text : ' ';
 				super.setTextFormat( format ); 
-			}
-			else 
-			{ 
+			} else { 
 				super.htmlText = (text) ? text : ' '; 
 			}
 			super.embedFonts = embedFont;
 			super.selectable = selectable;
-			if ( hasAutoSize )
-			{
+			if ( hasAutoSize ){
 				super.autoSize = autoSize;
 				if( width != 0) super.width = width;
 				if( height != 0) super.height = height;
-			}
-			else
-			{
+			} else {
 				if( width != 0) super.width = width;
 				if( height != 0) super.height = height;
 			}

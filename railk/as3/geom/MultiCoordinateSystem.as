@@ -12,7 +12,6 @@ package railk.as3.geom
 	
 	public class MultiCoordinateSystem 
 	{
-		
 		public var TL:Point;
 		public var T:Point;
 		public var TR:Point;
@@ -28,13 +27,11 @@ package railk.as3.geom
 		private var transformedPoints:Object = { TL:null, L:null, BL:null, B:null, BR:null, R:null, TR:null, T:null, CENTER:null, REG:null, dx:null, dy:null };
 		
 		
-		public function MultiCoordinateSystem(TL:Point=null, L:Point=null, BL:Point=null, B:Point=null, BR:Point=null, R:Point=null, TR:Point=null, T:Point=null, CENTER:Point=null, REG:Point=null)
-		{
+		public function MultiCoordinateSystem(TL:Point=null, L:Point=null, BL:Point=null, B:Point=null, BR:Point=null, R:Point=null, TR:Point=null, T:Point=null, CENTER:Point=null, REG:Point=null) {
 			if ( TL && L && BL && B && BR && R && TR && T && REG && CENTER) define(TL, L, BL, B, BR, R, TR, T, CENTER, REG);
 		}
 		
-		public function define( TL:Point, L:Point, BL:Point, B:Point, BR:Point, R:Point, TR:Point, T:Point, CENTER:Point, REG:Point ):void
-		{
+		public function define( TL:Point, L:Point, BL:Point, B:Point, BR:Point, R:Point, TR:Point, T:Point, CENTER:Point, REG:Point ):void {
 			this.TL = TL;
 			this.BL = BL;
 			this.BR = BR;
@@ -48,8 +45,7 @@ package railk.as3.geom
 			this.defineSystems();
 		}
 		
-		private function defineSystems():void
-		{
+		private function defineSystems():void {
 			systems['TL'] = { BL:{p:new Point2D(TL.x,TL.y,new CoordinateSystem(BL,B,TL)),axis:'xAxis'}, TR:{p:new Point2D(TL.x,TL.y,new CoordinateSystem(BR,B,TR)),axis:'yAxis'} };
 			systems['BL'] = { TL:{p:new Point2D(BL.x,BL.y,new CoordinateSystem(TL,T,BL)),axis:'xAxis'}, BR:{p:new Point2D(BL.x,BL.y,new CoordinateSystem(TR,T,BR)),axis:'yAxis'} };
 			systems['TR'] = { TL:{p:new Point2D(TR.x,TR.y,new CoordinateSystem(TL,T,BL)),axis:'yAxis'}, BR:{p:new Point2D(TR.x,TR.y,new CoordinateSystem(BL,BR,TL)),axis:'xAxis'} };
@@ -60,8 +56,7 @@ package railk.as3.geom
 			systems['R'] = { R:{p:new Point2D(R.x,R.y,new CoordinateSystem(L,R,TL)),axis:'xAxis'}, TR:{p:new Point2D(R.x,R.y,new CoordinateSystem(TL,TR,L)),axis:'xAxis'}, BR:{p:new Point2D(R.x,R.y,new CoordinateSystem(BL,BR,L)),axis:'xAxis'} };
 		}
 		
-		public function project( target:String, coordinate:Point ):Object
-		{
+		public function project( target:String, coordinate:Point ):Object {
 			var result:Object={};
 			var points:Object = systems[target];
 			var v:Vector2D;
@@ -167,8 +162,7 @@ package railk.as3.geom
 			return transformedPoints;
 		}
 		
-		private function projectPoints( points:Object, coordinate:Point ):Object
-		{
+		private function projectPoints( points:Object, coordinate:Point ):Object {
 			var result:Object = {};
 			for ( var point:String in points )
 			{
@@ -181,8 +175,7 @@ package railk.as3.geom
 			return result;
 		}
 		
-		private function getInnerSystemPoint( p:Point, origin:Object, x:Object, y:Object ):Point
-		{
+		private function getInnerSystemPoint( p:Point, origin:Object, x:Object, y:Object ):Point {
 			var xReg = (new Point2D(x.o.x + (new Vector2D(x.o, p)).dx * ((new Vector2D( x.n, origin.n)).dx / (new Vector2D(x.o, origin.o)).dx), x.o.y + (new Vector2D(x.o, p)).dy *( (((new Vector2D( x.n, origin.n)).dy / (new Vector2D(x.o, origin.o)).dy))?((new Vector2D( x.n, origin.n)).dy / (new Vector2D(x.o, origin.o)).dy):1 ) , new CoordinateSystem(origin.n, x.n, y.n))).xProjection;
 			var yReg = (new Point2D(y.o.x + (new Vector2D(y.o, p)).dx * ( ((new Vector2D( y.n, origin.n)).dx / (new Vector2D(y.o, origin.o)).dx)?((new Vector2D( y.n, origin.n)).dx / (new Vector2D(y.o, origin.o)).dx):1 ), y.o.y + (new Vector2D(y.o, p)).dy * ((new Vector2D( y.n, origin.n)).dy / (new Vector2D(y.o, origin.o)).dy), new CoordinateSystem(origin.n, x.n, y.n))).yProjection;
 			var v1:Vector2D = new Vector2D(origin.n, xReg);
@@ -190,8 +183,7 @@ package railk.as3.geom
 			return new Point(origin.n.x+v1.dx+v2.dx,origin.n.y+v1.dy+v2.dy);
 		}
 		
-		public function update(...args):void
-		{
+		public function update(...args):void {
 			this.TL = transformedPoints.TL;
 			this.BL = transformedPoints.BL;
 			this.BR = transformedPoints.BR;
@@ -205,8 +197,7 @@ package railk.as3.geom
 			this.defineSystems();
 		}
 		
-		public function toString():String
-		{
+		public function toString():String {
 			var result:String = '[ MULTI COORDINATESYSTEM \n';
 			for ( var key:String in systems)
 			{
@@ -216,6 +207,5 @@ package railk.as3.geom
 			result += ' ]';
 			return result
 		}
-		
 	}
 }

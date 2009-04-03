@@ -2,16 +2,12 @@
  * senocular graphics copy class
  */
 
-package railk.as3.display {
+package railk.as3.display.graphicShape {
 	
 	import flash.display.Graphics;
 	import flash.utils.flash_proxy;
 	import flash.utils.Proxy;
 	
-	/**
-	 * a graphics property substitute for DisplayObject instances
-	 * that can be duplicated
-	 */
 	public dynamic class GraphicCopy extends Proxy {
 		
 		private var _graphics:Graphics;
@@ -26,18 +22,10 @@ package railk.as3.display {
 			copy(this);
 		}
 		
-		/**
-		 * constructor
-		 * @param graphics Optional Graphics instance to recieve
-		 * drawing commands given to this GraphicsCopy instance
-		 */
 		public function GraphicCopy(graphics:Graphics = null) {
 			_graphics = graphics;
 		}
 		
-		/**
-		 * copies the graphics of a GraphicsCopy into this GraphicsCopy
-		 */
 		public function copy(graphicsCopy:GraphicCopy):void {
 			var hist:Array = graphicsCopy.history;
 			history = hist.slice();
@@ -51,7 +39,6 @@ package railk.as3.display {
 			}
 		}
 		
-		// PROXY overrides
 		flash_proxy override function callProperty(methodName:*, ... args):* {
 			methodName = String(methodName);
 			switch(methodName) {

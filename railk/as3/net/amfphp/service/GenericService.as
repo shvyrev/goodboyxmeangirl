@@ -15,8 +15,7 @@ package railk.as3.net.amfphp.service
 		private var _action                          :String;
 		private var _vars                            :Array;
 		
-		public function GenericService( service:String, method:String, ...args ) 
-		{
+		public function GenericService( service:String, method:String, ...args ) {
 			_vars = args;
 			_action = service + '.' + method;
 		}

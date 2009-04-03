@@ -22,15 +22,14 @@
 * 
 */
 
-package railk.as3.net.preloader {
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.net.preloader 
+{
 	import flash.display.MovieClip;
 	import flash.events.ProgressEvent;
 	import flash.events.Event;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.TopLevel;
 	import railk.as3.display.DSprite;
 	import railk.as3.ui.Loading;
@@ -40,7 +39,6 @@ package railk.as3.net.preloader {
 	
 	public class MainPreloader extends MovieClip
 	{
-		// ______________________________________________________________________________ VARIABLES PRELOADER
 		private var container                                  :DSprite;
 		private var foreground                                 :DSprite;
 		private var background                                 :DSprite;
@@ -52,8 +50,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function MainPreloader():void
-		{
+		public function MainPreloader():void {
 			super();
 			init();
 		}
@@ -61,8 +58,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																								 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function init():void
-		{
+		private function init():void {
 			//--
 			stop();
 			TopLevel.root = root;
@@ -116,8 +112,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 		CREATE BG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBackground():DSprite
-		{
+		protected function createBackground():DSprite {
 			return new DSprite();
 		}
 		
@@ -125,8 +120,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					CREATE FOREGROUND
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createForeground():DSprite
-		{
+		protected function createForeground():DSprite {
 			return new DSprite();
 		}
 		
@@ -134,8 +128,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					CREATE FOREGROUND
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createMask():DSprite
-		{
+		protected function createMask():DSprite {
 			var s:DSprite= new DSprite();
 			
 				var m:GraphicShape = new GraphicShape();
@@ -149,8 +142,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   CREATE LOADING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createLoading():Loading
-		{
+		protected function createLoading():Loading {
 			var loadBar:Loading = new Loading();
 			loadBar.barLoading( { fond:0x111111, bar:0xFFFFFF }, 0, 0, 6, 200 );
 			
@@ -160,8 +152,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							  DESTROY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function destroy():void
-		{
+		private function destroy():void {
 			this.loaderInfo.removeEventListener( ProgressEvent.PROGRESS, manageEvent);
 			this.loaderInfo.removeEventListener( Event.COMPLETE, manageEvent);
 			stage.removeEventListener( Event.RESIZE, manageEvent );
@@ -173,8 +164,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							   LAUNCH
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function launch():void
-		{	
+		private function launch():void {	
 			destroy();
 			gotoAndStop(2);
 			trace("                                    Preloader done");
@@ -187,8 +177,7 @@ package railk.as3.net.preloader {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:* ):void {
 			switch( evt.type ) {
-				case Event.RESIZE :
-				case Event.ACTIVATE:
+				case Event.RESIZE : case Event.ACTIVATE:
 					container.x2 = Math.round(stage.stageWidth*.5);
 					container.y2 = Math.round(stage.stageHeight*.5);
 					break;

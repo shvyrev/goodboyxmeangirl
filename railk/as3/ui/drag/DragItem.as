@@ -17,9 +17,12 @@ package railk.as3.ui.drag
 	
 	public class DragItem extends EventDispatcher
 	{
-		private var name:String;
-		private var bounds:Rectangle;
+		public var next:DragItem;
+		public var prev:DragItem;
+		
+		public var name:String;
 		public var o:Object;
+		private var bounds:Rectangle;
 		private var orientation:String;
 		private var stage:Stage;
 		

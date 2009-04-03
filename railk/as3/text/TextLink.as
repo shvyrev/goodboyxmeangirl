@@ -8,34 +8,27 @@
 
 package railk.as3.text
 {
-	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
-	import flash.text.AntiAliasType;
-	
-	// ________________________________________________________________________________________ IMPORT RAILK
+	import flash.text.AntiAliasType;	
 	import railk.as3.display.RegistrationPoint;
 	
 	
 	public class  TextLink extends RegistrationPoint
 	{
-		//________________________________________________________________________________________ CONSTANTES
 		public static const AUTOSIZE_LEFT                         :String = TextFieldAutoSize.LEFT;
 		public static const AUTOSIZE_RIGHT                        :String = TextFieldAutoSize.RIGHT;
 		public static const AUTOSIZE_CENTER                       :String = TextFieldAutoSize.CENTER;
-		
 		public static const DYNAMIC_TYPE                          :String = TextFieldType.DYNAMIC;
 		public static const INPUT_TYPE                            :String = TextFieldType.INPUT;
 		
-		//_________________________________________________________________________________________ VARIABLES
 		private var textLink                                      :Sprite;
 		private var format                                        :TextFormat;
 		private var texte                                         :TextField;
 		
-		//________________________________________________________________________________ VARIABLES TEXTLINK
 		private var _name                                         :String;
 		private var _type                                         :String;
 		private var _text                                         :String; 

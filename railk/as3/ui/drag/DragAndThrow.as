@@ -12,16 +12,13 @@ package railk.as3.ui.drag
 	import flash.geom.Rectangle;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	
 	import railk.as3.event.CustomEvent;
-	import railk.as3.data.list.DLinkedList;
-	import railk.as3.data.list.DListNode;
 	
 	public class DragAndThrow extends EventDispatcher
 	{
 		private static var _stage:Stage;
-		private static var itemsList:DLinkedList;
-		private static var walker:DListNode;
+		private static var firstItem:DragItem;
+		private static var lastItem:DragItem;
 		protected static var disp:EventDispatcher;
 		
 		
@@ -47,10 +44,8 @@ package railk.as3.ui.drag
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	   	 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( stage:Stage )
-		{
+		public static function init( stage:Stage ){
 			_stage = stage;
-			itemsList = new DLinkedList();
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -64,115 +59,109 @@ package railk.as3.ui.drag
 		 * @param	useRect			object passed must contain a public object name content where the content to scroll is
 		 * @param	bounds
 		 */
-		public static function enable( name:String, o:Object, orientation:String, useRect:Boolean=false, bounds:Rectangle=null  )
-		{
-			itemsList.add( [name, new DragItem(_stage, name, o, orientation, useRect, bounds)] );
-			itemsList.tail.data.addEventListener( 'onScrollListDrag', manageEvent, false, 0, true );
+		public static function enable( name:String, o:Object, orientation:String, useRect:Boolean=false, bounds:Rectangle=null  ):void {
+			add( new DragItem(_stage, name, o, orientation, useRect, bounds) );
+			lastItem.addEventListener( 'onScrollListDrag', manageEvent, false, 0, true );
 		}
 		
-		public static function disable( name:String  )
-		{
-			itemsList.getNodeByName(name).data.removeEventListener( 'onScrollListDrag', manageEvent);
-			itemsList.getNodeByName( name ).data.dispose();
-			itemsList.remove( name );
+		public static function disable( name:String  ):void {
+			getItem(name).removeEventListener( 'onScrollListDrag', manageEvent);
+			getItem(name).dispose();
+			remove( name );
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							PROG DRAG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function drag( name:String, x:Number, y:Number ):void
-		{
-			var from:DListNode = itemsList.getNodeByName( name );
-			if ( from == itemsList.head )
-			{
+		public static function drag( name:String, x:Number, y:Number ):void {
+			var from:DragItem = getItem( name ), walker:DragItem;
+			if ( from == firstItem ) {
 				walker = from.next;
 				while ( walker ) {
-					move( walker.data,x,y );
+					move( walker,x,y );
 					walker = walker.next;
 				}
-			}
-			else if (from == itemsList.tail )
-			{
+			} else if (from == lastItem ) {
 				walker = from.prev;
 				while ( walker ) {
-					move( walker.data,x,y );
+					move( walker,x,y );
 					walker = walker.prev;
 				}
-			}
-			else
-			{
-				var prev:DListNode = from.prev;
+			} else {
+				var prev:DragItem = from.prev;
 				while ( prev ) {
-					move( prev.data,x,y );
+					move( prev,x,y );
 					prev = prev.prev;
 				}
 				
-				var next:DListNode = from.next;
+				var next:DragItem = from.next;
 				while ( next ) {
-					move( next.data,x,y );
+					move( next,x,y );
 					next = next.next;
 				}
 			}
 		}
 		
-		private static function move( item:DragItem, x:Number, y:Number ):void
-		{
-			if ( item.useRect )
-			{
+		private static function move( item:DragItem, x:Number, y:Number ):void {
+			if ( item.useRect ) {
 				var rect:Rectangle = item.o.content.scrollRect;
 				rect.y = y;
 				rect.x = x;
 				item.o.content.scrollRect = rect;
-			}
-			else 
-			{
+			} else {
 				item.o.y = y;
 				item.o.x = x;
 			}
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	   REMOVE
+		// 																						 MANAGE ITEMS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function remove( name:String ):void
-		{
-			itemsList.getNodeByName( name ).data.dispose();
-			itemsList.remove( name );
+		private static function add( item:DragItem ):void {
+			if (!firstItem) firstItem = lastItem = item;
+			else {
+				lastItem.next = item;
+				item.prev = lastItem;
+				lastItem = item;
+			}
+		}
+		
+		public static function getItem( name:String ):DragItem {
+			var walker:DragItem = firstItem;
+			while ( walker ) {
+				if(walker.name == name ) return walker;
+				walker = walker.next;
+			}
+			return null;
+		}
+		
+		public static function remove( name:String ):void {
+			var i:DragItem = getItem(name);
+			if (i.next) i.next.prev = i.prev;
+			if (i.prev) i.prev.next = i.next;
+			else if (firstItem == i) firstItem = i.next;
+			i = null;
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							  DISPOSE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function dispose():void 
-		{
-			walker = itemsList.head;
-			while ( walker ) 
-			{
-				walker.data.dispose();
+		public static function dispose():void {
+			var walker:DragItem = firstItem;
+			while ( walker ) {
+				walker.dispose();
 				walker = walker.next;
 			}
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							TO STRING
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function toString():String
-		{
-			return itemsList.toString();
-		}
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function manageEvent(evt:CustomEvent):void
-		{
-			switch(evt.type)
-			{
-				case 'onScrollListDrag' :
-					dispatchEvent( new CustomEvent( evt.type, {name:evt.name} ) );
-					break;
+		public static function manageEvent(evt:CustomEvent):void {
+			switch(evt.type) {
+				case 'onScrollListDrag' : dispatchEvent( new CustomEvent( evt.type, {name:evt.name} ) ); break;
 			}
 		}
 	}

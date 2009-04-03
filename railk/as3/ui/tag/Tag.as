@@ -3,73 +3,76 @@
 *  TAG
 * 
 * @author Richard Rodney
-* @version 0.2
+* @version 0.3
 */
 
-package railk.as3.ui.tag {
-	
-	// ___________________________________________________________________________________ IMPORT OBJECT LIST
-	import railk.as3.data.list.*;
-	
-
-	public class Tag {
+package railk.as3.ui.tag 
+{	
+	public class Tag 
+	{	
+		public var next:Tag;
+		public var prev:Tag;
 		
-		//_____________________________________________________________________________________ VARIABLES TAG
-		private var _name                                   :String;
-		private var occurences                              :Number = 0;
+		public var name:String;
+		public var value:Number=0;
+		private var firstFile:FileNode;
+		private var lastFile:FileNode;
 		
-		// _________________________________________________________________________________ VARIABLES LISTES
-		private var fileAssociated                			:DLinkedList;
-		private var walker                                  :DListNode;
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * TAG
+		 */
 		public function Tag( name:String, displayObjectName:String ):void {
-			occurences +=  1;
-			_name = name;
-			fileAssociated = new DLinkedList();
-			fileAssociated.add( [displayObjectName,displayObjectName] );
+			this.name = name;
+			this.addFile( displayObjectName );
 		}
 		
+		public function getFile(name:String):FileNode {
+			var walker:FileNode = lastFile;
+			while (walker) {
+				if(name == walker.name) return walker;
+				walker = walker.prev;
+			}
+			return null;
+		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				             ADD FILE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function addFile( displayObjectName:String ):void {
-			occurences += 1;
-			fileAssociated.add( [displayObjectName,displayObjectName] );
+			var f:FileNode = new FileNode(displayObjectName);
+			if (!firstFile) firstFile = lastFile = f
+			else {
+				lastFile.next = f;
+				f.prev = lastFile;
+				lastFile = f;
+			}
+			value++;
 		}
 		
+		public function removeFile( file:String ):void {
+			var f:FileNode = getFile(name);
+			if (f.next) f.next.prev = f.prev;
+			if (f.prev) f.prev.next = f.next;
+			else if (firstFile == f) firstFile = f.next;
+			f = null;
+		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		  REMOVE FILE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function removeFile( file:String ):Boolean { return fileAssociated.remove( file ); }
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  			  DISPOSE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void {
-			fileAssociated.clear();
-			occurences = 0;
+			firstFile = lastFile = null;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get name():String { return _name; }
-		
-		public function file( file:String ):Boolean {
-			var result:Boolean;
-			if ( fileAssociated.getNodeByName( file ) ) result = true;
-			else result = false;
-			return result;
+		/**
+		 * HAS FILE
+		 */
+		public function hasFile( file:String ):Boolean {
+			if ( getFile(name) ) return true;
+			return false;
 		}
-		
-		public function get value():Number { return occurences; }
+	}
+}
+
+internal class FileNode {
+	public var next:FileNode;
+	public var prev:FileNode;
+	public var name:String;
+	public function FileNode(name:String) {
+		this.name = name;
 	}
 }

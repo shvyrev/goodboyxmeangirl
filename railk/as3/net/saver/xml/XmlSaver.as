@@ -15,20 +15,16 @@
 * 
 */
 
-package railk.as3.net.saver.xml {
-	
-	// _________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.net.saver.xml 
+{
 	import flash.events.EventDispatcher;
 	import flash.utils.ByteArray;
 	import flash.utils.IDataInput;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	import flash.events.Event;
-	
-	// ___________________________________________________________________________________________ IMPORT ZIP
 	import nochump.util.zip.*;
 	
-	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.net.saver.xml.XmlSaverEvent;
 	import railk.as3.net.amfphp.AmfphpClient;
 	import railk.as3.net.amfphp.AmfphpClientEvent;
@@ -36,15 +32,13 @@ package railk.as3.net.saver.xml {
 	import railk.as3.data.parser.Parser;
 	
 
-	public class XmlSaver extends EventDispatcher {
-		
-		//__________________________________________________________________________________ VARIABLES SERVICE
+	public class XmlSaver extends EventDispatcher 
+	{		
 		private var amf                                   :AmfphpClient;
 		private var service                               :FileService;
 		private var requester                             :String = 'xmlSaver';
 		private var loader                                :URLLoader;
 		
-		//_________________________________________________________________________________ VARIABLES RECUPERE
 		private var _name                                 :String;
 		private var _nodes                                :Array;
 		private var _file                                 :String;
@@ -52,19 +46,14 @@ package railk.as3.net.saver.xml {
 		private var _zip                                  :Boolean;
 		private var _updateType                           :String;
 		
-		//_____________________________________________________________________________________ VARIABLES FILE
 		private var xmlFile                               :XML;
 		private var zipFile                               :ZipOutput;
-		
-		//_______________________________________________________________________________  VARIABLES EVENEMENT
-		private var eEvent                                :XmlSaverEvent;
 		
 		
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function XmlSaver( name:String = "undefined", server:String = '', path:String = '' ):void 
-		{
+		public function XmlSaver( name:String = "undefined", server:String = '', path:String = '' ):void {
 			_name = name;
 			amf = new AmfphpClient( server, path,false,'../' );
 			
@@ -99,8 +88,7 @@ package railk.as3.net.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function create( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
-		{
+		public function create( url:String, file:String, nodes:Array, zip:Boolean = false ):void {
 			_url = url;
 			_file = file;
 			_nodes = nodes;
@@ -114,8 +102,7 @@ package railk.as3.net.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function add( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
-		{
+		public function add( url:String, file:String, nodes:Array, zip:Boolean = false ):void {
 			_url = url;
 			_file = file;
 			_nodes = nodes;
@@ -131,8 +118,7 @@ package railk.as3.net.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function remove( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
-		{
+		public function remove( url:String, file:String, nodes:Array, zip:Boolean = false ):void {
 			_url = url;
 			_file = file;
 			_nodes = nodes;
@@ -148,8 +134,7 @@ package railk.as3.net.saver.xml {
 		 * @param	nodes
 		 * @param	zip
 		 */
-		public function update( url:String, file:String, nodes:Array, zip:Boolean = false ):void 
-		{
+		public function update( url:String, file:String, nodes:Array, zip:Boolean = false ):void {
 			_url = url;
 			_file = file;
 			_nodes = nodes;
@@ -162,8 +147,7 @@ package railk.as3.net.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		   	CHECK FILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function checkFile():void 
-		{
+		private function checkFile():void {
 			var toCheck:String
 			if ( _zip) toCheck = _file.split('.')[0] + '.zip';
 			else toCheck = _file;
@@ -173,8 +157,7 @@ package railk.as3.net.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		   	 LOAD FILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function loadFile():void 
-		{
+		private function loadFile():void {
 			var toLoad:String
 			//AmfphpClient.call( new FileService().load( toLoad, (_zip) ? 'binary' : 'xml' ), requester );
 			if ( _zip) {
@@ -197,8 +180,7 @@ package railk.as3.net.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   		   	 SAVE FILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function saveFile( xml:XML ):void 
-		{
+		private function saveFile( xml:XML ):void {
 			if (_zip)
 			{
 				var entryName = _file.split('/')[_file.split('/').length - 1];
@@ -213,9 +195,7 @@ package railk.as3.net.saver.xml {
 				zipFile.finish();	
 				
 				amf.call( new FileService().saveFile( _url+'/'+zipName+'.zip', zipFile.byteArray ), requester);
-			}
-			else 
-			{
+			} else {
 				amf.call( new FileService().saveXml( _url+'/'+_file, xml.toXMLString() ), requester);
 			}	
 		}
@@ -234,63 +214,39 @@ package railk.as3.net.saver.xml {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent(evt:* ):void 
-		{
+		private function manageEvent(evt:* ):void {
 			var args:Object;
-			if ( evt.requester == requester)
-			{
-				switch( evt.type )
-				{
+			if ( evt.requester == requester){
+				switch( evt.type ) {
 					case AmfphpClientEvent.ON_RESULT :
-						switch( evt.service )
-						{
+						switch( evt.service ) {
 							case 'check' :
 								if ( evt.data == true ) loadFile();
 								else create(_url, _file, _nodes, _zip);
-								///////////////////////////////////////////////////////////////
-								args = { info:"problem checking file", data:evt.data };
-								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_CHECK_COMLETE, args );
-								dispatchEvent( eEvent );
-								///////////////////////////////////////////////////////////////
+								dispatchEvent( new XmlSaverEvent( XmlSaverEvent.ON_CHECK_COMLETE, { info:"problem checking file", data:evt.data } ) );
 								break;
 								
 							case 'load' :
 								if ( _zip ) xmlFile = new XML( parseZip( evt.data as ByteArray ) );
 								else xmlFile = new XML( evt.data );
 								updateXmlFile();
-								///////////////////////////////////////////////////////////////
-								args = { info:"load complete" };
-								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_LOAD_COMPLETE, args );
-								dispatchEvent( eEvent );
-								///////////////////////////////////////////////////////////////
+								dispatchEvent( new XmlSaverEvent( XmlSaverEvent.ON_LOAD_COMPLETE, { info:"load complete" } ) );
 								break;
 							
 							case 'saveXml' :
-								///////////////////////////////////////////////////////////////
-								args = { info:"saving xml complete "+evt.data };
-								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_SAVE_XML_COMPLETE, args );
-								dispatchEvent( eEvent );
-								///////////////////////////////////////////////////////////////
+								dispatchEvent( new XmlSaverEvent( XmlSaverEvent.ON_SAVE_XML_COMPLETE, { info:"saving xml complete "+evt.data } ) );
 								//dispose();
 								break;
 								
 							case 'saveFile' :
-								///////////////////////////////////////////////////////////////
-								args = { info:"saving file complete "+evt.data };
-								eEvent = new XmlSaverEvent( XmlSaverEvent.ON_SAVE_FILE_COMPLETE, args );
-								dispatchEvent( eEvent );
-								///////////////////////////////////////////////////////////////
+								dispatchEvent( new XmlSaverEvent( XmlSaverEvent.ON_SAVE_FILE_COMPLETE, { info:"saving file complete "+evt.data } ) );
 								//dispose();
 								break;
 						}
 						break;
 						
 					case AmfphpClientEvent.ON_ERROR :
-						///////////////////////////////////////////////////////////////
-						args = { info:"problem with "+ evt.service +" file" };
-						eEvent = new XmlSaverEvent( XmlSaverEvent.ON_ERROR, args );
-						dispatchEvent( eEvent );
-						///////////////////////////////////////////////////////////////
+						dispatchEvent( new XmlSaverEvent( XmlSaverEvent.ON_ERROR, { info:"problem with "+ evt.service +" file" } ));
 						dispose();
 						break;
 						
@@ -309,8 +265,7 @@ package railk.as3.net.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				        	   DISPOSE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose():void 
-		{
+		public function dispose():void {
 			delListeners();
 			amf.close();
 		}
@@ -319,8 +274,7 @@ package railk.as3.net.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						CREATE XMLFILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function createXmlFile():void 
-		{
+		private function createXmlFile():void {
 			var subtype:String;
 			var tmpStr:String;
 			XML.ignoreProcessingInstructions = false;
@@ -387,8 +341,7 @@ package railk.as3.net.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				CREATE XMLFILE SUBNODE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function subNode(node:*, type:String):String
-		{
+		private function subNode(node:*, type:String):String {
 			var subtype:String;
 			var tmpStr:String;
 			
@@ -423,8 +376,7 @@ package railk.as3.net.saver.xml {
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				        UPDATE XMLFILE
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function updateXmlFile():void 
-		{
+		private function updateXmlFile():void {
 			var updated:Boolean = false;
 			if ( _nodes[0].root == 'atom' ) xmlFile = removeXmlNamespace( xmlFile );
 			else if ( _nodes[0].root == 'rss' ) xmlFile = rssToXml( xmlFile );
@@ -530,8 +482,7 @@ package railk.as3.net.saver.xml {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	PARSE TO NODE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function parseToNode( xmlFile:XML ):Array
-		{
+		private static function parseToNode( xmlFile:XML ):Array {
 			var result:Array = new Array();
 			var nbNodes:Number = getNbChildrens( xmlFile );			
 			for ( var i:int = 0; i<nbNodes; i++ ) {

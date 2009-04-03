@@ -14,7 +14,6 @@ package railk.as3.data.foil
 	
 	public class Deserialize
 	{
-		//________________________________________________________________________________________ VARIABLES
 		public var type:String;
 		public var name:String;
 		public var info:String;
@@ -30,8 +29,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 GET INSTANCE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function getInstance():Deserialize 
-		{
+		public static function getInstance():Deserialize {
 			return Singleton.getInstance(Deserialize);
 		}
 		
@@ -44,8 +42,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		 FEED
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function feed( rawData:String ):Object
-		{
+		public function feed( rawData:String ):Object {
 			if( root ) root.clear();
 			this.rawData = rawData;
 			toParse = rawData.replace(/[\t|\n]/mg, '');
@@ -61,8 +58,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					  PARSE FILE INFO
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function parseInfos( data:String ):void
-		{
+		private function parseInfos( data:String ):void {
 			var type:RegExp = /type[ ]{0,}:['|"][a-zA-Z0-9 -+=@#$£&%§_:,;'?\/!.~"çêéèàùïîöô\[\]()<>]{0,}['|"]/;
 			var name:RegExp = /name[ ]{0,}:['|"][a-zA-Z0-9 -+=@#$£&%§_:,;'?\/!.~"çêéèàùïîöô\[\]()<>]{0,}['|"]/;
 			var info:RegExp = /info[ ]{0,}:['|"][a-zA-Z0-9 -+=@#$£&%§_:,;'?\/!.~"çêéèàùïîöô\[\]()<>]{0,}['|"]/;
@@ -79,8 +75,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						PARSE CONTENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function parseObjects( data:Array, parent:TreeNode ):void
-		{
+		private function parseObjects( data:Array, parent:TreeNode ):void {
 			var content:String;
 			var beginBloc:RegExp = /[a-zA-Z0-9 ]{0,}:[\r]{0,}\{/;
 			
@@ -97,13 +92,11 @@ package railk.as3.data.foil
 			}
 		}
 		
-		private function parseContent( data:String, parent:TreeNode ):void
-		{
+		private function parseContent( data:String, parent:TreeNode ):void {
 			var type:String;
 			var content:Array = ['Object', 'Function', 'String', 'Array', 'Number', 'Custom', 'Boolean'];
 			var classes:Array = [ FoilObject, FoilFunction, FoilString, FoilArray, FoilNumber, FoilCustom, FoilBoolean];
-			for (var i:int = 0; i < content.length ; i++) 
-			{
+			for (var i:int = 0; i < content.length ; i++) {
 				type = content[i];
 				content[i] = getData(data, type );
 				data  = reduceData( content[i], data );
@@ -117,8 +110,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							 GET DATA
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getData( data:String, type:String ):Array
-		{
+		private function getData( data:String, type:String ):Array {
 			var result:Array = [];
 			result = this['get'+type+'s']( data );
 			return result;
@@ -127,8 +119,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  GET STRINGS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getStrings( data:String ):Array
-		{
+		private function getStrings( data:String ):Array {
 			var result:Array = [];
 			var reg:RegExp = /[a-zA-Z0-9 ]{1,}:['|\"]/;
 			var pos:int = data.search(reg);
@@ -142,8 +133,7 @@ package railk.as3.data.foil
 			var stringType:String = '';
 			
 			var char:String;
-			loop:while ( pos < data.length )
-			{
+			loop:while ( pos < data.length ) {
 				char = data.charAt(pos);
 				if ( !char.search(bChar) )
 				{
@@ -152,11 +142,9 @@ package railk.as3.data.foil
 				}
 				if ( !isString && char == '[') isArray = true;
 				if ( !isString && char == ']') isArray = true;
-				if ( isString )
-				{
+				if ( isString ) {
 					var toCheck:String=char+data.charAt(pos+1);
-					if ( !toCheck.search(eChar) && char == stringType && !isArray ) 
-					{
+					if ( !toCheck.search(eChar) && char == stringType && !isArray ) {
 						result.push( { data:data.slice(beginPos, pos + 1 ), begin:beginPos, end: pos+1} );
 						isString = false;
 						stringType = '';
@@ -174,8 +162,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   GET ARRAYS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getArrays( data:String ):Array
-		{
+		private function getArrays( data:String ):Array {
 			var result:Array = [];
 			var reg:RegExp = /[a-zA-Z0-9 ]{1,}:\[/;
 			var pos:int = data.search(reg);
@@ -186,15 +173,12 @@ package railk.as3.data.foil
 			var isArray:Boolean = false;
 			
 			var char:String;
-			loop:while ( pos < data.length )
-			{
+			loop:while ( pos < data.length ) {
 				char = data.charAt(pos);
 				if ( !char.search(bChar) )isArray = true;
-				if ( isArray )
-				{
+				if ( isArray ) {
 					var toCheck:String=char+data.charAt(pos+1);
-					if ( !toCheck.search(eChar) ) 
-					{
+					if ( !toCheck.search(eChar) ) {
 						result.push( { data: data.slice(beginPos, pos + 1 ), begin:beginPos, end: pos + 1 } );
 						isArray = false;
 						
@@ -211,8 +195,7 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  GET NUMBERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getNumbers( data:String ):Array
-		{
+		private function getNumbers( data:String ):Array {
 			var result:Array = [];
 			var reg:RegExp = /[a-zA-Z0-9 ]{1,}:/;
 			var pos:int = data.search(reg);
@@ -223,8 +206,7 @@ package railk.as3.data.foil
 			var isNumber:Boolean = false;
 			
 			var char:String;
-			loop:while ( pos < data.length )
-			{
+			loop:while ( pos < data.length ) {
 				char = data.charAt(pos);
 				if ( !char.search(bChar) ) isNumber = true;
 				if ( isNumber )
@@ -417,12 +399,10 @@ package railk.as3.data.foil
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							UTILITIES
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function reduceData( data:Array, string:String ):String
-		{
+		private function reduceData( data:Array, string:String ):String {
 			var result:String = '';
 			var reduceLength:int=0;
-			for (var i:int = 0; i < data.length ; i++) 
-			{
+			for (var i:int = 0; i < data.length ; i++) {
 				result += string.slice(0, data[i].begin-reduceLength);
 				result += string.slice(data[i].end - reduceLength, string.length );
 				string = result;
@@ -432,23 +412,19 @@ package railk.as3.data.foil
 			return string;
 		}
 		
-		private function createData( data:Array, classe:Class, parent:TreeNode ):void
-		{
-			for (var i:int = 0; i < data.length ; i++) 
-			{
+		private function createData( data:Array, classe:Class, parent:TreeNode ):void {
+			for (var i:int = 0; i < data.length ; i++) {
 				var forNode:Array = (data[i].data as String).split(':');
 				node = new TreeNode( forNode[0].replace(/[\r\t\n]/mg, ''), (new classe(forNode[1])).data, parent );
 			}
 		}
 		
-		private function exportData( from:TreeNode ):Array
-		{
+		private function exportData( from:TreeNode ):Array {
 			var result:Array = new Array();
 			var obj:Object ={};
 			if( from.hasChildren()) {
 				var walker:DListNode = from.childs.head;
-				while (walker)
-				{
+				while (walker) {
 					obj ={}
 					var node:TreeNode = walker.data;
 					if (node.hasChildren()) {
@@ -461,20 +437,17 @@ package railk.as3.data.foil
 					}
 					walker = walker.next;
 				}
-			}
-			else {
+			} else {
 				obj[from.name] = from.data
 				result.push( obj )
 			}
 			return result;
 		}
 		
-		private function subObject( objects:DLinkedList ):Object
-		{
+		private function subObject( objects:DLinkedList ):Object {
 			var result:Object ={};
 			var walker:DListNode = objects.head;
-			while (walker)
-			{
+			while (walker) {
 				var node:TreeNode = walker.data;
 				if (node.hasChildren()) result[node.name] =subObject( node.childs );
 				else result[node.name] = node.data;

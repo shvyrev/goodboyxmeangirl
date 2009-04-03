@@ -7,66 +7,53 @@
 * @version 0.1
 */
 
-package railk.as3.ui.scrollList {
-	
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.ui.scrollList 
+{	
 	import flash.display.Stage;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	
-	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.display.GraphicShape;
+	import railk.as3.display.graphicShape.RectangleShape;
 	import railk.as3.event.CustomEvent;
-	import railk.as3.data.list.DLinkedList;
-	import railk.as3.data.list.DListNode;
 	import railk.as3.utils.Clone;
 	
-	
-	public class ScrollList extends Sprite {
+	public class ScrollList extends Sprite 
+	{	
+		public var next			:ScrollList;
+		public var prev			:ScrollList;
 		
-		// _____________________________________________________________________________ VARIABLES SCROLLIST
-		public var orientation                                  :String;
-		public var size	                                     	:Number;
-		public var oldSize	                                    :Number=0;
-		public var espacement                                   :int;
-		public var full                                         :Boolean = false;
-		public var engine                                       :Class;
+		public var vertical		:Boolean;
+		public var size	     	:Number;
+		public var oldSize	  	:Number=0;
+		public var espacement 	:int;
+		public var full       	:Boolean = false;
 		
-		// _______________________________________________________________________________ VARIABLES CONTENT
-		public var content                                      :Sprite;
-		private var fond   										:GraphicShape;
-		public var objectsSize                             		:Number;
-		public var objects                                     	:DLinkedList;
-		private var walker                                      :DListNode;
-		private var rectSize                                    :Number = 1;
-		private var delta                                       :Number = 70;
-		private var oldX	                                	:Number;
-		private var oldY	                                	:Number;
-		private var bound                                       :Boolean = false;
-		private var linked                                      :Boolean = false;
-		private var oldStageH                  					:Number;
-		private var oldStageW                  					:Number;
-		private var lastTail                                    :Object;
-		private var lastHead                                    :Object;
-		private var headClone                                   :*;
-		private var tailClone                                   :*;
+		public var content    	:Sprite;
+		private var fond   		:RectangleShape;
+		public var objectsSize	:Number;
+		private var rectSize  	:Number = 1;
+		private var delta     	:Number = 70;
+		private var oldX		:Number;
+		private var oldY		:Number;
+		private var bound     	:Boolean = false;
+		private var linked    	:Boolean = false;
+		private var oldStageH 	:Number;
+		private var oldStageW 	:Number;
+		private var lastTail  	:Object;
+		private var lastHead  	:Object;
+		private var headClone 	:*;
+		private var tailClone 	:*;
+		
+		public var firstItem    :ScrollListItem;
+		public var lastItem     :ScrollListItem;
+		public var walker	    :ScrollListItem;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 * @param	orientation   'V'|'H'
-		 * @param	width
-		 * @param	height
-		 * @param	espacement
-		 */
-		public function ScrollList( name:String='', engine:Class=null, orientation:String='V', size:Number=1, espacement:int=1, linked=false, bound=true ):void 
-		{	
+		public function ScrollList( name:String='', vertical:Boolean=true, size:Number=1, espacement:int=1, linked=false, bound=true ):void {	
 			this.name = name;
 			this.orientation = orientation;
 			this.espacement = espacement;
@@ -75,80 +62,79 @@ package railk.as3.ui.scrollList {
 			this.linked = linked;
 			this.engine = engine;
 			
-			objects = new DLinkedList();			
 			content = new Sprite();
 			addChild( content );
 			
-			if ( orientation == 'V' ) content.scrollRect = new Rectangle( 0,0,rectSize,size );
-			else if ( orientation == 'H' ) content.scrollRect = new Rectangle( 0, 0, size, rectSize );
+			if ( vertical ) content.scrollRect = new Rectangle( 0,0,rectSize,size );
+			else content.scrollRect = new Rectangle( 0, 0, size, rectSize );
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     ADD OBJECT TO THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 * @param	o
-		 */
-		public function add( name:String,  o:* ):void 
-		{ 
-			objects.add( [ name, new ScrollListItem( name, o, this.name ) ] );
-			objects.getNodeByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
-			lastTail = { x:objects.tail.data.x + objects.tail.data.width + espacement, y:objects.tail.data.y + objects.tail.data.height + espacement };
+		public function add( name:String,  o:* ):void {
+			var item:ScrollListItem = new ScrollListItem( name, o, this.name );
+			if (!firstItem) firstItem = lastItem = item;
+			else {
+				lastItem.next = item;
+				item.prev = lastItem;
+				lastItem = item;
+			}
+			item.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
+			lastTail = { x:lastItem.x + lastItem.width + espacement, y:lastItem.y + lastItem.height + espacement };
 		}
 		
-		public function insertBefore( name:String, o:*):void
-		{
-			objects.insertBefore( objects.head, name, new ScrollListItem( name, o, this.name ));
-			objects.getNodeByName( name ).data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
-			lastTail = { x:objects.tail.data.x + objects.tail.data.width + espacement, y:objects.tail.data.y + objects.tail.data.height + espacement };
+		public function insertBefore( name:String, o:*):void {
+			var item:ScrollListItem = new ScrollListItem( name, o, this.name );
+			firstItem.prev = item;
+			item.next = firstItem;
+			firstItem = item;
+			item.data.addEventListener( 'onScrollItemChange', manageEvent, false, 0, true );
+			lastTail = { x:lastItem.x + lastItem.width + espacement, y:lastItem.y + lastItem.height + espacement };
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	  REMOVE OBJECT TO THE SCROLLLIST
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 */
-		public function remove( name:String):Boolean 
-		{ 
-			objectsSize -= objects.getNodeByName( name ).data.height + espacement;
-			objects.getNodeByName( name ).data.removeEventListener( 'onScrollItemChange', manageEvent);
-			return  objects.remove( name );
-		}	
+		public function remove( name:String):void { 
+			var item:ScrollListItem = getItem(name);
+			objectsSize -= item.height + espacement;
+			item.removeEventListener( 'onScrollItemChange', manageEvent);
+			if (item.next) item.next.prev = item.prev;
+			if (item.prev) item.prev.next = item.next;
+			else if (firstItem == item) firstItem = item.next;
+			item = null;
+		}
+		
+		private function getItem( name:String ):ScrollListItem {
+			walker = firstItem;
+			while ( walker ) {
+				if (walker.name == name ) return walker;
+				walker = walker.next;
+			}
+			return null;
+		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		CREATE THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function create():void 
-		{
+		public function create():void {
 			var place = 0;
-			walker = objects.head;
-			while ( walker ) 
-			{
-				var obj:* = walker.data.o;
+			walker = firstItem;
+			while ( walker ) {
+				var obj:* = walker.o;
 				content.addChild( obj );
-				if ( orientation == 'V' )
-				{
+				if ( vertical ){
 					if ( obj.width > rectSize ) {
 						rectSize = obj.width;
 						content.scrollRect = new Rectangle( 0,0,rectSize,size );
 					}
-					
 					obj.y = place;
 					place += obj.height + espacement;
-				}
-				else if ( orientation == 'H' )
-				{
+				} else {
 					if ( obj.height > rectSize ) {
 						rectSize = obj.height;
 						content.scrollRect = new Rectangle( 0,0,size,rectSize );
 					}
-					
 					obj.x = place;
 					place += obj.width + espacement;
 				}
@@ -156,9 +142,9 @@ package railk.as3.ui.scrollList {
 			}
 			objectsSize = place;
 			
-			fond = new GraphicShape();
-			if ( orientation == 'V' ) fond.rectangle(0xff0000, 0, 0, rectSize, size );
-			else if ( orientation == 'H' ) fond.rectangle(0xffffff, 0, 0, size , rectSize);
+			fond = new RectangleShape();
+			if ( vertical ) fond.rectangle(0xff0000, 0, 0, rectSize, size );
+			else fond.rectangle(0xffffff, 0, 0, size , rectSize);
 			fond.alpha = 0;
 			addChildAt(fond, 0);
 			
@@ -166,47 +152,36 @@ package railk.as3.ui.scrollList {
 			this.oldStageW = stage.stageWidth;
 			this.oldX = content.scrollRect.x;
 			this.oldY = content.scrollRect.y;
-			if ( objects.tail.data.y >= size - objects.tail.data.height - espacement ) full = true;
-			lastHead = { x:objects.head.data.x - (objects.head.data.width + espacement), y:objects.head.data.y - (objects.head.data.height + espacement) };
-			
-			
-			///////////////////////////////
+			if ( lastItem.y >= size - lastItem.height - espacement ) full = true;
+			lastHead = { x:firstItem.x - (firstItem.width + espacement), y:firstItem.y - (firstItem.height + espacement) };
 			initListeners();
-			///////////////////////////////
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		   GESTION DES CLONES
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function enableClones( head:*, tail:*, first:Boolean=false):void
-		{
-			if ( head )
-			{
+		public function enableClones( head:*, tail:*, first:Boolean=false):void {
+			if ( head ){
 				headClone = Clone.deep( head );
 				addClone( 'headclone', headClone, first );
 			}
-			if ( tail )
-			{
+			if ( tail ) {
 				tailClone = Clone.deep( tail );
 				addClone( 'tailclone', tailClone, first );
 			}	
 		}
 		
-		private function addClone( name:String, clone:*, first:Boolean ):void
-		{
+		private function addClone( name:String, clone:*, first:Boolean ):void {
 			if ( name == 'headclone' ) {
 				var h:Number = ((first)? clone.height+espacement : 0);
-				clone.y =  objects.head.data.y -( h );
+				clone.y =  firstItem.y -( h );
 			}
-			else if ( name == 'tailclone' ) {
-				clone.y = objects.tail.data.y + (objects.tail.data.height + espacement);
-			}
+			else if ( name == 'tailclone' ) clone.y = lastItem.y + (lastItem.height + espacement);
 			clone.name = name;
 			content.addChild( clone );
 		}
 		
-		public function removeClones():void
-		{
+		public function removeClones():void {
 			if (headClone != null) {
 				content.removeChild( headClone );
 				headClone = null;
@@ -220,39 +195,26 @@ package railk.as3.ui.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     		UPDATE THE SCROLLLIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function update( name:String, o:*, headClone:*=null, tailClone:*=null, head:Boolean = false ):void 
-		{	
-			
-			//////////////////////////////////////////////////////////
-			if ( linked ) removeClones();
-			//////////////////////////////////////////////////////////
-			
-			if (head)
-			{
+		public function update( name:String, o:*, headClone:*=null, tailClone:*=null, head:Boolean = false ):void {				
+			if ( linked ) removeClones();			
+			if (head) {
 				this.content.addChild( o );
 				if ( objects.head ) {
-					o.y = objects.head.data.y - espacement - objects.head.data.height;
+					o.y = firstItem.y - espacement - firstItem.height;
 					insertBefore( name, o );
-				}
-				else {
+				} else {
 					o.y = lastHead.y;
 					add( name, o );
 				}
-			}
-			else 
-			{
+			} else {
 				this.content.addChild( o );
-				if ( objects.tail ) o.y = objects.tail.data.y + objects.tail.data.height + espacement
+				if ( lastItem ) o.y = lastItem.y + lastItem.height + espacement;
 				else o.y =  lastTail.y;
 				add( name, o );
 			}
-			objectsSize += o.height + espacement;
-			
-			//////////////////////////////////////////////////////////
+			objectsSize += o.height + espacement;			
 			if ( linked ) enableClones( headClone, tailClone, head );
-			//////////////////////////////////////////////////////////
 		}
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   GESTION LISTERNERS
@@ -277,18 +239,17 @@ package railk.as3.ui.scrollList {
 			if(!linked) stage.removeEventListener( Event.RESIZE, manageEvent );
 		}
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	    			    	   RESIZE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function resize():void {
-			if ( orientation == 'V' ) {
+			if ( vertical ) {
 				size = (size * stage.stageHeight) / oldStageH;
 				oldStageH = stage.stageHeight;
 				fond.rectangle(0xff0000, 0, 0, rectSize, size );
 				content.scrollRect = new Rectangle( 0, 0, rectSize, size );
 			}
-			else if ( orientation == 'H' ) {
+			else {
 				size = (size * stage.stageWidth) / oldStageW;
 				oldStageW = stage.stageWidth;
 				fond.rectangle(0xffffff, 0, 0, size , rectSize);
@@ -305,13 +266,11 @@ package railk.as3.ui.scrollList {
 			this.removeChild( content );
 			this.removeChild( fond );
 			
-			walker = objects.head;
-			while ( walker )
-			{
+			walker = firstItem;
+			while ( walker ) {
 				walker.data.dispose();
 				walker = walker.next;
 			}
-			
 			objects = null;
 			content = null;
 			fond = null;
@@ -320,8 +279,7 @@ package railk.as3.ui.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							TO STRING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		override public function toString():String
-		{
+		override public function toString():String {
 			return '[ SCROLL_LIST > ' + name + ', ( orientation : ' + orientation + ' ), ( size : ' + size + ' ), ( espacement : ' + espacement + ' ) ]';
 		}
 		
@@ -329,84 +287,85 @@ package railk.as3.ui.scrollList {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	     				 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ):void 
-		{
-			var args:Object = new Object();
-			var eEvent:*;
-			var rect:Rectangle = content.scrollRect;
-			var value:Number;
-			switch( evt.type )
-			{
-				case 'onScrollItemChange' :
-					dispatchEvent( new CustomEvent( evt.type, { item:evt.item}) );
-					break;
-					
+		private function manageEvent( evt:* ):void {
+			var rect:Rectangle = content.scrollRect, value:Number;
+			switch( evt.type ) {
+				case 'onScrollItemChange' : dispatchEvent( new CustomEvent( evt.type, { item:evt.item}) ); break;
 				case Event.ENTER_FRAME :
-					if ( orientation == "V" ) 
-					{
-						if ( oldY != rect.y )
-						{
-							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:rect.x, y:rect.y  } ) );
-						}
-					}
-					else if ( orientation == "H" ) 
-					{
-						if ( oldX != rect.x )
-						{
-							dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:rect.x, y:rect.y } ) );
-						}
+					if ( vertical ) if ( oldY != rect.y ) dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:rect.x, y:rect.y  } ) );
+					else {
+						if ( oldX != rect.x ) dispatchEvent( new CustomEvent( 'onScrollListMove', { item:this, x:rect.x, y:rect.y } ) );
 					}
 					break;
-				
-				case Event.RESIZE :
-					if(!linked) resize();
-					break;
-				
+				case Event.RESIZE : if(!linked) resize(); break;
 				case MouseEvent.ROLL_OVER :
 					stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true );
-					///////////////////////////////////////////////////////////////
-					args = { info:name+' height change', name:this.name };
-					eEvent = new CustomEvent( 'onScrollListOver', args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
+					dispatchEvent( new CustomEvent( 'onScrollListOver', { info:name+' height change', name:this.name } ) );
 					break;
-					
 				case MouseEvent.ROLL_OUT :
 					stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent );
-					///////////////////////////////////////////////////////////////
-					args = { info:name+' height change', name:this.name };
-					eEvent = new CustomEvent( 'onScrollListOut', args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
+					dispatchEvent( new CustomEvent( 'onScrollListOut', { info:name+' height change', name:this.name } );
 					break;
-					
 				case MouseEvent.MOUSE_WHEEL :
-					if ( !bound )
-					{
-						if ( orientation == "V" ) {
-							if ( evt.delta != 0) { engine.to( rect, 1, { y:rect.y + evt.delta * delta }, { onUpdate:function(){ content.scrollRect = rect; } } ); }
-						}
-						else if ( orientation == "H" ) {
+					if ( !bound ) {
+						if ( vertical ) if ( evt.delta != 0) { engine.to( rect, 1, { y:rect.y + evt.delta * delta }, { onUpdate:function(){ content.scrollRect = rect; } } ); }
+						else {
 							if ( evt.delta != 0) { engine.to( rect, 1, { x:rect.x + evt.delta * delta }, { onUpdate:function(){ content.scrollRect = rect; } } ); }
 						}
-					}
-					else
-					{
-						if (orientation == "V" ) 
-						{
-							if ( rect.y >= 0 + evt.delta * delta  && rect.y <= rect.height + evt.delta * delta  ) engine.to( rect, .4, { y: rect.y - (evt.delta * delta)} , {  onUpdate:function(){ content.scrollRect = rect; } } );
-							else if ( rect.y < 0 + evt.delta * delta ) engine.to( rect, .4, { y: 0}, { onUpdate:function(){ content.scrollRect = rect; } } );
-							else if ( rect.y > rect.height + evt.delta * delta ) engine.to( rect, .4, { y:rect.height }, { onUpdate:function(){ content.scrollRect = rect; } } );
-						}
-						else if (orientation == "H" ) 
-						{
-							if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) engine.to( rect, .4, { x: rect.x - (evt.delta * delta)} , { onUpdate:function(){ content.scrollRect = rect; } } );
-							else if( rect.x < 0 + evt.delta*delta ) engine.to( rect, .4, { x: 0 }, { onUpdate:function(){ content.scrollRect = rect; } } );
-							else if ( rect.x > rect.height+evt.delta*delta ) engine.to( rect, .4, { x:rect.width }, { onUpdate:function(){ content.scrollRect = rect; } } );
+					} else {
+						if (vertical ) {
+							if ( rect.y >= 0 + evt.delta * delta  && rect.y <= rect.height + evt.delta * delta  ) Engine.to( rect,.4,NaN,rect.y-(evt.delta * delta),function(){ content.scrollRect = rect; });
+							else if ( rect.y < 0 + evt.delta * delta ) Engine.to( rect,.4,NaN,0,function(){ content.scrollRect = rect; });
+							else if ( rect.y > rect.height + evt.delta * delta ) Engine.to( rect,.4,NaN,rect.height,function(){ content.scrollRect = rect; });
+						} else {
+							if ( rect.x >= 0 + evt.delta*delta && rect.x <= rect.width + evt.delta*delta ) Engine.to( rect,.4,rect.x-(evt.delta * delta),NaN,function(){ content.scrollRect = rect; });
+							else if( rect.x < 0 + evt.delta*delta ) Engine.to( rect,.4,0,NaN,function(){ content.scrollRect = rect; });
+							else if ( rect.x > rect.height+evt.delta*delta ) Engine.to( rect,.4,rect.width,NaN,function(){ content.scrollRect = rect; });
 						}
 					}
 					break;
 			}
 		}
 	}
+}
+
+import flash.utils.getTimer;
+internal class Engine {
+	private var t:Object;
+	private var stm:Number;
+	private var dr:Number
+	private var props:Array=[];
+	private var update:Function;
+	
+	public static function to(t:Object,dr:Number, x:Number=NaN, y:Number=NaN, update:Function=null):Engine {
+		return new Engine(t,dr,x,y,update);
+	}
+	
+	public function Engine(t:Object,dr:Number,x:Number,y:Number,update:Function){
+		this.stm = getTimer()*.001;
+		this.t = t;
+		this.dr = dr;
+		this.update = update;
+		this.complete = complete;
+		if(!isNaN(x)) props.push( {p:'x',s:t.x,c:x-t.x} );
+		if(!isNaN(y)) props.push( {p:'y',s:t.y,c:y-t.y} );
+		t.addEventListener('enterFrame', u );
+	}
+
+	private function u(evt:*):void {
+		var tm:Number = (getTimer()*.001-stm);
+		if ( up(((tm>=dr)?1:((tm<=0)?0:e(tm,0,1,dr))))==1 ){
+			t.removeEventListener('enterFrame', u );
+			props = null;
+		}
+	}
+	
+	private function up(r:Number):int{
+		var i:int=props.length;
+		while( --i > -1 ) t[props[i].p] = props[i].s+props[i].c*r+1e-18-1e-18;
+		if (update!=null) update.apply();
+		return r;
+	}
+	
+	private function e(t:Number,b:Number,c:Number,d:Number):Number { return c*t/d+b; }
 }

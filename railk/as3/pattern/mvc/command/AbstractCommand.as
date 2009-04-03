@@ -13,25 +13,35 @@ package railk.as3.pattern.mvc.command
 	
 	public class AbstractCommand implements ICommand
 	{
-		protected var actions:DLinkedList;
+		protected var firstAction:Action;
+		protected var lastAction:Action;
 		protected var proxy:IProxy;
+		public var type:String;
 		
-		public function AbstractCommand( proxy:IProxy )
-		{
+		public function AbstractCommand( type:String,proxy:IProxy ) {
+			this.type = type;
 			this.proxy = proxy;
-			actions = new DLinkedList();
 		}
 		
-		public function addAction( type:String, action:Function, actionParam:Array=null ):void
-		{
-			actions.add([type, null, '', action, {actionParam:actionParam}]);
+		public function addAction( type:String, action:Function, actionParams:Array=null ):void {
+			var action:Action = new Action(type, action, actionParams);
+			if (!firstAction) firstAction = lastAction = action;
+			else {
+				lastAction.next = action;
+				action.prev = lastAction;
+				lastAction = action;
+			}
 		}
 		
-		public function execute( name:String ):void
-		{
-			var node:ObjectNode = actions.getNodeByName( name );
-			node.action.apply(null, node.args.actionParam);
+		public function getAction(type:String):Action {
+			var walker:Action = firstAction;
+			while ( walker ) {
+				if ( walker.type == type ) return walker;
+				walker = walker.next;
+			}
+			return null;
 		}
 		
+		public function execute( name:String ):void{ getAction(type).apply(); }
 	}
 }

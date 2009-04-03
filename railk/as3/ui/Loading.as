@@ -5,9 +5,8 @@
 * @author RICHARD RODNEY
 * @version 0.3
 */
-package railk.as3.ui {
-	
-	// ___________________________________________________________________ import flash
+package railk.as3.ui 
+{
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.display.Graphics;
@@ -16,22 +15,19 @@ package railk.as3.ui {
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	// ___________________________________________________________________ import Railk
 	import railk.as3.display.DSprite;
 	import railk.as3.display.GraphicShape;
 	import railk.as3.display.BitmapConvertor;
 	import railk.as3.display.RegistrationPoint;
 	
 	
-	public dynamic class Loading extends RegistrationPoint {	
-		
-		//____________________________________________________________________ variables rapatriées
+	public dynamic class Loading extends RegistrationPoint 
+	{	
 		private var _radius                  :Number;
 		private var _color                   :Number;
 		private var _epaisseur	             :Number;
 		private var _percent                 :Number;
 		
-		//____________________________________________________________________ variables
 		private var current                 :String;
 		private var barCont                 :DSprite;
 		private var bar                     :GraphicShape;
@@ -50,7 +46,9 @@ package railk.as3.ui {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function Loading(){}
+		public function Loading() { 
+			super();
+		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -63,8 +61,7 @@ package railk.as3.ui {
 		* @param	innerRadius
 		* @return
 		*/
-		public function cercleLoading(colors:Object, radius:Number, innerRadius:Number):void 
-		{
+		public function cercleLoading(colors:Object, radius:Number, innerRadius:Number):void {
 			//--
 			current = 'cercle';
 			_radius = radius;
@@ -309,8 +306,5 @@ package railk.as3.ui {
 			else if( current == 'barre' ) { bar.width =  (value*barFd.width)/100; }
 			else if( current == 'texte' ) { texte.appendText(''); texte.text = String(value); }
 		}
-		
-
 	}
-	
 }

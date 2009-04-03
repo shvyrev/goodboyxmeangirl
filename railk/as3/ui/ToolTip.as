@@ -9,23 +9,18 @@
 
 package railk.as3.ui
 {
-	// ________________________________________________________________________________________ IMPORT FLASH
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Point;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.display.DSprite;
 	import railk.as3.display.GraphicShape;
-	import railk.as3.display.RegistrationPoint;
-	import railk.as3.tween.process.*;
-	
+	import railk.as3.display.RegistrationPoint;	
 	
 	public class ToolTip extends RegistrationPoint
 	{
-		// __________________________________________________________________________________ VARIABLES BULLE
 		private var bulle                          :GraphicShape;
 		private var triangle                       :GraphicShape;
 		private var info                           :DSprite;
@@ -49,7 +44,6 @@ package railk.as3.ui
 		private var _triPoints                     :Array;
 		private var _triPlace                      :String;
 		
-		// _______________________________________________________________________________ VARIABLES CONTROLE
 		private var engaged                        :Boolean = false;
 		
 		
@@ -73,8 +67,7 @@ package railk.as3.ui
 		 * @param	triPlace       place of the marker top | bottom | left | right
 		 * 
 		 */
-		public function ToolTip( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int = 0, dropShadow:Boolean = false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' )
-		{
+		public function ToolTip( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int = 0, dropShadow:Boolean = false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' ) {
 			_type = type;
 			_thickness = thickness;
 			_orientation = orientation;
@@ -229,27 +222,22 @@ package railk.as3.ui
 		
 		public function set texte( value:String ):void {
 			txt.appendText( '' );
-			Process.to( txt, .3, { text:value }, { onUpdate:function()
-			{ 
-				var add:int=0;
-				if ( txt.textWidth >= 20 ) 
-				{
-					add = 20;
-					Process.to( triangle, 0, { alpha:1 } );
-					engaged = false;
+			txt.text = value;
+			var add:int=0;
+			if ( txt.textWidth >= 20 ) {
+				add = 20;
+				triangle.alpha = 1;
+				engaged = false;
+			} else {
+				if(_tri && !engaged ){
+					triangle.alpha = 0;
+					engaged = true;
 				}	
-				else
-				{
-					if(_tri && !engaged )
-						Process.to( triangle, .2, { alpha:0 } );
-						engaged = true;
-				}		
-						
-				bulle.roundRectangle( bulleColor, 0, 0, txt.textWidth+add, _height, _corner, _corner );
-				if (_tri) 
-					placeTriangle( _triPlace );
-				_width = bulle.width;	
-			} } );
+			}		
+			
+			bulle.roundRectangle( bulleColor, 0, 0, txt.textWidth+add, _height, _corner, _corner );
+			if (_tri) placeTriangle( _triPlace );
+			_width = bulle.width;	
 			_texte = value;
 		}
 		

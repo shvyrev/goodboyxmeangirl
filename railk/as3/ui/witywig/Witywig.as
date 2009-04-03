@@ -29,15 +29,14 @@ package railk.as3.ui.witywig
 		
 		private static var _activationKey:int;
 		private static var reservedActions:Object;
-		private static var activated:Boolean = false;
+		private static var activated:Boolean;
 		private static var datas:Dictionary;
 		private static var termsRelation:Dictionary;
 		
 		private static var textfield:Text;
 		private static var underfield:Text;
-		private static var decorated:Boolean = false;
+		private static var decorated:Boolean;
 		
-		private static var eEvent:WitywigEvent;
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   GESTION DES LISTENERS DE CLASS
@@ -60,8 +59,7 @@ package railk.as3.ui.witywig
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   							 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( stage:Stage, activationKey:String=SPACEBAR ):void 
-		{
+		public static function init( stage:Stage, activationKey:String=SPACEBAR ):void {
 			_activationKey = int(activationKey);
 			stage.addEventListener( KeyboardEvent.KEY_DOWN, manageEvent, false, 0, true );
 		}
@@ -69,8 +67,7 @@ package railk.as3.ui.witywig
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   			  DECORATE MOVIE CLIP
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function decorate( executeBox:Object ):void 
-		{
+		public static function decorate( executeBox:Object ):void {
 			executeBox.alpha = 0;
 			executeBox.visible = false;
 			textfield = executeBox.getChildByName('text');
@@ -84,16 +81,12 @@ package railk.as3.ui.witywig
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function execute( method:String, ...args ):* {
 			var result:*;
-			loop:for ( var a in reservedActions )
-			{
-				if ( method == a )
-				{
+			loop:for ( var a in reservedActions ){
+				if ( method == a ){
 					(reservedActions[a].action as Function).call(null, args)
 					result = true;
 					break loop;
-				}
-				else
-				{
+				} else {
 					result = parseExecute(args);
 				}
 			}
@@ -136,13 +129,10 @@ package railk.as3.ui.witywig
 			}
 		}
 		
-		private static function parseExecute( terms:Array ):Array 
-		{
+		private static function parseExecute( terms:Array ):Array {
 			var result:Array;
-			for (var i:int = 0; i < terms.length; i++) 
-			{
-				for (var t in termsRelation )
-				{
+			for (var i:int = 0; i < terms.length; i++) {
+				for (var t in termsRelation ) {
 					if ( t == terms[i] ) result.push( termsRelation[t] );
 				}
 			}
@@ -152,39 +142,23 @@ package railk.as3.ui.witywig
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  MANAGE SEARCH TERMS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function manageEvent( evt:* )
-		{
-			var args:Object;
-			switch( evt.type )
-			{
+		public static function manageEvent( evt:* ):void {
+			switch( evt.type ){
 				case KeyboardEvent.KEY_DOWN :
-					if ( evt.keyCode == _activationKey &&  decorated )
-					{
+					if ( evt.keyCode == _activationKey &&  decorated ) {
 						if (activated) {
 							activated = false;
-							///////////////////////////////////////////////////////////////
-							args = { info:"witywig activated"};
-							eEvent = new WitywigEvent( WitywigEvent.ON_DESACTIVATION, args );
-							dispatchEvent( eEvent );
-							///////////////////////////////////////////////////////////////
-						}
-						else {
+							dispatchEvent( ew WitywigEvent( WitywigEvent.ON_DESACTIVATION, { info:"witywig activated"} ));
+						} else {
 							activated = true;
-							///////////////////////////////////////////////////////////////
-							args = { info:"witywig activated"};
-							eEvent = new WitywigEvent( WitywigEvent.ON_ACTIVATION, args );
-							dispatchEvent( eEvent );
-							///////////////////////////////////////////////////////////////
+							dispatchEvent( new WitywigEvent( WitywigEvent.ON_ACTIVATION, { info:"witywig activated"} ) );
 						}
-						
 					}
 					break;
 					
 				case TextEvent.TEXT_INPUT :
-					loop:for ( var a:String in reservedActions )
-					{
-						if ( a.search(evt.text) != -1 )
-						{
+					loop:for ( var a:String in reservedActions ){
+						if ( a.search(evt.text) != -1 ) {
 							underfield.text = String(a) + '' + String(reservedActions[a].args);
 						}
 					}	
