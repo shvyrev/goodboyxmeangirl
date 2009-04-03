@@ -11,8 +11,7 @@ package railk.as3.net.amfphp.service
 	import flash.net.NetConnection;
 	import flash.net.Responder;
 	
-	public interface IService  
-	{
+	public interface IService {
 		function exec( connexion:NetConnection, responder:Responder ):void;
 		function get name():String;
 	}

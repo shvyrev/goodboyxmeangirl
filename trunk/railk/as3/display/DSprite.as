@@ -10,16 +10,13 @@ package railk.as3.display
 	public class DSprite extends RegistrationPoint 
 	{
 		private var _extra:Object={};
-		
-		public function DSprite( extra:Object = null )
-		{
+		public function DSprite( extra:Object = null ){
 			super();
 			this._extra = (extra)?extra:_extra;
 		}
 		
 		public function set extra( value:Object ):void {
-			for ( var prop:String in value)
-			{
+			for ( var prop:String in value){
 				_extra[prop] = value[prop];
 			}	
 		}

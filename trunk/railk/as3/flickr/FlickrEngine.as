@@ -8,12 +8,9 @@
 
 package railk.as3.flickr {
 	
-	// __________________________________________________________________________________________ IMPORT ADOBE
 	import com.adobe.webapis.flickr.*;
 	import com.adobe.webapis.flickr.methodgroups.*;
 	import com.adobe.webapis.flickr.events.*;
-	
-	// __________________________________________________________________________________________ IMPORT FLASH
 	import flash.events.EventDispatcher;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
@@ -21,7 +18,6 @@ package railk.as3.flickr {
 	
 	public class FlickrEngine extends EventDispatcher
 	{
-		// _________________________________________________________________________________________ VARIABLES
 		private var flickr                           :FlickrService;
 		private var people                           :People;
 		private var contact                          :Contacts;
@@ -37,7 +33,6 @@ package railk.as3.flickr {
 		private var frob                             :String;
 		private var userId                           :String;
 		
-		// ____________________________________________________________________________________ VARIABLES DATA
 		private var contactsList                     :Array;
 		private var tagsList                         :Array;
 		private var photoSetsList                    :Array;
@@ -45,7 +40,6 @@ package railk.as3.flickr {
 		private var photoSizesList                   :Array;
 		private var photo                            :Object;
 		
-		// ___________________________________________________________________________________ VARIABLES EVENT
 		private var eEvent                           :FlickrEngineEvent;
 		private var eErrorEvent                      :FlickrEngineErrorEvent;
 		

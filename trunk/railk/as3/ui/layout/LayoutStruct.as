@@ -1,5 +1,5 @@
 /**
- * Layout Manager structure based on foil or xml file/string
+ * Layout Manager structure
  * 
  * @author Richard Rodney
  * @version 0.1
@@ -7,43 +7,18 @@
 
 package railk.as3.ui.layout
 {
-	import railk.as3.data.foil.Foil;
 	import railk.as3.data.parser.Parser;
-	
 	public class LayoutStruct
 	{
-		private var dataType:String;
-		private var _blocs:Array;
-				
-		public function LayoutStruct( data:String )
-		{
-			dataType = getType( data );
-			_blocs = parse( data, dataType );
-		}
+		public var dataType:String;
+		public var blocs:Array;
 		
-		private function getType( data:String ):String
-		{
-			
-			return (data.charAt(0) == '{')?'foil':'xml';
+		public function LayoutStruct(data:String){
+			this.blocs = parse( data );
 		}
-		
-		private function parse(data:String, dataType:String):Array
-		{
-			var result:Array;
-			switch(dataType)
-			{
-				case "xml":
-					result = Parser.XMLItem( new XML( data) );
-					break;
-				
-				case "foil":
-					result = Foil.deserialize(data).data;
-					break;
-			}
-			return result;
-		}
-		
-		public function get blocs():Array { return _blocs; }
+
+		private function parse(data:String):Array {
+			return Parser.XMLItem( new XML( data) );
+		}		
 	}
-	
 }

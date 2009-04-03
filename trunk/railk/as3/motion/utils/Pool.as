@@ -8,7 +8,6 @@
 
 package railk.as3.motion.utils
 {
-	import flash.utils.Dictionary;
 	import railk.as3.motion.RTweens;
 	public class Pool
 	{

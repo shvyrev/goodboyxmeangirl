@@ -16,8 +16,7 @@ package railk.as3.display.drawingShape
 	public class DrawingShape extends RegistrationPoint
 	{
 		
-		public function DrawingShape()
-		{
+		public function DrawingShape(){
 			super();
 		}
 		
@@ -25,9 +24,6 @@ package railk.as3.display.drawingShape
 		 * 
 		 * @param	...args   new point(x,y),.../ or an array of point
 		 */
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						   DRAW SHAPE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function drawShape( color:uint, ...args ):void {
 			var i:int;
 			this.graphics.clear();
@@ -35,16 +31,12 @@ package railk.as3.display.drawingShape
 			
 			if ( args[0] is Point ){
 				this.graphics.moveTo( args[0].x, args[0].y );
-				for ( i= 1; i < args.length; i++ )
-				{
+				for ( i= 1; i < args.length; i++ ){
 					this.graphics.lineTo( args[i].x, args[i].y );
 				}
-			}
-			else if ( args[0] is Array )
-			{
+			} else if ( args[0] is Array ) {
 				this.graphics.moveTo( args[0][0].x, args[0][0].y );
-				for ( i= 1; i < args[0].length; i++ )
-				{
+				for ( i= 1; i < args[0].length; i++ ){
 					this.graphics.lineTo( args[0][i].x, args[0][i].y );
 				}
 			}
@@ -56,9 +48,6 @@ package railk.as3.display.drawingShape
 		 * 
 		 * @param	...args   {width:,height:,points:[{A(x,y),B(x,y)},...]}
 		 */
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  DRAW PIXELS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function drawPixelShape( color:uint, data:Object ):void {
 			var result:Bitmap = new Bitmap( new BitmapData( data.width, data.height, true, 0x00FFFFFF ) );
 			result.bitmapData.lock();
@@ -73,8 +62,7 @@ package railk.as3.display.drawingShape
 				var pixColor:uint = (data.points[i].color)? data.points[i].color : color;
 				
 				if (dx == 0 && dy == 0 ) result.bitmapData.setPixel32( x,y,pixColor );
-				else
-				{
+				else {
 					var yLonger:Boolean=false;
 					if (dx < 0)  absDx = -dx; else absDx = dx;
 					if (dy < 0)  absDx = -dy; else absDy = dy;
@@ -125,11 +113,7 @@ package railk.as3.display.drawingShape
 		 * 
 		 * @param	data {height:number,width:number,pixels:array}
 		 */
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					DRAW PIXELS ARRAY
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function drawPixelArrayShape( data:Object ):void 
-		{
+		public function drawPixelArrayShape( data:Object ):void {
 			var color:uint = 0xFFFFFFFF;
 			var result:Bitmap = new Bitmap( new BitmapData( data.width, data.height, true, 0x00FFFFFF ) );
 			
@@ -165,11 +149,7 @@ package railk.as3.display.drawingShape
 		 * 
 		 * @param	data {height:number,width:number,pixels:array}
 		 */
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					DRAW PIXELS ARRAY
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function drawPixelGraphicsShape( data:Object ):void 
-		{
+		public function drawPixelGraphicsShape( data:Object ):void {
 			var color:uint = 0xFFFFFFFF;
 			this.graphics.clear();
 			
@@ -183,13 +163,11 @@ package railk.as3.display.drawingShape
 				pos = yLoop * data.width + nx;
 				
 				var pixel = data.pixels[pos];
-				if ( pixel is int && pixel == 1)
-				{
+				if ( pixel is int && pixel == 1){
 					this.graphics.beginFill(color,1);
 					this.graphics.drawRect( nx, yLoop, 1, 1 );
 				}
-				else if ( pixel is Array)
-				{
+				else if ( pixel is Array){
 					color = pixel[0];
 					this.graphics.beginFill(color);
 					this.graphics.drawRect( nx, yLoop, 1, 1 );

@@ -6,9 +6,8 @@
 * @version 0.3
 */
 
-package railk.as3.stage {
-	
-	// _______________________________________________________________________________________ IMPORT FLASH
+package railk.as3.stage 
+{
 	import flash.display.Stage;
 	import flash.display.StageAlign;
 	import flash.display.StageQuality;
@@ -17,35 +16,25 @@ package railk.as3.stage {
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.events.MouseEvent;
-	import flash.utils.getTimer;
+	import flash.utils.getTimer;		
 	
-	// ________________________________________________________________________________________ IMPORT RAILK
-	import railk.as3.ui.key.Key;
-	
-	
-	public class StageManager {
+	public class StageManager 
+	{
 		
-		// ______________________________________________________________________________ VARIABLES PROTEGEES
 		protected static var disp                      :EventDispatcher;
 		
-		// ______________________________________________________________________________ VARIABLES STATIQUES
 		public static var GlobalVars                   :Object = {};
 		public static var H                            :Number;
 		public static var W                            :Number;
 		
-		// ____________________________________________________________________________________________ STAGE
 		private static var _stage                      :Stage;
 		public static var folder                       :String;
 		public static var url                          :String;
 		
-		// ______________________________________________________________________________ VARAIBLE MOUSE IDLE
 		private static var lastMove                    :Number;
 		private static var timeOut                     :Number;
 		private static var isIdle                      :Number;
 		private static var isActive                    :Number;
-		
-		// _______________________________________________________________________________ VARIABLE EVENEMENT
-		private static var eEvent                      :StageManagerEvent;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -76,8 +65,7 @@ package railk.as3.stage {
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, ctMenu = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void
-		{
+		public static function init( stage:Stage, ctMenu = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void {
 			trace("                                   Stage initialise");
 			trace("---------------------------------------------------------------------------------------");
 			
@@ -94,9 +82,6 @@ package railk.as3.stage {
 			stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
 			stage.addEventListener( Event.MOUSE_LEAVE, manageEvent, false, 0, true );
 			
-			//initialisation des listener clavier
-			Key.initialize(stage);
-			
 			//taille de la surface
 			H = stage.stageHeight;
 			W = stage.stageWidth;
@@ -111,8 +96,7 @@ package railk.as3.stage {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		  GET THE APPFOLDER FROM ROOT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function getAppFolder( value:String ):String 
-		{
+		private static function getAppFolder( value:String ):String {
 			var regLocal:RegExp = new RegExp("file:///[A-Z][|]/", "");
 			var regLocalExtended:RegExp = new RegExp("file:///[A-Z][|]/[0-9A-Za-z%_./]*/www/", "");
 			var regServer:RegExp = new RegExp("http://[A-Za-z0-9.]*/", "");
@@ -128,8 +112,8 @@ package railk.as3.stage {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																		GESTION ACTIVITE DE LA SOURIS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function checkMouseOn( t:Number=0 ):void{
-			if( t != 0 ){ timeOut =  t; }
+		public static function checkMouseOn( t:Number=0 ):void {
+			if( t != 0 ) timeOut =  t;
 			isIdle = 0;
 			isActive = 0;
 			_stage.addEventListener(Event.ENTER_FRAME, idled ,false,0,true );
@@ -151,25 +135,15 @@ package railk.as3.stage {
 			if ( (lastMove+timeOut) < getTimer() ) {
 				if( isIdle == 0 ){
 					isActive = 0;
-					///////////////////////////////////////////////////////////////
-					args = { info:"mouse Idle"};
-					eEvent = new StageManagerEvent( StageManagerEvent.ONMOUSEIDLE, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
+					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSEIDLE, { info:"mouse Idle"} ) );
 				}
 				//on incremente isIdle pour n'envoyer le message q'une seule fois
 				isIdle += 1;
-			} 
-			else if ( _stage.mouseX || _stage.mouseY == true ) 
-			{
+			} else if ( _stage.mouseX || _stage.mouseY == true ) {
 				if( isActive == 0 ){
 					//on passe isactive a 0 pour pouvoir envoyer un message
 					isIdle = 0;	
-					///////////////////////////////////////////////////////////////
-					args = { info:"mouse Active"};
-					eEvent = new StageManagerEvent( StageManagerEvent.ONMOUSEACTIVE, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
+					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSEACTIVE, { info:"mouse Active"} ));
 				}
 				//on incremente isActive pour n'envoyer le message q'une seule fois
 				isActive += 1;
@@ -184,28 +158,10 @@ package railk.as3.stage {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:Event ):void 
-		{
-			var args:Object;
-			switch( evt.type ) 
-			{
-				case Event.RESIZE :
-					H = _stage.stageHeight;
-					W = _stage.stageWidth;
-					///////////////////////////////////////////////////////////////
-					args = { info:"surface modifiee "+H+" "+W };
-					eEvent = new StageManagerEvent( StageManagerEvent.ONSTAGERESIZE, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
-					break;
-				
-				case Event.MOUSE_LEAVE :
-					///////////////////////////////////////////////////////////////
-					args = { info:"la souris a quitte la surface" };
-					eEvent = new StageManagerEvent( StageManagerEvent.ONMOUSELEAVE, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
-					break;
+		private static function manageEvent( evt:Event ):void {
+			switch( evt.type ) {
+				case Event.RESIZE : dispatchEvent( new StageManagerEvent( StageManagerEvent.ONSTAGERESIZE, { info:"surface modifiee "+_stage.stageHeight+" "+_stage.stageWidth } ) ); break;
+				case Event.MOUSE_LEAVE : dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSELEAVE, { info:"la souris a quitte la surface" } ) ); break;
 			}
 		}
 	}

@@ -7,24 +7,20 @@
 */
 
 
-package railk.as3.net.flux {
-	
-	// _________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.net.flux 
+{
 	import flash.events.EventDispatcher;
 	import flash.events.Event;
 	
-	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.net.saver.xml.XmlSaver;
 	import railk.as3.net.saver.xml.XmlSaverEvent;	
 	
 	
 	public class Flux extends EventDispatcher  
 	{
-		// ______________________________________________________________________________ VARIABLES PROTEGEES
 		protected static var disp                                :EventDispatcher;
 		public static var FluxList                               :Object={};
 		
-		// ______________________________________________________________________________ VARIABLES FLUXSAVER
 		private static var _server                               :String;
 		private static var _path	                             :String;
 		private static var saver                                 :XmlSaver;
@@ -32,7 +28,6 @@ package railk.as3.net.flux {
 		private static var rssNodes                              :Array;
 		private static var atomNodes                             :Array;
 		
-		// ___________________________________________________________________________________ VARIABLES DATE
 		private static var monthObj                              :Object = {
 			"january": { str:"Jan", num:"01" },
 			"february": { str:"Feb", num:"02" },
@@ -57,11 +52,7 @@ package railk.as3.net.flux {
 			"saturday":{ str:"Sat", num:"06" },							
 			"sunday": { str:"Sun", num:"07" } 
 			}
-		
-		// __________________________________________________________________________________ VARIABLES EVENT
-		private static var eEvent                                :FluxEvent;
-		
-		
+			
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   GESTION DES LISTENERS DE CLASS
@@ -84,8 +75,7 @@ package railk.as3.net.flux {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							 	 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( server:String, path:String ):void
-		{
+		public static function init( server:String, path:String ):void {
 			_server = server;
 			_path = path;
 		}
@@ -101,8 +91,7 @@ package railk.as3.net.flux {
 		 * @param	desc       simple description
 		 * @param	webmaster  mail
 		 */
-		public static function addRss( id:String, filename:String, titre:String, link:String, desc:String, webmaster:String ):void 
-		{
+		public static function addRss( id:String, filename:String, titre:String, link:String, desc:String, webmaster:String ):void {
 			filePath = filename;
 			
 			rssNodes = new Array();
@@ -150,8 +139,7 @@ package railk.as3.net.flux {
 		 * @param	author
 		 * @param	mail
 		 */
-		public static function addAtom( id:String, filename:String, titre:String, link:String, author:String, mail:String ):void 
-		{
+		public static function addAtom( id:String, filename:String, titre:String, link:String, author:String, mail:String ):void {
 			filePath = filename;
 			
 			atomNodes = new Array();
@@ -200,8 +188,7 @@ package railk.as3.net.flux {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					     FLUX UTILITY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function rssDate( date:String = "" ):String 
-		{
+		private static function rssDate( date:String = "" ):String {
 			var timeStr:String;
 			var tmpArr:Array;
 			var dayTab:Array = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -219,8 +206,7 @@ package railk.as3.net.flux {
 			return timeStr;
 		}
 		
-		private static function atomDate( date:String = "" ):String 
-		{
+		private static function atomDate( date:String = "" ):String {
 			var timeStr:String;
 			var tmpArr:Array;
 			
@@ -236,8 +222,7 @@ package railk.as3.net.flux {
 			return timeStr;
 		}
 		
-		private static function zero( value:* ):String 
-		{
+		private static function zero( value:* ):String {
 			var tmpStr:String;
 			if ( value >= 0 && value <= 9 ) tmpStr = "0" + value;
 			else tmpStr = String(value);
@@ -250,13 +235,7 @@ package railk.as3.net.flux {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private static function manageEvent( evt:XmlSaverEvent ) {
 			switch( evt.type ) {
-				case XmlSaverEvent.ON_ERROR:
-					///////////////////////////////////////////////////////////////
-					var args:Object = { info:"flux error " };
-					eEvent = new FluxEvent( FluxEvent.ON_FLUX_PUBLISH_ERROR, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
-					break;
+				case XmlSaverEvent.ON_ERROR: dispatchEvent( new FluxEvent( FluxEvent.ON_FLUX_PUBLISH_ERROR, { info:"flux error " } ) ); break;
 			}
 		}
 	}

@@ -3,44 +3,29 @@
 * Static class LinkManager
 * 
 * @author Richard Rodney
-* @version 0.2
+* @version 0.3
 */
 
-
-package railk.as3.ui.link {
-	
+package railk.as3.ui.link 
+{	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	
-	import railk.as3.data.list.*;
-	
 	import com.asual.swfaddress.SWFAddress;
 	import com.asual.swfaddress.SWFAddressEvent;
 	
 	
-	public class LinkManager {
+	public class LinkManager 
+	{	
+		protected static var disp:EventDispatcher;
+		public static var inited:Boolean;
 		
-		// ______________________________________________________________________________ VARIABLES PROTEGEES
-		protected static var disp                             :EventDispatcher;
-		
-		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var linkList                           :DLinkedList;
-		private static var walker                             :DListNode;
-		
-		//_____________________________________________________________________________ VARIABLES LINKMANAGER
-		private static var _inited                            :Boolean = false;
-		private static var _engine                            :Class;
-		private static var siteTitre                          :String;
-		private static var swfAdress                          :Boolean = false;
-		private static var updateTitle                        :Boolean = false;
-		private static var state                              :String;
-		
-		//____________________________________________________________________________________ VARIABLES LINK
-		private static var link                               :Link;
-		
-		// ________________________________________________________________________________ VARIABLE EVENEMENT
-		private static var eEvent                             :LinkManagerEvent;
-		
+		private static var firstLink:Link
+		private static var lastLink:Link
+		private static var siteTitre:String;
+		private static var swfAdress:Boolean;
+		private static var updateTitle:Boolean;
+		private static var state:String;		
+		private static var link:Link;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -65,7 +50,7 @@ package railk.as3.ui.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  				 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( titre:String, engine:Class, swfAdressEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
+		public static function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
@@ -73,9 +58,7 @@ package railk.as3.ui.link {
 				swfAdress = swfAdressEnable;
 			}
 			updateTitle = updateTitleEnabled;
-			linkList = new DLinkedList();
-			_inited = true;
-			_engine = engine;
+			inited = true;
 		}
 		
 		
@@ -85,25 +68,38 @@ package railk.as3.ui.link {
 		/**
 		 * 
 		 * @param	name                   nom du lien de type /.../.../...
-		 * @param	displayObject		   displayObject clickable
+		 * @param	target				   displayObject clickable
 		 * @param   type                   'mouse' | 'roll'
 		 * @param	actions                Function(type:String("hover"|"out"|"do"|"undo"),requester:*,data:*)=null
 		 * @param	colors                 Object {hover:,out:,click:}
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 */
-		public static function add( name:String, displayObject:Object=null, type:String='mouse', actions:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, data:*=null):Link 
-		{	
+		public static function add( name:String, target:Object=null, type:String='mouse', action:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, data:*=null):Link {	
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
 			else if( swfAdress && !swfAdressEnable ) enable = false;
 			else if( !swfAdress && swfAdressEnable ) enable = false;
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
-			var dummy:Boolean = (displayObject)? false : true;
-			link = new Link( name, _engine, displayObject, type, actions, colors, enable, dummy, data );
-			if ( !linkList.getNodeByName( name ) || dummy || linkList.getNodeByName( name ).data.isDummy() ) linkList.add( [name, link] );
-			else linkList.update( name, link );
-			
+			var dummy:Boolean = (target)?false:true;
+			link = new Link( name, target, type, action, colors, enable, dummy, data );
+			if ( !getLink( name ) || dummy || getLink( name ).data.isDummy() ) {
+				if (!firstLink) firstLink = lastLink = link;
+				else {
+					lastLink.next = link;
+					link.prev = lastLink;
+					lastLink = link;
+				}
+			} else {
+				var l:Link = getLink(name);
+				l.target = target;
+				l.type = type;
+				l.action = action;
+				l.colors = colors;
+				l.dummy = dummy;
+				l.swfAddress = enable;
+				l.data = data;
+			}
 			return link;
 		}
 		
@@ -111,11 +107,24 @@ package railk.as3.ui.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE LINKS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function remove( name:String ):Boolean { return linkList.remove( name ); }
+		public static function remove( name:String ):void {
+			var l:Link = getLink(name);
+			if (l.next) l.next.prev = l.prev;
+			if (l.prev) l.prev.next = l.next;
+			else if (firstLink == l) firstLink = l.next;
+			l = null;
+		}
 		
-		public static function getLink( name:String ):Link { return linkList.getNodeByName( name ).data; }
+		public static function getLink( name:String ):Link { 
+			var walker:Link = firstLink;
+			while (walker ) {
+				if (walker.name == name ) return walker;
+				walker = walker.next;
+			}
+			return null;
+		}
 		
-		public static function getLinkContent( name:String ):* { return getLink( name ).object; }
+		public static function getLinkContent( name:String ):* { return getLink( name ).target; }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -134,8 +143,7 @@ package railk.as3.ui.link {
 		private static function parseAddress( value:String ):Array {
 			var result:Array = new Array();
 			var tmp:Array = value.split('/');
-			for (var i:int = 0; i < tmp.length; i++) 
-			{
+			for (var i:int = 0; i < tmp.length; i++){
 				if ( tmp[i] != '' ) result.push( tmp[i]+'/' );
 			}
 			return result;
@@ -145,50 +153,28 @@ package railk.as3.ui.link {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  		 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:SWFAddressEvent ):void 
-		{
-			var args:Object;
-			var prop:String;
+		private static function manageEvent( evt:SWFAddressEvent ):void {
+			var args:Object, prop:String;
 			try {
-				if ( evt.value == '/' ) 
-				{
+				if ( evt.value == '/' ) {
 					if ( getLink(evt.value) ) getLink(evt.value).doAction();
-										
 					state = "home";
-					///////////////////////////////////////////////////////////////
-					args = { info:"changed state", state:state };
-					eEvent = new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
-				}
-				else 
-				{
+					dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE,{ info:"changed state", state:state } ) );
+				} else {
 					var parsed:Array = parseAddress( evt.value );
 					var nextLink:String = '/';
-					for (var i:int = 0; i < parsed.length ; i++) 
-					{
-						if (!getLink( nextLink + parsed[i] ).isActive()) {
-							getLink( nextLink + parsed[i] ).doAction();
-						}
+					for (var i:int = 0; i < parsed.length ; i++) {
+						if (!getLink( nextLink + parsed[i] ).active) getLink( nextLink + parsed[i] ).doAction();
 						nextLink = nextLink + parsed[i];
 					}
-					
 					state = evt.value;
-					///////////////////////////////////////////////////////////////
-					args = { info:"changed state", state:state };
-					eEvent = new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
+					dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, { info:"changed state", state:state } ) );
 				}
 				if(updateTitle) SWFAddress.setTitle(formatTitle(evt.value));
 				
 			} catch (err) {
 				state = "erreur 404";
-				///////////////////////////////////////////////////////////////
-				args = { info:"error state", state:state };
-				eEvent = new LinkManagerEvent( LinkManagerEvent.ONERRORSTATE, args );
-				dispatchEvent( eEvent );
-				///////////////////////////////////////////////////////////////
+				dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONERRORSTATE,{ info:"error state", state:state } ) );
 			}
 		}
 		
@@ -196,13 +182,9 @@ package railk.as3.ui.link {
 		// 																				  		GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		static public function get titre():String { return siteTitre; }
-		
 		static public function set titre( value:String ):void { 
 			siteTitre = value;
 			SWFAddress.setTitle( siteTitre );
-		}
-		
-		static public function get inited():Boolean { return _inited; }
-		
+		}		
 	}
 }

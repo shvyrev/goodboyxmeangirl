@@ -25,11 +25,10 @@ package railk.as3.geom
 		public var left:Point;
 		public var center:Point;
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function Bounds( x:Number, y:Number, width:Number, height:Number )
-		{
+		/**
+		 * CONSTRUCTEUR
+		 */
+		public function Bounds( x:Number, y:Number, width:Number, height:Number ) {
 			this.x = x;
 			this.y = y;
 			this.width = width;
@@ -37,12 +36,10 @@ package railk.as3.geom
 			this.getBounds();
 		}
 		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	GET BOUNDS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getBounds():void
-		{
+		/**
+		 * GET BOUNDS
+		 */
+		private function getBounds():void {
 			top_left = new Point(x,y);
 			top_right = new Point(x+width,y);
 			bottom_left = new Point(x,y+height);
@@ -53,7 +50,5 @@ package railk.as3.geom
 			right = new Point(x+width,y+height*.5);
 			center = new Point(x+width*.5,y+height*.5);
 		}
-	
 	}
-	
 }

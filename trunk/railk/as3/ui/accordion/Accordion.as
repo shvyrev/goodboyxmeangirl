@@ -12,78 +12,73 @@ package railk.as3.ui.accordion
 	import flash.events.EventDispatcher;
 	import flash.geom.Rectangle;
 	
-	import railk.as3.data.list.*;	
-	
-	
 	public class  Accordion extends EventDispatcher 
 	{
-		private var _type                                   :String;
-		private var acItem                                  :AccordionItem;
-		private var itemList                         		:DLinkedList;
-		private var prev                                    :DListNode;
-		private var next                                    :DListNode;
-		private var walker                                  :DListNode;		
+		private var type:String;
+		private var item:AccordionItem;
+		private var firstItem:AccordionItem;
+		private var lastItem:AccordionItem;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
-		 * 
 		 * @param	type	'V'|'H'
 		 */
 		public function Accordion( type:String = 'V' ) {
-			_type = type;
-			itemList = new DLinkedList();
+			this.type = type;
 		}
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  ADD AN ITEM
+		// 																						  MANAGE ITEM
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	name
-		 * @param	content
-		 * @return
-		 */
-		public function add( name:String, content:Object, separator:Number=0 ):void
-		{
-			acItem = new AccordionItem( name, _type, content, separator );
-			acItem.addEventListener( AccordionEvent.ON_HEIGHT_CHANGE, manageEvent, false, 0, true );
-			acItem.addEventListener( AccordionEvent.ON_WIDTH_CHANGE, manageEvent, false, 0, true );
-			itemList.add( [name,acItem] );
+		public function add( name:String, content:Object, separator:Number=0 ):void {
+			item = new AccordionItem( name, _type, content, separator );
+			item.addEventListener( AccordionEvent.ON_HEIGHT_CHANGE, manageEvent, false, 0, true );
+			item.addEventListener( AccordionEvent.ON_WIDTH_CHANGE, manageEvent, false, 0, true );
+			if (!firstItem) firstItem = lastItem = item;
+			else {
+				lastItem.next = item;
+				item.prev = lastItem;
+				lastItem ) item;
+			}
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   REMOVE AN ITEM
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function remove( name:String ):Boolean 
-		{		
-			return itemList.remove( name );
+		public function remove( name:String ):void {		
+			var i:AccordionItem = getFile(name);
+			if (i.next) i.next.prev = i.prev;
+			if (i.prev) i.prev.next = i.next;
+			else if (firstItem == i) firstItem = i.next;
+			i = null;
 		}
+		
+		public function getItem( name:String ):AccordionItem {
+			var walker:AccordionItem = firstItem;
+			while ( walker ) {
+				if (walker.name == name ) return walker;
+				walker = walker.next;
+			}
+			return null;
+		}
+		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				PLACE ITEMS ON CHANGE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function placeItemFrom( itemName:String ):void
-		{
-			var item:DListNode = itemList.getNodeByName( itemName );
-			if ( item == itemList.head )
-			{
-				walker = itemList.head.next;
-				while ( walker ) 
-				{
-					walker.data.y=walker.prev.data.nextY;
+		private function placeItemFrom( name:String ):void {
+			var i:AccordionItem = getItem( name ), walker:AccordionItem;
+			if ( item == firstItem ) {
+				walker = firstItem.next;
+				while ( walker ) {
+					walker.y = walker.prev.nextY;
 					walker = walker.next;
 				}
-			}
-			else if (item != itemList.tail )
-			{
+			} else if (item != lastItem ) {
 				walker = item.next;
 				while ( walker ) {
-					 walker.data.y=walker.prev.data.nextY;
+					walker.y=walker.prev.nextY;
 					walker = walker.next;
 				}
 			}
@@ -92,32 +87,15 @@ package railk.as3.ui.accordion
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					   		  DESTROY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose():void 
-		{	
-			walker = itemList.head;
-			loop:while ( walker ) {
-				walker.data.dispose();
+		public function dispose():void {	
+			var walker:AccordionItem = firstItem;
+			firstItem = null;
+			while ( walker ) {
+				walker.dispose();
 				walker = walker.next;
 			}
-			itemList.clear()
+			lastItem = null;
 		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getItem( name:String ):* 
-		{
-			return itemList.getNodeByName( name ).data.content;
-		}
-		
-		public function get items():Array 
-		{
-			return itemList.toArray();
-		}
-		
-		
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					     MANAGE EVENT

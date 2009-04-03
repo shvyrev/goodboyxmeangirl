@@ -9,108 +9,88 @@ package railk.as3.ui.layout
 {
 	import flash.events.Event;
 	import railk.as3.display.VSprite;
-	import railk.as3.data.list.DLinkedList;
 	
 	public class LayoutBloc
-	{
+	{	
+		public var arcs:Array=[];
+		public var marked:Boolean;
+		public var numArcs:int=0;
+		
 		private var bloc:VSprite;
-		private var subBlocs:DLinkedList;
+		private var subBlocs:Array=[];
 		
-		private var _name:String;
-		private var _height:Number;
-		private var _width:Number;
-		private var _hasSubBlocs:Boolean = true;
-		
+		public var name:String;
+		public var height:Number;
+		public var width:Number;
+		public var hasSubBlocs:Boolean;
 		public var dynamicHeight:Boolean = true;
 		public var dynamicWidth:Boolean = true;
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function LayoutBloc(parent:Object, name:String )
-		{
-			subBlocs = new DLinkedList();
+		/**
+		 * CONSTRUCTEUR
+		 */
+		public function LayoutBloc(parent:Object, name:String, x:Number, y:Number, width:Number, height:Number ) {
 			bloc = new VSprite(parent);
-			bloc.addEventListener( Event.ENTER_FRAME, resize, false, 0, true);
+			bloc.name = name;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						ADD SUB BLOCS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function addSubBlocs( blocs:Array ):void
-		{
-			for (var i:int = 0; i < blocs; i++) 
-			{
+		/**
+		 * CONTENT
+		 */
+		public function addSubBlocs( blocs:Array ):void {
+			for (var i:int = 0; i < blocs; i++) {
 				subBlocs.add[blocs.name]
 			}
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  ADD CONTENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function addContent( content:Object ):Boolean
-		{
+		public function addContent( content:Object ):Boolean {
 			var result:Boolean;
 			if ( hasSubBlocs) result = false;
-			else
-			{
+			else {
 				bloc.addChild( content );
 				result = true;
 			}
 			return result;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 SET REGISTRATION
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function setRegistration(x:Number, y:Number):void
-		{
+		public function setRegistration(x:Number, y:Number):void {
 			bloc.changeRegistration(x, y);
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							   RESIZE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function resize(evt:Event):void
-		{
+		public function move():void{
 			
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							   RESIZE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose():void
-		{
-			bloc.removeEventListener( Event.ENTER_FRAME, resize );
+		public function dispose():void {
 			bloc = null;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get name():String { return _name; }
-		
-		public function set name(value:String):void 
-		{
-			_name = value;
+		/**
+		 * GRAPH PART
+		 */
+		public function addArc(target:LayoutBloc, weight:int):void {
+			arcs[numArcs++] = new LayoutArc(target, weight);
 		}
 		
-		public function get height():Number { return _height; }
-		
-		public function set height(value:Number):void 
-		{
-			_height = value;
+		public function removeArc(target:GraphNode):Boolean {
+			var i:int = numArcs;
+			while( --i > -1 ) {
+				if (arcs[i].bloc == target) {
+					arcs.splice(i, 1);
+					numArcs--;
+					return true;
+				}
+			}
+			return false;
 		}
 		
-		public function get width():Number { return _width; }
-		
-		public function set width(value:Number):void 
-		{
-			_width = value;
+		public function getArc(target:GraphNode):LayoutArc {
+			var i:int = numArcs;
+			while( --i > -1 ) {
+				var arc:LayoutArc = arcs[i];
+				if (arc.bloc == target) return arc;
+			}
+			return null;
 		}
-		
-		public function get hasSubBlocs():Boolean { return _hasSubBlocs; }
-		
 	}
-	
 }

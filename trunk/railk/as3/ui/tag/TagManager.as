@@ -7,85 +7,68 @@
 */
 
 
-package railk.as3.ui.tag {
-	
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.ui.tag 
+{
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
-	
-	// ________________________________________________________________________________________ IMPORT RAILK
+	import flash.text.TextFormat;	
 	import railk.as3.data.grid.Grid;
-	import railk.as3.data.grid.Cell;
-	import railk.as3.data.list.*;
+	import railk.as3.data.grid.Cell;	
 	
-	
-	public class TagManager {
-		
-		//_______________________________________________________________________________ VARIABLES STATIQUES
-		private static var tagList                            :DLinkedList;
-		private static var walker                             :DListNode;
-	
-		//_____________________________________________________________________________________ VARIABLES TAG
-		private static var tag                                :Tag;
-		
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  				 INIT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init():void {
-			 tagList = new DLinkedList();
-		}
-		
-		
+	public class TagManager 
+	{
+		private static var tag:Tag;
+		private static var firstTag:Tag;
+		private static var lastTag:Tag;
+
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				  			  ADD TAG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function add( name:String, displayObjectName:String ):void 
-		{	
+		public static function add( name:String, displayObjectName:String ):void {	
 			if ( getTag(name) ) { getTag(name).addFile( displayObjectName ); }
 			else {
 				tag = new Tag( name, displayObjectName );
-				tagList.add( [name,tag] );
+				if (!firstTag)  firstTag = lastTag = tag;
+				else {
+					lastTag.next = tag;
+					tag.prev = lastTag;
+					lastTag = tag;
+				}
 			}
 		}
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   MANAGE TAG
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function remove( name:String ):Boolean 
-		{
-			var result:Boolean;
-			var t:DListNode = tagList.getNodeByName( name );
-			if ( t )
-			{
-				t.data.dispose();
-				tagList.removeNode( t );
-				result = true;
+		public static function remove( name:String ):Boolean {
+			var t:Tag = getTag( name );
+			if ( t ) {
+				if (t.next) t.next.prev = t.prev;
+				if (t.prev) t.prev.next = t.next;
+				else if (firstTag == t) firstTag = t.next;
+				t.dispose();
+				t = null;
+				return true;
 			}
-			else result = false;
-			return result;
+			return false;
 		}
 		
 		public static function getTag( name:String ):Tag {
-			var result:Tag;
-			if ( tagList.getNodeByName( name ) ) result = tagList.getNodeByName( name ).data;
-			else result = null;
-			return result;
+			var walker:Tag = firstTag;
+			while (walker) {
+				if ( walker.name == name ) return walker;
+				walker = walker.next;
+			}
+			return null;
 		}
 		
 		public static function getTagByValue( value:Number ):Tag {
-			walker = tagList.head;
-			loop:while ( walker ) {
-				if ( walker.data.value == value ) {
-					var result = walker.data;
-					break loop;
-				}
+			var walker:Tag = firstTag;
+			while ( walker ) {
+				if ( walker.value == value ) return walker;
 				walker = walker.next;
 			}
-			return result;
+			return null;
 		}
 		
 		
@@ -102,32 +85,22 @@ package railk.as3.ui.tag {
 		 * @param	debugContainer
 		 * @return
 		 */
-		public static function tagCloud( fontClassName:String, H:Number, W:Number, gridPrecision:int = 5, upperCase:Boolean = true, debug:Boolean = false, debugContainer:*= null ):Array 
-		{
-			var i:int = 0;
-			var j:int = 0;
-			var result:Array = new Array();
-			var minH:Number = gridPrecision;
-			var minW:Number = gridPrecision;
-			var cell:Cell;
-			var format:TextFormat;
-			var txt:TextField;
-			var blocs:Array = new Array();
-			var tagSortList:DLinkedList = DListSort.sort( tagList, DListSort.NUMERIC, DListSort.DESC, 'value' );
-			var grid:Grid = new Grid( "tag", H, W, minH, minW, 0, 0, debug, debugContainer );
-			var multiplier:Number = computeSpace( grid, minH, minW, tagSortList, blocs, fontClassName );
+		public static function tagCloud( fontClassName:String, H:Number, W:Number, gridPrecision:int = 5, upperCase:Boolean = true ):Array {
+			var i:int, result:Array =[], minH:Number = gridPrecision, minW:Number = gridPrecision, cell:Cell, format:TextFormat, txt:TextField, blocs:Array = [];
+			var tagSort:Array = toArray().sortOn('value', Array.DESCENDING | Array.NUMERIC);
+			var grid:Grid = new Grid( "tag", H, W, minH, minW, 0, 0 );
+			var multiplier:Number = computeSpace( grid, minH, minW, tagSort, blocs, fontClassName );
 			
 			//--compute blocs
-			walker = tagSortList.head;
-			while ( walker ) {
-				var texte:String = walker.data.name;
-				if (upperCase) { texte = texte.toUpperCase(); }
-				else { texte = texte.toLowerCase(); }
+			i = tagSort.length;
+			while ( --i > -1 ) {
+				var texte:String = tagSort[i].name;
+				texte=(upperCase)?texte.toUpperCase():texte.toLowerCase();
 				
 				format = new TextFormat();
 				format.font = fontClassName;
 				format.align = "left";
-				format.size = walker.data.value*multiplier;
+				format.size = tagSort[i].value*multiplier;
 				
 				txt = new TextField();
 				txt.autoSize = TextFieldAutoSize.LEFT;
@@ -136,11 +109,7 @@ package railk.as3.ui.tag {
 				
 				var tagWidth:Number = txt.width;
 				var tagHeight:Number = txt.height;
-				
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				blocs.push( { h:toCellLength(tagHeight, gridPrecision), w:toCellLength(tagWidth, gridPrecision), extra:{texte:texte, size:walker.data.value*multiplier} } );
-				///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-				walker = walker.next;
+				blocs.push( { height:toCellLength(tagHeight, gridPrecision), width:toCellLength(tagWidth, gridPrecision), extra:{texte:texte, size:tagSort[i].value*multiplier} } );
 			}
 			result = grid.getBlocsPlace( blocs );			
 			return result;
@@ -149,27 +118,19 @@ package railk.as3.ui.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						COMPUTE SPACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function computeSpace( grid:Grid,  cellH:int, cellW:int, list:ObjectList, blocs:Array, fontClassName:String ):Number 
-		{
-			var result:Number = 1;
-			var nbCells:int = 0;
-			var tagWidth:Number;
-			var tagHeight:Number;
-			var format:TextFormat;
-			var txt:TextField;
-			var largest:int=0;
-			var highest:int=0;
+		private static function computeSpace( grid:Grid,  cellH:int, cellW:int, list:Array, blocs:Array, fontClassName:String ):Number {
+			var result:Number = 1, nbCells:int = 0, tagWidth:Number, tagHeight:Number, format:TextFormat, txt:TextField, largest:int=0, highest:int=0;
 				
-			walker = list.head;
-			while ( walker ) {
+			var i:int = list.length;
+			while ( --i > -1 ) {
 				format = new TextFormat();
 				format.font = fontClassName;
 				format.align = "left";
-				format.size = walker.data.value;
+				format.size = list[i].value;
 				
 				txt = new TextField();
 				txt.autoSize = TextFieldAutoSize.LEFT;
-				txt.text = walker.data.name;
+				txt.text = list[i].name;
 				txt.setTextFormat( format );
 				
 				tagWidth = txt.width;
@@ -177,10 +138,7 @@ package railk.as3.ui.tag {
 				
 				if ( tagWidth > largest ) largest = tagWidth;
 				if ( tagHeight > highest ) highest = tagHeight;
-
-				nbCells += int( (tagWidth / cellW )*(tagHeight / cellH ) ) + 1;
-				
-				walker = walker.next;
+				nbCells += int( (tagWidth / cellW )*(tagHeight / cellH ) ) + 1;				
 			}
 			
 			if ( nbCells != grid.freeCells ) {
@@ -199,38 +157,11 @@ package railk.as3.ui.tag {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	 TAG LIST
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	file
-		 * @param	sorted
-		 * @param	sortType   'desc' | 'asc'
-		 * @return
-		 */
-		public static function tagListArray( file:String = '', sorted:Boolean = false, sortMode:String = 'desc' ):Array 
-		{
-			var result:Array = new Array();
-			var tagSortList:DLinkedList;
-			
-			if ( !file )
-			{
-				if (sorted) {
-					tagSortList = DListSort.sort( tagList, DListSort.NUMERIC, sortMode, 'value' );
-					result = tagSortList.toArray();
-				}
-				else { result = tagList.toArray(); }
-			}	
-			else 
-			{
-				if (sorted) {
-					tagSortList = DListSort.sort( tagList, DListSort.NUMERIC, sortMode, 'value' );
-					walker = tagSortList.head;
-				}
-				else { walker = tagList.head }
-				
-				loop:while ( walker ) {
-					if ( walker.data.file( file ) ) result.push( walker.data.name );
-					walker = walker.next;
-				}
+		public static function toArray():Array {
+			var result:Array = [], walker:Tag = firstTag;
+			while (walker ) {
+				result[result.length] = walker;
+				walker = walker.next;
 			}
 			return result;
 		}

@@ -9,7 +9,6 @@
 package railk.as3.ui.witywig 
 {
 	import flash.events.Event;
-	
 	public dynamic class WitywigEvent extends Event{
 			
 		static public const ON_ACTIVATION                   	 :String = "onStageResize";

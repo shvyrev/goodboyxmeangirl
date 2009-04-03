@@ -3,194 +3,123 @@
 * Scrollbar
 * 
 * @author Richard Rodney
-* @version 0.1
+* @version 0.2
 */
 
 package railk.as3.ui 
 {	
-	import flash.display.Sprite;
 	import flash.display.Stage
 	import flash.events.MouseEvent;
 	import flash.events.Event;
-	import flash.geom.Point;
 	import flash.geom.Rectangle;
-	import railk.as3.display.GraphicShape;
 	import railk.as3.display.RegistrationPoint;
 	
 	
-	public class ScrollBar extends RegistrationPoint {
+	public class ScrollBar extends RegistrationPoint 
+	{	
+		private var toScroll        :Object;		
+		public var slider           :*;
+		public var top   	        :*;
+		public var bottom           :*;
+		public var bg               :*;
+		private var size            :Object;
 		
-		public static var scrollList           :Object = { };
-		private static var baseDelta           :Number = 14;
+		private var inited	        :Boolean;
+		private var vScroll			:Boolean;
+		private var vToScroll		:Boolean;
+		private var wheel	        :Boolean;
+		private var resize		    :Boolean;
+		private var autoCheck		:Boolean;
+		private var autoScroll		:Boolean;
+		private var fullscreen		:Boolean;
+		private var listeners       :Boolean;
 		
-		private var engine                     :Class;
-		private var scrollContainer            :Sprite;
-		private var slider                     :*;
-		private var top   	                   :*;
-		private var bottom                     :*;
-		private var scrollBG                   :GraphicShape;
-		private var scrollSize                 :Object;
-		private var scrollColor                :Object; 
-		private var scrollAlpha                :Object;
-		private var customSlider               :Boolean;
-		private var wheelEnable                :Boolean;
-		private var resizeEnable               :Boolean;
-		private var autoCheckEnable            :Boolean;
-		private var autoScrollEnable           :Boolean;
-		private var fullscreenEnable           :Boolean;
-		private var content                    :Object;
-		private var contentCheck               :Object={};
-		private var multiplier                 :Number;
-		private var delta                      :Number;
-		private var distance                   :Number;
-		private var way                        :String;
-		private var rect                       :Rectangle;
-		private var oldStageH                  :Number;
-		private var oldStageW                  :Number;
-		private var contentPlace               :Point;
-	
-		private var rollOut                    :Boolean = false;
-		private var listeners                  :Boolean = false;
+		private var baseDelta		:Number=14;
+		private var multiplier      :Number;
+		private var delta			:Number;
+		private var distance        :Number;
+		private var rect 			:Rectangle;
 		
+		private var rollOver		:Function;
+		private var rollOut			:Function;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
-		 * 
-		 * @param	name                unique name for the scrollbar
-		 * @param	orientation 		"V" | "H"
 		 * @param	toScroll            the object to scroll
-		 * @param	colors 				Object  { fond:uint, fondOver:uint, slider:uint, sliderOver:uint }
-		 * @param	sizes 				Object  { fH:Number, fW:Number, sH:Number, sW:Number }
-		 * @param	alphas   			Object  { fond:alpha, slider:alpha }
+		 * @param	vScroll				vertical or horizontal scrollbar
+		 * @param	vToScroll			vertical or horizontal content scrolling
 		 * @param	wheel				To activate the wheel or not
-		 * @param	sliderClass         To use a personnal shape instead of the rectangular basic one
-		 * @param	resizeAble          To give the possibility to the scrollbar to automaticaly resize itself base on the size of the screen
+		 * @param	resize		        To give the possibility to the scrollbar to automaticaly resize itself base on the size of the screen
 		 * @param	autoCheck           To make the scrollBar adapt itself automaticaly when the content size change
 		 * @param	autoScroll          to follow the mouse when the mouse is hover the scrollbar.
+		 * @param	fullScreen          to make the scrollbar fulllscreen
 		 */
-		public function ScrollBar( name:String, orientation:String, toScroll:Object, colors:Object, sizes:Object,  engine:Class, topObj:*= null, bottomObj:*=null, alphas:Object = null, wheel:Boolean = false , sliderClass:Class = null, resizeAble:Boolean = false, autoCheck:Boolean = false, autoScroll:Boolean = false, fullScreen:Boolean = false )
-		{
-			this.engine = engine;
-			scrollList[name] = this;
-			wheelEnable = wheel;
-			resizeEnable = resizeAble;
-			autoCheckEnable = autoCheck;
-			autoScrollEnable = autoScroll;
-			fullscreenEnable = fullScreen;
-			content = toScroll;
-			scrollSize = sizes;
-			scrollColor = colors;
-			scrollAlpha = alphas;
-			way = orientation;
-			top = topObj;
-			bottom = bottomObj;
-			contentPlace = new Point( content.x, content.y);
-			
-			scrollContainer = new Sprite();
-			scrollContainer.alpha = 0;
-			scrollContainer.name = "container";
-			scrollContainer.buttonMode = true;
-			addChild( scrollContainer );
-			
-				//--BG
-				scrollBG = new GraphicShape();
-				scrollBG.rectangle( colors.fond, 0, 0, sizes.fW, sizes.fH );
-				scrollBG.mouseEnabled = false;
-				scrollContainer.addChild( scrollBG );
-				
-				//--Slider
-				if ( slider == null ) {
-					slider = new GraphicShape();
-					slider.rectangle( colors.slider, 0, 0, sizes.sW, sizes.sH );
-				}
-				else {
-					slider = new sliderClass();
-				}
-				slider.name = "slider";
-				slider.buttonMode = true;
-				scrollContainer.addChild( slider );
-				
-				//--TOP/BOTTOM
-				if ( top != null )
-				{
-					top.y = scrollContainer.y -2;
-					addChild( top );
-				}
-				if ( bottom != null )
-				{
-					bottom.y = scrollContainer.height + 2;
-					addChild( bottom );
-				}
-				
-			this.addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
+		public function ScrollBar( toScroll:Object,vScroll:Boolean=true,vToScroll:Boolean=true,wheel:Boolean=true,autoCheck:Boolean=true,resize:Boolean=true,fullScreen:Boolean=true,autoScroll:Boolean=false ) {
+			this.name = 'scrollbar';
+			this.toScroll = toScroll;
+			this.wheel = wheel;
+			this.resize = resize;
+			this.autoCheck = autoCheck;
+			this.autoScroll = autoScroll;
+			this.fullscreen = fullScreen;
+			this.vScroll = vScroll;
+			this.vToScroll = vToScroll;
 		}
 		
+		public function init(slider:*,bg:*=null,top:*=null,bottom:*=null,rollOver:Function=null,rollOut:Function=null):void {
+			if (!slider) return;
+			this.top = top;
+			this.bottom = bottom;
+			this.slider = slider;
+			this.bg = bg;
+			this.rollOver = rollOver;
+			this.rollOut = rollOut;
+			this.inited = true;
+			this.addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																								SETUP
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function setup( evt:Event ):void 
-		{
-			//--resize
-			if( resizeEnable ){
-				stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
-				oldStageH = stage.stageHeight;
-				oldStageW = stage.stageWidth;
-			}
+		private function setup( evt:Event ):void {
+			if (!inited) throw new Error('scrollbar not inited please use the init function before addchild' );
 			
-			//--Autocheck if scroll bar is needed or must be resized if content size is modified
-			if ( autoCheckEnable ) {
-				contentCheck = { height:content.height, width:content.width };
-				this.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
-			}
+			size={ 	bg:((vScroll)?stage.stageHeight:stage.stageWidth), 
+					slider:slider.height, 
+					stageHeight:stage.stageHeight,
+					stageWidth:stage.stageWidth,
+					toScrollHeight:toScroll.height,
+					toScrollWidth:toScroll.width,
+					toScrollX:toScroll.x,
+					toScrollY:toScroll.y }
 			
-			//--AutoScroll en fonction de la position de la souris
-			if ( autoScrollEnable ) {
-				scrollContainer.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
-			}	
+			if (bg) { size.bg = bg.height; bg.mouseEnabled = false; this.addChild( bg ); }	
+			if (slider) { slider.name = "slider"; slider.buttonMode = true; this.addChild( slider ); }
+			if (top) { top.y = this.y -2; addChild( top ); }
+			if (bottom) { bottom.y = this.height + 2; addChild( bottom ); }
+			if (resize) { stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true ); }
+			if (autoCheck) {  this.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true ); }
+			if (autoScroll) { this.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true ); }
 				
-			//--Scroll setup
-			if ( way == "V" ) {
-				if ( contentPlace.y+content.height > stage.stageHeight ) {
-					showHide(1, true);
-					distance = contentPlace.y+content.height - stage.stageHeight;
-					slider.height = ( (scrollSize.fH - distance) > scrollSize.sH ) ? scrollSize.fH - distance : scrollSize.sH;
-					multiplier = distance / ( scrollSize.fH - slider.height );
-					delta = baseDelta / (multiplier*.5);
-					delta = (delta > 6)? delta : 6;
-					rect = new Rectangle(0, 0, 0, scrollSize.fH - slider.height);
-					////////////////////////////////////
-					initListeners();
-					listeners = true;
-					////////////////////////////////////
-				}
-				else showHide(0,false);
-			}
-			else if ( way == "H" ) {
-				if ( contentPlace.x+content.width > stage.stageWidth ) {
-					showHide(1,true);
-					distance = contentPlace.x+content.width - stage.stageWidth;
-					slider.width = ( (scrollSize.fW - distance) > scrollSize.sW ) ? scrollSize.fW - distance : scrollSize.sW;
-					multiplier = distance / ( scrollSize.fW - slider.width );
-					delta = baseDelta / (multiplier*.5);
-					delta = (delta > 6)? delta : 6;
-					rect = new Rectangle(0, 0, scrollSize.fW - slider.width, 0);
-					////////////////////////////////////
-					initListeners();
-					listeners = true;
-					////////////////////////////////////
-				}
-				else showHide(0,false);
-			}
+			if ( size.toScrollY+toScroll.height > stage.stageHeight ) {
+				showHide(1, true);
+				distance = size.toScrollY+toScroll.height-stage.stageHeight;
+				slider.height = ((size.bg-distance)>size.slider)?size.bg-distance:size.slider;
+				multiplier = distance/(size.bg-slider.height);
+				delta = baseDelta/(multiplier*.5);
+				delta = (delta>6)?delta:6;
+				rect = new Rectangle(0,0,0,size.bg-slider.height);
+				////////////////////////////////////
+				initListeners();
+				listeners = true;
+				////////////////////////////////////
+			} 
+			else showHide(0,false);
 			
-			if ( scrollAlpha != null ) {
-				scrollBG.alpha = scrollAlpha.fond;
-				slider.alpha = scrollAlpha.slider;
-			}
-			
+			this.rotation = (vScroll)?0:-90;
 			this.removeEventListener( Event.ADDED_TO_STAGE, setup );
 		}
 		
@@ -198,25 +127,23 @@ package railk.as3.ui
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																				   GESTION LISTERNERS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function initListeners():void 
-		{
-			scrollContainer.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
-			scrollContainer.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
-			scrollContainer.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
+		public function initListeners():void {
+			this.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
+			this.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
+			this.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 			slider.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 			slider.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
-			if ( wheelEnable ) { stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true ); }
+			if ( wheel ) { stage.addEventListener( MouseEvent.MOUSE_WHEEL, manageEvent, false, 0, true ); }
 			stage.addEventListener( MouseEvent.MOUSE_UP, manageEvent, false, 0, true );
 		}
 		
-		public function delListeners():void 
-		{
-			scrollContainer.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
-			scrollContainer.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
-			scrollContainer.removeEventListener( MouseEvent.CLICK, manageEvent );
+		public function delListeners():void {
+			this.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
+			this.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
+			this.removeEventListener( MouseEvent.CLICK, manageEvent );
 			slider.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
 			slider.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
-			if ( wheelEnable ) { stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent ); }
+			if ( wheel ) { stage.removeEventListener( MouseEvent.MOUSE_WHEEL, manageEvent ); }
 			stage.removeEventListener( MouseEvent.MOUSE_UP, manageEvent );
 		}
 		
@@ -224,248 +151,160 @@ package railk.as3.ui
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 	   RESIZE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function resize():void 
-		{
-			if ( way == "V" ) {
-				if ( contentPlace.y + content.height > stage.stageHeight ) {
-					scrollContainer.visible = true;
-					showHide(1, true);
+		private function _resize():void {
+			if ( size.toScrollY+toScroll.height > stage.stageHeight ) {
+				this.visible = true;
+				showHide(1, true);
+				
+				if ( fullscreen ){
+					if ( slider.y >= size.stageHeight-slider.height ) slider.y = stage.stageHeight-slider.height;
+					else slider.y = ( slider.y * stage.stageHeight )/size.stageHeight;
+					bg.height = ( size.bg*stage.stageHeight )/size.stageHeight;
+					if (bottom) bottom.y = bg.height+2;
+				}
 					
-					if ( fullscreenEnable )
-					{
-						if ( slider.y >= oldStageH - slider.height ) { slider.y = stage.stageHeight - slider.height; }
-						else { slider.y = ( slider.y * stage.stageHeight ) / oldStageH; }
-						scrollBG.height = ( scrollSize.fH * stage.stageHeight ) / oldStageH;
-						if (bottom) bottom.y = scrollBG.height+2;
-					}
-					else
-					{
-						scrollBG.height = scrollSize.fH;
-					}
-						
-					distance = contentPlace.y+content.height - stage.stageHeight;
-					slider.height = ( (scrollSize.fH - distance) > scrollSize.sH ) ? scrollSize.fH - distance : scrollSize.sH;
-					multiplier = distance / ( scrollBG.height - slider.height );
-					delta = baseDelta / ( multiplier*.5);
-					delta = (delta > 6)? delta : 6;
-					rect = new Rectangle(0, 0, 0, scrollBG.height - slider.height );
-					oldStageH = stage.stageHeight;
-					scrollSize.fH = scrollBG.height;
-					
-					Process.to( slider, .5, { y:0 }, { onUpdate: function() { content.y = contentPlace.y-(slider.y * multiplier); } } );
-					
-					if(!listeners){
-						////////////////////////////////////
-						initListeners();
-						listeners = true;
-						////////////////////////////////////
-					}	
-				}	
-				else {
-					Process.to( slider, .4, { y:0 }, { onUpdate: function() { content.y = contentPlace.y -(slider.y * ((multiplier)? multiplier : 0) ); } } );
-					showHide(0, false);
+				distance = size.toScrollY+toScroll.height-stage.stageHeight;
+				slider.height = ((size.bg-distance) > size.slider )?size.bg-distance:size.slider;
+				multiplier = distance/( bg.height-slider.height );
+				delta = baseDelta / ( multiplier*.5);
+				delta = (delta > 6)? delta : 6;
+				rect = new Rectangle(0,0,0,bg.height-slider.height );
+				size.stageHeight= stage.stageHeight;
+				size.stageWidth= stage.stageWidth;
+				size.bg = bg.height;
+				
+				Engine.to( slider,.5,NaN,0,NaN,null,function(){ toScroll.y = size.toScrollY-(slider.y*multiplier); } );
+				
+				if(!listeners){
 					////////////////////////////////////
-					delListeners();
-					listeners = false;
+					initListeners();
+					listeners = true;
 					////////////////////////////////////
 				}	
-			}
-			else if ( way == "H" ) {
-				if ( contentPlace.x+content.height > stage.stageWidth) {
-					showHide(1, true);
-					
-					if ( fullscreenEnable)
-					{
-						if ( slider.x >= oldStageW - slider.width ) { slider.x = stage.stageWidth - slider.width; }
-						else { slider.x = ( slider.x * stage.stageWidth ) / oldStageW; }
-						scrollBG.width = ( scrollSize.fW * stage.stageWidth ) / oldStageW;
-						if ( bottom ) bottom.x = scrollBG.width +2;
-					}
-					else
-					{
-						scrollBG.width = scrollSize.fW;
-					}
-						
-					distance = contentPlace.x+content.height - stage.stageWidth;
-					slider.width = ( (scrollSize.fW - distance) > scrollSize.sW ) ? scrollSize.fWs - distance : scrollSize.sW;
-					multiplier = distance / ( scrollBG.width - slider.width  );
-					delta = baseDelta / (multiplier*.5);
-					delta = (delta > 6)? delta : 6;
-					rect = new Rectangle(0, 0, scrollBG.width - slider.width, 0);
-					oldStageW = stage.stageWidth;
-					scrollSize.fW = scrollBG.width;
-					
-					if(!listeners){
-						////////////////////////////////////
-						initListeners();
-						listeners = true;
-						////////////////////////////////////
-					}	
-				}	
-				else {
-					Process.to( slider, .4, { x:0 } , { onUpdate: function() { content.x = contentPlace.x -(slider.x * ((multiplier)? multiplier : 0) ); } } );
-					showHide(0, false);
-					////////////////////////////////////
-					delListeners();
-					listeners = false;
-					////////////////////////////////////
-				}		
-			}
+			} else {
+				Engine.to( slider,.4,NaN,y,NaN,null,function(){ toScroll.y= size.toScrollY-(slider.y*((multiplier)?multiplier:0)); } );
+				showHide(0, false);
+				////////////////////////////////////
+				delListeners();
+				listeners = false;
+				////////////////////////////////////
+			}			
 		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						   VISIBILITY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	alpha
-		 */
 		public function showHide( alpha:Number, visibility:Boolean ):void {
-			if(alpha) Process.to( scrollContainer, .4, { alpha:alpha }, { onStart:function() { scrollContainer.visible = visibility; } } );
-			else Process.to( scrollContainer, .4, { alpha:alpha }, { onComplete:function() { scrollContainer.visible = visibility; } } );
+			if(alpha) Engine.to( this, .4,NaN,NaN,alpha,function() { this.visible = visibility; } );
+			else Engine.to( this,.4,NaN,NaN,alpha,null,null,function() { this.visible = visibility; } );
 			if(top) top.alpha = alpha;
 			if(bottom) bottom.alpha = alpha;
-		}	
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get ObjectToScroll():Object { return content; }
-		
-		public function set ObjectToScroll( value:Object ):void { content = value; }
-		
-		override public function get alpha():Number { return scrollContainer.alpha; }
-		
+		}		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ) 
-		{
-			var value:Number;
+		private function manageEvent( evt:* ) {
+			var value:Number, p:String = (vToScroll)?'y':'x', s:String = (vToScroll)?'toScrollY':'toScrollX';
 			switch( evt.type ) {
 				case Event.ENTER_FRAME:
-					if ( content.height != contentCheck.height || content.width != contentCheck.width ) {
-						contentCheck.height = content.height;
-						contentCheck.width = content.width;
-						resize();
+					if ( toScroll.height != size.toScrollHeight || toScroll.width != size.toScrollWidth ) {
+						size.toScrollHeight = toScroll.height;
+						size.toScrollWidth = toScroll.width;
+						_resize();
 					}
 					break;
-				
-				case Event.RESIZE :
-					resize();
-					break;
-					
+				case Event.RESIZE : _resize(); break;
 				case MouseEvent.CLICK :
-					if ( way == "V" ) { 
-						if ( mouseY >= rect.height ) { value = rect.height; }
-						else if ( mouseY <= slider.height ) { value = 0; }
-						else { value = mouseY - slider.height / 2; }
-						Process.to( slider, .4, { y:value} );
-						Process.to( content, .6, { y: contentPlace.y-(value * multiplier)},{rounded:true} );
-					}
-					else if ( way == "H" ) {
-						if ( mouseX >= rect.width ) { value = rect.width; }
-						else if ( mouseX <= slider.width ) { value = 0; }
-						else { value = mouseX - slider.width / 2; }
-						engine.to( slider, .4, { x:value} );
-						engine.to( content, .6, { x: contentPlace.x-(value * multiplier)},{rounded:true} );
-					}
+					if ( mouseY >= rect.height ) value = rect.height;
+					else if ( mouseY <= slider.height ) value = 0;
+					else value = mouseY-slider.height*.5;
+					Engine.to( slider,.2,NaN,value);
+					Engine.to( toScroll,.2,((vToScroll)?NaN:size[s]-(value*multiplier)),((vToScroll)?size[s]-(value*multiplier):NaN));
 					evt.updateAfterEvent();
 					break;
-				
-				case MouseEvent.ROLL_OVER :
-					engine.to( scrollBG, .6, { color:scrollColor.fondOver } );
-					if( !customSlider ){
-						engine.to( slider, .6, { color:scrollColor.sliderOver} );
-					}	
-					break;
-					
-				case MouseEvent.ROLL_OUT :
-					engine.to( scrollBG, .6, { color:scrollColor.fond} );
-					if( !customSlider ){
-						engine.to( slider, .6, { color:scrollColor.slider} );
-					}	
-					break;
-					
+				case MouseEvent.ROLL_OVER : if(rollOver!=null) rollOver.apply(); break;
+				case MouseEvent.ROLL_OUT : if(rollOut!=null) rollOut.apply(); break;
 				case MouseEvent.MOUSE_DOWN :
 					if ( evt.currentTarget.name == "slider" ) {
 						evt.currentTarget.startDrag( false, rect );
 						stage.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
-						scrollContainer.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
+						this.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 					}	
-					else {
-						stage.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
-					}
+					else stage.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
 					break;
-					
 				case MouseEvent.MOUSE_UP :
-					var eEvent:MouseEvent = new MouseEvent( MouseEvent.ROLL_OUT, true,false, scrollContainer.x, scrollContainer.y, scrollContainer );
 					if( evt.currentTarget.name == "slider" ){
 						evt.currentTarget.stopDrag();
 						stage.removeEventListener( MouseEvent.MOUSE_MOVE, manageEvent );
-						scrollContainer.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
-					}
-					else {
+						this.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
+					} else {
 						stage.removeEventListener( MouseEvent.MOUSE_DOWN, manageEvent );
-						scrollContainer.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
-						manageEvent( eEvent );
+						this.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
+						manageEvent( new MouseEvent( MouseEvent.ROLL_OUT, true,false, this.x, this.y, this ) );
 						stopDrag();
 					}
 					break;
-					
 				case MouseEvent.MOUSE_MOVE :
-					if ( evt.currentTarget.name == "container" ) {
-						if ( way == "V" ) {
-							if ( mouseY >= rect.height ) { value = rect.height; }
-							else if ( mouseY <= slider.height ) { value = 0; }
-							else { value = mouseY - slider.height / 2; }
-							engine.to( slider, 1, { y:value }, { onUpdate: function() { content.y = contentPlace.y-(slider.y * multiplier); } } );
-						}
-						else if ( way == "H" ) {
-							if ( mouseX >= rect.width ) { value = rect.width; }
-							else if ( mouseX <= slider.width ) { value = 0; }
-							else { value = mouseX - slider.width / 2; }
-							engine.to( slider, 1, { x:value},{onUpdate: function() { content.x = contentPlace.x-(slider.x * multiplier); } } );
-						}
-					}
-					else {
-						if ( way == "V" ) {
-							engine.to( content, .3, { y:contentPlace.y -(slider.y * multiplier) }, { rounded:true } );
-						}
-						else if( way == "H" ) {
-							engine.to( content,.3, { x:contentPlace.x -(slider.x * multiplier)}, {rounded:true } );
-						}
-					}
+					if ( evt.currentTarget.name == "scrollBar" ) {
+						if ( mouseY >= rect.height ) value = rect.height;
+						else if ( mouseY <= slider.height ) value = 0;
+						else value = mouseY - slider.height*.5;
+						Engine.to(slider,0,((vToScroll)?NaN:value),((vToScroll)?value:NaN),NaN,null,function(){ toScroll[p]= size[s]-(slider.y*multiplier); } );
+					} 
+					else Engine.to( toScroll,0,((vToScroll)?NaN:size[s]-(slider.y*multiplier)),((vToScroll)?size[s]-(slider.y*multiplier):NaN) );
 					break;
-					
 				case MouseEvent.MOUSE_WHEEL :
-					
-					if ( way == "V" ) {
-						if ( slider.y >= 0 + evt.delta*delta  && slider.y <= rect.height+ evt.delta*delta  ) {
-							engine.to( slider, .4, { y: slider.y - (evt.delta * delta)} , { onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
-						}
-						else if( slider.y < 0 + evt.delta*delta ) {
-							engine.to( slider, .4, { y: 0}, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
-						}
-						else if ( slider.y > rect.height + evt.delta*delta ) {
-							engine.to( slider, .4, { y:rect.height }, {onUpdate: function() { content.y =contentPlace.y -(slider.y * multiplier); } } );
-						}
-					}
-					else if ( way == "H" ) {
-						if ( slider.x >= 0 + evt.delta*delta && slider.x <= rect.width + evt.delta*delta ) {
-							engine.to( slider, .4, { x: slider.x - (evt.delta * delta)} , {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
-						}
-						else if( slider.x < 0 + evt.delta*delta ) {
-							engine.to( slider, .4, { x: 0 }, {onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
-						}
-						else if ( slider.x > rect.height+evt.delta*delta ) {
-							engine.to( slider, .4, { x:rect.width }, { onUpdate: function() { content.x =contentPlace.x -(slider.x * multiplier); } } );
-						}
-					}
+					if ( slider.y >= 0+evt.delta*delta  && slider.y <= rect.height+evt.delta*delta  ) Engine.to( slider,.4,NaN,slider.y-(evt.delta*delta),NaN,null,function() { toScroll[p] =size[s]-(slider.y*multiplier); });
+					else if( slider.y < 0 + evt.delta*delta ) Engine.to( slider,.2,NaN,0,NaN,null,function() { toScroll[p] =size[s]-(slider.y * multiplier); });
+					else if ( slider.y > rect.height + evt.delta*delta ) Engine.to( slider,.2,NaN,rect.height,NaN,null,function() { toScroll[p] =size[s]-(slider.y*multiplier); });
 					break;
 			}
 		}
 	}
+}
+
+import flash.utils.getTimer;
+internal class Engine {
+	private var t:Object;
+	private var stm:Number;
+	private var dr:Number
+	private var props:Array=[];
+	private var update:Function;
+	private var complete:Function;
+	
+	public static function to(t:Object,dr:Number, x:Number=NaN, y:Number=NaN, a:Number=NaN, start:Function=null, update:Function=null, complete:Function=null):Engine {
+		return new Engine(t,dr,x,y,a,start,update,complete);
+	}
+	
+	public function Engine(t:Object,dr:Number,x:Number,y:Number,a:Number,start:Function,update:Function,complete:Function){
+		this.stm = getTimer()*.001;
+		this.t = t;
+		this.dr = dr;
+		this.update = update;
+		this.complete = complete;
+		if(!isNaN(x)) props.push( {p:'x',s:t.x,c:x-t.x} );
+		if(!isNaN(y)) props.push( {p:'y',s:t.y,c:y-t.y} );
+		if(!isNaN(a)) props.push( {p:'alpha',s:t.alpha,c:a-t.alpha} );
+		if (start!=null) start.apply();
+		t.addEventListener('enterFrame', u );
+	}
+
+	private function u(evt:*):void {
+		var tm:Number = (getTimer()*.001-stm);
+		if ( up(((tm>=dr)?1:((tm<=0)?0:e(tm,0,1,dr))))==1 ){
+			t.removeEventListener('enterFrame', u );
+			if (complete != null) complete.apply();
+			props = null;
+		}
+	}
+	
+	private function up(r:Number):int{
+		var i:int=props.length;
+		while( --i > -1 ) t[props[i].p] = Math.round(props[i].s+props[i].c*r+1e-18-1e-18);
+		if (update!=null) update.apply();
+		return r;
+	}
+	
+	private function e(t:Number,b:Number,c:Number,d:Number):Number { return c*t/d+b; }
 }

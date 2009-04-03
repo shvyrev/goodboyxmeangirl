@@ -2,28 +2,24 @@
 * Animatedclip class with frame and script
 * 
 * @author Richard Rodney
-* @version 0.1
+* @version 0.2
 */
 
 package railk.as3.display
 {
-	// _________________________________________________________________________________________ IMPORT FLASH
 	import flash.utils.Timer;
 	import flash.events.TimerEvent;
-	
-	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.data.list.DLinkedList;
 	import railk.as3.data.list.DListNode;
 	
 	public class AnimatedClip extends RegistrationPoint
 	{
-		// ________________________________________________________________________________________ VARIABLES
-		private var _frames                                               :int = 0;
-		private var _frameRate                                            :Number;
-		private var _current                                              :DListNode;
-		private var framesList                                            :DLinkedList;
-		private var walker                                            	  :DListNode;
-		private var t                                                     :Timer;
+		public var frames:int = 0;
+		private var _frameRate:Number=1;
+		private var _current:DListNode;
+		private var framesList:DLinkedList;
+		private var walker:DListNode;
+		private var t:Timer;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -31,10 +27,9 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function AnimatedClip( frames:int = 1 ):void {
 			super();
-			_frames = frames;
+			this.frames = frames;
 			framesList = new DLinkedList();
-			for ( var i:int=0; i < frames; i++ )
-			{
+			for ( var i:int=0; i < frames; i++ ){
 				framesList.add( [String(i),null] );
 			}
 			_current = framesList.head;
@@ -45,7 +40,7 @@ package railk.as3.display
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 		 PLAY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function play( frameRate:int = 1 ):void {
+		public function play( frameRate:int=1 ):void {
 			_frameRate = frameRate;
 			t.delay = frameRate;
 			t.start();
@@ -124,8 +119,7 @@ package railk.as3.display
 		public function dispose():void {
 			t.removeEventListener( TimerEvent.TIMER, manageEvent );
 			walker = framesList.head;
-			loop:while ( walker ) 
-			{
+			loop:while ( walker ) {
 				walker.dispose();
 				walker = walker.next;
 			}
@@ -136,8 +130,7 @@ package railk.as3.display
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:TimerEvent ):void {
-			switch( evt.type )
-			{
+			switch( evt.type ){
 				case TimerEvent.TIMER :
 					pushFrameOnScreen();
 					break;
@@ -149,13 +142,7 @@ package railk.as3.display
 		// 																						GETTER/SETTER
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function get currentFrame():DListNode { return _current; }
-		
-		public function get frames():int { return _frames; }
-		
-		public function set frames( value:int ):void { _frames = value; }
-		
 		public function get frameRate():Number { return _frameRate; }
-		
 		public function set frameRate( value:Number ):void {
 			_frameRate = value;
 			t.delay = value

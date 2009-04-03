@@ -9,7 +9,6 @@
 package railk.as3.ui.resize {
 
 	import flash.events.Event;
-	
 	public dynamic class ResizeManagerEvent extends Event{
 			
 		static public const ON_REMOVE_ONE                    :String = "onRemoveOne";

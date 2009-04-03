@@ -5,29 +5,21 @@
 * @author Default
 */
 
-package railk.as3.net.checker {
-	
-	// _________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.net.checker 
+{	
 	import flash.events.EventDispatcher;
 	import flash.events.Event;
 	
-	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.net.amfphp.*;
 	import railk.as3.net.amfphp.service.FileService;
 	
 	
-	
 	public class FileCheck extends EventDispatcher {
 		
-		// ______________________________________________________________________________ VARIABLES PROTEGEES
-		protected static var disp                               :EventDispatcher;
-		
-		// ________________________________________________________________________________________ VARIABLES
+		protected static var disp                               :EventDispatcher;		
 		private static var amf                                  :AmfphpClient;
 		private static var _file                                :String;
 		private static var requester                            :String = 'fileCheck';
-		
-		private static var eEvent                               :FileCheckEvent;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -56,8 +48,7 @@ package railk.as3.net.checker {
 		 * 
 		 * @param	file    the file to check if it exist
 		 */
-		public static function check( file:String, server:String='', path:String='' ):void 
-		{	
+		public static function check( file:String, server:String='', path:String='' ):void {	
 			amf = new AmfphpClient( server, path );
 			_file = file;
 			
@@ -102,20 +93,12 @@ package railk.as3.net.checker {
 				switch( evt.type ) 
 				{	
 					case AmfphpClientEvent.ON_RESULT :
-						///////////////////////////////////////////////////////////////
-						args = { info:"fichier "+ _file +" present", data:evt.data };
-						eEvent = new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_COMPLETE, args );
-						dispatchEvent( eEvent );
-						///////////////////////////////////////////////////////////////
+						dispatchEvent( new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_COMPLETE, { info:"fichier "+ _file +" present", data:evt.data } ) );
 						dispose();
 						break;
 						
 					case AmfphpClientEvent.ON_ERROR :
-						///////////////////////////////////////////////////////////////
-						args = { info:"check error" };
-						eEvent = new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_ERROR, args );
-						dispatchEvent( eEvent );
-						///////////////////////////////////////////////////////////////
+						dispatchEvent( new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_ERROR, { info:"check error" } ) );
 						dispose();
 						break;
 				}

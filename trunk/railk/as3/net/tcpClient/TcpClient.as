@@ -8,28 +8,21 @@
 * @version 0.1
 */
 
-package railk.as3.net.tcpClient {
-
-	// ________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.net.tcpClient 
+{
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
-	import flash.net.Socket;
-	
-	// ________________________________________________________________________________________ IMPORT RAILK
+	import flash.net.Socket;	
 	import railk.as3.utils.Logger;
 	
 	
 	public class TcpClient extends Sprite 
 	{	
-		// __________________________________________________________________________________ VARIABLES SOCKET
 		private var sc                                 :Socket;
 		private var _data                              :String;
-		
-		// ___________________________________________________________________________________ VARIABLES EVENT
-		private var eEvent                             :TcpClientEvent;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -68,14 +61,9 @@ package railk.as3.net.tcpClient {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																							 GET DATA
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getData( data:String ):void 
-		{
+		public function getData( data:String ):void {
 			_data = data;
-			///////////////////////////////////////////////////////////////
-			var args:Object = { info:"data received from server", data:_data };
-			eEvent = new TcpClientEvent( TcpClientEvent.ONDATARECEIVED, args );
-			dispatchEvent( eEvent );
-			///////////////////////////////////////////////////////////////
+			dispatchEvent( new TcpClientEvent( TcpClientEvent.ONDATARECEIVED, { info:"data received from server", data:_data } ) );
 		}
 		
 		
@@ -89,11 +77,8 @@ package railk.as3.net.tcpClient {
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:* ):void {
-			switch( evt.type )
-			{
-				case SecurityErrorEvent.SECURITY_ERROR :
-					break;
-				
+			switch( evt.type ) {
+				case SecurityErrorEvent.SECURITY_ERROR : break;
 				case ProgressEvent.SOCKET_DATA :
 					Logger.print( 'data reçu', Logger.MESSAGE );
 					sc.writeUTFBytes( 'client deconnecte' );
@@ -103,11 +88,7 @@ package railk.as3.net.tcpClient {
 				
 				case Event.CONNECT :
 					Logger.print( 'connecté', Logger.MESSAGE );
-					///////////////////////////////////////////////////////////////
-					var args:Object = { info:"connected to the server" };
-					eEvent = new TcpClientEvent( TcpClientEvent.ONCONNECTED, args );
-					dispatchEvent( eEvent );
-					///////////////////////////////////////////////////////////////
+					dispatchEvent( new TcpClientEvent( TcpClientEvent.ONCONNECTED, { info:"connected to the server" } ) );
 					break;
 					
 				case Event.CLOSE :
