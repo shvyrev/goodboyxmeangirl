@@ -32,18 +32,18 @@ package railk.as3.net.preloader
 	
 	import railk.as3.TopLevel;
 	import railk.as3.display.DSprite;
-	import railk.as3.ui.Loading;
-	import railk.as3.display.GraphicShape;
+	import railk.as3.ui.loading.*;
+	import railk.as3.display.graphicShape.*;;
 
 	
 	
 	public class MainPreloader extends MovieClip
 	{
-		private var container                                  :DSprite;
-		private var foreground                                 :DSprite;
-		private var background                                 :DSprite;
-		private var masker                                     :DSprite;
-		private var loading                                    :Loading;
+		private var container  :DSprite;
+		private var foreground :DSprite;
+		private var background :DSprite;
+		private var masker     :DSprite;
+		private var loading    :RectLoading
 		
 		
 		
@@ -96,13 +96,10 @@ package railk.as3.net.preloader
 			container.x2 = stage.stageWidth*.5;
 			container.y2 = stage.stageHeight*.5;	
 			
-			if ( this.loaderInfo.bytesLoaded == this.loaderInfo.bytesTotal )
-			{
+			if ( this.loaderInfo.bytesLoaded == this.loaderInfo.bytesTotal ){
 				loading.percent = 100;
 				launch();
-			}
-			else
-			{
+			} else {
 				this.loaderInfo.addEventListener( ProgressEvent.PROGRESS, manageEvent, false, 0, true );
 				this.loaderInfo.addEventListener( Event.COMPLETE, manageEvent, false, 0, true  );
 			}
@@ -131,8 +128,7 @@ package railk.as3.net.preloader
 		protected function createMask():DSprite {
 			var s:DSprite= new DSprite();
 			
-				var m:GraphicShape = new GraphicShape();
-				m.rectangle( 0xFF0000, 0, 0, 200, 6 );
+				var m:RectangleShape = new RectangleShape(0xFF0000,0,0,200,6);
 				s.addChild( m );
 			
 			return s;
@@ -143,9 +139,7 @@ package railk.as3.net.preloader
 		// 																					   CREATE LOADING
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		protected function createLoading():Loading {
-			var loadBar:Loading = new Loading();
-			loadBar.barLoading( { fond:0x111111, bar:0xFFFFFF }, 0, 0, 6, 200 );
-			
+			var loadBar:RectLoading = new RectLoading(0xFFFFFF,0x111111,0,0,6,200);			
 			return loadBar;
 		}	
 		
