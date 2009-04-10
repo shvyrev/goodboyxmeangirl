@@ -16,8 +16,7 @@ package railk.as3.ui.depth
 		
 		public function changeDepth( name:String, depth:int ):void {
 			var i:int = target.numChildren;
-			while( --i > -1 )
-				if( target.getChildAt(i).name == name) target.swapChildren( target, target.getChildAt(depth) ):
+			while( --i > -1 ) if( target.getChildAt(i).name == name) target.swapChildren( target, target.getChildAt(depth) );
 		}
 		
 		public function get length():int { return target.numChildren; }

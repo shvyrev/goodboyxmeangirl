@@ -7,62 +7,61 @@
 
 package railk.as3.ui.layout
 {
+	import flash.events.EventDispatcher;
 	import flash.events.Event;
-	import railk.as3.display.VSprite;
-	
-	public class LayoutBloc
+	public class LayoutBloc extends EventDispatcher
 	{	
 		public var arcs:Array=[];
 		public var marked:Boolean;
 		public var numArcs:int=0;
 		
-		private var bloc:VSprite;
-		private var subBlocs:Array=[];
+		public var target:*;
+		public var moveAction:Function;
+		public var moveActionParams:Array=[];
 		
 		public var name:String;
+		public var x:Number;
+		public var y:Number;
 		public var height:Number;
 		public var width:Number;
-		public var hasSubBlocs:Boolean;
-		public var dynamicHeight:Boolean = true;
-		public var dynamicWidth:Boolean = true;
+		public var dynamicHeight:Boolean;
+		public var dynamicWidth:Boolean;
+		public var align:String;
 		
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutBloc(parent:Object, name:String, x:Number, y:Number, width:Number, height:Number ) {
-			bloc = new VSprite(parent);
-			bloc.name = name;
+		public function LayoutBloc( name:String, x:Number, y:Number, width:String, height:String, align:String ) {
+			this.name = name;
+			this.x = x;
+			this.y = y;
+			this.width = Number(width.match(/[0-9]{0,}/)[0]);
+			this.height = Number(height.match(/[0-9]{0,}/)[0]);
+			this.dynamicHeight = (height.search(/\%/)!=-1)?true:false;
+			this.dynamicWidth = (width.search(/\%/)!=-1)?true:false;
+			this.align = align;
+		}
+		
+		public function setup(target:*, moveAction:Function, moveActionParams:Array = null):void {
+			this.target = target;
+			this.moveAction = moveAction;
+			this.moveActionParams = moveActionParams;
 		}
 		
 		/**
-		 * CONTENT
+		 * ACTION
 		 */
-		public function addSubBlocs( blocs:Array ):void {
-			for (var i:int = 0; i < blocs; i++) {
-				subBlocs.add[blocs.name]
-			}
+		public function move():Boolean {
+			return moveAction.apply(target, moveActionParams);
 		}
 		
-		public function addContent( content:Object ):Boolean {
-			var result:Boolean;
-			if ( hasSubBlocs) result = false;
-			else {
-				bloc.addChild( content );
-				result = true;
-			}
-			return result;
-		}
-		
-		public function setRegistration(x:Number, y:Number):void {
-			bloc.changeRegistration(x, y);
-		}
-		
-		public function move():void{
-			
+		public function change():void {
+			dispatchEvent( new Event(Event.CHANGE) );
 		}
 		
 		public function dispose():void {
-			bloc = null;
+			target=null;
+			arcs=null;
 		}
 		
 		/**
@@ -72,7 +71,7 @@ package railk.as3.ui.layout
 			arcs[numArcs++] = new LayoutArc(target, weight);
 		}
 		
-		public function removeArc(target:GraphNode):Boolean {
+		public function removeArc(target:LayoutBloc):Boolean {
 			var i:int = numArcs;
 			while( --i > -1 ) {
 				if (arcs[i].bloc == target) {
@@ -84,7 +83,7 @@ package railk.as3.ui.layout
 			return false;
 		}
 		
-		public function getArc(target:GraphNode):LayoutArc {
+		public function getArc(target:LayoutBloc):LayoutArc {
 			var i:int = numArcs;
 			while( --i > -1 ) {
 				var arc:LayoutArc = arcs[i];

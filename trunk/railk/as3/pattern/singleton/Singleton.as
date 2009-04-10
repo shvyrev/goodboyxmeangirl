@@ -16,10 +16,8 @@ package railk.as3.pattern.singleton
 		private static var instances:Dictionary = new Dictionary();
 		private static var allowInstantiation:Boolean = false;
 		
-		public static function getInstance(classe:Class):*
-		{
-			if ( instances[classe] == undefined )
-			{
+		public static function getInstance(classe:Class):* {
+			if ( instances[classe] == undefined ){
 				allowInstantiation = true;
 				instances[classe] = new classe();
 				allowInstantiation = false;
@@ -27,11 +25,8 @@ package railk.as3.pattern.singleton
 			return instances[classe];
 		}
 		
-		public static function assertSingle(classe:Class):void
-		{
-			if (!allowInstantiation) {
-				throw new Error("Error: Instantiation of class "+classe+" failed: Use "+classe+".getInstance() instead of new.");
-			}
+		public static function assertSingle(classe:Class):void {
+			if (!allowInstantiation) throw new Error("Error: Instantiation of class "+classe+" failed: Use "+classe+".getInstance() instead of new.");
 		}
 	}
 }

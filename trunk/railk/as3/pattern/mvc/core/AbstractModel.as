@@ -9,6 +9,7 @@
 package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.IModel;
+	import railk.as3.pattern.mvc.interfaces.IProxy;
 	import railk.as3.pattern.singleton.Singleton;
 		
 	public class AbstractModel implements IModel
@@ -23,21 +24,21 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function registerProxy( proxyClass:Class ):void {
-			proxys[proxys.length] = proxyClass;
+			proxys[proxys.length] = new proxyClass();
 		}
 
 		public function removeProxy( name:String ):void {
-			loop:for (var i:int = 0; i < proxys.length; i++) {
-				if ( proxys[i].NAME = name ) {
-					proxys.splice(i, 1);
-					break loop;
-				}
-			}
+			loop:for (var i:int = 0; i < proxys.length; i++) if ( proxys[i].NAME = name ) { proxys.splice(i, 1); break loop; }
+		}
+		
+		public function getProxy( name:String ):IProxy {
+			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME = name ) return proxys[i];
+			return null;
 		}
 		
 		public function hasProxy( name:String ):Boolean {
 			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME = name ) return true;
-			return false
+			return false;
 		}
 	}
 }

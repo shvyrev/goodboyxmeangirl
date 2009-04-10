@@ -8,12 +8,11 @@
 
 package railk.as3.pattern.mvc.interfaces
 {
-	import flash.events.IEventDispatcher;
-	
 	public interface IModel
 	{
 		function registerProxy( proxyClass:Class ):void;
 		function removeProxy( name:String ):void;
+		function getProxy( name:String ):IProxy;
 		function hasProxy( name:String ):Boolean;
 	}
 }
