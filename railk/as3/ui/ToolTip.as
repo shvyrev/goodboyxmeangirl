@@ -16,13 +16,13 @@ package railk.as3.ui
 	import flash.text.TextFormat;
 	
 	import railk.as3.display.DSprite;
-	import railk.as3.display.GraphicShape;
+	import railk.as3.display.graphicShape.*;
 	import railk.as3.display.RegistrationPoint;	
 	
 	public class ToolTip extends RegistrationPoint
 	{
-		private var bulle                          :GraphicShape;
-		private var triangle                       :GraphicShape;
+		private var bulle                          :RoundRectangleShape;
+		private var triangle                       :TriangleShape;
 		private var info                           :DSprite;
 		private var txt                            :TextField;
 		private var format                         :TextFormat;
@@ -111,8 +111,7 @@ package railk.as3.ui
 			else _width = txt.textWidth;
 			
 			//--bulle
-			bulle = new GraphicShape();
-			bulle.roundRectangle( bulleColor, 0, 0, _width, thickness, corner, corner );
+			bulle = new RoundRectangleShape(bulleColor, 0, 0, _width, thickness, corner, corner);
 			bulle.y = -thickness;
 			bulle.filters = _filters;
 			addChild( bulle );
@@ -122,8 +121,7 @@ package railk.as3.ui
 			
 			//--triangle
 			if(tri){
-				triangle = new GraphicShape();
-				triangle.triangle( triPoints[0], triPoints[1], triPoints[2], bulleColor );
+				triangle = new TriangleShape(triPoints[0], triPoints[1], triPoints[2], bulleColor);
 				triangle.filters = _filters;
 				addChild( triangle );
 				placeTriangle( triPlace );

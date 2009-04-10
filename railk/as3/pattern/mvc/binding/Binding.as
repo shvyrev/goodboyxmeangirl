@@ -28,18 +28,11 @@ package railk.as3.pattern.mvc.binding
 		}
 		
 		static public function remove( view:IView ):void {
-			loop:for (var i:int = 0; i < bindings; i++) {
-				if ( view.getName() == bindings[i].view.getName()) {
-					bindings.splice(i, 1);
-					break loop;
-				}
-			}
+			loop:for (var i:int = 0; i < bindings; i++) if ( view.getName() == bindings[i].view.getName()) { bindings.splice(i, 1); break loop; }
 		}
 		
 		static public function getBinding( view:IView ):Binding {
-			loop:for (var i:int = 0; i < bindings; i++) {
-				if ( view.getName() == bindings[i].view.getName()) return bindings[i];
-			}
+			for (var i:int = 0; i < bindings; i++) if ( view.getName() == bindings[i].view.getName()) return bindings[i];
 			return null;
 		}
 	
@@ -52,10 +45,8 @@ package railk.as3.pattern.mvc.binding
 			_view = view;
 			_isBound = true;
 			
-			/////////////////////////////////////////////////////////////////////
 			_proxy.addEventListener( _eventType, manageEvent, false, 0, true );	
 			bindings.push(this);
-			/////////////////////////////////////////////////////////////////////
 		}
 		
 		

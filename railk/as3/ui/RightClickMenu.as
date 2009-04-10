@@ -17,23 +17,20 @@ package railk.as3.ui
 	
 	public class RightClickMenu extends EventDispatcher
 	{
-		private var menu                                            :ContextMenu;
-		private var item                                            :ContextMenuItem;
-		private var actions                                         :Object={};
-		
+		public var menu     :ContextMenu;
+		private var item    :ContextMenuItem;
+		private var actions :Object={};
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 CONSTRUCTEUR
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function RightClickMenu( target:*, hideDefault:Boolean=true ) {
+		public function RightClickMenu( hideDefault:Boolean=true ) {
 			menu = new ContextMenu();
 			if(hideDefault) menu.hideBuiltInItems();
-			target.contextMenu = menu;
 		}
 		
-		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 		  ADD
+		// 																						 MANAGE ITEMS
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function add( name:String, action:Function, separator=false ):void {
 			actions[name] = action;
@@ -42,10 +39,6 @@ package railk.as3.ui
 			menu.customItems.push( item );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	   REMOVE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function remove( name:String ):void {
 			actions[name] = null;
 			loop:for ( var i:int = 0; i < menu.customItems.length; i++ ) {
@@ -57,28 +50,16 @@ package railk.as3.ui
 			}
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	  	 SHOW
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function show( name:String ):void {
 			var chosenItem:ContextMenuItem = getItemByName( name );
 			if ( chosenItem ) chosenItem.visible = true;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	   	 HIDE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function hide( name:String ):void {
 			var chosenItem:ContextMenuItem = getItemByName( name );
 			if ( chosenItem ) chosenItem.visible = false;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 GET ITEM BY NAME
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function getItemByName( name:String ):ContextMenuItem {
 			var result:ContextMenuItem;
 			loop:for ( var i:int = 0; i < menu.customItems.length; i++ ) {
@@ -95,36 +76,16 @@ package railk.as3.ui
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function dispose():void {
 			actions = null;
-			for ( var i:int = 0; i < menu.customItems.length; i++ ) {
-				menu.customItems[i].removeEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent );
-			}
+			for ( var i:int = 0; i < menu.customItems.length; i++ ) menu.customItems[i].removeEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent );
 			menu.customItems = null;
 		}
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						    TO STRING
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public override function toString():String {
-			var result:String = '[ RightClickMenu Items\n';
-			var state:String;
-			for ( var i:int = 0; i < menu.customItems.length; i++ ) {
-				if ( menu.customItems[i].visible ) state = 'visible';
-				else state = 'hidden';
-				result += '[ '+menu.customItems[i].caption+' is '+state+' ]\n'
-			}
-			result += ' RightClickMenu Items ]'
-			return result;
-		}
-		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:ContextMenuEvent ):void {
 			switch( evt.type ) {
-				case ContextMenuEvent.MENU_ITEM_SELECT :
-					actions[evt.target.caption].apply();
-					break;
+				case ContextMenuEvent.MENU_ITEM_SELECT : actions[evt.target.caption].apply(); break;
 			}
 		}
 	}

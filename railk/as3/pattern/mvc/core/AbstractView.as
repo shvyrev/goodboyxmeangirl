@@ -11,7 +11,6 @@ package railk.as3.pattern.mvc.core
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.display.RegistrationPoint;
 	
-	
 	public class AbstractView extends RegistrationPoint implements IView
 	{
 		static public const NAME:String = 'view';

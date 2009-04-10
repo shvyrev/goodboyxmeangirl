@@ -9,7 +9,6 @@ package railk.as3.ui
 {
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
-	
 	public class LinkedObject extends Proxy {
 		public var _master:*;
 		private var linked:Array;

@@ -2,7 +2,7 @@
 * 
 * What i Type is what i get ... humanized search/actions trigger system by typing everywhere on the surface.
 * 
-* TODO: test and make improment based on use
+* TODO: test and make improvement based on use
 * 
 * @author Richard Rodney
 * @version 0.1
