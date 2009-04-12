@@ -18,6 +18,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
+	import railk.as3.TopLevel;
 	
 	public class PageManager extends AbstractFacade implements IFacade
 	{
@@ -35,30 +36,43 @@ package railk.as3.ui.page
 		}
 		
 		public function init( title:String, hasmenu:Boolean, model:String, controller:String, src:String):void {
-			LinkManager.init( title,true,true);
+			LinkManager.init( title, true, true);
 			this.menu = new RightClickMenu();
 			this.hasMenu = hasMenu;
-			//loadEngine(src,model,controller);
+			this.loadEngine(src,model,controller);
 		}
 		
 		public function addPage(parent:String, title:String, layout:Layout, assets:Array = null):void {
 			if (parent==''){
-				index = new Page(null,title,layout,assets);
+				index = new Page(model,controller,null,title,layout,assets);
 				pages[pages.length] = index;
 			} else {
-				pages[pages.length] = new Page(getPage(parent), title, layout, assets);
+				pages[pages.length] = new Page(model,controller,getPage(parent), title, layout, assets);
 				pages[pages.length-1].parent.addChild(pages[pages.length-1]);
 			}
+			var link:String='/', prt:Page;
+			while (prt) { link='/'+prt.title+link; prt = prt.parent; }
+			link+=title+'/';
+			var action=function(type:String, requester:*, data:*) {
+				if (type == 'do') {
+					pages[pages.length-1].show();
+					TopLevel.stage.addChild(pages[pages.length-1].component);
+				} else if (type == 'undo') {
+					pages[pages.length-1].hide();
+					TopLevel.stage.removeChild(pages[pages.length-1].component);
+				}
+			}
+			LinkManager.add(link,null,action,null,true);
 		}
 		
 		public function getPage( name:String ):Page {
-			for (var i:int=0; i<pages.length; ++i) if (pages[i].name == name ) return pages[i];
+			for (var i:int=0; i<pages.length; ++i) if (pages[i].title == name ) return pages[i];
 			return null;
 		}
 		
-		public function loadEngine(src:String,model:String,controller:String) {
+		public function loadEngine(src:String, model:String, controller:String) {
 			var loader:Loader = new Loader();
-			loader.addEventListener(Event.COMPLETE, function(evt:Event)
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(evt:Event)
 			{
 				this.registerModel(getDefinitionByName(model) as Class);
 				this.registerController(getDefinitionByName(controller) as Class);

@@ -7,18 +7,18 @@
 
 package railk.as3.ui.layout
 {
-	import flash.events.EventDispatcher;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import railk.as3.pattern.mvc.interfaces.*;
+	
 	public class LayoutBloc extends EventDispatcher
 	{	
 		public var arcs:Array=[];
 		public var marked:Boolean;
 		public var numArcs:int=0;
 		
-		public var target:*;
-		public var moveAction:Function;
-		public var moveActionParams:Array=[];
-		
+		private var _view:IView;
+		public var viewClass:String;
 		public var name:String;
 		public var x:Number;
 		public var y:Number;
@@ -31,10 +31,10 @@ package railk.as3.ui.layout
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutBloc( name:String, x:Number, y:Number, width:String, height:String, align:String ) {
+		public function LayoutBloc( viewClass:Class, name:String, x:Number, y:Number, width:String, height:String, align:String ) {
 			this.name = name;
 			this.x = x;
-			this.y = y;
+			this.y = y; 
 			this.width = Number(width.match(/[0-9]{0,}/)[0]);
 			this.height = Number(height.match(/[0-9]{0,}/)[0]);
 			this.dynamicHeight = (height.search(/\%/)!=-1)?true:false;
@@ -42,17 +42,18 @@ package railk.as3.ui.layout
 			this.align = align;
 		}
 		
-		public function setup(target:*, moveAction:Function, moveActionParams:Array = null):void {
-			this.target = target;
-			this.moveAction = moveAction;
-			this.moveActionParams = moveActionParams;
+		public function setupView(model:IModel, controller:IController):Object {
+			if(!_view) _view = new Classe(model, controller);
+			return _view.component;
 		}
+		
+		public function get view():IView { return _view; };
 		
 		/**
 		 * ACTION
 		 */
-		public function move():Boolean {
-			return moveAction.apply(target, moveActionParams);
+		public function update():Boolean {
+			return _view.component.update();
 		}
 		
 		public function change():void {

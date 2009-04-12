@@ -69,12 +69,12 @@ package railk.as3.ui.link
 		 * 
 		 * @param	name                   nom du lien de type /.../.../...
 		 * @param	target				   displayObject clickable
-		 * @param   type                   'mouse' | 'roll'
-		 * @param	actions                Function(type:String("hover"|"out"|"do"|"undo"),requester:*,data:*)=null
+		 * @param	action                Function(type:String("hover"|"out"|"do"|"undo"),requester:*,data:*)=null
 		 * @param	colors                 Object {hover:,out:,click:}
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
+		 * @param   type                   'mouse' | 'roll'
 		 */
-		public static function add( name:String, target:Object=null, type:String='mouse', action:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, data:*=null):Link {	
+		public static function add( name:String, target:Object=null, action:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):Link {	
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
 			else if( swfAdress && !swfAdressEnable ) enable = false;
