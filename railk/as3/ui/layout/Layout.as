@@ -14,8 +14,7 @@ package railk.as3.ui.layout
 		public var parent:*;
 		public var next:Layout;
 		public var prev:Layout;
-		
-		private var blocs:Array;
+		public var blocs:Array=[];
 		private var blocCount:int=0;
 		
 		/**
@@ -24,6 +23,7 @@ package railk.as3.ui.layout
 		public function Layout( name:String, structure:Array ) {
 			this.name = name;
 			this.addBloc( structure );
+			this.linkBloc( structure );
 		}
 		
 		public function getBloc(name:String):LayoutBloc {
@@ -32,11 +32,19 @@ package railk.as3.ui.layout
 			return null;
 		}
 		
-		public function addBloc(blocs:Array):void {
-			for (var i:int = 0; i < blocs.length;++i) {
-				var b:XML = blocs[i], arcs:Array = (b.@linkId as String).split(',');
-				blocs[blocCount++] =  new LayoutBloc(b.@id,b.@x,b.@y,b.@width,b.@height,b.@align);
-				for (var i:int=0; i<arcs.length; ++i) addArc(b.@id, arcs[i]);
+		public function addBloc(struct:Array):void {
+			for (var i:int = 0; i < struct.length;++i) {
+				var b:XML = struct[i], arcs:Array;
+				arcs = b.@linkId.split(',');
+				blocs[blocCount++] =  new LayoutBloc(b.@view,b.@id,b.@x,b.@y,b.@width,b.@height,b.@align);
+			}
+		}
+		
+		public function linkBloc(struct:Array):void {
+			for (var i:int = 0; i < struct.length;++i) {
+				var b:XML = struct[i], arcs:Array;
+				arcs = b.@linkId.split(',');
+				for ( var j:int=0; j<arcs.length; ++j) addArc(b.@id, arcs[j]);
 			}
 		}
 		
@@ -78,7 +86,7 @@ package railk.as3.ui.layout
 			
 			while (c > 0){
 				v = que[front];
-				if (!v.move()) return;
+				if (!v.update()) return;
 				arcs = v.arcs, k = v.numArcs;
 				for (i = 0; i < k; i++){
 					w = arcs[i].bloc;

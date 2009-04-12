@@ -7,22 +7,32 @@
 
 package railk.as3.ui.page
 {
+	import railk.as3.display.DSprite;
+	import railk.as3.pattern.mvc.core.AbstractView;
+	import railk.as3.pattern.mvc.interfaces.IController;
+	import railk.as3.pattern.mvc.interfaces.IModel;
+	import railk.as3.pattern.mvc.interfaces.IView;
 	import railk.as3.ui.layout.Layout;
-	public class Page
+	public class Page extends AbstractView implements IView
 	{
 		public var next:Page;
 		public var prev:Page;
 		
-		public var name:String;
+		public var title:String;
 		public var parent:Page;
+		public var assets:Array;
+		public var layout:Layout;
 		public var firstChild:Page;
 		public var lastChild:Page;
 		public var length:Number=0;
 		
 		
-		public function Page( parent:Page, name:String, layour:Layout, assets:Array=null) {
+		public function Page( model:IModel, controller:IController, parent:Page, title:String, layout:Layout, assets:Array=null) {
 			this.parent = parent;
 			this.name = name;
+			this.layout = layout;
+			this.assets = assets;
+			this.component = new DSprite();
 		}
 		
 		public function addChild( child:Page ):void {
@@ -35,12 +45,18 @@ package railk.as3.ui.page
 			length++;
 		}
 		
-		public function setActive():void {
-			
+		override public function show():void {
+			for (var i:int = 0; i < layout.blocs.length; ++i) (component as DSprite).addChild( layout.blocs[i].setupView(model, controller) );
 		}
 		
-		public function dispose():void {
-
+		override public function hide():void {
+			for (var i:int = 0; i < layout.blocs.length; ++i) (component as DSprite).removeChild(layout.blocs[i].view.component );
+		}
+		
+		override public function dispose():void {
+			assets = null;
+			layout.dispose();
+			layout = null;
 		}
 		
 		/**
