@@ -7,12 +7,16 @@
 
 package railk.as3.ui.page
 {
+	import flash.events.Event;
+	import flash.net.URLRequest;
+	import flash.display.Loader;
 	import railk.as3.display.DSprite;
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.IController;
 	import railk.as3.pattern.mvc.interfaces.IModel;
 	import railk.as3.pattern.mvc.interfaces.IView;
 	import railk.as3.ui.layout.Layout;
+	
 	public class Page extends AbstractView implements IView
 	{
 		public var next:Page;
@@ -20,18 +24,20 @@ package railk.as3.ui.page
 		
 		public var title:String;
 		public var parent:Page;
-		public var assets:Array;
 		public var layout:Layout;
+		public var src:String;
+		
 		public var firstChild:Page;
 		public var lastChild:Page;
 		public var length:Number=0;
 		
 		
-		public function Page( model:IModel, controller:IController, parent:Page, title:String, layout:Layout, assets:Array=null) {
+		public function Page( model:IModel, controller:IController, parent:Page, title:String, layout:Layout, src:String) {
+			super(model, controller);
 			this.parent = parent;
-			this.name = name;
+			this.title = title;
 			this.layout = layout;
-			this.assets = assets;
+			this.src = src;
 			this.component = new DSprite();
 		}
 		
@@ -46,7 +52,13 @@ package railk.as3.ui.page
 		}
 		
 		override public function show():void {
-			for (var i:int = 0; i < layout.blocs.length; ++i) (component as DSprite).addChild( layout.blocs[i].setupView(model, controller) );
+			var loader:Loader = new Loader();
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(evt:Event)
+			{ 
+				for (var i:int = 0; i < layout.blocs.length; ++i) (component as DSprite).addChild( layout.blocs[i].setupView(model, controller) );
+			}
+			, false, 0, true );
+			loader.load( new URLRequest(src) );
 		}
 		
 		override public function hide():void {
@@ -54,7 +66,6 @@ package railk.as3.ui.page
 		}
 		
 		override public function dispose():void {
-			assets = null;
 			layout.dispose();
 			layout = null;
 		}

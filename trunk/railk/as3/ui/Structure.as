@@ -24,9 +24,9 @@ package railk.as3.ui
 		
 		private function getPages( xml:XML ):void {
 			for each ( var p:XML in xml..page) {
-				var title:String = getA('title', p);
+				var title:String = getA('title', p), src:String = getA('src', p);
 				var parent:String = (p.parent().localName()=='page')?p.parent().@id:'';
-				PageManager.getInstance().addPage(parent,title,getPageLayout( title, new XML(p.child('structure')) ),((p.child('assets').length())?getPageAssets(new XML(p.child('assets'))):null ) );
+				PageManager.getInstance().addPage(parent,title,getPageLayout( title, new XML(p.child('structure')) ),src );
 			}
 		}
 		
@@ -34,12 +34,6 @@ package railk.as3.ui
 			var struct:Array=[];
 			for each ( var b:XML in xml..bloc) struct.push(b) 
 			return LayoutManager.addLayout(page,struct);
-		}
-		
-		private function getPageAssets( xml:XML ):Array {
-			var result:Array=[];
-			for each ( var a:XML in xml..asset) result.push( {id:a.@id, src:a.@src } );
-			return result;
 		}
 		
 		private function getA( name:String, xml:XML ):String {

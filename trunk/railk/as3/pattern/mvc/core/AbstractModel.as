@@ -28,16 +28,16 @@ package railk.as3.pattern.mvc.core
 		}
 
 		public function removeProxy( name:String ):void {
-			loop:for (var i:int = 0; i < proxys.length; i++) if ( proxys[i].NAME = name ) { proxys.splice(i, 1); break loop; }
+			loop:for (var i:int = 0; i < proxys.length; i++) if ( proxys[i].NAME == name ) { proxys.splice(i, 1); break loop; }
 		}
 		
 		public function getProxy( name:String ):IProxy {
-			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME = name ) return proxys[i];
+			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME == name ) return proxys[i];
 			return null;
 		}
 		
 		public function hasProxy( name:String ):Boolean {
-			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME = name ) return true;
+			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME == name ) return true;
 			return false;
 		}
 	}

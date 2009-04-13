@@ -27,15 +27,14 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function registerModel( modelClass:Class ):void {
-			this.model = new modelClass();
+			model = modelClass.getInstance.apply();
 		}
 		
 		public function registerController( controllerClass:Class ):void {
-			this.controller = new controllerClass(this.model);
+			controller = controllerClass.getInstance.apply();
 		}
 		
-		public function registerView( name:String, viewClass:Class ):void {
-			var view:IView = new viewClass( model, controller );
+		public function registerView( view:IView ):void {
 			views.push( view );
 		}
 		
