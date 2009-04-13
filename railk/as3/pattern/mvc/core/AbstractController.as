@@ -31,8 +31,8 @@ package railk.as3.pattern.mvc.core
 		
 		public function registerCommand( proxyClass:Class, type:String, commandClass:Class, actions:Array ):void {
 			if ( !model.getProxy(proxyClass.NAME) ) model.registerProxy(proxyClass);
-			commands.push(new CommandClass(type,model.getProxy(proxyClass.NAME)));
-			for (var i:int = 0; i < actions; i++) commands[commands.length-1].addAction( actions[i].type, actions[i].action, actions[i].actionParams );
+			commands.push(new commandClass(type,model.getProxy(proxyClass.NAME)));
+			for (var i:int = 0; i < actions.length; i++) commands[commands.length-1].addAction( actions[i].type, actions[i].action, actions[i].actionParams );
 		}
 		
 		public function executeCommand( type:String, action:String ):void {
@@ -41,16 +41,16 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function getCommand(type:String):ICommand {
-			for (var i:int = 0; i < commands; i++) if( commands[i].type == type ) return commands[i];
+			for (var i:int = 0; i < commands.length; i++) if( commands[i].type == type ) return commands[i];
 			return null;
 		}
 		
 		public function removeCommand( type:String ):void {
-			loop:for (var i:int = 0; i < commands; i++) if ( commands[i].type == type ) { commands.splice(i, 1); break loop; }
+			loop:for (var i:int = 0; i < commands.length; i++) if ( commands[i].type == type ) { commands.splice(i, 1); break loop; }
 		}
 		
 		public function hasCommand( type:String ):Boolean {
-			( commands.getNodeByName(type) )?true:false;
+			return ( commands.getNodeByName(type) )?true:false;
 		}
 	}
 }

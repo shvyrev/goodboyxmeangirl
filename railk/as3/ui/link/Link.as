@@ -63,7 +63,7 @@ package railk.as3.ui.link
 			this.dummy = dummy;
 			this.data = data;			
 			this.swfAddress = swfAddress;
-			this.target.buttonMode = true;
+			if(!dummy) this.target.buttonMode = true;
 			initListeners();			
 		}
 		

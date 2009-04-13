@@ -10,8 +10,10 @@ package railk.as3.ui.page
 {
 	import flash.events.Event;
 	import flash.net.URLRequest;
-	import flash.utils.getDefinitionByName;
 	import flash.display.Loader;
+	import flash.system.LoaderContext;
+	import flash.system.ApplicationDomain;
+	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.core.AbstractFacade;
 	import railk.as3.pattern.mvc.interfaces.IFacade;
 	import railk.as3.pattern.singleton.Singleton;
@@ -42,12 +44,12 @@ package railk.as3.ui.page
 			this.loadEngine(src,model,controller);
 		}
 		
-		public function addPage(parent:String, title:String, layout:Layout, assets:Array = null):void {
+		public function addPage(parent:String, title:String, layout:Layout, src:String):void {
 			if (parent==''){
-				index = new Page(model,controller,null,title,layout,assets);
+				index = new Page(model,controller,null,title,layout,src);
 				pages[pages.length] = index;
 			} else {
-				pages[pages.length] = new Page(model,controller,getPage(parent), title, layout, assets);
+				pages[pages.length] = new Page(model,controller,getPage(parent), title, layout, src);
 				pages[pages.length-1].parent.addChild(pages[pages.length-1]);
 			}
 			var link:String='/', prt:Page;
@@ -62,6 +64,7 @@ package railk.as3.ui.page
 					TopLevel.stage.removeChild(pages[pages.length-1].component);
 				}
 			}
+			registerView(pages[pages.length - 1]);
 			LinkManager.add(link,null,action,null,true);
 		}
 		
@@ -72,13 +75,15 @@ package railk.as3.ui.page
 		
 		public function loadEngine(src:String, model:String, controller:String) {
 			var loader:Loader = new Loader();
+			var context:LoaderContext = new LoaderContext(true, ApplicationDomain.currentDomain);
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(evt:Event)
 			{
-				this.registerModel(getDefinitionByName(model) as Class);
-				this.registerController(getDefinitionByName(controller) as Class);
+				registerModel(getDefinitionByName(model) as Class);
+				registerController(getDefinitionByName(controller) as Class);
+				loader.unload();
 			}
 			, false, 0, true );
-			loader.load( new URLRequest(src) );
+			loader.load( new URLRequest(src),context );
 		}
 	}
 }

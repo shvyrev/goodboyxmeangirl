@@ -9,6 +9,7 @@ package railk.as3.ui.layout
 {
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.interfaces.*;
 	
 	public class LayoutBloc extends EventDispatcher
@@ -31,7 +32,8 @@ package railk.as3.ui.layout
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutBloc( viewClass:Class, name:String, x:Number, y:Number, width:String, height:String, align:String ) {
+		public function LayoutBloc( viewClass:String, name:String, x:Number, y:Number, width:String, height:String, align:String ) {
+			this.viewClass = viewClass;
 			this.name = name;
 			this.x = x;
 			this.y = y; 
@@ -43,7 +45,7 @@ package railk.as3.ui.layout
 		}
 		
 		public function setupView(model:IModel, controller:IController):Object {
-			if(!_view) _view = new Classe(model, controller);
+			if(!_view) _view = new (getDefinitionByName(viewClass) as Class)(model, controller);
 			return _view.component;
 		}
 		
@@ -61,7 +63,7 @@ package railk.as3.ui.layout
 		}
 		
 		public function dispose():void {
-			target=null;
+			viewClass=null;
 			arcs=null;
 		}
 		
