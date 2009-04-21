@@ -7,15 +7,14 @@
 
 package railk.as3.ui.page
 {
-	import flash.events.Event;
-	import flash.net.URLRequest;
-	import flash.display.Loader;
+	import flash.utils.getDefinitionByName;
 	import railk.as3.display.DSprite;
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.IController;
 	import railk.as3.pattern.mvc.interfaces.IModel;
 	import railk.as3.pattern.mvc.interfaces.IView;
 	import railk.as3.ui.layout.Layout;
+	import railk.as3.ui.UILoader;
 	
 	public class Page extends AbstractView implements IView
 	{
@@ -31,6 +30,7 @@ package railk.as3.ui.page
 		public var lastChild:Page;
 		public var length:Number=0;
 		
+		private var loader:UILoader;
 		
 		public function Page( model:IModel, controller:IController, parent:Page, title:String, layout:Layout, src:String) {
 			super(model, controller);
@@ -52,13 +52,10 @@ package railk.as3.ui.page
 		}
 		
 		override public function show():void {
-			var loader:Loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(evt:Event)
-			{ 
-				for (var i:int = 0; i < layout.blocs.length; ++i) (component as DSprite).addChild( layout.blocs[i].setupView(model, controller) );
-			}
-			, false, 0, true );
-			loader.load( new URLRequest(src) );
+			loader = new UILoader( src,function(){ 
+				setupBlocs(layout.blocs,component);
+				bindBlocs(layout.blocs);
+			});
 		}
 		
 		override public function hide():void {
@@ -70,6 +67,24 @@ package railk.as3.ui.page
 			layout = null;
 		}
 		
+		/**
+		 * 	UTILITIES
+		 */
+		private function setupBlocs(blocs:Array, container:*=null):void {
+			for (var i:int = 0; i < blocs.length; ++i) {
+				var child:* = blocs[i][0].setupView(model, controller);
+				if(blocs[i][1] ) setupBlocs(blocs[i][1],child);
+				container.addChild( child );
+			}
+		}
+		
+		private function bindBlocs(blocs:Array):void {
+			for (var i:int = 0; i < blocs.length; ++i) {
+				blocs[i][0].bind();
+				if(blocs[i][1] ) bindBlocs(blocs[i][1]);
+			}
+		}
+		 
 		/**
 		 * 	GETTER/SETTER
 		 */
@@ -87,13 +102,6 @@ package railk.as3.ui.page
 				child = child.parent;
 			}
 			return c;
-		}
-		
-		public function get numChildren():int { return length; }
-		
-		public function get numSiblings():int {
-			if (parent) return parent.length;
-			return 0;
 		}
 	}
 }

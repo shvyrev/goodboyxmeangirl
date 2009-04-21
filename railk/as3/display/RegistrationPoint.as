@@ -23,8 +23,7 @@ package railk.as3.display {
 		private var _rotation2               :Number;
 		
 		
-		public function RegistrationPoint() 
-		{
+		public function RegistrationPoint() {
 			_x2 = 0;
 			_y2 = 0;
 			_scaleX2 = 1;
@@ -33,8 +32,7 @@ package railk.as3.display {
 			_rotation2 = 0;
 		}
 		
-		public function setRegistration(x:Number, y:Number):void
-		{
+		public function setRegistration(x:Number, y:Number):void {
 			rp = new Point(x, y);
 		}
 		
