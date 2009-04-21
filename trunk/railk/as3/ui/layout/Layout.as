@@ -1,5 +1,5 @@
 ﻿/**
- * Layout Manager Layout
+ * Layout
  * 
  * @author Richard Rodney
  * @version 0.1
@@ -7,7 +7,6 @@
 
 package railk.as3.ui.layout
 {
-	import flash.events.Event;
 	public class Layout
 	{
 		public var name:String;
@@ -28,24 +27,48 @@ package railk.as3.ui.layout
 		
 		public function getBloc(name:String):LayoutBloc {
 			var i:int = blocs.length;
-			while( --i > -1 ) if(blocs[i].name==name) return blocs[i];
+			while ( --i > -1 ) {
+				var result:LayoutBloc = getSubBloc(blocs[i],name);
+				if (result) return result;
+			}
 			return null;
 		}
 		
-		public function addBloc(struct:Array):void {
-			for (var i:int = 0; i < struct.length;++i) {
-				var b:XML = struct[i], arcs:Array;
-				arcs = b.@linkId.split(',');
-				blocs[blocCount++] =  new LayoutBloc(b.@view,b.@id,b.@x,b.@y,b.@width,b.@height,b.@align);
+		private function getSubBloc(blocs:Array, name:String ):LayoutBloc {
+			if (blocs[0].name == name) return blocs[0];
+			else {
+				if (blocs[1]) {
+					for (var i:int = 0; i < blocs[1].length; i++) {
+						var result:LayoutBloc = getSubBloc(blocs[1][i], name);
+						if (result) return result;
+					}
+				}
 			}
+			return null;
 		}
 		
-		public function linkBloc(struct:Array):void {
-			for (var i:int = 0; i < struct.length;++i) {
-				var b:XML = struct[i], arcs:Array;
+		public function addBloc(struct:Array):void { for (var i:int = 0; i < struct.length;++i) blocs[blocCount++] = addSubBloc(struct[i]); }
+		
+		private function addSubBloc(struct:*,parent:LayoutBloc=null):Array {
+			var result:Array=[], b:XML=(struct is Array)?struct[0]:struct;
+			if(struct is Array){
+				result[0] =  new LayoutBloc(this,'railk.as3.ui.layout.utils::Dummy',b.@id,b.@x,b.@y,b.@width,b.@height,b.@align,parent);
+				result[1] = [];
+				for (var i:int = 0; i < struct[1].length; ++i) result[1][i] = addSubBloc(struct[1][i],result[0]); 
+			} 
+			else result[0] =  new LayoutBloc(this,b.@view,b.@id,b.@x,b.@y,b.@width,b.@height,b.@align,parent);
+			return result;
+		}
+		
+		public function linkBloc(struct:Array):void { for (var i:int = 0; i < struct.length;++i) linkSubBloc(struct[i]); }
+		
+		private function linkSubBloc(struct:*):void {
+			var arcs:Array, b:XML = (struct is Array)?struct[0]:struct;
+			if (b.@linkId.toString()){
 				arcs = b.@linkId.split(',');
-				for ( var j:int=0; j<arcs.length; ++j) addArc(b.@id, arcs[j]);
-			}
+				for ( var j:int = 0; j < arcs.length; ++j) addArc(b.@id, arcs[j]);
+			}	
+			if ( struct is Array ) for (var i:int=0; i < struct[1].length; ++i) linkSubBloc(struct[1][i]);
 		}
 		
 		public function removeBloc(name:String):Boolean {
@@ -68,31 +91,20 @@ package railk.as3.ui.layout
 		}
 		
 		/**
-		 * EVENT
-		 */
-		public function manageEvent(evt:Event):void {
-			var target:LayoutBloc = evt.currentTarget as LayoutBloc;
-			changeFrom(target);
-		}
-		
-		/**
 		 * GRAPH BREADTH FIRST 
 		 */
 		public function changeFrom(bloc:LayoutBloc):void {
-			var que:Array = new Array(0x10000), divisor:int = 0x10000 - 1, front:int = 0;
-			que[0] = bloc; 
-			bloc.marked = true;
-			var c:int = 1, k:int, i:int, arcs:Array, v:LayoutBloc, w:LayoutBloc;
+			var queue:Array = new Array(0x10000), divisor:int = 0x10000-1, front:int = 0;
+			queue[0] = bloc; 
 			
+			var c:int = 1, k:int, arcs:Array;
 			while (c > 0){
-				v = que[front];
-				if (!v.update()) return;
+				var v:LayoutBloc = queue[front];
+				if (front) v.update(bloc);
 				arcs = v.arcs, k = v.numArcs;
-				for (i = 0; i < k; i++){
-					w = arcs[i].bloc;
-					if (w.marked) continue;
-					w.marked = true;
-					que[int((c++ + front) & divisor)] = w;
+				for ( var i:int=0; i < k; ++i){
+					var w:LayoutBloc = arcs[i].bloc;
+					queue[int((c++ + front) & divisor)] = w;
 				}
 				if (++front == 0x10000) front = 0;
 				c--;
@@ -125,14 +137,6 @@ package railk.as3.ui.layout
 				return true;
 			}
 			return false;
-		}
-		
-		private function clearMarks():void {
-			var i:int = blocCount;
-			while( --i > -1 ) {
-				var b:LayoutBloc = blocs[i];
-				if (b) b.marked = false;
-			}
 		}
 	}
 }

@@ -8,31 +8,37 @@
 package railk.as3.ui.layout
 {
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
+	import flash.geom.Point;
 	import flash.utils.getDefinitionByName;
+	import flash.geom.Rectangle;
 	import railk.as3.pattern.mvc.interfaces.*;
+	import railk.as3.ui.layout.utils.*;
 	
-	public class LayoutBloc extends EventDispatcher
+	public class LayoutBloc
 	{	
 		public var arcs:Array=[];
-		public var marked:Boolean;
 		public var numArcs:int=0;
 		
-		private var _view:IView;
+		public var view:IView;
+		public var component:*
+		public var layout:Layout;
 		public var viewClass:String;
+		public var parent:LayoutBloc;
 		public var name:String;
-		public var x:Number;
-		public var y:Number;
-		public var height:Number;
-		public var width:Number;
+		public var x:int;
+		public var y:int;
+		public var height:int;
+		public var width:int;
 		public var dynamicHeight:Boolean;
 		public var dynamicWidth:Boolean;
 		public var align:String;
+		public var moved:Point = new Point();
 		
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutBloc( viewClass:String, name:String, x:Number, y:Number, width:String, height:String, align:String ) {
+		public function LayoutBloc( layout:Layout, viewClass:String, name:String, x:Number, y:Number, width:String, height:String, align:String, parent:LayoutBloc=null ) {
+			this.layout = layout;
 			this.viewClass = viewClass;
 			this.name = name;
 			this.x = x;
@@ -42,29 +48,44 @@ package railk.as3.ui.layout
 			this.dynamicHeight = (height.search(/\%/)!=-1)?true:false;
 			this.dynamicWidth = (width.search(/\%/)!=-1)?true:false;
 			this.align = align;
+			this.parent = parent;
 		}
 		
 		public function setupView(model:IModel, controller:IController):Object {
-			if(!_view) _view = new (getDefinitionByName(viewClass) as Class)(model, controller);
-			return _view.component;
+			if(!view) view = (name!='dummy')?new (getDefinitionByName(viewClass) as Class)(model, controller):new Dummy(model,controller);
+			component = view.component;
+			component.x = x;
+			component.y = y;
+			//_view.component.scrollRect = new Rectangle(0,0,((!dynamicWidth)?width:_view.component.width),((!dynamicHeight)?height:_view.component.height));
+			return component;
 		}
-		
-		public function get view():IView { return _view; };
 		
 		/**
 		 * ACTION
 		 */
-		public function update():Boolean {
-			return _view.component.update();
+		public function bind():void { 
+			x=component.x; width=component.width; 
+			y=component.y; height=component.height;
+			component.addEventListener(Event.ENTER_FRAME, check); 
 		}
+		public function unbind():void { component.removeEventListener(Event.ENTER_FRAME, check); }
 		
-		public function change():void {
-			dispatchEvent( new Event(Event.CHANGE) );
+		private function check(evt:Event):void {
+			layout.changeFrom(this);
+			x=component.x; width=component.width; 
+			y=component.y; height=component.height;
+		}
+
+		public function update(from:LayoutBloc):void {
+			unbind();
+			if(component.y >= from.y && component.y < from.y+from.height )component.x += int(from.component.width)-from.width+int(from.component.x)-from.x;
+			if(component.x >= from.x && component.x < from.x+from.width ) component.y += int(from.component.height)-from.height+int(from.component.y)-from.y;
+			bind();
 		}
 		
 		public function dispose():void {
 			viewClass=null;
-			arcs=null;
+			arcs = null;
 		}
 		
 		/**

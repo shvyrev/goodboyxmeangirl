@@ -12,12 +12,12 @@ package railk.as3.pattern.mvc.core
 	public class AbstractView implements IView
 	{
 		static public const NAME:String = 'view';
-		private var _component:Object;
+		private var _component:*;
 		
 		protected var model:IModel;
 		protected var controller:IController;
 		
-		public function AbstractView( model:IModel, controller:IController, component:Object=null ) {
+		public function AbstractView( model:IModel, controller:IController, component:*=null ) {
 			this.model = model;
 			this.controller = controller;
 			_component = component;
@@ -25,8 +25,8 @@ package railk.as3.pattern.mvc.core
 		
 		public function getName():String { return NAME; }
 		
-		public function get component():Object { return _component; }
-		public function set component(value:Object):void { _component=value; }
+		public function get component():* { return _component; }
+		public function set component(value:*):void { _component=value; }
 		
 		public function show():void {
 		}

@@ -14,7 +14,13 @@ package railk.as3.motion
 	public class RTweenByte
 	{
 		/**
-		 * actions
+		 * 
+		 * @param	t 	target
+		 * @param	dr	duration
+		 * @param	ps	props
+		 * @param	d	delay
+		 * @param	e	ease
+		 * @return
 		 */
 		static public function to( t:*,dr:*,ps:*,d:*=0,e:*=null ):RTweenByte { return new RTweenByte(t,dr,ps,d,e); }
 
