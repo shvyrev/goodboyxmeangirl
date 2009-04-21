@@ -7,8 +7,8 @@
 
 package railk.as3.ui.layout
 {
+	import flash.display.Stage;
 	import flash.events.Event;
-	import flash.geom.Point;
 	import flash.utils.getDefinitionByName;
 	import flash.geom.Rectangle;
 	import railk.as3.pattern.mvc.interfaces.*;
@@ -17,7 +17,8 @@ package railk.as3.ui.layout
 	public class LayoutBloc
 	{	
 		public var arcs:Array=[];
-		public var numArcs:int=0;
+		public var numArcs:int = 0;
+		public var stage:Stage;
 		
 		public var view:IView;
 		public var component:*
@@ -29,10 +30,9 @@ package railk.as3.ui.layout
 		public var y:int;
 		public var height:int;
 		public var width:int;
-		public var dynamicHeight:Boolean;
-		public var dynamicWidth:Boolean;
+		public var fixedHeight:Boolean;
+		public var fixedWidth:Boolean;
 		public var align:String;
-		public var moved:Point = new Point();
 		
 		/**
 		 * CONSTRUCTEUR
@@ -45,8 +45,8 @@ package railk.as3.ui.layout
 			this.y = y; 
 			this.width = Number(width.match(/[0-9]{0,}/)[0]);
 			this.height = Number(height.match(/[0-9]{0,}/)[0]);
-			this.dynamicHeight = (height.search(/\%/)!=-1)?true:false;
-			this.dynamicWidth = (width.search(/\%/)!=-1)?true:false;
+			this.fixedHeight = (height.search(/f/)!=-1)?true:false;
+			this.fixedWidth = (width.search(/f/)!=-1)?true:false;
 			this.align = align;
 			this.parent = parent;
 		}
@@ -56,7 +56,10 @@ package railk.as3.ui.layout
 			component = view.component;
 			component.x = x;
 			component.y = y;
-			//_view.component.scrollRect = new Rectangle(0,0,((!dynamicWidth)?width:_view.component.width),((!dynamicHeight)?height:_view.component.height));
+			if (fixedHeight || fixedWidth) component.scrollRect = new Rectangle(0, 0, width, height);
+			component.addEventListener(Event.ADDED_TO_STAGE, function() {
+				stage = component.stage;
+			});
 			return component;
 		}
 		
@@ -67,6 +70,7 @@ package railk.as3.ui.layout
 			x=component.x; width=component.width; 
 			y=component.y; height=component.height;
 			component.addEventListener(Event.ENTER_FRAME, check); 
+			if (align) stage.addEventListener(Event.RESIZE, resize );
 		}
 		public function unbind():void { component.removeEventListener(Event.ENTER_FRAME, check); }
 		
@@ -78,14 +82,51 @@ package railk.as3.ui.layout
 
 		public function update(from:LayoutBloc):void {
 			unbind();
-			if(component.y >= from.y && component.y < from.y+from.height )component.x += int(from.component.width)-from.width+int(from.component.x)-from.x;
-			if(component.x >= from.x && component.x < from.x+from.width ) component.y += int(from.component.height)-from.height+int(from.component.y)-from.y;
+			if(component.y >= from.y && component.y < from.y+from.height ) component.x += int(from.component.width)-from.width;
+			if(component.x >= from.x && component.x < from.x+from.width ) component.y += int(from.component.height)-from.height;
 			bind();
 		}
 		
 		public function dispose():void {
 			viewClass=null;
 			arcs = null;
+		}
+		
+		/**
+		 * RESIZE
+		 */
+		private function resize(evt:Event):void {
+			switch(align) {
+				case 'TL' : component.x = component.y = 0; break;
+				case 'TR' : 
+					component.x = stage.stageWidth - component.width;
+					component.y = 0;
+					break;
+				case 'BR' :
+					component.x = stage.stageWidth - component.width;
+					component.y = stage.stageHeight - component.height;
+					break;
+				case 'BL' : 
+					component.x = 0;
+					component.y = stage.stageHeight - component.height;
+					break;
+				case 'T' :
+					component.x = stage.stageWidth*.5-component.width*.5;
+					component.y = 0;
+					break;
+				case 'L' :
+					component.x = 0;
+					component.y = stage.stageHeight*.5-component.height*.5;
+					break;
+				case 'R' :
+					component.x = stage.stageWidth - component.width;
+					component.y = stage.stageHeight*.5-component.height*.5;
+					break;
+				case 'B' :
+					component.x = component.x = stage.stageWidth*.5-component.width*.5;
+					component.y = stage.stageHeight - component.height;
+					break;
+			}
 		}
 		
 		/**
