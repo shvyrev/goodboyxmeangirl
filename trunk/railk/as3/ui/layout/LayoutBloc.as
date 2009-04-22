@@ -123,8 +123,12 @@ package railk.as3.ui.layout
 					component.y = stage.stageHeight*.5-component.height*.5;
 					break;
 				case 'B' :
-					component.x = component.x = stage.stageWidth*.5-component.width*.5;
+					component.x = stage.stageWidth*.5-component.width*.5;
 					component.y = stage.stageHeight - component.height;
+					break;
+				case 'CENTER' :
+					component.x = stage.stageWidth*.5-component.width*.5;
+					component.y = stage.stageHeight*.5-component.height*.5;
 					break;
 			}
 		}
