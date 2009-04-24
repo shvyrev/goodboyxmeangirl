@@ -46,7 +46,7 @@ package railk.as3.data.pool
 		}
 		
 		public function purge():void {
-			var i:int=tweens.length;
+			var i:int=os.length;
 			while( --i > -1 ) os[i].dispose();
 			os = [];
 			size = 0;
