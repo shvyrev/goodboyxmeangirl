@@ -82,8 +82,8 @@ package railk.as3.ui.layout
 
 		public function update(from:LayoutBloc):void {
 			unbind();
-			if(component.y >= from.y && component.y < from.y+from.height ) component.x += int(from.component.width)-from.width;
-			if(component.x >= from.x && component.x < from.x+from.width ) component.y += int(from.component.height)-from.height;
+			if(component.y >= from.y && component.y < from.y+from.height+1 ) component.x += int(from.component.width)-from.width;
+			if(component.x >= from.x && component.x < from.x+from.width+1 ) component.y += int(from.component.height)-from.height;
 			bind();
 		}
 		
