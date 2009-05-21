@@ -6,7 +6,7 @@
 * @version 0.2
 */
 
-package railk.as3.flickr 
+package railk.as3.external.flickr 
 {
 	import flash.events.Event;
 

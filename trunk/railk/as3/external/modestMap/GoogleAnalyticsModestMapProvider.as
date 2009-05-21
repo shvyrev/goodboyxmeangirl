@@ -1,4 +1,4 @@
-﻿package railk.as3.analytics.modestMap {
+﻿package railk.as3.external.modestMap {
 	
 	import com.modestmaps.core.Coordinate;
 	import com.modestmaps.geo.MercatorProjection;
