@@ -17,11 +17,11 @@ package railk.as3.ui.loading
 		private var _percent:Number;
 		private var _color:uint;
 		
-		public function RectLoading(color:uint,bgColor:uint,x:Number,x:Number,height:Number,width:Number) { 
+		public function RectLoading(bgColor:uint,color:uint,x:Number,y:Number,height:Number,width:Number) { 
 			super();
 			_color = color;
-			bg = new RectangleShape(bgColor,0,0,width,height);
-			bar = new RectangleShape(barColor,0,0,1,height);
+			bg = new RectangleShape(bgColor,x,y,width,height);
+			bar = new RectangleShape(color,x,y,1,height);
 			this.addChild(bg);
 			this.addChild(bar)
 		}

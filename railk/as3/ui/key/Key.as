@@ -46,7 +46,7 @@ package railk.as3.ui.key {
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																	   							 INIT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-        public static function initialize(stage:Stage) {
+        public static function initialize(stage:Stage):void {
             if (!_initialized) {
                 stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressed);
                 stage.addEventListener(KeyboardEvent.KEY_UP, keyReleased);

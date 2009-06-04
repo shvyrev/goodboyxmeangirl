@@ -67,24 +67,18 @@ package railk.as3.ui.layout
 		 * ACTION
 		 */
 		public function bind():void { 
-			x=component.x; width=component.width; 
-			y=component.y; height=component.height;
-			component.addEventListener(Event.ENTER_FRAME, check); 
+			component.addEventListener(Event.CHANGE, check); 
 			if (align) stage.addEventListener(Event.RESIZE, resize );
 		}
-		public function unbind():void { component.removeEventListener(Event.ENTER_FRAME, check); }
+		public function unbind():void { component.removeEventListener(Event.CHANGE, check); }
 		
 		private function check(evt:Event):void {
-			layout.changeFrom(this);
-			x=component.x; width=component.width; 
-			y=component.y; height=component.height;
+			for (var i:int = 0; i < arcs.length ; ++i) arcs[i].bloc.update(this);
 		}
 
 		public function update(from:LayoutBloc):void {
-			unbind();
-			if(component.y >= from.y && component.y < from.y+from.height+1 ) component.x += int(from.component.width)-from.width;
-			if(component.x >= from.x && component.x < from.x+from.width+1 ) component.y += int(from.component.height)-from.height;
-			bind();
+			if(component.y >= from.y && component.y < from.y+from.height+1 ) component.x = int(x+(from.component.x-from.x)+(from.component.width-from.width));
+			if(component.x >= from.x && component.x < from.x+from.width+1 ) component.y = int(y+(from.component.y-from.y)+(from.component.height-from.height));
 		}
 		
 		public function dispose():void {

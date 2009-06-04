@@ -97,7 +97,7 @@ package railk.as3.utils {
 			var monthTab:Array = ["january", "february", "march", "april", "may", "june", "july" ,"august" ,"september", "october", "november", "december"];
 			
 			var myTime:Date = new Date();
-			var timeStr =  String( dayTab[myTime.getDay()]+" "+zero(myTime.getDate())+"-"+monthTab[myTime.getMonth()]+"-"+myTime.fullYear+" "+zero(myTime.getHours()) +":"+ zero(myTime.getMinutes()) +":"+ zero(myTime.getSeconds()) );
+			var timeStr:String =  String( dayTab[myTime.getDay()]+" "+zero(myTime.getDate())+"-"+monthTab[myTime.getMonth()]+"-"+myTime.fullYear+" "+zero(myTime.getHours()) +":"+ zero(myTime.getMinutes()) +":"+ zero(myTime.getSeconds()) );
 			return timeStr;
 		}
 		
@@ -139,33 +139,14 @@ package railk.as3.utils {
 		static public function numberToTime( value:Number, displayHours:Boolean ):String 
 		{
 			var result:String;
-			var minutes = Math.floor(value/ 60);
+			var minutes:Number = Math.floor(value/ 60);
 			
 			if (displayHours) 
 			{
-				var hours = Math.floor(minutes / 60);
+				var hours:Number = Math.floor(minutes / 60);
 			}
-			var seconds = Math.round(value - (minutes * 60));
-			
-			if (seconds < 10) 
-			{
-				seconds = "0" + seconds;
-			}
-			if (minutes < 10) 
-			{
-				minutes = "0" + minutes;
-			}
-			
-			if (displayHours) 
-			{
-				if (hours < 10) 
-				{
-					hours = "0" + hours;
-				}
-			}
-			
-			result = hours + ":" + minutes + ":" + seconds;
-			
+			var seconds:Number = Math.round(value - (minutes * 60));
+			result = ((hours < 10)?"0" + String(hours):String(hours))+ ":" + ((minutes < 10)?"0" + String(minutes):String(minutes))+ ":" + ((seconds < 10)?"0"+String(seconds):String(seconds));
 			return result;
 		}
 	}	

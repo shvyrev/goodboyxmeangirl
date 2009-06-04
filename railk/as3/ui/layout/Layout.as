@@ -90,27 +90,6 @@ package railk.as3.ui.layout
 			blocs=[];
 		}
 		
-		/**
-		 * GRAPH BREADTH FIRST 
-		 */
-		public function changeFrom(bloc:LayoutBloc):void {
-			var queue:Array = new Array(0x10000), divisor:int = 0x10000-1, front:int = 0;
-			queue[0] = bloc; 
-			
-			var c:int = 1, k:int, arcs:Array;
-			while (c > 0){
-				var v:LayoutBloc = queue[front];
-				if (front) v.update(bloc);
-				arcs = v.arcs, k = v.numArcs;
-				for ( var i:int=0; i < k; ++i){
-					var w:LayoutBloc = arcs[i].bloc;
-					queue[int((c++ + front) & divisor)] = w;
-				}
-				if (++front == 0x10000) front = 0;
-				c--;
-			}
-		}
-		
 		private function getArc(from:String, to:String):LayoutArc {
 			var f:LayoutBloc = getBloc(from);
 			var t:LayoutBloc = getBloc(to);
