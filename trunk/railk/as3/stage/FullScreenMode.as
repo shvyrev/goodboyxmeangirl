@@ -25,7 +25,7 @@ package railk.as3.stage
 			_stage = stage;
 		}
 		
-		private static var action:Function = function () {
+		private static function action():void {
 			if( _stage.hasOwnProperty("displayState") ) {
 				if( _stage.displayState != StageDisplayState.FULL_SCREEN ) _stage.displayState = StageDisplayState.FULL_SCREEN;
 				else _stage.displayState = StageDisplayState.NORMAL;

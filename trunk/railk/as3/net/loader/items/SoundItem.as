@@ -54,11 +54,13 @@ package railk.as3.net.loader.items
 		override protected function initListeners(loader:*):void {
 			super.initListeners(loader);
 			loader.addEventListener( Event.ID3, ID3, false, 0, true );
+			loader.addEventListener( Event.SOUND_COMPLETE, soundComplete, false, 0, true );
 		}
 		
 		override protected function delListeners(loader:*):void {
 			super.delListeners(loader);
 			loader.removeEventListener( Event.ID3, ID3 );
+			loader.removeEventListener( Event.SOUND_COMPLETE, soundComplete );
 		}
 		
 		private function streamReady():void {

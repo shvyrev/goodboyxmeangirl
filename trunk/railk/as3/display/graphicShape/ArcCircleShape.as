@@ -15,14 +15,14 @@ package railk.as3.display.graphicShape
 			this.graphicsCopy.clear();
 			startAngle = startAngle/360;
 			arcAngle = arcAngle/360;
-			var twoPI = 2 * Math.PI;
-			var angleStep = arcAngle/precision;
-			var X = centerX + Math.cos(startAngle * twoPI) * radius;
-			var Y = centerY + Math.sin(startAngle * twoPI) * radius;
+			var twoPI:Number = 2 * Math.PI;
+			var angleStep:Number = arcAngle/precision;
+			var X:Number = centerX + Math.cos(startAngle * twoPI) * radius;
+			var Y:Number = centerY + Math.sin(startAngle * twoPI) * radius;
 			this.graphicsCopy.lineStyle( epaisseur, color,1,false,"normal","square","round",3 );
 			this.graphicsCopy.moveTo(X, Y);
-			for(var i=1; i<=precision; i++){
-				var angle = startAngle + i * angleStep;
+			for(var i:int=1; i<=precision; i++){
+				var angle:Number = startAngle + i * angleStep;
 				X = centerX + Math.cos(angle * twoPI) * radius;
 				Y = centerY + Math.sin(angle * twoPI) * radius;
 				this.graphicsCopy.lineTo(X, Y);

@@ -10,7 +10,7 @@ package railk.as3.ui
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
 	public class LinkedObject extends Proxy {
-		public var _master:*;
+		public var master:*;
 		private var linked:Array;
 		
 		public function LinkedObject( master:*, ...args ) {
@@ -24,7 +24,7 @@ package railk.as3.ui
 		}
 		
 		flash_proxy override function getProperty(prop:*):* {
-			return _master[prop];
+			return master[prop];
 		}
 		
 		flash_proxy override function setProperty(prop:*,value:*):void {

@@ -21,20 +21,19 @@ package railk.as3.stage
 	public class StageManager 
 	{
 		
-		protected static var disp                      :EventDispatcher;
+		protected static var disp     :EventDispatcher;
 		
-		public static var GlobalVars                   :Object = {};
-		public static var H                            :Number;
-		public static var W                            :Number;
+		public static var H           :Number;
+		public static var W           :Number;
 		
-		private static var _stage                      :Stage;
-		public static var folder                       :String;
-		public static var url                          :String;
+		private static var _stage     :Stage;
+		public static var folder      :String;
+		public static var url         :String;
 		
-		private static var lastMove                    :Number;
-		private static var timeOut                     :Number;
-		private static var isIdle                      :Number;
-		private static var isActive                    :Number;
+		private static var lastMove   :Number;
+		private static var timeOut    :Number;
+		private static var isIdle     :Number;
+		private static var isActive   :Number;
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -65,7 +64,7 @@ package railk.as3.stage
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, ctMenu = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void {
+		public static function init( stage:Stage, ctMenu:Boolean = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void {
 			trace("                                   Stage initialise");
 			trace("---------------------------------------------------------------------------------------");
 			

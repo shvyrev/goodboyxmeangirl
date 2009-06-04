@@ -234,7 +234,7 @@ package railk.as3.external.flickr {
 				case FlickrResultEvent.AUTH_GET_TOKEN :
 					if ( evt.success ){
 						var authResult:AuthResult = AuthResult( evt.data.auth );
-						var id = authResult.user.nsid;
+						var id:String = authResult.user.nsid;
 						flickr.token = authResult.token;
 						flickr.permission = authResult.perms;
 						
