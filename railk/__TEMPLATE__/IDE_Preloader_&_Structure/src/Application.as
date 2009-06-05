@@ -7,7 +7,11 @@
 
 package 
 {	
-	import flash.display.Sprite;	
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.net.URLLoader;
+	import flash.net.URLRequest;
+	
 	import railk.as3.TopLevel;
 	import railk.as3.stage.StageManager;
 	import railk.as3.stage.StageManagerEvent;
@@ -19,12 +23,7 @@ package
 	public class Application extends Sprite 
 	{
 		public function Application() {
-			StageManager.init( TopLevel.stage, true );
-			StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
-			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
-			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );
-			StageManager.addEventListener( StageManagerEvent.ONMOUSELEAVE, manageEvent, false, 0, true );
-			
+			StageManager.init( TopLevel.stage, true );			
 			FullScreenMode.init( TopLevel.stage );
 			SWFWheel.initialize( TopLevel.stage );
 			
@@ -38,16 +37,12 @@ package
 		}
 		
 		private function startup():void {
-			
-		}
-		
-		private function manageEvent( evt:* ):void {
-			switch( evt.type ) {
-				case StageManagerEvent.ONSTAGERESIZE :break;
-				case StageManagerEvent.ONMOUSEIDLE :break;	
-				case StageManagerEvent.ONMOUSEACTIVE :break;
-				case StageManagerEvent.ONMOUSELEAVE :break;
-			}
+			var loader:URLLoader = new URLLoader( new URLRequest(TopLevel.root.loaderInfo.parameters.structure));
+			loader.addEventListener(Event.COMPLETE,  function() {
+				struct = new Structure( new XML(loader.data) );
+				struct.view('index');
+				loader = null;
+			}, false, 0, true);
 		}	
 	}
 }
