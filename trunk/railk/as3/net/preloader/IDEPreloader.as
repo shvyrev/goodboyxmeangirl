@@ -63,6 +63,7 @@ package railk.as3.net.preloader
 			stop();
 			TopLevel.root = root;
 			TopLevel.stage = stage;
+			TopLevel.main = this;
 			
 			//--stage
 			stage.scaleMode = StageScaleMode.NO_SCALE;

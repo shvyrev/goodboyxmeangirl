@@ -64,9 +64,9 @@ package railk.as3.stage
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, ctMenu:Boolean = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void {
-			trace("                                   Stage initialise");
-			trace("---------------------------------------------------------------------------------------");
+		public static function init( stage:Stage, cxMenu:Boolean = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void {
+			trace("                   Stage initialise");
+			trace("------------------------------------------------------");
 			
 			//initialisation variable mouse idle .2*60*1000 = 30 seconds
 			timeOut = .2*15*1000;
@@ -77,7 +77,7 @@ package railk.as3.stage
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.quality = quality;
 			stage.frameRate = frameRate;
-			stage.showDefaultContextMenu = ctMenu;
+			stage.showDefaultContextMenu = cxMenu;
 			stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
 			stage.addEventListener( Event.MOUSE_LEAVE, manageEvent, false, 0, true );
 			

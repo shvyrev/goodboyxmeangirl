@@ -6,11 +6,13 @@
 package railk.as3
 {
 	import flash.display.DisplayObject;
+	import flash.display.Sprite;
 	import flash.display.Stage;
 	
 	public class  TopLevel
 	{
-		public static var root                       :DisplayObject;
-		public static var stage                      :Stage;
+		public static var root:DisplayObject;
+		public static var stage:Stage;
+		public static var main:Sprite;
 	}
 }
