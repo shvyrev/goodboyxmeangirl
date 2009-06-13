@@ -17,7 +17,7 @@ package railk.as3.ui.page
 		
 		public function Background(id:String, view:String, src:String, container:*) {
 			this.id = id;
-			var loader:UILoader = new UILoader(src, function() {
+			var loader:UILoader = new UILoader(src, function():void {
 				component=new (getDefinitionByName(view) as Class)() ;
 				container.addChild( component );
 			});
