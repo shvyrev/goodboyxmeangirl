@@ -36,12 +36,15 @@ package railk.as3.ui.div
 		
 		public function bind():void { 
 			this.addEventListener(Event.CHANGE, check); 
-			if (align!='none') stage.addEventListener(Event.RESIZE, resize, false ,0, true );
+			if (align != 'none') {
+				stage.addEventListener(Event.RESIZE, resize, false ,0, true );
+				resize();
+			}
 		}
 		
 		public function unbind():void { 
 			this.removeEventListener(Event.CHANGE, check);
-			if (align!='none') stage.removeEventListener(Event.RESIZE, resize ); 
+			if (align != 'none') stage.removeEventListener(Event.RESIZE, resize );
 		}
 		
 		private function check(evt:Event):void { 
@@ -68,7 +71,7 @@ package railk.as3.ui.div
 		/**
 		 * RESIZE
 		 */
-		private function resize(evt:Event):void {
+		private function resize(evt:Event=null):void {
 			switch(_align) {
 				case 'TL' : x = y = 0; break;
 				case 'TR' : 
