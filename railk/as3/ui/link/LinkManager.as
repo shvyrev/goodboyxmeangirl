@@ -13,7 +13,6 @@ package railk.as3.ui.link
 	import com.asual.swfaddress.SWFAddress;
 	import com.asual.swfaddress.SWFAddressEvent;
 	
-	
 	public class LinkManager 
 	{	
 		protected static var disp:EventDispatcher;
@@ -27,10 +26,9 @@ package railk.as3.ui.link
 		private static var state:String;		
 		private static var link:Link;
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   LISTENERS DE CLASS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * LISTENERS DE CLASSE
+		 */
 		public static function addEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false, p_priority:int=0, p_useWeakReference:Boolean=false):void {
       			if (disp == null) { disp = new EventDispatcher(); }
       			disp.addEventListener(p_type, p_listener, p_useCapture, p_priority, p_useWeakReference);
@@ -46,10 +44,9 @@ package railk.as3.ui.link
       			disp.dispatchEvent(p_event);
       	}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  				 INIT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * INIT
+		 */
 		public static function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
@@ -61,11 +58,8 @@ package railk.as3.ui.link
 			inited = true;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  			 ADD LINK
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * ADD LINK
 		 * 
 		 * @param	name                   nom du lien de type /.../.../...
 		 * @param	target				   displayObject clickable
@@ -104,9 +98,9 @@ package railk.as3.ui.link
 		}
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE LINKS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE LINKS
+		 */
 		public static function remove( name:String ):void {
 			var l:Link = getLink(name);
 			if (l.next) l.next.prev = l.prev;
@@ -126,61 +120,44 @@ package railk.as3.ui.link
 		
 		public static function getLinkContent( name:String ):* { return getLink( name ).target; }
 		
+		/**
+		 * SWFADRESS UTILITIES
+		 */
+		public static function setValue(value:String):void { SWFAddress.setValue(value); }
+		private static function replace(str:String, find:String, replace:String):String { return str.split(find).join(replace); }	
+		private static function toTitleCase(str:String):String { return str.substr(0,1).toUpperCase() + str.substr(1); }
+		private static function formatTitle(title:String):String { return siteTitre + (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : ''); }
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  SWFADRESS UTILITIES
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function replace(str, find, replace) { return str.split(find).join(replace); }
-		
-		private static function toTitleCase(str) { return str.substr(0,1).toUpperCase() + str.substr(1); }
-		
-		private static function formatTitle(title) { return siteTitre + (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : ''); }
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		PARSE ADDRESS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function parseAddress( value:String ):Array {
-			var result:Array = new Array();
-			var tmp:Array = value.split('/');
-			for (var i:int = 0; i < tmp.length; i++){
-				if ( tmp[i] != '' ) result.push( tmp[i]+'/' );
-			}
-			return result;
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE EVENT
+		 */
 		private static function manageEvent( evt:SWFAddressEvent ):void {
-			var args:Object, prop:String;
 			try {
-				if ( evt.value == '/' ) {
-					if ( getLink(evt.value) ) getLink(evt.value).doAction();
-					state = "home";
-					dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE,{ info:"changed state", state:state } ) );
-				} else {
-					var parsed:Array = parseAddress( evt.value );
-					var nextLink:String = '/';
-					for (var i:int = 0; i < parsed.length ; i++) {
-						if (!getLink( nextLink + parsed[i] ).active) getLink( nextLink + parsed[i] ).doAction();
-						nextLink = nextLink + parsed[i];
+				state= (evt.value == '/')?"home":evt.value;
+				if ( getLink(evt.value) ) getLink(evt.value).deepLinkAction();
+				else {
+					if ( getLink(evt.value + '/') ) getLink(evt.value + '/').deepLinkAction();
+					else {
+						var a:Array = evt.value.split('/');
+						var link:String = '';
+						for (var i:int = 0; i < a.length-1; ++i) link+=a[i]+'/';
+						if ( getLink(link) ) getLink(link).deepLinkAction(a[a.length-1]);
+						else setValue('/');
 					}
-					state = evt.value;
-					dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, { info:"changed state", state:state } ) );
 				}
+				
+				dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, { info:"changed state", state:state } ) );
 				if(updateTitle) SWFAddress.setTitle(formatTitle(evt.value));
 				
-			} catch (err) {
+			} catch (err:Error) {
 				state = "erreur 404";
 				dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONERRORSTATE,{ info:"error state", state:state } ) );
 			}
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * GETTER/SETTER
+		 */
 		static public function get titre():String { return siteTitre; }
 		static public function set titre( value:String ):void { 
 			siteTitre = value;
