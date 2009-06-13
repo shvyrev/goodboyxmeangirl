@@ -7,115 +7,58 @@
 
 package railk.as3.ui.layout
 {
+	import flash.utils.Dictionary;
 	public class Layout
 	{
 		public var name:String;
-		public var parent:*;
-		public var next:Layout;
-		public var prev:Layout;
-		public var blocs:Array=[];
-		private var blocCount:int=0;
+		public var pack:String;
+		public var viewsDict:Dictionary=new Dictionary(true);
+		public var views:Array=[];
 		
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function Layout( name:String, structure:Array ) {
+		public function Layout( pack:String, name:String, structure:XML ) {
+			this.pack = pack;
 			this.name = name;
-			this.addBloc( structure );
-			this.linkBloc( structure );
+			this.construct( structure );
+		}
+			
+		private function construct(d:XML, master:LayoutView=null, container:LayoutView=null):void {
+			var length:int = d.children().length(), cm:LayoutView;
+			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),((d.component.toString())?pack+'.component::'+d.component:''),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d) );
+			for (var i:int = 0; i < length; i++) if (d.children()[i].name() != 'component') construct( d.children()[i],getView(d.children()[i-1].@id.toString()),viewsDict[d.@id.toString()] );
+		}		
+		
+		/**
+		 * MANAGE VIEWS
+		 */
+		public function getView(name:String):LayoutView { return (viewsDict[name])?viewsDict[name]:null; }
+		public function removeView(name:String):void {
+			for (var i:int = 0; i < views.length; i++) if (views[i].id == name) views.splice(i,1); 
+			delete views[name]; 
 		}
 		
-		public function getBloc(name:String):LayoutBloc {
-			var i:int = blocs.length;
-			while ( --i > -1 ) {
-				var result:LayoutBloc = getSubBloc(blocs[i],name);
-				if (result) return result;
-			}
-			return null;
-		}
-		
-		private function getSubBloc(blocs:Array, name:String ):LayoutBloc {
-			if (blocs[0].name == name) return blocs[0];
-			else {
-				if (blocs[1]) {
-					for (var i:int = 0; i < blocs[1].length; i++) {
-						var result:LayoutBloc = getSubBloc(blocs[1][i], name);
-						if (result) return result;
+		/**
+		 * UTILITIES
+		 */
+		private var attributes:Object =  { 'class':'', float:'none', align:'none', margins:null, posistion:'relative', x:0, y:0 };
+		private var margins:Object =  { 0:'top', 1:'right', 2:'bottom', 3:'left' };
+		private function A( name:String, xml:XML ):* {
+			var i:int;
+			for (i=0; i < xml.@*.length(); ++i){
+				if (name == xml.@*[i].name()) {
+					if (name == 'margins') {
+						var a:Array = (xml.@*[i].toString()).split(','), result:Object={ top:0,right:0,bottom:0,left:0 };
+						if(a.length==1){ var value:Number = Number(a[0]); result={top:value,right:value,bottom:value,left:value}; }
+						else for (i=0; i < a.length; i++) result[margins[i]] = Number(a[i]);
+						return result;
 					}
+					if(name == 'class') return pack+'.view::'+xml.@*[i];
+					return xml.@*[i];
 				}
-			}
-			return null;
-		}
-		
-		public function addBloc(struct:Array):void { for (var i:int = 0; i < struct.length;++i) blocs[blocCount++] = addSubBloc(struct[i]); }
-		
-		private function addSubBloc(struct:*,parent:LayoutBloc=null):Array {
-			var result:Array=[], b:XML=(struct is Array)?struct[0]:struct;
-			if(struct is Array){
-				result[0] =  new LayoutBloc(this,'railk.as3.ui.layout.utils::Dummy',b.@id,b.@x,b.@y,b.@width,b.@height,b.@align,parent);
-				result[1] = [];
-				for (var i:int = 0; i < struct[1].length; ++i) result[1][i] = addSubBloc(struct[1][i],result[0]); 
-			} 
-			else result[0] =  new LayoutBloc(this,b.@view,b.@id,b.@x,b.@y,b.@width,b.@height,b.@align,parent);
-			return result;
-		}
-		
-		public function linkBloc(struct:Array):void { for (var i:int = 0; i < struct.length;++i) linkSubBloc(struct[i]); }
-		
-		private function linkSubBloc(struct:*):void {
-			var arcs:Array, b:XML = (struct is Array)?struct[0]:struct;
-			if (b.@linkId.toString()){
-				arcs = b.@linkId.split(',');
-				for ( var j:int = 0; j < arcs.length; ++j) addArc(b.@id, arcs[j]);
 			}	
-			if ( struct is Array ) for (var i:int=0; i < struct[1].length; ++i) linkSubBloc(struct[1][i]);
-		}
-		
-		public function removeBloc(name:String):Boolean {
-			var b:LayoutBloc = getBloc(name), i:int=blocs.length;
-			if (!b) return false;
-			
-			while( --i > -1 ) {
-				var t:LayoutBloc = blocs[i];
-				if (t && t.getArc(b)) removeArc(t.name, b.name);
-			}
-			
-			b = null;
-			blocCount--;
-			return true;
-		}
-
-		public function dispose():void {
-			next = prev = null;
-			blocs=[];
-		}
-		
-		private function getArc(from:String, to:String):LayoutArc {
-			var f:LayoutBloc = getBloc(from);
-			var t:LayoutBloc = getBloc(to);
-			if (f && t) return f.getArc(t);
-			return null;
-		}
-		
-		private function addArc(from:String,to:String,weight:int=1):Boolean {
-			var f:LayoutBloc = getBloc(from);
-			var t:LayoutBloc = getBloc(to);
-			if (f && t){
-				if (f.getArc(t)) return false;
-				f.addArc(t,weight);
-				return true;
-			}
-			return false;
-		}
-		
-		private function removeArc(from:String, to:String):Boolean {
-			var f:LayoutBloc = getBloc(from);
-			var t:LayoutBloc = getBloc(to);
-			if (f && t){
-				f.removeArc(t);
-				return true;
-			}
-			return false;
+			return attributes[name];
 		}
 	}
 }

@@ -39,11 +39,8 @@ package railk.as3.ui.link
 		private var updateType:String;
 		private var toUpdate:*;
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * CONSTRUCTEUR
 		 * 
 		 * @param	name
 		 * @param	target
@@ -73,17 +70,14 @@ package railk.as3.ui.link
 			
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				      GET OBJECT TYPE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function getType( object:* ):String {
-			if ( object is TextField ) return 'text';
-			return 'object';
-		}
+		/**
+		 * GET OBJECT TYPE
+		 */
+		private function getType( object:* ):String { return (object is TextField)?'text':'object'; }
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   GESTION LISTERNERS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * LISTENERS
+		 */
 		public function initListeners():void {
 			if ( type == 'mouse'){
 				target.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
@@ -106,33 +100,31 @@ package railk.as3.ui.link
 			target.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  			TO STRING
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * TO STRING
+		 */
 		public function toString():String {
 			return '[ LINK > ' + this.name +' ]';
 		}
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function deepLinkAction(root:Boolean=false, data:*=null):void {
-			if ( swfAddress ) {
-				if (data) this.data = data;
-				if(root) SWFAddress.setValue('/');
-				else SWFAddress.setValue(name);
-			}
-		}
+		/**
+		 * DEEP LINK ACTIONS
+		 * 
+		 * @param	data
+		 */
+		public function deepLinkAction(data:*= null):void { action(data).call(); }
 		
+		
+		/**
+		 * NORMAL LINK ACTIONS
+		 */
 		public function doAction():void { 
 			var prop:String;
 			if ( action != null ) { 
 				active = true; 
 				action("do",target,((data is Function)?data.call():data));
-				for ( prop in content ) {
-					if ( content[prop].action != null ) content[prop].action("do",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data));
-				}
+				for ( prop in content ) if ( content[prop].action != null ) content[prop].action("do",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data));
 			} 
 		}
 		
@@ -141,26 +133,27 @@ package railk.as3.ui.link
 			if ( action != null ) { 
 				active = false; 
 				action("undo",target,((data is Function)?data.call():data));
-				for ( prop in content ) {
-					if ( content[prop].action != null ) content[prop].action("undo",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data));
-				}
+				for ( prop in content ) if ( content[prop].action != null ) content[prop].action("undo",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data));
 			} 
 		}
-				
-		public function change():void { active =(active)?false:true; }		
+		
+		
+		/**
+		 * GETTER/SETTER
+		 */
 		public function get mouseChildren():Boolean { return target.mouseChildren; }
 		public function set mouseChildren(value:Boolean):void { target.mouseChildren = value; }
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  		 DISPOSE LINK
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose() { delListeners(); }
+		/**
+		 * DISPOSE
+		 */
+		public function dispose():void { delListeners(); }
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE EVENT
+		 */
 		private function manageEvent( evt:* ):void {
 			var prop:String, type:String = getType( target );
 			switch( evt.type ) {
@@ -207,6 +200,9 @@ package railk.as3.ui.link
 			}
 		}
 		
+		/**
+		 * ENGINE
+		 */
 		private function changeColor(target:*, type:String, startColor:uint, endColor:uint):void {
 			target.addEventListener('enterFrame', update );
 			this.startTime = getTimer()*.001;
@@ -223,12 +219,12 @@ package railk.as3.ui.link
 		
 		private function updateColor(ratio:Number):int {
 			if ( updateType == 'text') target.textColor = clr(ratio,startColor,endColor);
-			else { var c = new ColorTransform(); c.color=clr(ratio,startColor,endColor); target.transform.colorTransform=c; }
+			else { var c:ColorTransform = new ColorTransform(); c.color=clr(ratio,startColor,endColor); target.transform.colorTransform=c; }
 			return ratio;
 		}
 		
 		private function clr(r:Number,b:uint,e:uint):uint {
-			var q=1-r;
+			var q:Number=1-r;
 			return  (((b>>24)&0xFF)*q+((e>>24)&0xFF)*r)<<24|(((b>>16)&0xFF)*q+((e>>16)&0xFF)*r)<<16|(((b>>8)&0xFF)*q+((e>>8)&0xFF)*r)<<8|(b&0xFF)*q+(e&0xFF)*r;
 		}
 		
