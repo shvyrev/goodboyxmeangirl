@@ -21,6 +21,7 @@ package railk.as3.ui.page
 	public class PageManager extends AbstractFacade implements IFacade
 	{
 		public var index:Page;
+		public var current:Page;
 		public var menu:RightClickMenu;
 		public var hasMenu:Boolean;
 		public var pages:Array=[];
@@ -35,53 +36,61 @@ package railk.as3.ui.page
 			Singleton.assertSingle(PageManager); 
 		}
 		
-		public function init( title:String, hasmenu:Boolean, model:String, controller:String, src:String):void {
+		public function init( author:String, title:String, hasMenu:Boolean, model:String, controller:String, src:String):void {
 			LinkManager.init( title, true, true);
-			this.menu = new RightClickMenu();
 			this.hasMenu = hasMenu;
-			loader = new UILoader(src, function() {
+			menu = new RightClickMenu();
+			menu.add(author,null,true);
+			loader = new UILoader(src, function():void {
 				registerModel(getDefinitionByName(model) as Class);
 				registerController(getDefinitionByName(controller) as Class);
 			});
 		}
 		
 		public function setBackground(id:String, view:String, src:String):void {
-			background = new Background(id, view, src, TopLevel.stage );
+			background = new Background(id, view, src, TopLevel.main );
 		}
 		
-		public function addPage(parent:String, title:String, layout:Layout, src:String):void {
+		public function addPage(id:String, parent:String, title:String, layout:Layout, src:String):void {
 			if (parent==''){
-				index = new Page(model,controller,null,title,layout,src);
+				index = new Page(id,model,controller,null,title,layout,src);
 				pages[pages.length] = index;
 			} else {
-				pages[pages.length] = new Page(model,controller,getPage(parent), title, layout, src);
-				pages[pages.length-1].parent.addChild(pages[pages.length-1]);
+				pages[pages.length] = new Page(id,model,controller,getPage(parent), title, layout, src);
+				getPage(parent).addChild(pages[pages.length-1]);
 			}
-			var link:String='/', prt:Page;
-			while (prt) { link='/'+prt.title+link; prt = prt.parent; }
-			link+=title+'/';
-			var action=function(type:String, requester:*, data:*) {
-				if (type == 'do') {
-					pages[pages.length-1].show();
-					TopLevel.stage.addChild(pages[pages.length-1].component);
-				} else if (type == 'undo') {
-					pages[pages.length-1].hide();
-					TopLevel.stage.removeChild(pages[pages.length-1].component);
-				}
-			}
-			registerView(pages[pages.length - 1]);
+			var link:String='', prt:Page=getPage(parent);
+			while (prt) { link=(prt.id!='index')?prt.id+'/'+link:'/'+link; prt=prt.parent; }
+			link+=(id!='index')?id+'/':'/';
+			var action:Function=function(data:*=null):void { setPage(id,data); }
+			registerView(getPage(id));
+			menu.add(title,function():void { LinkManager.setValue(link) }, ((id=='index')?true:false) );
 			LinkManager.add(link,null,action,null,true);
 		}
 		
-		public function getPage( name:String ):Page {
-			for (var i:int=0; i<pages.length; ++i) if (pages[i].title == name ) return pages[i];
+		public function getPage( id:String ):Page {
+			for (var i:int=0; i<pages.length; ++i) if (pages[i].id == id ) return pages[i];
 			return null;
 		}
 		
-		public function setPage( name:String ):void {
-			var page:Page = getPage(name);
+		public function setPage( id:String, data:*= null ):void {
+			if(current) unsetPage(current.id);
+			var page:Page = getPage(id);
+			page.data = data;
 			page.show();
-			TopLevel.stage.addChild(page.component);
+			TopLevel.main.addChild(page.component);
+			current = page;
+		}
+		
+		public function unsetPage( id:String ):void {
+			var page:Page = getPage(id);
+			page.hide();
+			TopLevel.main.removeChild(page.component);
+			current = null;
+		}
+		
+		public function setContextMenu():void {
+			TopLevel.main.contextMenu = menu.menu;
 		}
 	}
 }
