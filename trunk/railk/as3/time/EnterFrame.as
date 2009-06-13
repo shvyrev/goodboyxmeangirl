@@ -45,7 +45,7 @@ package railk.as3.time
 		
 		public function pause():void {
 			elapsedTime = time;
-			ticker.addEventListener(Event.ENTER_FRAME, dispatch);
+			ticker.removeEventListener(Event.ENTER_FRAME, dispatch);
 		}
 		
 		public function reset():void {
