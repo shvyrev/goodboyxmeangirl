@@ -41,16 +41,20 @@ package railk.as3.display {
 		override public function set width(value:Number):void { super.width = value; dispatchChange(); }
 		override public function set height(value:Number):void { super.height = value; dispatchChange(); }
 		override public function addChild(child:DisplayObject):DisplayObject { 
-			if(hasEventListener(Event.CHANGE)) child.addEventListener(Event.CHANGE, dispatchChange); 
+			if (hasEventListener(Event.CHANGE)) child.addEventListener(Event.CHANGE, dispatchChange, false, 0, true ); 
 			return super.addChild(child); 
 		}
 		override public function addChildAt(child:DisplayObject, index:int):DisplayObject { 
-			if(hasEventListener(Event.CHANGE)) child.addEventListener(Event.CHANGE, dispatchChange); 
+			if(hasEventListener(Event.CHANGE)) child.addEventListener(Event.CHANGE, dispatchChange, false, 0, true); 
 			return super.addChildAt(child, index); 
 		}
 		override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
 			if( type == Event.CHANGE ) for(var i:int=0;i<this.numChildren;++i) if(!this.getChildAt(i).hasEventListener(Event.CHANGE)) this.getChildAt(i).addEventListener(Event.CHANGE, dispatchChange); 
 			super.addEventListener(type, listener, useCapture, priority, useWeakReference);
+		}
+		override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
+			if( type == Event.CHANGE ) for(var i:int=0;i<this.numChildren;++i) if(this.getChildAt(i).hasEventListener(Event.CHANGE)) this.getChildAt(i).removeEventListener(Event.CHANGE, dispatchChange);
+			super.removeEventListener(type, listener, useCapture);
 		}
 		
 		/**

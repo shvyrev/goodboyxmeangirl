@@ -9,9 +9,6 @@ package railk.as3.display.graphicShape {
 	
 	import flash.geom.ColorTransform;
 	import flash.geom.Transform;
-	import flash.geom.Matrix;
-	import flash.display.Graphics;
-	import flash.geom.Point;
 	import railk.as3.display.RegistrationPoint;
 	
 	public class GraphicShape extends RegistrationPoint 

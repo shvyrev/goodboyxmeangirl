@@ -3,6 +3,9 @@
  * 
  * @author Richard Rodney
  * @version 0.1
+ * 
+ * TO ADD A BUNCH OF OPTIONS its just a first test
+ * 
  */
 
 package railk.as3.data.grid
@@ -89,7 +92,6 @@ package railk.as3.data.grid
 }
 
 import flash.events.Event;
-import railk.as3.data.grid.OrganicGrid;
 internal class OrganicGridCell {
 	
 	public var name:String = 'undefined';
@@ -124,10 +126,7 @@ internal class OrganicGridCell {
 		if( pos == 'BR' && content.x < from.content.x+from.content.width) content.y = int(y+(from.content.y-from.y)+(from.content.height-from.height));
 	}
 	
-	public function addArc(cell:OrganicGridCell,pos:String):void {
-		arcs[numArcs++] = new OrganicGridArc(cell,pos);
-	}
-	
+	public function addArc(cell:OrganicGridCell,pos:String):void { arcs[numArcs++] = new OrganicGridArc(cell,pos); }
 	public function removeArc(cell:OrganicGridCell):Boolean {
 		var i:int = numArcs;
 		while( --i > -1 ) {
@@ -138,12 +137,6 @@ internal class OrganicGridCell {
 			}
 		}
 		return false;
-	}
-	
-	public function getArc(cell:OrganicGridCell):OrganicGridArc{
-		var i:int = numArcs;
-		while( --i > -1 ) if (arcs[i].cell == cell) return arcs[i];
-		return null;
 	}
 }
 
