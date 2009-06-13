@@ -17,26 +17,28 @@ package railk.as3.ui
 	
 	public class RightClickMenu extends EventDispatcher
 	{
-		public var menu     :ContextMenu;
-		private var item    :ContextMenuItem;
-		private var actions :Object={};
+		public var menu:ContextMenu;
+		private var item:ContextMenuItem;
+		private var actions:Object={};
+		private var items:Array=[];
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * CONSTRUCTEUR
+		 */
 		public function RightClickMenu( hideDefault:Boolean=true ) {
 			menu = new ContextMenu();
 			if(hideDefault) menu.hideBuiltInItems();
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE ITEMS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function add( name:String, action:Function, separator=false ):void {
+		/**
+		 * MANAGE ITEMS
+		 */
+		public function add( name:String, action:Function=null, separator:Boolean=false ):void {
 			actions[name] = action;
 			item = new ContextMenuItem( name,separator );
-			item.addEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent, false, 0, true );
+			if(action!=null) item.addEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent, false, 0, true );
 			menu.customItems.push( item );
+			items.push(name);
 		}
 		
 		public function remove( name:String ):void {
@@ -71,22 +73,25 @@ package railk.as3.ui
 			return result;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						      DISPOSE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * DISPOSE
+		 */
 		public function dispose():void {
 			actions = null;
 			for ( var i:int = 0; i < menu.customItems.length; i++ ) menu.customItems[i].removeEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent );
 			menu.customItems = null;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:ContextMenuEvent ):void {
-			switch( evt.type ) {
-				case ContextMenuEvent.MENU_ITEM_SELECT : actions[evt.target.caption].apply(); break;
-			}
+		/**
+		 * MANAGE EVENT
+		 */
+		private function manageEvent( evt:ContextMenuEvent ):void { actions[evt.target.caption].apply(); }
+		
+		/**
+		 * DISPOSE
+		 */
+		override public function toString():String {
+			return '[CONTEXT MENU > '+items+' ]'
 		}
 	}
 }
