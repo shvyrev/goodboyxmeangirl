@@ -17,7 +17,7 @@ package $(PackageName)$(CSLB)
 	public class Main extends Sprite $(CSLB)
 	{	
 		public function Main() {
-			StageManager.init( TopLevel.stage );
+			StageManager.init( TopLevel.stage, true );
 			StageManager.addEventListener( StageManagerEvent.ONSTAGERESIZE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEIDLE, manageEvent, false, 0, true );
 			StageManager.addEventListener( StageManagerEvent.ONMOUSEACTIVE, manageEvent, false, 0, true );

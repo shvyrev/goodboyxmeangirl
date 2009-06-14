@@ -9,6 +9,8 @@ package $(PackageName)$(CSLB)
 	import flash.events.Event;
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
+	import flash.utils.getTimer;
+	import railk.as3.ui.loading.*;
 	
 	import railk.as3.TopLevel;
 	import railk.as3.stage.StageManager;
@@ -38,10 +40,13 @@ package $(PackageName)$(CSLB)
 		}
 		
 		public function startup():void {
-			var loader:URLLoader = new URLLoader( new URLRequest(TopLevel.root.loaderInfo.parameters.structure));
-			loader.addEventListener(Event.COMPLETE,  function() {
-				struct = new Structure( new XML(loader.data) );
-				struct.view('index');
+			var l:RectLoading = new RectLoading(0xffffff, 0x00CBFF, 0, 0, StageManager.W, 4);
+			TopLevel.main.addChild(l);
+			
+			var url:String = (TopLevel.root.loaderInfo.parameters.structure)?TopLevel.root.loaderInfo.parameters.structure:"../assets/siteLocal.xml";
+			var loader:URLLoader = new URLLoader( new URLRequest(url+'?nocache'+int(Math.random()*1000)*getTimer()+''+getTimer()));
+			loader.addEventListener(Event.COMPLETE,  function():void {
+				struct = new Structure( new XML(loader.data), l);
 				loader = null;
 			}, false, 0, true);
 		}

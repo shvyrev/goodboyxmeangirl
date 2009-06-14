@@ -15,17 +15,17 @@
 	<style type="text/css">
 		/* hide from ie on mac \*/
 		html { height: 100%; }
-		#content { height: 100%; font-family:arial; font-size:12px; color: #FFFFFF; }
+		#altContent { height: 100%; font-family:arial; font-size:12px; color: #FFFFFF; }
 		/* end hide */
-		#content a { color: #000000; background-color: #FFFFFF;}
-		#content a:hover { color: #000000; background-color: #00FFCC; }
+		#altContent a { color: #000000; background-color: #FFFFFF;}
+		#altContent a:hover { color: #000000; background-color: #00FFCC; }
 		body { height: 100%; margin: 0; padding: 0; }
 	</style>
 	<script type="text/javascript" src="js/swfobject.js"></script>
 	<script type="text/javascript" src="js/swfaddress.js"></script>
 	<script type="text/javascript">
 		var flashvars = {};
-		flashvars.structure = "/assets/structure.xml";
+		flashvars.structure = "/assets/site.xml";
 		var params = {};
 		params.menu = "false";
 		params.scale = "noscale";
@@ -33,7 +33,7 @@
 		params.allowScriptAccess= "always";
 		var attributes = {};
 		attributes.id = "$(ProjectID)";
-		swfobject.embedSWF("flash/$(ProjectID).swf", "altContent", "100%", "100%", "9.0.124", "flash/expressInstall.swf", flashvars, params, attributes);
+		swfobject.embedSWF("flash/boot.swf", "altContent", "100%", "100%", "9.0.124", "flash/expressInstall.swf", flashvars, params, attributes);
 		if (swfobject.hasFlashPlayerVersion("9.0.124")) swfobject.createCSS("body", "height: 100%; margin: 0; padding: 0; overflow: hidden;");
 	</script>
 	<script type="text/javascript">
