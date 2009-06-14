@@ -18,10 +18,10 @@ package railk.as3.ui.layout
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function Layout( pack:String, name:String, structure:XML ) {
+		public function Layout( pack:String, name:String, body:XML ) {
 			this.pack = pack;
 			this.name = name;
-			this.construct( structure );
+			for (var i:int=0; i < body.children().length(); i++) construct( body.children()[i] );
 		}
 			
 		private function construct(d:XML, master:LayoutView=null, container:LayoutView=null):void {

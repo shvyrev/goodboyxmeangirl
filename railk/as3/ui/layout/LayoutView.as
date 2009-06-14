@@ -55,8 +55,8 @@ package railk.as3.ui.layout
 			var X:Number = ((master)?master.div.x:0), Y:Number = ((master)?master.div.y:0);
 			if (float == 'none') Y = Y+div.margins.top+((master)?master.div.height+master.div.margins.bottom:0);
 			else if (float == 'left') X = X+div.margins.left + ((master)?master.div.width + master.div.margins.right:0);
-			div.x = X;
-			div.y = Y;
+			div.x += X;
+			div.y += Y;
 			div.state.update();
 			if (master && position!='absolute') master.div.addArc(div);
 			div.bind();
