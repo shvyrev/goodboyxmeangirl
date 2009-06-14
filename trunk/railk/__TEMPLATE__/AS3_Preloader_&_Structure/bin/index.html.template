@@ -25,7 +25,8 @@
 	<script type="text/javascript" src="js/swfaddress.js"></script>
 	<script type="text/javascript">
 		var flashvars = {};
-		flashvars.structure = "/assets/site.xml";
+		flashvars.main = "flash/$(ProjectID)";
+		flashvars.structure = "assets/site.xml";
 		var params = {};
 		params.menu = "false";
 		params.scale = "noscale";
