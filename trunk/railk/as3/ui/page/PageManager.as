@@ -17,6 +17,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
+	import railk.as3.utils.Logger;
 	
 	public class PageManager extends AbstractFacade implements IFacade
 	{
@@ -47,8 +48,9 @@ package railk.as3.ui.page
 			});
 		}
 		
-		public function setBackground(id:String, view:String, src:String):void {
-			background = new Background(id, view, src, TopLevel.main );
+		public function setBackground(id:String, layout:Layout, src:String):void {
+			background = new Background(id, model, controller, layout, src );
+			background.show();
 		}
 		
 		public function addPage(id:String, parent:String, title:String, layout:Layout, src:String):void {
@@ -74,19 +76,19 @@ package railk.as3.ui.page
 		}
 		
 		public function setPage( id:String, data:*= null ):void {
-			if(current) unsetPage(current.id);
-			var page:Page = getPage(id);
-			page.data = data;
-			page.show();
-			TopLevel.main.addChild(page.component);
-			current = page;
+			Logger.print( 'setPage' + id );
+			if (!current || current.id!=id) {
+				if(current) unsetPage(current.id);
+				var page:Page = getPage(id);
+				current = page;
+				page.data = data;
+				page.show();
+			}
 		}
 		
 		public function unsetPage( id:String ):void {
 			var page:Page = getPage(id);
 			page.hide();
-			TopLevel.main.removeChild(page.component);
-			current = null;
 		}
 		
 		public function setContextMenu():void {

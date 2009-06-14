@@ -65,9 +65,6 @@ package railk.as3.stage
 		 * @param	quality
 		 */
 		public static function init( stage:Stage, cxMenu:Boolean = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void {
-			trace("                   Stage initialise");
-			trace("------------------------------------------------------");
-			
 			//initialisation variable mouse idle .2*60*1000 = 30 seconds
 			timeOut = .2*15*1000;
 			_stage = stage;

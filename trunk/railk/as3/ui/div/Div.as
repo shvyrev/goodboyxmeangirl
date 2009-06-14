@@ -35,7 +35,7 @@ package railk.as3.ui.div
 		}
 		
 		public function bind():void { 
-			this.addEventListener(Event.CHANGE, check); 
+			if(position!='asbolute') this.addEventListener(Event.CHANGE, check); 
 			if (align != 'none') {
 				stage.addEventListener(Event.RESIZE, resize, false ,0, true );
 				resize();
@@ -43,7 +43,7 @@ package railk.as3.ui.div
 		}
 		
 		public function unbind():void { 
-			this.removeEventListener(Event.CHANGE, check);
+			if(position!='asbolute') this.removeEventListener(Event.CHANGE, check);
 			if (align != 'none') stage.removeEventListener(Event.RESIZE, resize );
 		}
 		
@@ -106,6 +106,9 @@ package railk.as3.ui.div
 					x = stage.stageWidth*.5-width*.5;
 					y = stage.stageHeight*.5-height*.5;
 					break;
+				
+				case 'CENTERX' : x = stage.stageWidth*.5-width*.5; break;
+				case 'CENTERY' : y = stage.stageHeight*.5-height*.5; break;
 			}
 		}
 		

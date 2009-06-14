@@ -81,8 +81,6 @@ package railk.as3.net.preloader
 		 */
 		private function main():void {
 			dispose();
-			trace("                    Preloader done");
-			trace("------------------------------------------------------");
 			addChild(new (getDefinitionByName("Main") as Class)() );
 		}
 		

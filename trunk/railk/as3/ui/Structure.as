@@ -27,15 +27,15 @@ package railk.as3.ui
 		}
 		
 		private function getBackground( xml:XML ):void {
-			var bg:XMLList = xml..background;
-			if(bg.@id.toString() != '') PageManager.getInstance().setBackground(bg.@id,bg.@view,bg.@src);
+			var b:XMLList = xml..background;
+			if(b.@id.toString() != '') PageManager.getInstance().setBackground(b.@id,getPageLayout( A('package',xml), b.@id, new XML(b.child('body')) ),b.@src);
 		}
 		
 		private function getPages( xml:XML ):void {
 			for each ( var p:XML in xml..page) {
 				var title:String = A('title', p), src:String = A('src', p);
 				var parent:String = (p.parent().localName() == 'page')?p.parent().@id:'';
-				PageManager.getInstance().addPage(A('id', p),parent,title,getPageLayout( A('package',xml), title, new XML(p.child('structure').children()) ),src );
+				PageManager.getInstance().addPage(A('id', p),parent,title,getPageLayout( A('package',xml), title, new XML(p.child('body')) ),src );
 			}
 		}
 		

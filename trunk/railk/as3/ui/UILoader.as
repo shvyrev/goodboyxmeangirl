@@ -16,15 +16,20 @@ package railk.as3.ui
 
 	public class UILoader
 	{
+		private var loader:Loader;
 		public function UILoader(src:String, complete:Function) {
-			var loader:Loader = new Loader();
 			var context:LoaderContext = new LoaderContext(true, ApplicationDomain.currentDomain);
+			loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(evt:Event):void{
 				complete.apply();
 				loader.unload();
 				loader = null;
 			}, false, 0, true );
 			loader.load( new URLRequest(src+'?nocache'+int(Math.random()*1000)*getTimer()+''+getTimer()),context );
-		}		
+		}
+		
+		public function stop():void {
+			if (loader) loader.close();
+		}
 	}
 }
