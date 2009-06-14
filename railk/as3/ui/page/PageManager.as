@@ -17,12 +17,11 @@ package railk.as3.ui.page
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
-	import railk.as3.utils.Logger;
 	
 	public class PageManager extends AbstractFacade implements IFacade
 	{
 		public var index:Page;
-		public var current:Page;
+		public var current:String='';
 		public var menu:RightClickMenu;
 		public var hasMenu:Boolean;
 		public var pages:Array=[];
@@ -76,13 +75,12 @@ package railk.as3.ui.page
 		}
 		
 		public function setPage( id:String, data:*= null ):void {
-			Logger.print( 'setPage' + id );
-			if (!current || current.id!=id) {
-				if(current) unsetPage(current.id);
+			if (current!=id) {
+				if(current) unsetPage(current);
 				var page:Page = getPage(id);
-				current = page;
 				page.data = data;
 				page.show();
+				current = id;
 			}
 		}
 		

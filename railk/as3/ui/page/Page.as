@@ -55,7 +55,7 @@ package railk.as3.ui.page
 		}
 		
 		override public function show():void {
-			loader = new UILoader( src, function():void { 
+			loader = new UILoader( src, function():void {
 				setupViews(layout.views, data);
 				TopLevel.main.addChild(component);
 				activateViews(layout.views);
@@ -64,8 +64,9 @@ package railk.as3.ui.page
 		
 		override public function hide():void {
 			loader.stop();
-			for (var i:int = 0; i < component.numChildren; i++) component.removeChildAt(i);
-			TopLevel.main.removeChild(component);
+			for (var i:int = 0; i < component.numChildren; ++i) component.removeChildAt(i);
+			try { TopLevel.main.removeChild(component); }
+			catch (e:ArgumentError){/*throw e;*/}
 			component = new DSprite();
 		}
 		
