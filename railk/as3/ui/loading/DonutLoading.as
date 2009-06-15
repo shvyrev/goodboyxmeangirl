@@ -10,7 +10,7 @@ package railk.as3.ui.loading
 	import railk.as3.display.graphicShape.*;
 	import railk.as3.display.RegistrationPoint;
 	
-	public class DonutLoading extends RegistrationPoint
+	public class DonutLoading extends RegistrationPoint implements ILoading
 	{	
 		private var cercle:DonutShape;
 		private var bg:DonutShape;

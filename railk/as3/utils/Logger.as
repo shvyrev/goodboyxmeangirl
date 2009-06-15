@@ -34,7 +34,7 @@ package railk.as3.utils
 		 * @param	type
 		 * @param	caller
 		 */
-		public static function print( info:String, type:String='all', caller:String = null ):void {
+		public static function print( info:*, type:String='all', caller:String = null ):void {
 			var _caller:String = ((caller != null ) ? caller.toUpperCase() : 'NONAME');
 			var mess:String;
 			if ( (loggerChannel == '' || loggerChannel == caller) && (loggerType == type || loggerType == Logger.ALL) ) mess = '[ LOG FROM ' + _caller +' => ' + info + ' ]';

@@ -13,6 +13,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.*
 	import railk.as3.ui.layout.Layout;
+	import railk.as3.ui.loading.ILoading;
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
 	
@@ -25,6 +26,7 @@ package railk.as3.ui.page
 		public var title:String;
 		public var parent:Page;
 		public var layout:Layout;
+		public var loadingView:ILoading;
 		public var src:String;
 		public var data:*;
 		
@@ -34,12 +36,13 @@ package railk.as3.ui.page
 		
 		private var loader:UILoader;
 		
-		public function Page( id:String, model:IModel, controller:IController, parent:Page, title:String, layout:Layout, src:String) {
+		public function Page( id:String, model:IModel, controller:IController, parent:Page, title:String, loadingView:ILoading, layout:Layout, src:String) {
 			super(model, controller);
 			this.id = id;
 			this.parent = parent;
 			this.title = title;
 			this.layout = layout;
+			this.loadingView = loadingView;
 			this.src = src;
 			this.component = new DSprite();
 		}
@@ -55,16 +58,16 @@ package railk.as3.ui.page
 		}
 		
 		override public function show():void {
-			loader = new UILoader( src, function():void {
-				setupViews(layout.views, data);
-				TopLevel.main.addChild(component);
-				activateViews(layout.views);
-			} );
+			var progress:Function = function(p:Number):void { loadingView.percent = p; }
+			var complete:Function = function():void { setupViews(layout.views, data); TopLevel.main.addChild(component); activateViews(layout.views); }
+			loader = new UILoader( src,complete,((loadingView)?progress:null) );
 		}
 		
 		override public function hide():void {
 			loader.stop();
-			for (var i:int = 0; i < component.numChildren; ++i) component.removeChildAt(i);
+			var i:int=0, views:Array = layout.views;
+			for (i=0; i < views.length; ++i) views[i].div.unbind();
+			for (i=0; i < component.numChildren; ++i) component.removeChildAt(i);
 			try { TopLevel.main.removeChild(component); }
 			catch (e:ArgumentError){/*throw e;*/}
 			component = new DSprite();
