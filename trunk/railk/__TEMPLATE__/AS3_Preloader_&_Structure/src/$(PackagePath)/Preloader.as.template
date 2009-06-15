@@ -5,10 +5,10 @@ $(CBI)*/
 
 package $(PackageName)$(CSLB)
 {
-	import railk.as3.net.preloader.AS3Preloader;
+	import railk.as3.net.preloader.BOOTPreloader;
 	import railk.as3.ui.loading.*;
 	
-	public class Preloader extends AS3Preloader $(CSLB)
+	public class Preloader extends BOOTPreloader $(CSLB)
 	{
 		public function Preloader() $(CSLB){
 			super();
