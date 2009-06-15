@@ -1,5 +1,5 @@
 ﻿/**
-* @mxmlc -default-background-color #cccccc -default-frame-rate 40 -default-size 800 600 -o bin/boot.swf
+* @mxmlc -default-background-color #cccccc -default-frame-rate 40 -default-size 800 600 -o bin/flash/boot.swf
 */
 
 package 

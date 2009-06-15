@@ -12,7 +12,7 @@ package railk.as3.ui.loading
 	import flash.text.TextFieldAutoSize;
 	import railk.as3.display.RegistrationPoint;
 	
-	public class TexteLoading extends RegistrationPoint
+	public class TexteLoading extends RegistrationPoint implements ILoading
 	{	
 		private var texte:TextField;
 		private var _percent:Number;

@@ -12,7 +12,7 @@ package railk.as3.ui.loading
 	import flash.geom.Transform;
 	import railk.as3.display.RegistrationPoint;
 	
-	public class RectLoading extends RegistrationPoint
+	public class RectLoading extends RegistrationPoint implements ILoading
 	{	
 		private var bar:Shape;
 		private var bg:Shape;

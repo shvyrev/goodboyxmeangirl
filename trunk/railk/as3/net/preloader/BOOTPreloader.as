@@ -1,9 +1,9 @@
 ﻿/**
 * 
-* AS3Preloader for FD project
+* BOOTPreloader for FD project
 * 
 * @author RICHARD RODNEY
-* @version 0.2;
+* @version 0.2
 */
 
 package railk.as3.net.preloader 
@@ -16,25 +16,25 @@ package railk.as3.net.preloader
 	import flash.utils.getDefinitionByName;	
 	import railk.as3.TopLevel;
 	
-	public class AS3Preloader extends MovieClip
+	public class BOOTPreloader extends MovieClip
 	{
 		protected var loading:*;
 		
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function AS3Preloader():void {
-			super();
-			init();
+		public function BOOTPreloader() {
+			if (stage) init();
+			else addEventListener(Event.ADDED_TO_STAGE, init);
 		}
 		
 		/**
 		 * INIT
 		 */
-		private function init():void {
-			TopLevel.root = root;
-			TopLevel.stage = stage;
-			TopLevel.main = this;
+		private function init(evt:Event=null):void {
+			TopLevel.root = this.parent.root;
+			TopLevel.stage = this.parent.stage;
+			TopLevel.main = this.parent.root as MovieClip;
 			
 			//--stage
 			stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -76,7 +76,7 @@ package railk.as3.net.preloader
 		 */
 		private function main():void {
 			dispose();
-			addChild(new (getDefinitionByName("Main") as Class)() );
+			addChild( new (getDefinitionByName("Main") as Class)() );
 		}
 		
 		/**

@@ -8,14 +8,15 @@
 package railk.as3.ui
 {
 	import railk.as3.ui.layout.Layout;
+	import railk.as3.ui.loading.ILoading;
 	import railk.as3.ui.page.PageManager;
 	
 	public class Structure
 	{
-		public function Structure( xml:XML ) {
+		public function Structure( xml:XML, loadingView:ILoading=null ) {
 			getSiteInfo(xml);
 			getBackground(xml);
-			getPages(xml);
+			getPages(xml,loadingView);
 			PageManager.getInstance().setContextMenu();
 		}
 		
@@ -31,11 +32,11 @@ package railk.as3.ui
 			if(b.@id.toString() != '') PageManager.getInstance().setBackground(b.@id,getPageLayout( A('package',xml), b.@id, new XML(b.child('body')) ),b.@src);
 		}
 		
-		private function getPages( xml:XML ):void {
+		private function getPages( xml:XML, loadingView:ILoading ):void {
 			for each ( var p:XML in xml..page) {
 				var title:String = A('title', p), src:String = A('src', p);
 				var parent:String = (p.parent().localName() == 'page')?p.parent().@id:'';
-				PageManager.getInstance().addPage(A('id', p),parent,title,getPageLayout( A('package',xml), title, new XML(p.child('body')) ),src );
+				PageManager.getInstance().addPage(A('id', p),parent,title,loadingView,getPageLayout( A('package',xml), title, new XML(p.child('body')) ),src );
 			}
 		}
 		

@@ -10,7 +10,7 @@ package railk.as3.ui.loading
 	import railk.as3.display.graphicShape.*;
 	import railk.as3.display.RegistrationPoint;
 	
-	public class CircleLoading extends RegistrationPoint
+	public class CircleLoading extends RegistrationPoint implements ILoading
 	{	
 		private var cercle:CircleShape;
 		private var bg:CircleShape;
