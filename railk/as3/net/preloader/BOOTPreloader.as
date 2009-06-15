@@ -31,10 +31,10 @@ package railk.as3.net.preloader
 		/**
 		 * INIT
 		 */
-		private function init(evt:Event=null):void {
+		private function init(evt:Event = null):void {
 			TopLevel.root = this.parent.root;
 			TopLevel.stage = this.parent.stage;
-			TopLevel.main = this.parent.root as MovieClip;
+			TopLevel.main = (this.parent.root as MovieClip)?this.parent.root as MovieClip:this;
 			
 			//--stage
 			stage.scaleMode = StageScaleMode.NO_SCALE;
