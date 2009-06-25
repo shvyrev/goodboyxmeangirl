@@ -10,14 +10,14 @@ package railk.as3.utils
 	import flash.external.ExternalInterface;
 	public class Logger 
 	{
-		public static const WARNING                               :String = 'warning';
-		public static const ERROR                                 :String = 'error';
-		public static const MESSAGE                               :String = 'message';
-		public static const ALL                                   :String = 'all';
-		public static const NONE                                  :String = 'none';
+		public static const WARNING      :String = 'warning';
+		public static const ERROR        :String = 'error';
+		public static const MESSAGE      :String = 'message';
+		public static const ALL          :String = 'all';
+		public static const NONE         :String = 'none';
 		
-		private static var loggerType                             :String;
-		private static var loggerChannel                          :String;
+		private static var loggerType    :String;
+		private static var loggerChannel :String;
 		
 		/**
 		 * INIT
@@ -34,7 +34,7 @@ package railk.as3.utils
 		 * @param	type
 		 * @param	caller
 		 */
-		public static function print( info:*, type:String='all', caller:String = null ):void {
+		public static function print( info:*, type:String='all', caller:* = null ):void {
 			var _caller:String = ((caller != null ) ? caller.toUpperCase() : 'NONAME');
 			var mess:String;
 			if ( (loggerChannel == '' || loggerChannel == caller) && (loggerType == type || loggerType == Logger.ALL) ) mess = '[ LOG FROM ' + _caller +' => ' + info + ' ]';

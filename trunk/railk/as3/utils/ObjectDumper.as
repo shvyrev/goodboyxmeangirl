@@ -14,7 +14,7 @@ package railk.as3.utils {
 		private static function toString( o:Object ):String
 		{
 			var result:String = '';
-			for ( var name in o ) 
+			for ( var name:String in o ) 
 			{
 				result += '[' + name +' => ';
 				result += (o[name].toString() == '[object Object]')?toString(o[name]):o[name].toString();
