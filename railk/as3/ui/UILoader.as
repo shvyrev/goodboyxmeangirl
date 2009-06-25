@@ -28,7 +28,7 @@ package railk.as3.ui
 			loader = new Loader();
 			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, manageEvent );
 			if (progress!=null) loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, manageEvent );
-			loader.load( new URLRequest(src+'?nocache'+int(Math.random()*1000)*getTimer()+''+getTimer()),context );
+			loader.load( new URLRequest(src+'?nocache='+int(Math.random()*1000)*getTimer()+''+getTimer()),context );
 		}
 		
 		private function manageEvent(evt:*):void {

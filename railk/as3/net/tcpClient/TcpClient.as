@@ -78,7 +78,7 @@ package railk.as3.net.tcpClient
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:* ):void {
 			switch( evt.type ) {
-				case SecurityErrorEvent.SECURITY_ERROR : break;
+				case SecurityErrorEvent.SECURITY_ERROR : Logger.print( 'security error '+evt, Logger.ERROR ); break;
 				case ProgressEvent.SOCKET_DATA :
 					Logger.print( 'data reçu', Logger.MESSAGE );
 					sc.writeUTFBytes( 'client deconnecte' );
@@ -96,7 +96,7 @@ package railk.as3.net.tcpClient
 					break;
 					
 				case IOErrorEvent.IO_ERROR :
-					Logger.print( 'erreur de connexion ', Logger.ERROR );
+					Logger.print( 'erreur de connexion '+evt, Logger.ERROR );
 					break;
 			}
 		}

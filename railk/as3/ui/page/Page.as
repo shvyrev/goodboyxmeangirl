@@ -16,6 +16,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.loading.ILoading;
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
+	import railk.as3.utils.Logger;
 	
 	public class Page extends AbstractView implements IView
 	{
@@ -65,12 +66,14 @@ package railk.as3.ui.page
 		
 		override public function hide():void {
 			loader.stop();
+			Logger.print('beforehiding', 'all', this );
 			var i:int=0, views:Array = layout.views;
 			for (i=0; i < views.length; ++i) views[i].div.unbind();
 			for (i=0; i < component.numChildren; ++i) component.removeChildAt(i);
 			try { TopLevel.main.removeChild(component); }
 			catch (e:ArgumentError){/*throw e;*/}
 			component = new DSprite();
+			Logger.print('hided', 'all', this );
 		}
 		
 		override public function dispose():void {
