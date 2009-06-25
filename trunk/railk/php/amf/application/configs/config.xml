@@ -1,0 +1,17 @@
+﻿<configdata>
+    <production>
+        <database>
+            <adapter>PDO_MYSQL</adapter>
+            <host>localhost</host>
+            <username>root</username>
+            <password></password>
+            <dbname></dbname>
+        </database>
+	</production>
+	<staging extends="production">
+    </staging>
+    <testing extends="production">
+    </testing>
+    <development extends="production">
+    </development>
+</configdata>
