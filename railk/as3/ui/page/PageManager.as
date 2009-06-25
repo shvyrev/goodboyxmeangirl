@@ -76,7 +76,7 @@ package railk.as3.ui.page
 		}
 		
 		public function setPage( id:String, data:*= null ):void {
-			if (current!=id) {
+			if (current != id) {
 				if(current) unsetPage(current);
 				var page:Page = getPage(id);
 				page.data = data;
