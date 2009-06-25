@@ -6,15 +6,13 @@
 */
 
 
-package railk.as3.net.checker {
-
+package railk.as3.net.checker 
+{
 	import flash.events.Event;
-	
-	public dynamic class FileCheckEvent extends Event{
-			
-		static public const ON_FILE_CHECK_COMPLETE                  :String = "onFileCheckComplete";
-		static public const ON_FILE_CHECK_ERROR                     :String = "onFileCheckError";
-		
+	public dynamic class FileCheckEvent extends Event
+	{
+		static public const ON_FILE_CHECK_COMPLETE :String = "onFileCheckComplete";
+		static public const ON_FILE_CHECK_ERROR    :String = "onFileCheckError";
 		
 		public function  FileCheckEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 				super(type, bubbles, cancelable) ;

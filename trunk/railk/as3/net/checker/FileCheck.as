@@ -9,60 +9,38 @@ package railk.as3.net.checker
 {	
 	import flash.events.EventDispatcher;
 	import flash.events.Event;
-	
 	import railk.as3.net.amfphp.*;
-	import railk.as3.net.amfphp.service.FileService;
 	
 	
-	public class FileCheck extends EventDispatcher {
+	public class FileCheck extends EventDispatcher 
+	{
+		public var amf:AmfphpClient;
 		
-		protected static var disp                               :EventDispatcher;		
-		private static var amf                                  :AmfphpClient;
-		private static var _file                                :String;
-		private static var requester                            :String = 'fileCheck';
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	   GESTION DES LISTENERS DE CLASS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function addEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false, p_priority:int=0, p_useWeakReference:Boolean=false):void {
-      			if (disp == null) { disp = new EventDispatcher(); }
-      			disp.addEventListener(p_type, p_listener, p_useCapture, p_priority, p_useWeakReference);
-      	}
-		
-    	public static function removeEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false):void {
-      			if (disp == null) { return; }
-      			disp.removeEventListener(p_type, p_listener, p_useCapture);
-      	}
-		
-    	public static function dispatchEvent(p_event:Event):void {
-      			if (disp == null) { return; }
-      			disp.dispatchEvent(p_event);
-      	}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * SINGLETON
+		 */
+		public static function getInstance():FileCheck{
+			return Singleton.getInstance(FileCheck);
+		}
+		
+		public function FileCheck() { Singleton.assertSingle(FileCheck); }
+		
+		
+		/**
+		 * CHECK
 		 * 
 		 * @param	file    the file to check if it exist
 		 */
-		public static function check( file:String, server:String='', path:String='' ):void {	
-			amf = new AmfphpClient( server, path );
-			_file = file;
-			
-			////////////////////////////////////
+		public function check( amf:AmfphpClient, path:String, name:String ):void {	
+			this.amf = amf;
 			initListeners();
-			amf.call( new FileService().check( _file ), requester );
-			////////////////////////////////////
+			amf.directCall( ((isUrl(name))?'File.Check.url':'File.Check.dir'), unescape(path+file) );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				GESTION DES LISTENERS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function initListeners():void {
+		/**
+		 * MANAGE LISTENERS
+		 */
+		private function initListeners():void {
 			amf.addEventListener( AmfphpClientEvent.ON_RESULT, manageEvent );
 			amf.addEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
@@ -72,38 +50,41 @@ package railk.as3.net.checker
 			amf.removeEventListener( AmfphpClientEvent.ON_ERROR, manageEvent  );
 		}
 		
+		/**
+		 * UTILITIES
+		 */
+		private function isUrl(filename:String):Boolean {
+            filename = filename.toLowerCase();
+            var pattern:RegExp = /^http:\/\/[A-Za-z0-9]+\.[A-Za-z0-9]+[\/=\?%\-&_~`@[\]\':+!]*([^<>\"\"])*$/; 
+            var result:Object = pattern.exec(filename);
+            if(result == null) return false;
+            return true;
+		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							  DISPOSE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * DISPOSE
+		 */
 		private static function dispose():void {
 			delListeners();
 			amf.close();
+			amf = null;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:AmfphpClientEvent ):void 
-		{
-			if ( evt.requester == requester )
-			{
-				var args:Object;
-				switch( evt.type ) 
-				{	
-					case AmfphpClientEvent.ON_RESULT :
-						dispatchEvent( new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_COMPLETE, { info:"fichier "+ _file +" present", data:evt.data } ) );
-						dispose();
-						break;
-						
-					case AmfphpClientEvent.ON_ERROR :
-						dispatchEvent( new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_ERROR, { info:"check error" } ) );
-						dispose();
-						break;
-				}
-			}	
+		/**
+		 * MANAGE EVENT
+		 */
+		private static function manageEvent( evt:AmfphpClientEvent ):void {
+			switch( evt.type ) {	
+				case AmfphpClientEvent.ON_RESULT :
+					dispatchEvent( new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_COMPLETE, { info:"fichier present", data:evt.data } ) );
+					dispose();
+					break;
+					
+				case AmfphpClientEvent.ON_ERROR :
+					dispatchEvent( new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_ERROR, { info:"check error" } ) );
+					dispose();
+					break;
+			}
 		}
 	}
-	
 }

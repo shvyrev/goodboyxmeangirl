@@ -11,24 +11,21 @@ package railk.as3.net.flux
 {
 	import flash.events.EventDispatcher;
 	import flash.events.Event;
-	
+	import railk.as3.net.amfphp.AmfphpClient;
 	import railk.as3.net.saver.xml.XmlSaver;
 	import railk.as3.net.saver.xml.XmlSaverEvent;	
 	
 	
 	public class Flux extends EventDispatcher  
 	{
-		protected static var disp                                :EventDispatcher;
-		public static var FluxList                               :Object={};
+		public var FluxList    :Object={};
+		private var amf        :AmfphpClient;
+		private var saver      :XmlSaver;
+		private var filePath   :String
+		private var rssNodes   :Array;
+		private var atomNodes  :Array;
 		
-		private static var _server                               :String;
-		private static var _path	                             :String;
-		private static var saver                                 :XmlSaver;
-		private static var filePath                              :String
-		private static var rssNodes                              :Array;
-		private static var atomNodes                             :Array;
-		
-		private static var monthObj                              :Object = {
+		private var monthObj   :Object = {
 			"january": { str:"Jan", num:"01" },
 			"february": { str:"Feb", num:"02" },
 			"march": { str:"Mar", num:"03" },
@@ -43,7 +40,7 @@ package railk.as3.net.flux
 			"december": { str:"Dec", num:"12" } 
 			}
 		
-		private static var dayObj                                :Object = {  
+		private var dayObj     :Object = {  
 			"monday":{ str:"Mon", num:"01" },								
 			"tuesday":{ str:"Tue", num:"02" },								
 			"wednesday":{ str:"Wed", num:"03" },							
@@ -54,44 +51,26 @@ package railk.as3.net.flux
 			}
 			
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																	   GESTION DES LISTENERS DE CLASS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function addEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false, p_priority:int=0, p_useWeakReference:Boolean=false):void {
-      			if (disp == null) { disp = new EventDispatcher(); }
-      			disp.addEventListener(p_type, p_listener, p_useCapture, p_priority, p_useWeakReference);
-      	}
-		
-    	public static function removeEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false):void {
-      			if (disp == null) { return; }
-      			disp.removeEventListener(p_type, p_listener, p_useCapture);
-      	}
-		
-    	public static function dispatchEvent(p_event:Event):void {
-      			if (disp == null) { return; }
-      			disp.dispatchEvent(p_event);
-      	}
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							 	 INIT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function init( server:String, path:String ):void {
-			_server = server;
-			_path = path;
+		/**
+		 * SINGLETON
+		 */
+		public function getInstance():Flux{
+			return Singleton.getInstance(Flux);
 		}
 		
+		public function Flux() { Singleton.assertSingle(Flux); }
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							 INIT RSS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		
 		/**
+		 * ADD RSS
+		 * 
 		 * @param	filename
 		 * @param	titre
 		 * @param	link
 		 * @param	desc       simple description
 		 * @param	webmaster  mail
 		 */
-		public static function addRss( id:String, filename:String, titre:String, link:String, desc:String, webmaster:String ):void {
+		public function addRss( id:String, filename:String, titre:String, link:String, desc:String, webmaster:String ):void {
 			filePath = filename;
 			
 			rssNodes = new Array();
@@ -104,11 +83,9 @@ package railk.as3.net.flux
 			FluxList[id] = rssNodes;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							  ADD RSS
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * 
+		 * ADD RSS ITEM
 		 * 
 		 * @param	permalink
 		 * @param	titre
@@ -116,7 +93,7 @@ package railk.as3.net.flux
 		 * @param	link
 		 * @param	author     mail
 		 */
-		public static function addRssItem( fluxID:String, permalink:String, titre:String, date:String, content:String, link:String, author:String ):void {
+		public function addRssItem( fluxID:String, permalink:String, titre:String, date:String, content:String, link:String, author:String ):void {
 				FluxList[fluxID].push( { root:"rss", type:"item", attribute:null, content:[ { type:"guid", attribute:null, content:permalink  },
 																					{ type:"pubDate", attribute:null, content:rssDate(date) }, 
 																					{ type:"title", attribute:null, content:titre },
@@ -127,11 +104,9 @@ package railk.as3.net.flux
 								} );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							INIT ATOM
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * 
+		 * ADD ATOM
 		 * 
 		 * @param	filename
 		 * @param	titre
@@ -139,7 +114,7 @@ package railk.as3.net.flux
 		 * @param	author
 		 * @param	mail
 		 */
-		public static function addAtom( id:String, filename:String, titre:String, link:String, author:String, mail:String ):void {
+		public function addAtom( id:String, filename:String, titre:String, link:String, author:String, mail:String ):void {
 			filePath = filename;
 			
 			atomNodes = new Array();
@@ -152,11 +127,8 @@ package railk.as3.net.flux
 			FluxList[id] = atomNodes;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							 ADD ATOM
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * ADD ATOM ITEM
 		 * 
 		 * @param	fluxID
 		 * @param	permalink
@@ -165,7 +137,7 @@ package railk.as3.net.flux
 		 * @param	content
 		 * @param	author
 		 */
-		public static function addAtomItem( fluxID:String, permalink:String, titre:String, date:String, content:String, author:String ):void {
+		public function addAtomItem( fluxID:String, permalink:String, titre:String, date:String, content:String, author:String ):void {
 				FluxList[fluxID].push( { root:"atom", type:"entry", attribute:null, content:[ { type:"title", attribute:null, content:titre }, 
 																					  { type:"id", attribute:null, content:permalink  }, 
 																					  { type:"updated", attribute:null, content:atomDate(date) },
@@ -175,20 +147,23 @@ package railk.as3.net.flux
 		}
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							  PUBLISH
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public static function Publish( fluxID:String ):void {	
-			saver = new XmlSaver( fluxID, _server, _path );
+		/**
+		 * PUBLISH
+		 * 
+		 * @param	fluxID
+		 */
+		public function Publish( fluxID:String, amf:AmfphpClient ):void {	
+			saver = new XmlSaver( amf );
 			saver.update( filePath, FluxList[fluxID] );
 			saver.addEventListener( XmlSaverEvent.ON_ERROR, manageEvent, false, 0, true );
+			saver.addEventListener( XmlSaverEvent.ON_SAVE_XML_COMPLETE, manageEvent,false,0,true );
 		}
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					     FLUX UTILITY
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function rssDate( date:String = "" ):String {
+		/**
+		 * UTILITIES
+		 */
+		private function rssDate( date:String = "" ):String {
 			var timeStr:String;
 			var tmpArr:Array;
 			var dayTab:Array = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -206,7 +181,7 @@ package railk.as3.net.flux
 			return timeStr;
 		}
 		
-		private static function atomDate( date:String = "" ):String {
+		private function atomDate( date:String = "" ):String {
 			var timeStr:String;
 			var tmpArr:Array;
 			
@@ -222,7 +197,7 @@ package railk.as3.net.flux
 			return timeStr;
 		}
 		
-		private static function zero( value:* ):String {
+		private function zero( value:* ):String {
 			var tmpStr:String;
 			if ( value >= 0 && value <= 9 ) tmpStr = "0" + value;
 			else tmpStr = String(value);
@@ -230,12 +205,17 @@ package railk.as3.net.flux
 		}
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function manageEvent( evt:XmlSaverEvent ) {
+		/**
+		 * MANAGE EVENT
+		 */
+		private function manageEvent( evt:XmlSaverEvent ) {
 			switch( evt.type ) {
 				case XmlSaverEvent.ON_ERROR: dispatchEvent( new FluxEvent( FluxEvent.ON_FLUX_PUBLISH_ERROR, { info:"flux error " } ) ); break;
+				case XmlSaverEvent.ON_SAVE_XML_COMPLETE :
+					saver.removeEventListener( XmlSaverEvent.ON_ERROR, manageEvent );
+					saver.removeEventListener( XmlSaverEvent.ON_SAVE_XML_COMPLETE, manageEvent );
+					saver.dispose();
+					break;
 			}
 		}
 	}
