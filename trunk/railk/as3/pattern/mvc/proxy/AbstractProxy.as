@@ -21,10 +21,10 @@ package railk.as3.pattern.mvc.proxy
 		
 		public function AbstractProxy() {}
 		
-		public function updateView(info:String, type:String, data:Object=null):void {
+		public function updateView(info:String, type:String, data:String=''):void {
 			var args:Object= {};
 			args.info = info;
-			if (data ) for ( var d:String in data) { args[d] = data[d]; }
+			if (data) args.data = getData(data);
 			dispatchEvent( new ModelEvent( type, args ) );
 		}
 		
@@ -34,7 +34,17 @@ package railk.as3.pattern.mvc.proxy
 				if (walker.name == name)  return walker;
 				walker = walker.next;
 			}
-			return walker;
+			return null;
+		}
+		
+		public function addData(name:String, data:*):void {
+			var d:Data = new Data(name, data);
+			if (!firstData) firstData = lastData = d;
+			else {
+				lastData.next = d;
+				d.prev = lastData;
+				lastData = d;
+			}
 		}
 		
 		public function removeData( name:String ):void {
@@ -46,11 +56,12 @@ package railk.as3.pattern.mvc.proxy
 		
 		public function clearData():void {
 			var walker:Data = firstData;
+			firstData = null;
 			while (walker) {
 				walker.data = null;
 				walker = walker.next;
 			}
-			return walker;
+			lastData = null;
 		}
 	}
 }

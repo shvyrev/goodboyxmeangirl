@@ -16,15 +16,15 @@ package railk.as3.pattern.mvc.command
 		protected var firstAction:Action;
 		protected var lastAction:Action;
 		protected var proxy:IProxy;
-		public var type:String;
+		public var name:String;
 		
-		public function AbstractCommand( type:String,proxy:IProxy ) {
-			this.type = type;
+		public function AbstractCommand( name:String,proxy:IProxy ) {
+			this.name = name;
 			this.proxy = proxy;
 		}
 		
-		public function addAction( type:String, action:Function, actionParams:Array=null ):void {
-			var action:Action = new Action(type, action, actionParams);
+		public function addAction( name:String, action:Function, actionParams:Array=null ):void {
+			var action:Action = new Action(name, action, actionParams);
 			if (!firstAction) firstAction = lastAction = action;
 			else {
 				lastAction.next = action;
@@ -33,15 +33,15 @@ package railk.as3.pattern.mvc.command
 			}
 		}
 		
-		public function getAction(type:String):Action {
+		public function getAction(name:String):Action {
 			var walker:Action = firstAction;
 			while ( walker ) {
-				if ( walker.type == type ) return walker;
+				if ( walker.name == name ) return walker;
 				walker = walker.next;
 			}
 			return null;
 		}
 		
-		public function execute( name:String ):void{ getAction(type).apply(); }
+		public function execute( name:String ):void{ getAction(name).apply(getAction(name).actionParams); }
 	}
 }

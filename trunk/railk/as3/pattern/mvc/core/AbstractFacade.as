@@ -32,6 +32,8 @@ package railk.as3.pattern.mvc.core
 		
 		public function registerController( controllerClass:Class ):void {
 			controller = controllerClass.getInstance.apply();
+			if (model) controller.initialize(model);
+			else throw new Error('model must be registered first');
 		}
 		
 		public function registerView( view:IView ):void {

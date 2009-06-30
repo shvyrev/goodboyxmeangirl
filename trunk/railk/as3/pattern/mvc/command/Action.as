@@ -13,12 +13,12 @@ package railk.as3.pattern.mvc.command
 		public var next:Action;
 		public var prev:Action;
 		
-		public var type:String;
+		public var name:String;
 		public var action:Function;
 		public var actionParams:Array=[];
 		
-		public function Action(type:String,action:Function,actionParams:Array) {
-			this.type = type;
+		public function Action(name:String,action:Function,actionParams:Array) {
+			this.name= name;
 			this.action = action;
 			this.actionParams = actionParams;
 		}
