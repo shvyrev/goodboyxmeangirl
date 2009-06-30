@@ -8,15 +8,14 @@
 
 package railk.as3.data.pool
 {
-	
 	public class Pool
 	{
 		public var growthRate:int=10;
 		public var size:int=0;
-		public var free:int=0;
-		public var os:Array = [];
-		public var last:*;
-		public var picked:*;
+		protected var free:int=0;
+		protected var os:Array = [];
+		protected var last:*;
+		protected var picked:*;
 		public var classe:Class;
 		
 		public function Pool( classe:Class, size:int = 10, growthRate:int = 10 ) {
@@ -25,7 +24,7 @@ package railk.as3.data.pool
 			this.populate(size);
 		}
 		
-		private function populate(i:int):void {
+		protected function populate(i:int):void {
 			while( --i > -1 ) {
 				last = classe();
 				os[free++] = last;
