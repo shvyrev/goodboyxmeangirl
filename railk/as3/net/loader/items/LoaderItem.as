@@ -34,10 +34,15 @@ package railk.as3.net.loader.items
 		
 		override protected function complete(evt:Event):void {
 			content = loader.content;
-			delListeners( loader );
+			dispose();
+			super.complete(evt);
+		}
+		
+		override public function dispose():void {
+			super.dispose();
+			delListeners(loader);
 			loader.unload();
 			loader = null;
-			super.complete(evt);
 		}
 	}
 }
