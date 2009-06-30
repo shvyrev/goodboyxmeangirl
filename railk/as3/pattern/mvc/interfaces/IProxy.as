@@ -12,7 +12,7 @@ package railk.as3.pattern.mvc.interfaces
 	
 	public interface IProxy extends IEventDispatcher
 	{
-		function updateView(info:String, type:String, data:Object = null ):void;
+		function updateView(info:String, type:String, data:String='' ):void;
 		function getData( name:String ):*;
 		function removeData( name:String ):*;
 		function clearData():void;

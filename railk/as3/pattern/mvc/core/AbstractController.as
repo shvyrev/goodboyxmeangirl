@@ -25,7 +25,7 @@ package railk.as3.pattern.mvc.core
 			Singleton.assertSingle(AbstractController);
 		}
 		
-		public function initializeController( model:IModel ):void {
+		public function initialize( model:IModel ):void {
 			this.model = model;
 		}
 		
