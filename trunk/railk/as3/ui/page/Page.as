@@ -29,6 +29,8 @@ package railk.as3.ui.page
 		public var loadingView:ILoading;
 		public var src:String;
 		public var data:*;
+		public var loaded:Boolean;
+		public var reload:Boolean;
 		
 		public var firstChild:Page;
 		public var lastChild:Page;
@@ -59,8 +61,9 @@ package railk.as3.ui.page
 		
 		override public function show():void {
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
-			var complete:Function = function():void { setupViews(layout.views, data); TopLevel.main.addChild(component); activateViews(layout.views); }
-			loader = new UILoader( src,complete,((loadingView)?progress:null) );
+			var complete:Function = function():void { setupViews(layout.views, data); TopLevel.main.addChild(component); activateViews(layout.views); loaded = true; }
+			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
+			else complete.apply();
 		}
 		
 		override public function hide():void {

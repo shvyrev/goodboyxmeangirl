@@ -21,10 +21,10 @@ package railk.as3.pattern.mvc.proxy
 		
 		public function AbstractProxy() {}
 		
-		public function updateView(info:String, type:String, data:String=''):void {
+		public function updateView(info:String, type:String, data:*=null):void {
 			var args:Object= {};
 			args.info = info;
-			if (data) args.data = getData(data);
+			if (data) args.data = (getData(data as String))?getData(data as String):data;
 			dispatchEvent( new ModelEvent( type, args ) );
 		}
 		
