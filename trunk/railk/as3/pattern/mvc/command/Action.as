@@ -15,12 +15,10 @@ package railk.as3.pattern.mvc.command
 		
 		public var name:String;
 		public var action:Function;
-		public var actionParams:Array=[];
 		
-		public function Action(name:String,action:Function,actionParams:Array) {
+		public function Action(name:String,action:Function) {
 			this.name= name;
 			this.action = action;
-			this.actionParams = actionParams;
 		}
 		
 		public function apply():void { action.apply(null, actionParams); }
