@@ -8,6 +8,7 @@
 package railk.as3.ui.div
 {	
 	import railk.as3.display.RegistrationPoint;
+	import railk.as3.ui.depth.DepthManager;
 	import flash.events.Event;
 	
 	public class Div extends RegistrationPoint implements IDiv
@@ -32,8 +33,12 @@ package railk.as3.ui.div
 			this.y = y;
 			this.data = data;
 			this.state = new DivState(this);
+			
 		}
 		
+		/**
+		 * MONITOR CHANGES
+		 */
 		public function bind():void { 
 			if(position!='asbolute') this.addEventListener(Event.CHANGE, check); 
 			if (align != 'none') {
@@ -47,15 +52,18 @@ package railk.as3.ui.div
 			if (align != 'none') stage.removeEventListener(Event.RESIZE, resize );
 		}
 		
-		private function check(evt:Event):void { 
+		private function check(evt:Event):void {
 			for (var i:int = 0; i < arcs.length ; ++i) arcs[i].div.update(this);
 		}
 		
 		public function update(from:IDiv):void {
 			if (y >= from.y && y < from.y+from.height ) x = int(state.x+(from.x-from.state.x)+(from.width-from.state.width));
-			if (x >= from.x && x < from.x + from.width ) y = int(state.y+(from.y-from.state.y)+(from.height-from.state.height));
+			if (x >= from.x && x < from.x+from.width ) y = int(state.y+(from.y-from.state.y)+(from.height-from.state.height));
 		}
 		
+		/**
+		 * MANAGE ARCS
+		 */
 		public function addArc(div:IDiv):void { arcs[arcs.length] = new DivArc(div); }
 		public function removeArc(div:IDiv):Boolean {
 			var i:int = arcs.length;
@@ -66,6 +74,14 @@ package railk.as3.ui.div
 				}
 			}
 			return false;
+		}
+		
+		/**
+		 * UTILITIES
+		 */
+		public function setFocus():void { 
+			parent.swapChildren( this, parent.getChildAt(parent.numChildren-1) );
+			if (parent is IDiv) (parent as IDiv).setFocus();
 		}
 		
 		/**
