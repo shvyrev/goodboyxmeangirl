@@ -23,8 +23,8 @@ package railk.as3.pattern.mvc.command
 			this.proxy = proxy;
 		}
 		
-		public function addAction( name:String, action:Function, actionParams:Array=null ):void {
-			var action:Action = new Action(name, action, actionParams);
+		public function addAction( name:String, action:Function ):void {
+			var action:Action = new Action(name, action );
 			if (!firstAction) firstAction = lastAction = action;
 			else {
 				lastAction.next = action;
@@ -42,6 +42,6 @@ package railk.as3.pattern.mvc.command
 			return null;
 		}
 		
-		public function execute( name:String ):void{ getAction(name).apply(getAction(name).actionParams); }
+		public function execute( name:String, params:Array=null ):void{ getAction(name).apply(null,params); }
 	}
 }

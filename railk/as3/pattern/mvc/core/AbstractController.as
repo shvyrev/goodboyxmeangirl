@@ -32,11 +32,11 @@ package railk.as3.pattern.mvc.core
 		public function registerCommand( proxyClass:Class, name:String, commandClass:Class, actions:Array=null ):void {
 			if ( !model.getProxy(proxyClass.NAME) ) model.registerProxy(proxyClass);
 			commands.push(new commandClass(name,model.getProxy(proxyClass.NAME)));
-			if(actions) for (var i:int = 0; i < actions.length; i++) commands[commands.length-1].addAction( actions[i].name, actions[i].action, actions[i].actionParams );
+			if(actions) for (var i:int = 0; i < actions.length; i++) commands[commands.length-1].addAction( actions[i].name, actions[i].action );
 		}
 		
-		public function executeCommand( name:String, action:String ):void {
-			getCommand(name).execute( action );
+		public function executeCommand( name:String, action:String, params:Array=null ):void {
+			getCommand(name).execute( action, params );
 			commandStack.push(getCommand(name));
 		}
 		
