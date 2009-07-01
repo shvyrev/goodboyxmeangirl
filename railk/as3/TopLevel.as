@@ -27,11 +27,11 @@ package railk.as3
 			}
 			return folder;
 		}
-		public static function get url():String {
+		public static function get url(folder:String=''):String {
 			var url:String = '';
 			if (stage) {
 				url = stage.loaderInfo.loaderURL.replace(stage.loaderInfo.loaderURL.split('/')[stage.loaderInfo.loaderURL.split('/').length - 1], "");
-				url = url.split('flash/')[0];
+				url = url.split(folder)[0];
 			}
 			return url;
 		}
