@@ -14,7 +14,6 @@ package railk.as3.ui.page
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.link.LinkManager;
-	import railk.as3.ui.loading.ILoading;
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
@@ -53,7 +52,7 @@ package railk.as3.ui.page
 			background.show();
 		}
 		
-		public function addPage(id:String, parent:String, title:String, loadingView:ILoading, layout:Layout, src:String):void {
+		public function addPage(id:String, parent:String, title:String, loadingView:*, layout:Layout, src:String):void {
 			if (parent==''){
 				index = new Page(id,model,controller,null,title,loadingView,layout,src);
 				pages[pages.length] = index;

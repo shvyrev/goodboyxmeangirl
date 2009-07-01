@@ -38,7 +38,7 @@ package railk.as3.ui
 					loader.unload();
 					dispose();
 					break;
-				case ProgressEvent.PROGRESS : progress.apply(null, [Math.round(evt.bytesLoaded/evt.bytesTotal)*100]); break;
+				case ProgressEvent.PROGRESS : progress.apply(null, [int(evt.bytesLoaded / evt.bytesTotal*100)]); break;
 			}
 		}
 		
