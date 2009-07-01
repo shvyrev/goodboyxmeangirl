@@ -7,15 +7,16 @@
 
 package railk.as3.ui.page
 {
+	import flash.display.Sprite;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import railk.as3.display.DSprite;
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.*
 	import railk.as3.ui.layout.Layout;
-	import railk.as3.ui.loading.ILoading;
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
+	import railk.as3.utils.Logger;
 	
 	public class Page extends AbstractView implements IView
 	{
@@ -26,7 +27,7 @@ package railk.as3.ui.page
 		public var title:String;
 		public var parent:Page;
 		public var layout:Layout;
-		public var loadingView:ILoading;
+		public var loadingView:*;
 		public var src:String;
 		public var data:*;
 		public var loaded:Boolean;
@@ -38,7 +39,7 @@ package railk.as3.ui.page
 		
 		private var loader:UILoader;
 		
-		public function Page( id:String, model:IModel, controller:IController, parent:Page, title:String, loadingView:ILoading, layout:Layout, src:String) {
+		public function Page( id:String, model:IModel, controller:IController, parent:Page, title:String, loadingView:*, layout:Layout, src:String) {
 			super(model, controller);
 			this.id = id;
 			this.parent = parent;
@@ -60,8 +61,9 @@ package railk.as3.ui.page
 		}
 		
 		override public function show():void {
+			TopLevel.main.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
-			var complete:Function = function():void { setupViews(layout.views, data); TopLevel.main.addChild(component); activateViews(layout.views); loaded = true; }
+			var complete:Function = function():void { TopLevel.main.removeChild( loadingView ); setupViews(layout.views, data); TopLevel.main.addChild(component); activateViews(layout.views); loaded = true; }
 			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
 			else complete.apply();
 		}

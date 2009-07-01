@@ -33,7 +33,7 @@ package railk.as3.ui
          *
          *  @param stage                Stage object.
          */
-        public static function initialize(stage:Stage):void
+        public static function init(stage:Stage):void
         {
             if (!available || isReady) return;
 
