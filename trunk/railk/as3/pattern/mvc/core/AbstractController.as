@@ -25,14 +25,13 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		
-		public function registerCommand( name:String, commandClass:Class, actions:Array=null ):void {
-			commands.push(new commandClass(name));
-			if(actions) for (var i:int = 0; i < actions.length; i++) commands[commands.length-1].addAction( actions[i].name, actions[i].action );
+		public function registerCommand( commandClass:Class, name:String='' ):void {
+			commands[commands.length] = new commandClass(name);
 		}
 		
 		public function executeCommand( name:String, action:String, params:Array=null ):void {
 			getCommand(name).execute( action, params );
-			commandStack.push(getCommand(name));
+			commandStack[commandStack.length] = getCommand(name);
 		}
 		
 		public function getCommand(name:String):ICommand {
