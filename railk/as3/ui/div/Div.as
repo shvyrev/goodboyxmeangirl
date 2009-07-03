@@ -8,7 +8,6 @@
 package railk.as3.ui.div
 {	
 	import railk.as3.display.RegistrationPoint;
-	import railk.as3.ui.depth.DepthManager;
 	import flash.events.Event;
 	
 	public class Div extends RegistrationPoint implements IDiv

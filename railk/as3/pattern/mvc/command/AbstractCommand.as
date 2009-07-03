@@ -7,20 +7,18 @@
 
 package railk.as3.pattern.mvc.command
 {
-	import railk.as3.data.list.DLinkedList;
-	import railk.as3.data.list.DListNode;
 	import railk.as3.pattern.mvc.interfaces.*;
+	import railk.as3.pattern.mvc.core.*;
+	import railk.as3.pattern.mvc.observer.Notifier;
 	
-	public class AbstractCommand implements ICommand
+	public class AbstractCommand extends Notifier implements ICommand,INotifier
 	{
 		protected var firstAction:Action;
 		protected var lastAction:Action;
-		protected var proxy:IProxy;
 		public var name:String;
 		
-		public function AbstractCommand( name:String,proxy:IProxy ) {
+		public function AbstractCommand( name:String) {
 			this.name = name;
-			this.proxy = proxy;
 		}
 		
 		public function addAction( name:String, action:Function ):void {
@@ -33,7 +31,7 @@ package railk.as3.pattern.mvc.command
 			}
 		}
 		
-		public function getAction(name:String):Action {
+		protected function getAction(name:String):Action {
 			var walker:Action = firstAction;
 			while ( walker ) {
 				if ( walker.name == name ) return walker;
@@ -42,6 +40,6 @@ package railk.as3.pattern.mvc.command
 			return null;
 		}
 		
-		public function execute( name:String, params:Array=null ):void{ getAction(name).apply(null,params); }
+		public function execute( name:String, params:Array=null ):void{ (getAction(name) as Function).apply(null,params); }
 	}
 }

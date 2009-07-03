@@ -20,9 +20,10 @@ package railk.as3.ui.page
 		public var layout:Layout;
 		public var src:String;
 		public var loader:UILoader;
+		public var data:*;
 		
-		public function Background(id:String, model:IModel, controller:IController, layout:Layout, src:String ) {
-			super(model, controller);
+		public function Background(id:String, layout:Layout, src:String ) {
+			super();
 			this.id = id;
 			this.layout = layout;
 			this.src = src;
@@ -52,7 +53,7 @@ package railk.as3.ui.page
 		 */		
 		protected function setupViews(views:Array):void { 
 			for (var i:int = 0; i < views.length; i++) {
-				views[i].setup(model, controller)
+				views[i].setup(data);
 				if (!views[i].container) component.addChild( views[i].div );
 				else views[i].container.div.addChild( views[i].div  );
 			}

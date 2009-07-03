@@ -13,7 +13,6 @@ package railk.as3.pattern.mvc.core
 	
 	public class AbstractController implements IController
 	{
-		protected var model:IModel;
 		protected var commands:Array=[];
 		protected var commandStack:Array=[];
 		
@@ -25,13 +24,9 @@ package railk.as3.pattern.mvc.core
 			Singleton.assertSingle(AbstractController);
 		}
 		
-		public function initialize( model:IModel ):void {
-			this.model = model;
-		}
 		
-		public function registerCommand( proxyClass:Class, name:String, commandClass:Class, actions:Array=null ):void {
-			if ( !model.getProxy(proxyClass.NAME) ) model.registerProxy(proxyClass);
-			commands.push(new commandClass(name,model.getProxy(proxyClass.NAME)));
+		public function registerCommand( name:String, commandClass:Class, actions:Array=null ):void {
+			commands.push(new commandClass(name));
 			if(actions) for (var i:int = 0; i < actions.length; i++) commands[commands.length-1].addAction( actions[i].name, actions[i].action );
 		}
 		

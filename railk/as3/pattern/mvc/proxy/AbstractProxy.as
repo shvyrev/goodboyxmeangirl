@@ -9,24 +9,17 @@
 package railk.as3.pattern.mvc.proxy
 {
 	import flash.events.EventDispatcher;
+	import railk.as3.pattern.mvc.core.*;
 	import railk.as3.pattern.mvc.interfaces.*;
-	import railk.as3.pattern.mvc.event.ModelEvent;
+	import railk.as3.pattern.mvc.observer.Notifier;
 	
-	public class AbstractProxy extends EventDispatcher implements IProxy 
+	public class AbstractProxy extends Notifier implements IProxy,INotifier 
 	{
 		static public const NAME:String = 'proxy';
-		
 		protected var firstData:Data;
 		protected var lastData:Data;
 		
 		public function AbstractProxy() {}
-		
-		public function updateView(info:String, type:String, data:*=null):void {
-			var args:Object= {};
-			args.info = info;
-			if (data) args.data = (getData(data as String))?getData(data as String):data;
-			dispatchEvent( new ModelEvent( type, args ) );
-		}
 		
 		public function getData( name:String ):Data {
 			var walker:Data = firstData;
@@ -37,7 +30,7 @@ package railk.as3.pattern.mvc.proxy
 			return null;
 		}
 		
-		public function addData(name:String, data:*):void {
+		protected function addData(name:String, data:*):void {
 			var d:Data = new Data(name, data);
 			if (!firstData) firstData = lastData = d;
 			else {
