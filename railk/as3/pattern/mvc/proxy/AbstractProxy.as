@@ -15,12 +15,12 @@ package railk.as3.pattern.mvc.proxy
 	
 	public class AbstractProxy extends Notifier implements IProxy,INotifier 
 	{
-		protected var NAME:String = 'undefined';
+		protected var _name:String = 'undefined';
 		protected var firstData:Data;
 		protected var lastData:Data;
 		
 		public function AbstractProxy(name:String = '') {
-			if(name) NAME = name;
+			if(name) _name = name;
 		}
 		
 		public function getData( name:String ):Data {
@@ -62,6 +62,6 @@ package railk.as3.pattern.mvc.proxy
 			lastData = null;
 		}
 		
-		public function get name():String { return NAME; }
+		public function get name():String { return _name; }
 	}
 }
