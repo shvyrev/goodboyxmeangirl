@@ -14,7 +14,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
 	
-	public class Background extends AbstractView implements IView
+	public class Background extends AbstractView implements IView,INotifier
 	{
 		public var id:String;
 		public var layout:Layout;

@@ -16,9 +16,8 @@ package railk.as3.ui.page
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.UILoader;
 	import railk.as3.TopLevel;
-	import railk.as3.utils.Logger;
 	
-	public class Page extends AbstractView implements IView
+	public class Page extends AbstractView implements IView,INotifier
 	{
 		public var next:Page;
 		public var prev:Page;
