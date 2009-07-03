@@ -62,6 +62,8 @@ package railk.as3.pattern.mvc.proxy
 			lastData = null;
 		}
 		
+		public function dispose():void {}
+		
 		public function get name():String { return _name; }
 	}
 }
