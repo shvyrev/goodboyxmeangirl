@@ -122,6 +122,9 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
      */
     protected function _formatPrefix($prefix)
     {
+        if($prefix == "") {
+    		return $prefix;
+    	}
         return rtrim($prefix, '_') . '_';
     }
 
@@ -139,7 +142,7 @@ class Zend_Loader_PluginLoader implements Zend_Loader_PluginLoader_Interface
             throw new Zend_Loader_PluginLoader_Exception('Zend_Loader_PluginLoader::addPrefixPath() method only takes strings for prefix and path.');
         }
 
-        if($prefix) $prefix = $this->_formatPrefix($prefix);
+        $prefix = $this->_formatPrefix($prefix);
         $path   = rtrim($path, '/\\') . '/';
 
         if ($this->_useStaticRegistry) {
