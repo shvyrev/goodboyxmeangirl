@@ -27,7 +27,10 @@ package railk.as3.pattern.mvc.proxy
 				if (walker.name == name)  return walker;
 				walker = walker.next;
 			}
-			return null;
+			return handleDataRequest;
+		}
+		
+		protected function handleDataRequest( name:String ):Data {
 		}
 		
 		protected function addData(name:String, data:*):void {
