@@ -8,18 +8,14 @@
 
 package railk.as3.pattern.mvc.core
 {
+	import railk.as3.pattern.mvc.observer.Notifier;
 	import railk.as3.pattern.mvc.interfaces.*;	
-	public class AbstractView implements IView
+	public class AbstractView extends Notifier implements IView,INotifier
 	{
 		static public const NAME:String = 'view';
-		private var _component:*;
+		protected var _component:*;
 		
-		protected var model:IModel;
-		protected var controller:IController;
-		
-		public function AbstractView( model:IModel, controller:IController, component:*=null ) {
-			this.model = model;
-			this.controller = controller;
+		public function AbstractView( component:*=null ) {
 			_component = component;
 		}
 		

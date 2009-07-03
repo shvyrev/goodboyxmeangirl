@@ -39,8 +39,8 @@ package railk.as3.ui.page
 		
 		private var loader:UILoader;
 		
-		public function Page( id:String, model:IModel, controller:IController, parent:Page, title:String, loadingView:*, layout:Layout, src:String) {
-			super(model, controller);
+		public function Page( id:String, parent:Page, title:String, loadingView:*, layout:Layout, src:String) {
+			super();
 			this.id = id;
 			this.parent = parent;
 			this.title = title;
@@ -88,7 +88,7 @@ package railk.as3.ui.page
 		 */
 		private function setupViews(views:Array,data:*=null):void { 
 			for (var i:int = 0; i < views.length; i++) {
-				views[i].setup(model, controller, data)
+				views[i].setup(data)
 				if (!views[i].container) component.addChild( views[i].div );
 				else views[i].container.div.addChild( views[i].div  );
 			}
