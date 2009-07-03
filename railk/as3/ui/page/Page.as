@@ -39,7 +39,7 @@ package railk.as3.ui.page
 		private var loader:UILoader;
 		
 		public function Page( id:String, parent:Page, title:String, loadingView:*, layout:Layout, src:String) {
-			super();
+			super(id);
 			this.id = id;
 			this.parent = parent;
 			this.title = title;
@@ -112,5 +112,7 @@ package railk.as3.ui.page
 			}
 			return c;
 		}
+		
+		public function toString():String { return '[ PAGE > '+id+ ' ]'; }
 	}
 }

@@ -12,11 +12,12 @@ package railk.as3.pattern.mvc.core
 	import railk.as3.pattern.mvc.interfaces.*;	
 	public class AbstractView extends Notifier implements IView,INotifier
 	{
-		static public const NAME:String = 'view';
+		protected var NAME:String = 'undefined';
 		protected var _component:*;
 		
-		public function AbstractView( component:*= null ) {
+		public function AbstractView( name:String='',component:*= null ) {
 			facade.addEventListener(Notification.NOTE, handleNotification );
+			if (name) NAME = name;
 			_component = component;
 		}
 		
@@ -33,10 +34,9 @@ package railk.as3.pattern.mvc.core
 			facade.removeEventListener(Notification.NOTE, handleNotification);
 		}
 		
-		
-		public function getName():String { return NAME; }
-		
 		public function get component():* { return _component; }
-		public function set component(value:*):void { _component=value; }
+		public function set component(value:*):void { _component = value; }
+		
+		public function get name():String { return NAME; }
 	}	
 }

@@ -23,21 +23,21 @@ package railk.as3.pattern.mvc.core
 			Singleton.assertSingle(AbstractModel);
 		}
 		
-		public function registerProxy( proxyClass:Class ):void {
-			proxys[proxys.length] = new proxyClass();
+		public function registerProxy( proxyClass:Class, name:String='' ):void {
+			proxys[proxys.length] = new proxyClass(name);
 		}
 
 		public function removeProxy( name:String ):void {
-			loop:for (var i:int = 0; i < proxys.length; i++) if ( proxys[i].NAME == name ) { proxys.splice(i, 1); break loop; }
+			loop:for (var i:int = 0; i < proxys.length; i++) if ( proxys[i].name == name ) { proxys.splice(i, 1); break loop; }
 		}
 		
 		public function getProxy( name:String ):IProxy {
-			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME == name ) return proxys[i];
+			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].name == name ) return proxys[i];
 			return null;
 		}
 		
 		public function hasProxy( name:String ):Boolean {
-			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].NAME == name ) return true;
+			for (var i:int=0; i<proxys.length; ++i) if ( proxys[i].name == name ) return true;
 			return false;
 		}
 	}

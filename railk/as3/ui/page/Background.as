@@ -23,7 +23,7 @@ package railk.as3.ui.page
 		public var data:*;
 		
 		public function Background(id:String, layout:Layout, src:String ) {
-			super();
+			super(id);
 			this.id = id;
 			this.layout = layout;
 			this.src = src;

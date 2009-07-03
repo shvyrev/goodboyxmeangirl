@@ -24,7 +24,6 @@ package railk.as3.ui.page
 		public var current:String='';
 		public var menu:RightClickMenu;
 		public var hasMenu:Boolean;
-		public var pages:Array=[];
 		public var background:Background;
 		public var loader:UILoader;
 		
@@ -55,24 +54,22 @@ package railk.as3.ui.page
 		public function addPage(id:String, parent:String, title:String, loadingView:*, layout:Layout, src:String):void {
 			if (parent==''){
 				index = new Page(id,null,title,loadingView,layout,src);
-				pages[pages.length] = index;
+				registerView( index );
 			} else {
-				pages[pages.length] = new Page(id,getPage(parent),title,loadingView,layout,src);
-				getPage(parent).addChild(pages[pages.length-1]);
+				registerView( new Page(id, getPage(parent), title, loadingView, layout, src) );
+				getPage(parent).addChild(getPage(id));
 			}
+			
+			//link
 			var link:String='', prt:Page=getPage(parent);
 			while (prt) { link=(prt.id!='index')?prt.id+'/'+link:'/'+link; prt=prt.parent; }
 			link+=(id!='index')?id+'/':'/';
 			var action:Function=function(data:*=null):void { setPage(id,data); }
-			registerView(getPage(id));
 			menu.add(title,function():void { LinkManager.setValue(link) }, ((id=='index')?true:false) );
 			LinkManager.add(link,null,action,null,true);
 		}
 		
-		public function getPage( id:String ):Page {
-			for (var i:int=0; i<pages.length; ++i) if (pages[i].id == id ) return pages[i];
-			return null;
-		}
+		public function getPage( id:String ):Page { return getView(id) as Page; }
 		
 		public function setPage( id:String, data:*= null ):void {
 			if (current != id) {

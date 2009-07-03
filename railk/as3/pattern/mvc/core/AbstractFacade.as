@@ -36,21 +36,22 @@ package railk.as3.pattern.mvc.core
 			controller = controllerClass.getInstance.apply();
 		}
 		
-		public function registerView( view:IView ):void {
-			views.push( view );
+		public function registerView( view:*, name:String = '', component:*= null ):void {
+			if (view is Class) views[views.length] = new view(name, component);
+			else views[views.length] = view;
 		}
 		
 		public function removeView( name:String ):void {
-			loop:for (var i:int = 0; i < views.length ; ++i) if ( views[i].getName() == name ) { views.splice(i, 1); break loop; }
+			loop:for (var i:int = 0; i < views.length ; ++i) if ( views[i].name == name ) { views.splice(i, 1); break loop; }
 		}
 		
 		public function getView( name:String ):IView {
-			for (var i:int = 0; i < views.length ; ++i) if ( views[i].getName() == name ) return views[i];
+			for (var i:int = 0; i < views.length ; ++i) if ( views[i].name == name ) return views[i];
 			return null;
 		}
 		
-		public function registerCommand(name:String, commandClass:Class, actions:Array = null):void { 
-			controller.registerCommand(name, commandClass, actions); 
+		public function registerCommand(commandClass:Class, name:String=''):void { 
+			controller.registerCommand(commandClass,name); 
 		}
 		
 		public function executeCommand(name:String, action:String, params:Array = null ):void { 
@@ -61,8 +62,8 @@ package railk.as3.pattern.mvc.core
 			controller.removeCommand(name); 
 		}
 		
-		public function registerProxy(proxyClass:Class):void { 
-			model.registerProxy(proxyClass); 
+		public function registerProxy(proxyClass:Class,name:String=''):void { 
+			model.registerProxy(proxyClass,name); 
 		}
 		
 		public function getProxy(name:String):void { 

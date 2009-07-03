@@ -13,12 +13,12 @@ package railk.as3.pattern.mvc.command
 	
 	public class AbstractCommand extends Notifier implements ICommand,INotifier
 	{
+		protected var NAME:String = 'undefined';
 		protected var firstAction:Action;
 		protected var lastAction:Action;
-		public var name:String;
 		
-		public function AbstractCommand( name:String) {
-			this.name = name;
+		public function AbstractCommand(name:String='') {
+			if(name) NAME = name;
 		}
 		
 		public function addAction( name:String, action:Function ):void {
@@ -40,6 +40,8 @@ package railk.as3.pattern.mvc.command
 			return null;
 		}
 		
-		public function execute( name:String, params:Array=null ):void{ (getAction(name) as Function).apply(null,params); }
+		public function execute( name:String, params:Array = null ):void { (getAction(name) as Function).apply(null, params); }
+		
+		public function get name():String { return NAME; }
 	}
 }
