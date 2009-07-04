@@ -29,10 +29,11 @@ package railk.as3.pattern.mvc.proxy
 				if (walker.name == name)  return walker;
 				walker = walker.next;
 			}
-			return handleDataRequest;
+			return handleDataRequest(name);
 		}
 		
 		protected function handleDataRequest( name:String ):Data {
+			return null;
 		}
 		
 		protected function addData(name:String, data:*):void {
@@ -49,7 +50,7 @@ package railk.as3.pattern.mvc.proxy
 			var d:Data = getData(name);
 			if (d.next) d.next.prev = d.prev;
 			if (d.prev) d.prev.next = d.next;
-			else if (firstData == t) firstData = d.next;
+			else if (firstData == d) firstData = d.next;
 		}
 		
 		public function clearData():void {
