@@ -22,12 +22,12 @@ package railk.as3.pattern.mvc.command
 		}
 		
 		public function addAction( name:String, action:Function ):void {
-			var action:Action = new Action(name, action );
-			if (!firstAction) firstAction = lastAction = action;
+			var a:Action = new Action(name, action );
+			if (!firstAction) firstAction = lastAction = a;
 			else {
-				lastAction.next = action;
-				action.prev = lastAction;
-				lastAction = action;
+				lastAction.next = a;
+				a.prev = lastAction;
+				lastAction = a;
 			}
 		}
 		
@@ -40,7 +40,7 @@ package railk.as3.pattern.mvc.command
 			return null;
 		}
 		
-		public function execute( name:String, params:Array = null ):void { (getAction(name) as Function).apply(null, params); }
+		public function execute( name:String, params:Array = null ):void { getAction(name).apply(params); }
 		
 		public function get name():String { return _name; }
 	}

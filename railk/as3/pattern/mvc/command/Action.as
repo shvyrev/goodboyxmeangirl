@@ -21,7 +21,7 @@ package railk.as3.pattern.mvc.command
 			this.action = action;
 		}
 		
-		public function apply():void { action.apply(null, actionParams); }
+		public function apply(params:Array):void { action.apply(null, params); }
 	}
 	
 }

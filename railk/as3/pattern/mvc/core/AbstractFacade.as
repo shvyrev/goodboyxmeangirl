@@ -66,8 +66,8 @@ package railk.as3.pattern.mvc.core
 			model.registerProxy(proxyClass,name); 
 		}
 		
-		public function getProxy(name:String):void { 
-			model.getProxy(name); 
+		public function getProxy(name:String):IProxy { 
+			return model.getProxy(name); 
 		}
 		
 		public function removeProxy(name:String):void { 

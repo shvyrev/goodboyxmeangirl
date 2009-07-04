@@ -8,10 +8,11 @@
 
 package railk.as3.pattern.mvc.interfaces
 {
+	import railk.as3.pattern.mvc.proxy.Data;
 	public interface IProxy
 	{
-		function getData( name:String ):*;
-		function removeData( name:String ):*;
+		function getData( name:String ):Data;
+		function removeData( name:String ):void;
 		function clearData():void;
 		function dispose():void;
 		function get name():String;
