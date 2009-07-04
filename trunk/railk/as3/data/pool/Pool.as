@@ -26,7 +26,7 @@ package railk.as3.data.pool
 		
 		protected function populate(i:int):void {
 			while( --i > -1 ) {
-				last = classe();
+				last = new classe();
 				os[free++] = last;
 				size++;
 			}

@@ -143,7 +143,7 @@ package railk.as3.display {
 		/**
 		 * EVENT DISPATCH
 		 */
-		private function dispatchChange(evt:Event = null):void {
+		protected function dispatchChange(evt:Event = null):void {
 			if(hasEventListener(Event.CHANGE)) dispatchEvent( new Event(Event.CHANGE) );
 		}
 	}

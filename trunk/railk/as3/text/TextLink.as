@@ -9,6 +9,7 @@
 package railk.as3.text
 {
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize;
@@ -19,35 +20,33 @@ package railk.as3.text
 	
 	public class  TextLink extends RegistrationPoint
 	{
-		public static const AUTOSIZE_LEFT                         :String = TextFieldAutoSize.LEFT;
-		public static const AUTOSIZE_RIGHT                        :String = TextFieldAutoSize.RIGHT;
-		public static const AUTOSIZE_CENTER                       :String = TextFieldAutoSize.CENTER;
-		public static const DYNAMIC_TYPE                          :String = TextFieldType.DYNAMIC;
-		public static const INPUT_TYPE                            :String = TextFieldType.INPUT;
+		public static const AUTOSIZE_LEFT    :String = TextFieldAutoSize.LEFT;
+		public static const AUTOSIZE_RIGHT   :String = TextFieldAutoSize.RIGHT;
+		public static const AUTOSIZE_CENTER  :String = TextFieldAutoSize.CENTER;
+		public static const DYNAMIC_TYPE     :String = TextFieldType.DYNAMIC;
+		public static const INPUT_TYPE       :String = TextFieldType.INPUT;
 		
-		private var textLink                                      :Sprite;
-		private var format                                        :TextFormat;
-		private var texte                                         :TextField;
+		private var textLink                 :Sprite;
+		private var format                   :TextFormat;
+		private var texte                    :TextField;
 		
-		private var _name                                         :String;
-		private var _type                                         :String;
-		private var _text                                         :String; 
-		private var _color                                        :uint;
-		private var _font                                         :String; 
-		private var _embedFont                                    :Boolean; 
-		private var _size                                         :Number; 
-		private var _align                                        :String; 
-		private var _wordwrap                                     :Boolean; 
-		private var _selectable                                   :Boolean; 
-		private var _width                                        :Number; 
-		private var _height                                       :Number; 
-		private var _autoSize                                     :Boolean; 
-		private var _autoSizeType                                 :String;
+		private var _name                    :String;
+		private var _type                    :String;
+		private var _text                    :String; 
+		private var _color                   :uint;
+		private var _font                    :String; 
+		private var _embedFont               :Boolean; 
+		private var _size                    :Number; 
+		private var _align                   :String; 
+		private var _wordwrap                :Boolean; 
+		private var _selectable              :Boolean; 
+		private var _width                   :Number; 
+		private var _height                  :Number; 
+		private var _autoSize                :Boolean; 
+		private var _autoSizeType            :String;
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  				 INIT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * CONSTRUCTEUR
 		 * 
 		 * @param	name
 		 * @param	type         'dynamic'
@@ -92,35 +91,27 @@ package railk.as3.text
 				texte = new TextField();
 				texte.name = name;
 				texte.type = type;
-				if ( !htmlText )
-				{
+				if ( !htmlText ){
 					texte.text = (text) ? text : ' ';
 					texte.setTextFormat( format ); 
-				}
-				else 
-				{ 
+				} else { 
 					texte.htmlText = (text) ? text : ' '; 
 				}
 				texte.embedFonts = embedFont;
 				texte.selectable = selectable;
-				if ( autoSize )
-				{
+				if ( autoSize ) {
 					texte.autoSize = autoSizeType;
 					if( width != 0) texte.width = width;
 					if( height != 0) texte.height = height;
-				}
-				else
-				{
+				} else {
 					if( width != 0) texte.width = width;
 					if( height != 0) texte.height = height;
 				}
-				if ( backgroundColor != 0x00FFFFFF )
-				{
+				if ( backgroundColor != 0x00FFFFFF ) {
 					texte.background = true;
 					texte.backgroundColor = backgroundColor;
 				}
-				if ( borderColor != 0x00FFFFFF )
-				{
+				if ( borderColor != 0x00FFFFFF ) {
 					texte.border = true;
 					texte.borderColor = borderColor;
 				}
@@ -132,123 +123,100 @@ package railk.as3.text
 			addChild( textLink );	
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  	   		TO STRING
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * TO STRING
+		 */
 		override public function toString():String {
 			return '[ TEXTLINK > ' + this._name + ' ]';
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  	    GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * GETTER/SETTER
+		 */
 		public function get textfield():TextField { return texte; }
 		
-		public override function get name():String { return _name; }
-		
-		public override function set name(value:String):void 
-		{
+		override public function get name():String { return _name; }
+		override public function set name(value:String):void {
 			texte.name = value;
 			_name = value;
 		}
 		
 		public function get type():String { return _type; }
-		
-		public function set type(value:String):void 
-		{
+		public function set type(value:String):void {
 			texte.type = value;
 			_type = value;
 		}
 		
 		public function get text():String { return _text; }
-		
-		public function set text(value:String):void 
-		{
+		public function set text(value:String):void {
 			texte.appendText('');
 			texte.text = value;
 			_text = value;
+			dispatchChange();
 		}
 		
 		public function get color():uint { return _color; }
-		
-		public function set color(value:uint):void 
-		{
+		public function set color(value:uint):void {
 			format.color = value;
 			_color = value;
 		}
 		
 		public function get font():String { return _font; }
-		
-		public function set font(value:String):void 
-		{
+		public function set font(value:String):void {
 			format.font =  value;
 			_font = value;
+			dispatchChange();
 		}
 		
 		public function get embedFont():Boolean { return _embedFont; }
-		
-		public function set embedFont(value:Boolean):void 
-		{
+		public function set embedFont(value:Boolean):void {
 			texte.embedFonts = value;
 			_embedFont = value;
 		}
 		
 		public function get size():Number { return _size; }
-		
-		public function set size(value:Number):void 
-		{
+		public function set size(value:Number):void {
 			format.size = value;
 			_size = value;
+			dispatchChange();
 		}
 		
 		public function get align():String { return _align; }
-		
-		public function set align(value:String):void 
-		{
+		public function set align(value:String):void {
 			format.align = value;
 			_align = value;
 		}
 		
 		public function get selectable():Boolean { return _selectable; }
-		
-		public function set selectable(value:Boolean):void 
-		{
+		public function set selectable(value:Boolean):void {
 			texte.selectable = value;
 			_selectable = value;
 		}
 		
-		public override function get width():Number { return _width; }
-		
-		public override function set width(value:Number):void 
-		{
-			if (!_autoSize)
-			{
+		override public function get width():Number { return _width; }
+		override public function set width(value:Number):void {
+			if (!_autoSize) {
 				texte.width = value;
 				_width = value;
+				dispatchChange();
 			}	
 		}
 		
-		public override function get height():Number { return _height; }
-		
-		public override function set height(value:Number):void 
-		{
-			if (!_autoSize)
-			{
+		override public function get height():Number { return _height; }
+		override public function set height(value:Number):void {
+			if (!_autoSize){
 				texte.height = value;
 				_height = value;
+				dispatchChange();
 			}
 		}
 		
 		public function get autoSize():Boolean { return _autoSize; }
-		
 		public function set autoSize(value:Boolean):void { _autoSize = value; }
 		
 		public function get autoSizeType():String { return _autoSizeType; }
-		
-		public function set autoSizeType(value:String):void 
-		{
-			if (_autoSize)
-			{
+		public function set autoSizeType(value:String):void {
+			if (_autoSize){
 				texte.autoSize = value;
 				_autoSizeType = value;
 			}

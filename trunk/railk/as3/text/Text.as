@@ -8,6 +8,7 @@
 
 package railk.as3.text
 {
+	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize;
@@ -17,20 +18,18 @@ package railk.as3.text
 	
 	public class  Text extends TextField
 	{
-		public static const AUTOSIZE_LEFT                         :String = TextFieldAutoSize.LEFT;
-		public static const AUTOSIZE_RIGHT                        :String = TextFieldAutoSize.RIGHT;
-		public static const AUTOSIZE_CENTER                       :String = TextFieldAutoSize.CENTER;
-		public static const DYNAMIC_TYPE                          :String = TextFieldType.DYNAMIC;
-		public static const INPUT_TYPE                            :String = TextFieldType.INPUT;
+		public static const AUTOSIZE_LEFT   :String = TextFieldAutoSize.LEFT;
+		public static const AUTOSIZE_RIGHT  :String = TextFieldAutoSize.RIGHT;
+		public static const AUTOSIZE_CENTER :String = TextFieldAutoSize.CENTER;
+		public static const DYNAMIC_TYPE    :String = TextFieldType.DYNAMIC;
+		public static const INPUT_TYPE      :String = TextFieldType.INPUT;
 		
-		private var format                                        :TextFormat;
-		private var texte                                         :TextField;
-		private var _hasAutoSize                                  :Boolean; 
+		private var format                  :TextFormat;
+		private var texte                   :TextField;
+		private var _hasAutoSize            :Boolean; 
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  				 INIT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * CONSTRUCTEUR
 		 * 
 		 * @param	name
 		 * @param	type         'dynamic'|'input'
@@ -73,13 +72,11 @@ package railk.as3.text
 				if( width != 0) super.width = width;
 				if( height != 0) super.height = height;
 			}
-			if ( backgroundColor != 0x00FFFFFF )
-			{
+			if ( backgroundColor != 0x00FFFFFF ){
 				super.background = true;
 				super.backgroundColor = backgroundColor;
 			}
-			if ( borderColor != 0x00FFFFFF )
-			{
+			if ( borderColor != 0x00FFFFFF ) {
 				super.border = true;
 				super.borderColor = borderColor;
 			}
@@ -89,79 +86,82 @@ package railk.as3.text
 			super.antiAliasType = AntiAliasType.ADVANCED;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  	   		TO STRING
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * TO STRING
+		 */
 		override public function toString():String {
 			return '[ TEXT > ' + super.name + ' ]';
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  	    GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		override public function set text(value:String):void 
-		{
+		/**
+		 * GETTER/SETTER
+		 */
+		override public function set text(value:String):void {
 			super.appendText('');
 			super.text = value;
+			dispatchChange();
 		}
 		
 		public function get color():Object { return format.color; }
-		
-		public function set color(value:Object):void 
-		{
+		public function set color(value:Object):void {
 			format.color = value;
 			super.setTextFormat( format );
 		}
 		
 		override public function get textColor():uint { return format.color as uint; }
-		
-		override public function set textColor(value:uint):void 
-		{
+		override public function set textColor(value:uint):void {
 			format.color = value;
 			super.setTextFormat( format );
 		}
 		
 		public function get font():String { return format.font; }
-		
-		public function set font(value:String):void 
-		{
+		public function set font(value:String):void {
 			format.font =  value;
 			super.setTextFormat( format );
 		}
 		
 		public function get size():Object { return format.size; }
-		
-		public function set size(value:Object):void 
-		{
+		public function set size(value:Object):void {
 			format.size = value;
 			super.setTextFormat( format );
+			dispatchChange();
 		}
 		
 		public function get align():String { return format.align; }
-		
-		public function set align(value:String):void 
-		{
+		public function set align(value:String):void {
 			format.align = value;
 			super.setTextFormat( format );
 		}
 		
-		public override function set width(value:Number):void 
-		{
-			if (!_hasAutoSize) super.width = value;
+		override public function set x(value:Number):void {
+			super.x = value;
+			dispatchChange();
 		}
 		
-		public override function set height(value:Number):void 
-		{
+		override public function set y(value:Number):void {
+			super.y = value;
+			dispatchChange();
+		}
+		
+		override public function set width(value:Number):void {
+			if (!_hasAutoSize) super.width = value;
+			dispatchChange();
+		}
+		
+		override public function set height(value:Number):void {
 			if (!_hasAutoSize) super.height = value;
+			dispatchChange();
 		}
 		
 		public function get hasAutoSize():Boolean { return _hasAutoSize; }
-		
 		public function set hasAutoSize(value:Boolean):void { _hasAutoSize = value; }
+		override public function set autoSize(value:String):void { if (_hasAutoSize) super.autoSize = value; }
 		
-		override public function set autoSize(value:String):void 
-		{
-			if (_hasAutoSize) super.autoSize = value;
+		/**
+		 * EVENT DISPATCH
+		 */
+		private function dispatchChange():void {
+			if(hasEventListener(Event.CHANGE)) dispatchEvent( new Event(Event.CHANGE) );
 		}
 	}
 }
