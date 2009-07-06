@@ -23,16 +23,19 @@ package railk.as3.pattern.mvc.proxy
 			if(name) _name = name;
 		}
 		
+		/**
+		 * TO OVERRIDE TO REQUEST DATA
+		 * @param	name
+		 */
+		public function requestData( name:String ):void {
+		}
+		
 		public function getData( name:String ):Data {
 			var walker:Data = firstData;
 			while (walker) {
 				if (walker.name == name)  return walker;
 				walker = walker.next;
 			}
-			return handleDataRequest(name);
-		}
-		
-		protected function handleDataRequest( name:String ):Data {
 			return null;
 		}
 		
