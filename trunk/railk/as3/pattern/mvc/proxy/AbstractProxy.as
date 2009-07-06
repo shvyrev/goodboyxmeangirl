@@ -27,7 +27,7 @@ package railk.as3.pattern.mvc.proxy
 		 * TO OVERRIDE TO REQUEST DATA
 		 * @param	name
 		 */
-		public function requestData( name:String ):void {
+		public function request( name:String ):void {
 		}
 		
 		public function getData( name:String ):Data {
