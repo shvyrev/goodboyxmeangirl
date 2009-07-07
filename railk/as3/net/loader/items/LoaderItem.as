@@ -30,19 +30,21 @@ package railk.as3.net.loader.items
 			loader.load( url, context );
 		}
 		
-		override public function stop():void { loader.close() }
+		override public function stop():void { 
+			loader.close();
+			end();
+		}
+		
+		override protected function end():void {
+			delListeners( loader );
+			loader.unload();
+			loader = null;
+		}
 		
 		override protected function complete(evt:Event):void {
 			content = loader.content;
-			dispose();
+			end();
 			super.complete(evt);
-		}
-		
-		override public function dispose():void {
-			super.dispose();
-			delListeners(loader);
-			loader.unload();
-			loader = null;
 		}
 	}
 }

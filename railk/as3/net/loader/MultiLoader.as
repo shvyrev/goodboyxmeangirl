@@ -315,7 +315,9 @@ package railk.as3.net.loader
 					sendEvent( MultiLoaderEvent.ON_MULTILOADER_PROGRESS, { percent:int( percent/length ) } );
 					break;
 				case MultiLoaderEvent.ON_ITEM_ERROR:
-					sendEvent( evt.type, { info:evt.info, item:evt.item } );			
+					evt.currentTarget.state = "failed";
+					sendEvent( evt.type, { info:evt.info, item:evt.item } );
+					takenSlots--;
 					checkFile();
 					break;
 				case MultiLoaderEvent.ON_STREAM_READY : sendEvent( evt.type, { info:evt.info, item:evt.item } ); break;
