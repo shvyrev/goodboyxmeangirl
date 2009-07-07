@@ -8,7 +8,9 @@
 
 package railk.as3.pattern.singleton 
 {	
-	import flash.utils.Dictionary
+	import flash.utils.getQualifiedSuperclassName;
+	import flash.utils.getDefinitionByName;
+	import flash.utils.Dictionary;
 	
 	public class Singleton
 	{
@@ -20,13 +22,17 @@ package railk.as3.pattern.singleton
 			if ( instances[classe] == undefined ){
 				allowInstantiation = true;
 				instances[classe] = new classe();
+				////////////////////////the singleton extends another singleton ? yes, so lets keep only the super instance as a reference for both/////////////////////////////
+				try { new getDefinitionByName(getQualifiedSuperclassName(classe))() }
+				catch (e:Error) { if ( getQualifiedSuperclassName(classe) != 'Object') instances[getDefinitionByName(getQualifiedSuperclassName(classe))] = instances[classe]; }
+				////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				allowInstantiation = false;
-			}	
+			}
 			return instances[classe];
 		}
 		
 		public static function assertSingle(classe:Class):void {
-			if (!allowInstantiation) throw new Error("Error: Instantiation of class "+classe+" failed: Use "+classe+".getInstance() instead of new.");
+			if (!allowInstantiation) throw new Error(classe+" is a Singleton : Use "+classe+".getInstance() instead of new.");
 		}
 	}
 }
