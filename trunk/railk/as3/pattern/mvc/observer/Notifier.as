@@ -16,6 +16,6 @@ package railk.as3.pattern.mvc.observer
 		protected var facade:IFacade = AbstractFacade.getInstance();
 		public function sendNotification( note:String, info:String, data:*=null ):void {
 			facade.sendNotification(note,info,data );
-		}		
+		}
 	}
 }	

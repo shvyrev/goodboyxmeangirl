@@ -51,7 +51,7 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function registerCommand(commandClass:Class, name:String=''):void { 
-			controller.registerCommand(commandClass,name); 
+			controller.registerCommand(commandClass, name);
 		}
 		
 		public function executeCommand(name:String, action:String, params:Array = null ):void { 
@@ -63,7 +63,7 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function registerProxy(proxyClass:Class,name:String=''):void { 
-			model.registerProxy(proxyClass,name); 
+			model.registerProxy(proxyClass, name);
 		}
 		
 		public function getProxy(name:String):IProxy { 
