@@ -14,7 +14,7 @@ package railk.as3.pattern.mvc.observer
 	public class Notifier implements INotifier
 	{
 		protected var facade:IFacade = AbstractFacade.getInstance();
-		public function sendNotification( note:String, info:String, data:*=null ):void {
+		public function sendNotification( note:String, info:String='', data:*=null ):void {
 			facade.sendNotification(note,info,data );
 		}
 	}
