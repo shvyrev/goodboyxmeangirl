@@ -75,7 +75,7 @@ package railk.as3.pattern.mvc.core
 		}
 		
 		public function sendNotification(note:String, info:String, data:*=null):void {
-			dispatchEvent( new Notification( note, {info:info, data:data} ) );
+			dispatchEvent( new Notification( note, info, data ) );
 		}
 	}
 }

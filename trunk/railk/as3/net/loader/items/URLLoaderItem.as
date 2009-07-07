@@ -32,12 +32,19 @@ package railk.as3.net.loader.items
 			loader.load(url);
 		}
 		
-		override public function stop():void { loader.close() }
+		override public function stop():void { 
+			loader.close();
+			end();
+		}
+		
+		override protected function end():void {
+			delListeners( loader );
+			loader = null;
+		}
 		
 		override protected function complete(evt:Event):void {
 			content = (contentType=='binary')?(loader.data as ByteArray):((contentType=='xml')?(new XML(loader.data)):loader.data);
-			delListeners( loader );
-			loader = null;
+			end();
 			super.complete(evt);
 		}
 	}

@@ -30,7 +30,7 @@ package railk.as3.net.loader.items
 		public var mode:String;
 		
 		public function SimpleItem( url:URLRequest, name:String, args:Object, priority:int, preventCache:Boolean, bufferSize:int, mode:String ):void {
-			this.url.url = (preventCache)?url.url+='?dontCacheMe='+int(Math.random()*100000*getTimer()+getTimer()):url.url;
+			this.url.url = (preventCache)?url.url+='?nocache='+int(Math.random()*100000*getTimer()+getTimer()):url.url;
 			this.name = name;
 			this.mode = mode;
 			this.args = args;
@@ -52,10 +52,13 @@ package railk.as3.net.loader.items
 		}
 		
 		public function start():void {}
-		
 		public function stop():void {}
+		protected function end():void {};
 		
-		public function dispose():void { content = null; }
+		public function dispose():void { 
+			end();
+			content = null;
+		}
 		
 		protected function begin( evt:Event ):void {	
 			state = "loading";
@@ -74,8 +77,8 @@ package railk.as3.net.loader.items
 		}
 		
 		protected function IOerror( evt:IOErrorEvent ):void {	
-			sendEvent(MultiLoaderEvent.ON_ITEM_ERROR,{info:'[ ITEM '+url.url+' COMPLETE ]',item:this })
 			state = "failed";
+			sendEvent(MultiLoaderEvent.ON_ITEM_ERROR,{info:'[ ITEM '+url.url+' ERROR ]',item:this })
 		}
 		
 		protected function sendEvent( type:String, args:Object ):void { dispatchEvent( new MultiLoaderEvent(type, args) ); }

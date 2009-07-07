@@ -30,7 +30,15 @@ package railk.as3.net.loader.items
             loader.load( url, new SoundLoaderContext(3000,true) );
 		}
 		
-		override public function stop():void { loader.close(); }
+		override public function stop():void { 
+			loader.close();
+			end();
+		}
+		
+		override protected function end():void {
+			delListeners( loader );
+			loader = null;
+		}
 		
 		override protected function begin(evt:Event):void {
 			content = loader;
@@ -47,7 +55,7 @@ package railk.as3.net.loader.items
 		
 		override protected function complete(evt:Event):void {
 			content = loader;
-			delListeners( loader );
+			end();
 			super.complete(evt);
 		}
 		
