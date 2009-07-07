@@ -23,10 +23,10 @@ package railk.as3.pattern.mvc.proxy
 			if(name) _name = name;
 		}
 		
-		public function getData( name:String ):Data {
+		public function getData( name:String ):* {
 			var walker:Data = firstData;
 			while (walker) {
-				if (walker.name == name)  return walker;
+				if (walker.name == name)  return walker.data;
 				walker = walker.next;
 			}
 			request(name);
