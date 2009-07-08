@@ -13,6 +13,7 @@ package railk.as3.ui.div
 		function unbind():void;
 		function addArc(div:IDiv):void;
 		function removeArc(div:IDiv):Boolean;
+		function resetArcs():void;
 		function update(from:IDiv):void;
 		function setFocus():void;
 		function get state():DivState;

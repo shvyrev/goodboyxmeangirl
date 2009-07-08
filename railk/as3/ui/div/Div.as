@@ -12,7 +12,6 @@ package railk.as3.ui.div
 	
 	public class Div extends RegistrationPoint implements IDiv
 	{
-		protected var lastDiv:IDiv;
 		protected var arcs:Array = [];
 		protected var _data:*;
 		protected var _state:DivState;
@@ -32,7 +31,6 @@ package railk.as3.ui.div
 			this.y = y;
 			this.data = data;
 			this.state = new DivState(this);
-			
 		}
 		
 		/**
@@ -41,8 +39,8 @@ package railk.as3.ui.div
 		public function bind():void { 
 			if(position!='asbolute') this.addEventListener(Event.CHANGE, check); 
 			if (align != 'none') {
-				stage.addEventListener(Event.RESIZE, resize, false ,0, true );
-				resize();
+				if (stage) initResize(); 
+				else addEventListener(Event.ADDED_TO_STAGE, initResize );
 			}
 		}
 		
@@ -74,6 +72,7 @@ package railk.as3.ui.div
 			}
 			return false;
 		}
+		public function resetArcs():void { arcs = []; }
 		
 		/**
 		 * UTILITIES
@@ -86,6 +85,12 @@ package railk.as3.ui.div
 		/**
 		 * RESIZE
 		 */
+		private function initResize(evt:Event = null):void {
+			removeEventListener( Event.ADDED_TO_STAGE, initResize);
+			stage.addEventListener(Event.RESIZE, resize, false , 0, true );
+			resize();
+		}
+		 
 		private function resize(evt:Event=null):void {
 			switch(_align) {
 				case 'TL' : x = y = 0; break;
