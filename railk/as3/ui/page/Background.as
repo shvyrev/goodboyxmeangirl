@@ -12,7 +12,6 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.UILoader;
-	import railk.as3.TopLevel;
 	
 	public class Background extends AbstractView implements IView,INotifier
 	{
@@ -33,19 +32,21 @@ package railk.as3.ui.page
 		/**
 		 * 	VISBILITY
 		 */
-		override public function show():void {
+		override public function show():* {
 			loader = new UILoader(src, function():void {
 				setupViews(layout.views);
-				TopLevel.main.addChild(component);
+				facade.addChild(component);
 				activateViews(layout.views);
 			} );
+			super.show();
 		}
 		
-		override public function hide():void {
+		override public function hide():* {
 			loader.stop();
 			for (var i:int = 0; i < component.numChildren; i++) component.removeChildAt(i);
-			TopLevel.main.removeChild(component);
+			facade.removeChild(component);
 			component = new DSprite();
+			super.hide();
 		}
 		
 		/**

@@ -16,6 +16,7 @@ package railk.as3.pattern.mvc.core
 	
 	public class AbstractFacade extends EventDispatcher implements IFacade
 	{
+		protected var container:*;
 		protected var model:IModel;
 		protected var controller:IController;
 		protected var views:Array = [];
@@ -27,6 +28,13 @@ package railk.as3.pattern.mvc.core
 		public function AbstractFacade() {
 			Singleton.assertSingle(AbstractFacade);
 		}
+		
+		public function registerContainer(container:*):void {
+			this.container = container;
+		}
+		
+		public function addChild(child:*):* { return container.addChild(child); }
+		public function removeChild(child:*):* { return container.removeChild(child); }
 		
 		public function registerModel( modelClass:Class ):void {
 			model = modelClass.getInstance.apply();

@@ -12,10 +12,11 @@ package railk.as3.ui
 	
 	public class Structure
 	{
-		public function Structure( xml:XML, loadingView:*=null ) {
+		public function Structure( xml:XML, container:*, loadingView:*=null ) {
 			getSiteInfo(xml);
 			getBackground(xml);
 			getPages(xml,loadingView);
+			PageManager.getInstance().registerContainer(container);
 			PageManager.getInstance().setContextMenu();
 		}
 		
