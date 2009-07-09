@@ -16,7 +16,6 @@ package railk.as3.ui.page
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.UILoader;
-	import railk.as3.TopLevel;
 	
 	public class PageManager extends AbstractFacade implements IFacade
 	{
@@ -87,7 +86,7 @@ package railk.as3.ui.page
 		}
 		
 		public function setContextMenu():void {
-			TopLevel.main.contextMenu = menu.menu;
+			container.contextMenu = menu.menu;
 		}
 	}
 }

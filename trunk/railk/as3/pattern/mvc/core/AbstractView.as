@@ -15,7 +15,7 @@ package railk.as3.pattern.mvc.core
 		protected var _name:String = 'undefined';
 		protected var _component:*;
 		
-		public function AbstractView( name:String='',component:*= null ) {
+		public function AbstractView( name:String='',component:*=null ) {
 			facade.addEventListener(Notification.NOTE, handleNotification );
 			if (name) _name = name;
 			_component = component;
@@ -24,10 +24,12 @@ package railk.as3.pattern.mvc.core
 		public function handleNotification(evt:Notification):void {
 		}
 		
-		public function show():void {
+		public function show():* {
+			return _component;
 		}
 		
-		public function hide():void {
+		public function hide():* {
+			return _component;
 		}
 		
 		public function dispose():void {

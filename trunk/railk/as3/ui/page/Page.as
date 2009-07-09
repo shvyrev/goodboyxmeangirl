@@ -15,7 +15,6 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.interfaces.*
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.UILoader;
-	import railk.as3.TopLevel;
 	
 	public class Page extends AbstractView implements IView,INotifier
 	{
@@ -59,23 +58,25 @@ package railk.as3.ui.page
 			length++;
 		}
 		
-		override public function show():void {
-			TopLevel.main.addChild( loadingView );
+		override public function show():* {
+			facade.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
-			var complete:Function = function():void { TopLevel.main.removeChild( loadingView ); setupViews(layout.views, data); TopLevel.main.addChild(component); activateViews(layout.views); loaded = true; }
+			var complete:Function = function():void { facade.removeChild( loadingView ); setupViews(layout.views, data); facade.addChild(component); activateViews(layout.views); loaded = true; }
 			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
 			else complete.apply();
+			super.show();
 		}
 		
-		override public function hide():void {
+		override public function hide():* {
 			loader.stop();
 			var i:int=0, views:Array = layout.views;
 			try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
 			catch (e:Error) { /*throw e;*/}
 			for (i=0; i < component.numChildren; ++i) component.removeChildAt(i);
-			try { TopLevel.main.removeChild(component); }
+			try { facade.removeChild(component); }
 			catch (e:ArgumentError){/*throw e;*/}
 			component = new DSprite();
+			super.hide();
 		}
 		
 		override public function dispose():void {
