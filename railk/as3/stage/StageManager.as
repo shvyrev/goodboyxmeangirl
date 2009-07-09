@@ -22,13 +22,14 @@ package railk.as3.stage
 	{
 		protected static var disp     :EventDispatcher;
 		
-		public static var H           :Number;
-		public static var W           :Number;
+		public static var width       :Number;
+		public static var height      :Number;
 		private static var lastMove   :Number;
 		private static var timeOut    :Number;
 		private static var isIdle     :Number;
 		private static var isActive   :Number;
 		private static var _stage     :Stage;
+		private static var _framerate :int;
 		
 		
 		/**
@@ -63,6 +64,7 @@ package railk.as3.stage
 			
 			//initialisation de la surface
 			_stage = stage;
+			_framerate = frameRate;
 			stage.align = align;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.quality = quality;
@@ -72,8 +74,8 @@ package railk.as3.stage
 			stage.addEventListener( Event.MOUSE_LEAVE, manageEvent, false, 0, true );
 			
 			//taille de la surface
-			H = stage.stageHeight;
-			W = stage.stageWidth;	
+			height = stage.stageHeight;
+			width = stage.stageWidth;	
 		}
 		
 		/**
@@ -118,12 +120,27 @@ package railk.as3.stage
 		}
 		
 		/**
+		 * FRAMRATE ADAPTER
+		 */
+		public static function minRate():void { _stage.frameRate = 5 };
+		public static function maxRate():void { _stage.frameRate = _framerate };
+		
+		/**
 		 * MANAGE EVENT
 		 */
-		private static function manageEvent( evt:Event ):void {
+		private static function manageEvent( evt:* ):void {
 			switch( evt.type ) {
 				case Event.RESIZE : dispatchEvent( new StageManagerEvent( StageManagerEvent.ONSTAGERESIZE, { info:"surface modifiee "+_stage.stageHeight+" "+_stage.stageWidth } ) ); break;
-				case Event.MOUSE_LEAVE : dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSELEAVE, { info:"la souris a quitte la surface" } ) ); break;
+				case Event.MOUSE_LEAVE : 
+					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSELEAVE, { info:"la souris a quitte la surface" } ) );
+					_stage.addEventListener(MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true);
+					minRate();
+					break;
+				case MouseEvent.MOUSE_MOVE : 
+					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSEBACK, { info:"la souris est de retour" } ) );
+					_stage.removeEventListener(MouseEvent.MOUSE_MOVE, manageEvent);
+					maxRate();
+					break;
 			}
 		}
 	}
