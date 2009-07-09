@@ -24,12 +24,10 @@ package railk.as3.pattern.mvc.core
 		public function handleNotification(evt:Notification):void {
 		}
 		
-		public function show():* {
-			return _component;
+		public function show():void {
 		}
 		
-		public function hide():* {
-			return _component;
+		public function hide():void {
 		}
 		
 		public function dispose():void {

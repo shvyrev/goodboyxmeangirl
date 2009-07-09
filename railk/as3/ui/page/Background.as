@@ -32,21 +32,19 @@ package railk.as3.ui.page
 		/**
 		 * 	VISBILITY
 		 */
-		override public function show():* {
+		override public function show():void {
 			loader = new UILoader(src, function():void {
 				setupViews(layout.views);
 				facade.addChild(component);
 				activateViews(layout.views);
 			} );
-			super.show();
 		}
 		
-		override public function hide():* {
+		override public function hide():void {
 			loader.stop();
 			for (var i:int = 0; i < component.numChildren; i++) component.removeChildAt(i);
 			facade.removeChild(component);
 			component = new DSprite();
-			super.hide();
 		}
 		
 		/**
