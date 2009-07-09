@@ -58,16 +58,15 @@ package railk.as3.ui.page
 			length++;
 		}
 		
-		override public function show():* {
+		override public function show():void {
 			facade.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
 			var complete:Function = function():void { facade.removeChild( loadingView ); setupViews(layout.views, data); facade.addChild(component); activateViews(layout.views); loaded = true; }
 			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
 			else complete.apply();
-			super.show();
 		}
 		
-		override public function hide():* {
+		override public function hide():void {
 			loader.stop();
 			var i:int=0, views:Array = layout.views;
 			try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
@@ -76,7 +75,6 @@ package railk.as3.ui.page
 			try { facade.removeChild(component); }
 			catch (e:ArgumentError){/*throw e;*/}
 			component = new DSprite();
-			super.hide();
 		}
 		
 		override public function dispose():void {
