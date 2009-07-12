@@ -223,7 +223,7 @@ package railk.as3.net.loader
 			walker = first;
 			loop:while ( walker ) {
 				if ( walker.state == "waiting" ) {
-					walker.load();
+					walker.start();
 					walker.state = "loading";
 					takenSlots++;
 				}

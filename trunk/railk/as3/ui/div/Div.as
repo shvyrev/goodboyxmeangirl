@@ -11,7 +11,7 @@ package railk.as3.ui.div
 	import flash.events.Event;
 	
 	public class Div extends RegistrationPoint implements IDiv
-	{
+	{	
 		protected var arcs:Array = [];
 		protected var _data:*;
 		protected var _state:DivState;
@@ -44,7 +44,7 @@ package railk.as3.ui.div
 			}
 		}
 		
-		public function unbind():void { 
+		public function unbind():void {
 			if(position!='asbolute') this.removeEventListener(Event.CHANGE, check);
 			if (align != 'none') stage.removeEventListener(Event.RESIZE, resize );
 		}
@@ -54,8 +54,10 @@ package railk.as3.ui.div
 		}
 		
 		public function update(from:IDiv):void {
-			if (y >= from.y && y < from.y+from.height ) x = int(state.x+(from.x-from.state.x)+(from.width-from.state.width));
-			if (x >= from.x && x < from.x+from.width ) y = int(state.y+(from.y-from.state.y)+(from.height-from.state.height));
+			if (y >= from.y && y < from.y+from.height ) x = int(state.x+((from.x-from.state.x)+(from.width-from.state.width)));
+			if (x >= from.x && x < from.x + from.width ) y = int(state.y+((from.y-from.state.y)+(from.height-from.state.height)));
+			//if (y >= from.y && y < from.y+from.height ) x = int(state.x+((from.x-from.state.x)));
+			//if (x >= from.x && x < from.x + from.width ) y = int(state.y+((from.y-from.state.y)));
 		}
 		
 		/**

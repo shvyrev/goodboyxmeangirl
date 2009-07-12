@@ -62,8 +62,8 @@ package railk.as3.pattern.mvc.core
 			controller.registerCommand(commandClass, name);
 		}
 		
-		public function executeCommand(name:String, action:String, params:Array = null ):void { 
-			controller.executeCommand(name, action, params); 
+		public function executeCommand(name:String, action:String, ...args ):void { 
+			controller.executeCommand(name, action, args); 
 		}
 		
 		public function removeCommand(name:String):void { 
