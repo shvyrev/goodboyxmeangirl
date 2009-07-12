@@ -26,7 +26,7 @@ package railk.as3.ui.div
 			current.x = X;
 			current.y = Y;
 			current.state.update();
-			if (previous && position!='absolute') previous.addArc(current);
+			if (previous && position != 'absolute') previous.addArc(current);
 			current.bind();
 			divs[divs.length] = addChild(current as Div);
 			///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -36,7 +36,6 @@ package railk.as3.pattern.mvc.core
 		
 		public function get component():* { return _component; }
 		public function set component(value:*):void { _component = value; }
-		
 		public function get name():String { return _name; }
 	}	
 }
