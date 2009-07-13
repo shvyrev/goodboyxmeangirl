@@ -1,6 +1,5 @@
 ﻿/**
- * 
- * Micro Tween /sound /color /text /textColor
+ * Micro Tween /autorotate /sound /color /text /textColor /begin /update /complete (1,57k)
  * 
  * @author Richard Rodney
  * @version 0.1
@@ -20,10 +19,12 @@ package railk.as3.motion
 		 * @param	ps	props {}
 		 * @param	d	delay
 		 * @param	e	ease
-		 * @param	e	complete function
+		 * @param	b	begin function
+		 * @param	u	update function
+		 * @param	c	complete function
 		 * @return
 		 */
-		static public function to( t:*,dr:*,ps:*,d:*=0,e:*=null,c:*=null ):RTweenByte { return new RTweenByte(t,dr,ps,d,e,c); }
+		static public function to( t:*,dr:*,ps:*,d:*=0,e:*=null,b:*=null,u:*=null,c:*=null ):RTweenByte { return new RTweenByte(t,dr,ps,d,e,b,u,c); }
 
 		/**
 		 * Class
@@ -34,14 +35,17 @@ package railk.as3.motion
 		public var ps:*=[];
 		public var d:*;
 		public var e:*;
+		public var u:*;
 		public var c:*;
 		
-		public function RTweenByte( _t:*, _dr:*, _ps:*, _d:*=0, _e:*=null,_c:*=null) {
+		public function RTweenByte(_t:*,_dr:*,_ps:*,_d:*=0,_e:*=null,_b:*=null,_u:*=null,_c:*=null) {
 			t = _t;
 			dr = _dr;
 			d = _d;
 			e = (_e!=null)?_e:de;
+			u = _u;
 			c = _c;
+			if (_b) _b.apply();
 			for ( var p:* in _ps ) {
 				if (p.search('rotation')!=-1){ t[p]=t[p]%360+((Math.abs(t[p]%360-_ps[p]%360)<180)?0:(t[p]%360>_ps[p]%360)?-360:360); _ps[p]=_ps[p]%360;}	
 				ps[ps.length] = [p,((t.hasOwnProperty(p))?t[p]:((p=='color')?t.transform.colorTransform.color:((p=='volume')?t.soundTransform.volume:t))),_ps[p]];
@@ -49,16 +53,21 @@ package railk.as3.motion
 			t.addEventListener('enterFrame', tk );
 		}
 		
+		public function dsp():void {
+			t.removeEventListener('enterFrame', tk );
+			ps = c = null;
+		}
+		
 		private function tk(ev:*):void {
 			var tm:Number = (getTimer()*.001-stm)-d;
-			if ( u(((tm>=dr)?1:((tm<=0)?0:e(tm,0,1,dr))))==1 ){
-				t.removeEventListener('enterFrame', tk );
+			if ( up(((tm>=dr)?1:((tm<=0)?0:e(tm,0,1,dr))))==1 ){
 				if(c) c.apply();
-				t = ps = c = null;
+				dsp();
 			}
 		}
 
-		private function u( r:* ):* {
+		private function up( r:* ):* {
+			if (u) u.apply();
 			var i:int=ps.length;
 			while( --i > -1 ) {
 				var p:*= ps[i];
