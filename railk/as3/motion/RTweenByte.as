@@ -17,12 +17,13 @@ package railk.as3.motion
 		 * 
 		 * @param	t 	target
 		 * @param	dr	duration
-		 * @param	ps	props
+		 * @param	ps	props {}
 		 * @param	d	delay
 		 * @param	e	ease
+		 * @param	e	complete function
 		 * @return
 		 */
-		static public function to( t:*,dr:*,ps:*,d:*=0,e:*=null ):RTweenByte { return new RTweenByte(t,dr,ps,d,e); }
+		static public function to( t:*,dr:*,ps:*,d:*=0,e:*=null,c:*=null ):RTweenByte { return new RTweenByte(t,dr,ps,d,e,c); }
 
 		/**
 		 * Class
@@ -33,12 +34,14 @@ package railk.as3.motion
 		public var ps:*=[];
 		public var d:*;
 		public var e:*;
+		public var c:*;
 		
-		public function RTweenByte( _t:*, _dr:*, _ps:*, _d:*=0, _e:*=null) {
+		public function RTweenByte( _t:*, _dr:*, _ps:*, _d:*=0, _e:*=null,_c:*=null) {
 			t = _t;
 			dr = _dr;
 			d = _d;
 			e = (_e!=null)?_e:de;
+			c = _c;
 			for ( var p:* in _ps ) {
 				if (p.search('rotation')!=-1){ t[p]=t[p]%360+((Math.abs(t[p]%360-_ps[p]%360)<180)?0:(t[p]%360>_ps[p]%360)?-360:360); _ps[p]=_ps[p]%360;}	
 				ps[ps.length] = [p,((t.hasOwnProperty(p))?t[p]:((p=='color')?t.transform.colorTransform.color:((p=='volume')?t.soundTransform.volume:t))),_ps[p]];
@@ -50,7 +53,8 @@ package railk.as3.motion
 			var tm:Number = (getTimer()*.001-stm)-d;
 			if ( u(((tm>=dr)?1:((tm<=0)?0:e(tm,0,1,dr))))==1 ){
 				t.removeEventListener('enterFrame', tk );
-				t = ps = null;
+				if(c) c.apply();
+				t = ps = c = null;
 			}
 		}
 
@@ -63,7 +67,6 @@ package railk.as3.motion
 				else if(p[0]=='textColor') t.textColor = clr(r,p[1],p[2]);
 				else if (p[0] == 'color') { var c:* = new ColorTransform(); c.color=clr(r,p[1],p[2]); t.transform.colorTransform=c; }
 				else t[p[0]] = p[1]+(p[2]-p[1])*r+1e-18-1e-18;
-				if(p[0]=='alpha' && !t[p[0]]) t.visible=false;
 			}
 			return r;
 		}

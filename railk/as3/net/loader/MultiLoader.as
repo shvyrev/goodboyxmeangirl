@@ -151,10 +151,10 @@ package railk.as3.net.loader
 			return false;
 		}
 		
-		public function removeByUrl( url:String ):Boolean {
+		public function removeByUrl( url:URLRequest ):Boolean {
 			walker = first;
 			while ( walker ) {
-				if ( walker.url.url == url ) {
+				if ( walker.url == url ) {
 					delItemListeners( walker );
 					walker.dispose();
 					removeItem( walker );
