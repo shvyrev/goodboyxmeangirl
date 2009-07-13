@@ -4,10 +4,6 @@ package railk.as3.utils
 	
 	public class CookieUtil
 	{
-		public function CookieUtil()
-		{
-		}
-		
 		private static const FUNCTION_SETCOOKIE:String = 
             "document.insertScript = function ()" +
             "{ " +

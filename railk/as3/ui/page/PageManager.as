@@ -15,6 +15,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
+	import railk.as3.ui.SEO;
 	import railk.as3.ui.UILoader;
 	
 	public class PageManager extends AbstractFacade implements IFacade
