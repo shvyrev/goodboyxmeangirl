@@ -56,8 +56,6 @@ package railk.as3.ui.div
 		public function update(from:IDiv):void {
 			if (y >= from.y && y < from.y+from.height ) x = int(state.x+((from.x-from.state.x)+(from.width-from.state.width)));
 			if (x >= from.x && x < from.x + from.width ) y = int(state.y+((from.y-from.state.y)+(from.height-from.state.height)));
-			//if (y >= from.y && y < from.y+from.height ) x = int(state.x+((from.x-from.state.x)));
-			//if (x >= from.x && x < from.x + from.width ) y = int(state.y+((from.y-from.state.y)));
 		}
 		
 		/**
@@ -93,7 +91,7 @@ package railk.as3.ui.div
 			resize();
 		}
 		 
-		private function resize(evt:Event=null):void {
+		public function resize(evt:Event=null):void {
 			switch(_align) {
 				case 'TL' : x = y = 0; break;
 				case 'TR' : 

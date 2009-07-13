@@ -7,6 +7,7 @@
 
 package railk.as3.ui.div
 {	
+	import flash.events.Event;
 	public interface IDiv
 	{	
 		function bind():void;
@@ -14,6 +15,7 @@ package railk.as3.ui.div
 		function addArc(div:IDiv):void;
 		function removeArc(div:IDiv):Boolean;
 		function resetArcs():void;
+		function resize(evt:Event = null):void;
 		function update(from:IDiv):void;
 		function setFocus():void;
 		function get state():DivState;
