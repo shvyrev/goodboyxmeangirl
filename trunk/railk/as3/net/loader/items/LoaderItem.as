@@ -38,6 +38,10 @@ package railk.as3.net.loader.items
 		override protected function end():void {
 			delListeners( loader );
 			loader.unload();
+		}
+		
+		override public function dispose():void {
+			super.dispose();
 			loader = null;
 		}
 		
