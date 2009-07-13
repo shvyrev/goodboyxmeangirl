@@ -82,7 +82,7 @@ package railk.as3.pattern.mvc.core
 			model.removeProxy(name); 
 		}
 		
-		public function sendNotification(note:String, info:String, data:*=null):void {
+		public function sendNotification(note:String, info:String, data:Object=null):void {
 			dispatchEvent( new Notification( note, info, data ) );
 		}
 	}
