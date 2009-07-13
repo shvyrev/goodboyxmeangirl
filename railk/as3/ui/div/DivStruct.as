@@ -19,19 +19,21 @@ package railk.as3.ui.div
 		
 		public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='none', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):void {
 			current = (div)?div:new Div( name, float, align, margins, position, x, y, data);
-			///////////////////////////////////////////////////////////////////////////////////////////////////
+			if (posistion == 'relative') placeDiv(current);
+			divs[divs.length] = addChild(current as Div);
+		}
+		
+		private function placeDiv(current:IDiv):void {
 			var X:Number = ((previous)?previous.x:0), Y:Number = ((previous)?previous.y:0);
 			if (current.float == 'none') Y = Y+current.margins.top+((previous)?previous.height+previous.margins.bottom:0);
 			else if (current.float == 'left') X = X + current.margins.left + ((previous)?previous.width + previous.margins.right:0);
 			current.x = X;
 			current.y = Y;
 			current.state.update();
-			if (previous && position != 'absolute') previous.addArc(current);
+			if (previous) previous.addArc(current);
 			current.bind();
-			divs[divs.length] = addChild(current as Div);
-			///////////////////////////////////////////////////////////////////////////////////////////////////
 			previous = current;
-		}	
+		}
 		
 		public function delDiv(name:String):void {
 			for (var i:int = 0; i < divs.length; ++i) {
@@ -49,11 +51,12 @@ package railk.as3.ui.div
 			return null;
 		}
 		
-		public function delAll():void {
+		public function delAllDiv():void {
 			for (var i:int = 0; i < divs.length; ++i) {
 				divs[i].unbind();
 				divs[i].resetArcs();
 				removeChild(divs[i]);
+				previous = current = null;
 			}
 		}
 	}
