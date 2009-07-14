@@ -7,6 +7,7 @@
 
 package railk.as3.ui.div
 {	
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 	public interface IDiv
 	{	
@@ -18,6 +19,7 @@ package railk.as3.ui.div
 		function resize(evt:Event = null):void;
 		function update(from:IDiv):void;
 		function setFocus():void;
+		function addChild(child:DisplayObject):DisplayObject;
 		function get state():DivState;
 		function set state(value:DivState):void;
 		function get float():String;

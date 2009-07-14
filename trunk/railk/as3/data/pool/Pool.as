@@ -12,11 +12,12 @@ package railk.as3.data.pool
 	{
 		public var growthRate:int=10;
 		public var size:int=0;
+		public var classe:Class;
 		protected var free:int=0;
 		protected var os:Array = [];
 		protected var last:*;
 		protected var picked:*;
-		public var classe:Class;
+		
 		
 		public function Pool( classe:Class, size:int = 10, growthRate:int = 10 ) {
 			this.classe = classe;
@@ -49,6 +50,6 @@ package railk.as3.data.pool
 			while( --i > -1 ) os[i].dispose();
 			os = [];
 			size = 0;
-		}
+		}		
 	}
 }

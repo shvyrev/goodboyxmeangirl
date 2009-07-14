@@ -130,7 +130,11 @@ package railk.as3.stage
 		 */
 		private static function manageEvent( evt:* ):void {
 			switch( evt.type ) {
-				case Event.RESIZE : dispatchEvent( new StageManagerEvent( StageManagerEvent.ONSTAGERESIZE, { info:"surface modifiee "+_stage.stageHeight+" "+_stage.stageWidth } ) ); break;
+				case Event.RESIZE :
+					width = _stage.stageWidth;
+					height = _stage.stageHeight;
+					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONSTAGERESIZE, { info:"surface modifiee " + width + " " + height } ) ); 
+					break;
 				case Event.MOUSE_LEAVE : 
 					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSELEAVE, { info:"la souris a quitte la surface" } ) );
 					_stage.addEventListener(MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true);

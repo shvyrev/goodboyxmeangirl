@@ -31,7 +31,8 @@ package railk.as3.net.loader.items
 		}
 		
 		override public function stop():void { 
-			loader.close();
+			try { loader.close(); }
+			catch (e:Error) { /*throw e;*/ }
 			end();
 		}
 		
