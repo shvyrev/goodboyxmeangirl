@@ -13,15 +13,15 @@ package railk.as3.ui.div
 	public class Div extends RegistrationPoint implements IDiv
 	{	
 		protected var arcs:Array = [];
-		protected var _data:*;
 		protected var _state:DivState;
 		protected var _position:String;
 		protected var _float:String;
 		protected var _align:String;
-		protected var _margins:Object = { top:0,right:0,bottom:0,left:0 };
+		protected var _margins:Object = { top:0, right:0, bottom:0, left:0 };
+		protected var _options:Object;
 		
 		
-		public function Div(name:String='undefined', float:String='none', align:String='none', margins:Object=null, position:String='relative', x:Number=0, y:Number=0, data:*=null ) {
+		public function Div(name:String='undefined', float:String='none', align:String='none', margins:Object=null, position:String='relative', x:Number=0, y:Number=0, options:Object=null ) {
 			this.name = name;
 			if (margins) this.margins = margins;
 			this.float = float;
@@ -29,7 +29,7 @@ package railk.as3.ui.div
 			this.position = position;
 			this.x = x;
 			this.y = y;
-			this.data = data;
+			this.options = options;
 			this.state = new DivState(this);
 		}
 		
@@ -91,7 +91,8 @@ package railk.as3.ui.div
 			resize();
 		}
 		 
-		public function resize(evt:Event=null):void {
+		public function resize(evt:Event = null):void {
+			if (_options && _options.hasOwnProperty('onResize')) _options['onResize'].apply(null, _options.hasOwnProperty('onResizeParams')?_options['onResizeParams']:null);
 			switch(_align) {
 				case 'TL' : x = y = 0; break;
 				case 'TR' : 
@@ -135,8 +136,6 @@ package railk.as3.ui.div
 		/**
 		 * GETTER/SETTER
 		 */
-		public function get data():* { return _data; }
-		public function set data(value:*):void { _data=value; }
 		public function get state():DivState { return _state; }
 		public function set state(value:DivState):void { _state=value; }
 		public function get float():String { return _float; }
@@ -147,6 +146,8 @@ package railk.as3.ui.div
 		public function set position(value:String):void { _position=value; }
 		public function get margins():Object { return _margins; }
 		public function set margins(value:Object):void { _margins = value; }
+		public function get options():Object { return _options; }
+		public function set options(value:Object):void { _options = value; }
 		
 		/**
 		 * TO STRING

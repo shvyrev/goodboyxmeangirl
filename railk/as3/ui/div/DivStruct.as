@@ -19,7 +19,8 @@ package railk.as3.ui.div
 		
 		public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='none', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):void {
 			current = (div)?div:new Div( name, float, align, margins, position, x, y, data);
-			if (posistion == 'relative') placeDiv(current);
+			if (current.position == 'relative') placeDiv(current);
+			current.bind();
 			divs[divs.length] = addChild(current as Div);
 		}
 		
@@ -31,7 +32,6 @@ package railk.as3.ui.div
 			current.y = Y;
 			current.state.update();
 			if (previous) previous.addArc(current);
-			current.bind();
 			previous = current;
 		}
 		
