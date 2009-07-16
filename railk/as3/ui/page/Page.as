@@ -10,7 +10,6 @@ package railk.as3.ui.page
 	import flash.display.Sprite;
 	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
-	import railk.as3.display.DSprite;
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.*
 	import railk.as3.ui.layout.Layout;
@@ -44,7 +43,7 @@ package railk.as3.ui.page
 			this.layout = layout;
 			this.loadingView = loadingView;
 			this.src = src;
-			this.component = new DSprite();
+			this.component = new Sprite();
 		}
 		
 		public function addChild( child:Page ):void {
@@ -73,7 +72,7 @@ package railk.as3.ui.page
 			for (i=0; i < component.numChildren; ++i) component.removeChildAt(i);
 			try { facade.removeChild(component); }
 			catch (e:ArgumentError){/*throw e;*/}
-			component = new DSprite();
+			component = new Sprite();
 		}
 		
 		override public function dispose():void {
