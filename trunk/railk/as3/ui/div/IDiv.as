@@ -20,6 +20,9 @@ package railk.as3.ui.div
 		function update(from:IDiv):void;
 		function setFocus():void;
 		function addChild(child:DisplayObject):DisplayObject;
+		function getChildAt(index:int):DisplayObject;
+		function getChildByName(name:String):DisplayObject;
+		function getChildIndex(child:DisplayObject):int;
 		function get state():DivState;
 		function set state(value:DivState):void;
 		function get float():String;
