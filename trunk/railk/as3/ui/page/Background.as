@@ -7,7 +7,7 @@
 
 package railk.as3.ui.page
 {	
-	import railk.as3.display.DSprite;
+	import flash.display.Sprite;
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.ui.layout.Layout;
@@ -25,7 +25,7 @@ package railk.as3.ui.page
 			this.id = id;
 			this.layout = layout;
 			this.src = src;
-			this.component = new DSprite();
+			this.component = new Sprite();
 		}
 		
 		/**
@@ -43,7 +43,7 @@ package railk.as3.ui.page
 			loader.stop();
 			for (var i:int = 0; i < component.numChildren; i++) component.removeChildAt(i);
 			facade.removeChild(component);
-			component = new DSprite();
+			component = new Sprite();
 		}
 		
 		/**

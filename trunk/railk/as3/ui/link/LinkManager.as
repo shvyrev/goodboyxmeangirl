@@ -8,14 +8,11 @@
 
 package railk.as3.ui.link 
 {	
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
 	import com.asual.swfaddress.SWFAddress;
 	import com.asual.swfaddress.SWFAddressEvent;
 	
 	public class LinkManager 
 	{	
-		protected static var disp:EventDispatcher;
 		public static var inited:Boolean;
 		
 		private static var firstLink:Link
@@ -25,24 +22,6 @@ package railk.as3.ui.link
 		private static var updateTitle:Boolean;
 		private static var state:String;		
 		private static var link:Link;
-		
-		/**
-		 * LISTENERS DE CLASSE
-		 */
-		public static function addEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false, p_priority:int=0, p_useWeakReference:Boolean=false):void {
-      			if (disp == null) { disp = new EventDispatcher(); }
-      			disp.addEventListener(p_type, p_listener, p_useCapture, p_priority, p_useWeakReference);
-      	}
-		
-    	public static function removeEventListener(p_type:String, p_listener:Function, p_useCapture:Boolean=false):void {
-      			if (disp == null) { return; }
-      			disp.removeEventListener(p_type, p_listener, p_useCapture);
-      	}
-		
-    	public static function dispatchEvent(p_event:Event):void {
-      			if (disp == null) { return; }
-      			disp.dispatchEvent(p_event);
-      	}
 		
 		/**
 		 * INIT
@@ -96,8 +75,7 @@ package railk.as3.ui.link
 			}
 			return link;
 		}
-		
-		
+			
 		/**
 		 * MANAGE LINKS
 		 */
@@ -144,14 +122,11 @@ package railk.as3.ui.link
 						if ( getLink(link) ) getLink(link).deepLinkAction(a[a.length-1]);
 						else setValue('/');
 					}
-				}
-				
-				dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONCHANGESTATE, { info:"changed state", state:state } ) );
+				}				
 				if(updateTitle) SWFAddress.setTitle(formatTitle(evt.value));
 				
 			} catch (err:Error) {
 				state = "erreur 404";
-				dispatchEvent( new LinkManagerEvent( LinkManagerEvent.ONERRORSTATE,{ info:"error state", state:state } ) );
 			}
 		}
 		
