@@ -124,10 +124,10 @@ package railk.as3.net.loader
 			return null;
 		}
 		
-		public function getItemByArgs( type:String, name:String ):* {
+		public function getItemByArgs( name:String, value:* ):* {
 			walker = first;
 			while ( walker ){
-				if ( walker.args && walker.args[type] != undefined ) if ( walker.args[type] == name ) return walker;
+				if ( walker.args && walker.args.hasOwnProperty(name) ) if ( walker.args[name] == value ) return walker;
 				walker = walker.next;
 			}
 			return null;
