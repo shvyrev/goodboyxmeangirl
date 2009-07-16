@@ -23,13 +23,13 @@ package railk.as3.pattern.mvc.proxy
 			if(name) _name = name;
 		}
 		
-		public function getData( name:String ):* {
+		public function getData( name:String, options:*=null ):* {
 			var walker:Data = firstData;
 			while (walker) {
 				if (walker.name == name)  return walker.data;
 				walker = walker.next;
 			}
-			request(name);
+			request(name,options);
 			return null;
 		}
 		
@@ -38,7 +38,7 @@ package railk.as3.pattern.mvc.proxy
 		 * 
 		 * @param	name
 		 */
-		protected function request( name:String ):void {
+		protected function request( name:String,options:* ):void {
 		}
 		
 		protected function addData(name:String, data:*):void {

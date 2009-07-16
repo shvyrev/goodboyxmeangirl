@@ -37,7 +37,7 @@ package railk.as3.ui.div
 		 * MONITOR CHANGES
 		 */
 		public function bind():void { 
-			if(position!='asbolute') this.addEventListener(Event.CHANGE, check); 
+			if(position!='asbolute') this.addEventListener(Event.CHANGE, check);
 			if (align != 'none') {
 				if (stage) initResize(); 
 				else addEventListener(Event.ADDED_TO_STAGE, initResize );
