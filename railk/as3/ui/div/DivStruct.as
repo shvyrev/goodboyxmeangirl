@@ -17,11 +17,12 @@ package railk.as3.ui.div
 			super(name, float, align, margins, position, x, y, data);
 		}
 		
-		public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='none', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):void {
+		public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='none', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):IDiv {
 			current = (div)?div:new Div( name, float, align, margins, position, x, y, data);
 			if (current.position == 'relative') placeDiv(current);
 			current.bind();
 			divs[divs.length] = addChild(current as Div);
+			return current;
 		}
 		
 		private function placeDiv(current:IDiv):void {
