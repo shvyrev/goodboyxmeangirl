@@ -24,7 +24,7 @@ package railk.as3.ui
 		
 		private function getSiteInfo( xml:XML ):void {
 			var p:String = A('package',xml)+'::'
-			PageManager.getInstance().init(A('author',xml),A('title',xml), Boolean(A('menu',xml)),p+A('model',xml), p+A('controller',xml), A('src',xml));
+			PageManager.getInstance().init(A('author',xml),A('title',xml), Boolean(A('menu',xml)));
 		}
 		
 		private function getBackground( xml:XML ):void {

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<site author="" title="" menu="" package="" model="" controller="" src=".swf" >
+<site author="" title="" menu="" package="" >
 	<background id="" src=".swf" >
 		<body>
 			<div id="" class="" align="" x="" y="">

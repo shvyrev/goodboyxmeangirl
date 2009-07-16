@@ -19,7 +19,6 @@ package railk.as3.ui.page
 		public var layout:Layout;
 		public var src:String;
 		public var loader:UILoader;
-		public var data:*;
 		
 		public function Background(id:String, layout:Layout, src:String ) {
 			super(id);
