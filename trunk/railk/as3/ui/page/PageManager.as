@@ -9,14 +9,13 @@
 package railk.as3.ui.page
 {
 	import flash.utils.getDefinitionByName;
-	import railk.as3.pattern.mvc.core.AbstractFacade;
+	import railk.as3.pattern.mvc.core.*;
 	import railk.as3.pattern.mvc.interfaces.IFacade;
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.SEO;
-	import railk.as3.ui.UILoader;
 	
 	public class PageManager extends AbstractFacade implements IFacade
 	{
@@ -25,7 +24,6 @@ package railk.as3.ui.page
 		public var menu:RightClickMenu;
 		public var hasMenu:Boolean;
 		public var background:Background;
-		public var loader:UILoader;
 		
 		public static function getInstance():PageManager {
 			return Singleton.getInstance(PageManager);
@@ -35,15 +33,13 @@ package railk.as3.ui.page
 			Singleton.assertSingle(PageManager); 
 		}
 		
-		public function init( author:String, title:String, hasMenu:Boolean, model:String, controller:String, src:String):void {
+		public function init( author:String, title:String, hasMenu:Boolean ):void {
 			LinkManager.init( title, true, true);
 			this.hasMenu = hasMenu;
 			menu = new RightClickMenu();
-			menu.add(author,null,true);
-			loader = new UILoader(src, function():void {
-				registerModel(getDefinitionByName(model) as Class);
-				registerController(getDefinitionByName(controller) as Class);
-			});
+			menu.add(author, null, true);
+			registerModel(AbstractModel);
+			registerController(AbstractController);
 		}
 		
 		public function setBackground(id:String, layout:Layout, src:String):void {

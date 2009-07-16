@@ -27,7 +27,6 @@ package railk.as3.ui.page
 		public var layout:Layout;
 		public var loadingView:*;
 		public var src:String;
-		public var data:*;
 		public var loaded:Boolean;
 		public var reload:Boolean;
 		

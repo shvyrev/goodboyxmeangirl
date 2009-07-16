@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<site title="" menu="true" model="::Model" controller="::Controller" src=".swf" >
+<site title="" menu="true">
 	<background id="" view="" src=".swf" />
 	<page id="index" title="" src=".swf">
 		<structure>

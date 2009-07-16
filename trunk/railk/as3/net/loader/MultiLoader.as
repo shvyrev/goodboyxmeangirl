@@ -126,7 +126,7 @@ package railk.as3.net.loader
 		
 		public function getItemByArgs( name:String, value:* ):* {
 			walker = first;
-			while ( walker ){
+			while ( walker ) {
 				if ( walker.args && walker.args.hasOwnProperty(name) ) if ( walker.args[name] == value ) return walker;
 				walker = walker.next;
 			}
