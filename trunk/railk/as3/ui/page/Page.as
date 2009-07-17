@@ -35,8 +35,8 @@ package railk.as3.ui.page
 		
 		private var loader:UILoader;
 		
-		public function Page( id:String, parent:Page, title:String, loadingView:*, layout:Layout, src:String) {
-			super(id);
+		public function Page( MID:String, id:String, parent:Page, title:String, loadingView:*, layout:Layout, src:String) {
+			super(MID,id);
 			this.id = id;
 			this.parent = parent;
 			this.title = title;

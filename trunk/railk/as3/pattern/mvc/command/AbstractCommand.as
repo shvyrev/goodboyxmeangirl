@@ -17,7 +17,8 @@ package railk.as3.pattern.mvc.command
 		protected var firstAction:Action;
 		protected var lastAction:Action;
 		
-		public function AbstractCommand(name:String='') {
+		public function AbstractCommand(MID:String, name:String = '') {
+			this.MID = MID;
 			if(name) _name = name;
 		}
 		

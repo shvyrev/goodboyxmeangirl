@@ -48,7 +48,7 @@ package railk.as3.ui.layout
 		
 		public function setup(data:*=null):void {
 			div = (divClass)?new (getDefinitionByName(divClass) as Class)(id, float, align, margins, position, x, y, data):new (getDefinitionByName('railk.as3.ui.div::Div') as Class)(id, float, align, margins, position, x, y, data);
-			view = (viewClass)?new (getDefinitionByName(viewClass) as Class)(id,div):new AbstractView(id,div);
+			view = (viewClass)?new (getDefinitionByName(viewClass) as Class)('S',id,div):new AbstractView('S',id,div);
 		}
 		
 		public function activate():void {

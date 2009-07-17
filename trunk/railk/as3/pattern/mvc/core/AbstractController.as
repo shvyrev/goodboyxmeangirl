@@ -9,24 +9,25 @@
 package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.*;
-	import railk.as3.pattern.singleton.Singleton;
+	import railk.as3.pattern.multiton.Multiton;
 	
 	public class AbstractController implements IController
 	{
+		protected var MID:String;
 		protected var commands:Array=[];
 		protected var commandStack:Array=[];
 		
-		public static function getInstance():AbstractController {
-			return Singleton.getInstance(AbstractController);
+		public static function getInstance(id:String):AbstractController {
+			return Multiton.getInstance(id,AbstractController);
 		}
 		
-		public function AbstractController() { 
-			Singleton.assertSingle(AbstractController);
+		public function AbstractController(id:String) { 
+			MID = Multiton.assertSingle(id,AbstractController);
 		}
 		
 		
 		public function registerCommand( commandClass:Class, name:String='' ):void {
-			commands[commands.length] = new commandClass(name);
+			commands[commands.length] = new commandClass(MID,name);
 		}
 		
 		public function executeCommand( name:String, action:String, params:Array=null ):void {

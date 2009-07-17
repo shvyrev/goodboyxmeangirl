@@ -8,7 +8,6 @@
 
 package railk.as3.pattern.mvc.proxy
 {
-	import flash.events.EventDispatcher;
 	import railk.as3.pattern.mvc.core.*;
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.observer.Notifier;
@@ -19,7 +18,8 @@ package railk.as3.pattern.mvc.proxy
 		protected var firstData:Data;
 		protected var lastData:Data;
 		
-		public function AbstractProxy(name:String = '') {
+		public function AbstractProxy(MID:String, name:String = '') {
+			this.MID = MID;
 			if(name) _name = name;
 		}
 		
