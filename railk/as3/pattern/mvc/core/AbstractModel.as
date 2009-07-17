@@ -10,21 +10,22 @@ package railk.as3.pattern.mvc.core
 {
 	import railk.as3.pattern.mvc.interfaces.IModel;
 	import railk.as3.pattern.mvc.interfaces.IProxy;
-	import railk.as3.pattern.singleton.Singleton;
+	import railk.as3.pattern.multiton.Multiton;
 		
 	public class AbstractModel implements IModel
 	{
+		protected var MID:String;
 		protected var proxys:Array=[];
-		public static function getInstance():AbstractModel {
-			return Singleton.getInstance(AbstractModel);
+		public static function getInstance(id:String):AbstractModel {
+			return Multiton.getInstance(id,AbstractModel);
 		}
 		
-		public function AbstractModel() { 
-			Singleton.assertSingle(AbstractModel);
+		public function AbstractModel(id:String) { 
+			MID = Multiton.assertSingle(id,AbstractModel);
 		}
 		
 		public function registerProxy( proxyClass:Class, name:String='' ):void {
-			proxys[proxys.length] = new proxyClass(name);
+			proxys[proxys.length] = new proxyClass(MID,name);
 		}
 
 		public function removeProxy( name:String ):void {

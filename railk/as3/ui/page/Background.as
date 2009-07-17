@@ -20,8 +20,8 @@ package railk.as3.ui.page
 		public var src:String;
 		public var loader:UILoader;
 		
-		public function Background(id:String, layout:Layout, src:String ) {
-			super(id);
+		public function Background( MID:String,id:String, layout:Layout, src:String ) {
+			super(MID,id);
 			this.id = id;
 			this.layout = layout;
 			this.src = src;

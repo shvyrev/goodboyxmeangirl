@@ -11,7 +11,7 @@ package railk.as3.ui.page
 	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.core.*;
 	import railk.as3.pattern.mvc.interfaces.IFacade;
-	import railk.as3.pattern.singleton.Singleton;
+	import railk.as3.pattern.multiton.Multiton;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
@@ -26,11 +26,12 @@ package railk.as3.ui.page
 		public var background:Background;
 		
 		public static function getInstance():PageManager {
-			return Singleton.getInstance(PageManager);
+			return Multiton.getInstance('S',PageManager);
 		}
 		
-		public function PageManager() { 
-			Singleton.assertSingle(PageManager); 
+		public function PageManager(id:String) {
+			super(id);
+			MID = Multiton.assertSingle(id,PageManager); 
 		}
 		
 		public function init( author:String, title:String, hasMenu:Boolean ):void {
@@ -43,16 +44,16 @@ package railk.as3.ui.page
 		}
 		
 		public function setBackground(id:String, layout:Layout, src:String):void {
-			background = new Background(id, layout, src );
+			background = new Background(MID,id, layout, src );
 			background.show();
 		}
 		
 		public function addPage(id:String, parent:String, title:String, loadingView:*, layout:Layout, src:String):void {
 			if (parent==''){
-				index = new Page(id,null,title,loadingView,layout,src);
+				index = new Page(MID,id,null,title,loadingView,layout,src);
 				registerView( index );
 			} else {
-				registerView( new Page(id, getPage(parent), title, loadingView, layout, src) );
+				registerView( new Page(MID,id, getPage(parent), title, loadingView, layout, src) );
 				getPage(parent).addChild(getPage(id));
 			}
 			

@@ -16,10 +16,11 @@ package railk.as3.pattern.mvc.core
 		protected var _component:*;
 		protected var _data:*;
 		
-		public function AbstractView( name:String='',component:*=null ) {
-			facade.addEventListener(Notification.NOTE, handleNotification );
+		public function AbstractView( MID:String, name:String='',component:*=null ) {
+			this.MID = MID;
 			if (name) _name = name;
 			_component = component;
+			facade.addEventListener(Notification.NOTE, handleNotification );
 		}
 		
 		public function handleNotification(evt:Notification):void {

@@ -12,22 +12,22 @@ package railk.as3.pattern.mvc.core
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.command.*;
 	import railk.as3.pattern.mvc.observer.*;
-	import railk.as3.pattern.singleton.Singleton;
+	import railk.as3.pattern.multiton.Multiton;
 	
 	public class AbstractFacade extends EventDispatcher implements IFacade
 	{
+		protected var _MID:String;
 		protected var container:*;
 		protected var model:IModel;
 		protected var controller:IController;
 		protected var views:Array = [];
 		
-		public static function getInstance():AbstractFacade {
-			return Singleton.getInstance(AbstractFacade);
+		public static function getInstance(id:String):AbstractFacade {
+			return Multiton.getInstance(id,AbstractFacade);
 		}
 		
-		public function AbstractFacade() {
-			Singleton.assertSingle(AbstractFacade);
-		}
+		public function AbstractFacade(id:String) { MID = Multiton.assertSingle(id,AbstractFacade); }
+		
 		
 		public function registerContainer(container:*):void {
 			this.container = container;
@@ -37,15 +37,15 @@ package railk.as3.pattern.mvc.core
 		public function removeChild(child:*):* { return container.removeChild(child); }
 		
 		public function registerModel( modelClass:Class ):void {
-			model = modelClass.getInstance.apply();
+			model = modelClass.getInstance.apply(null,[MID]);
 		}
 		
 		public function registerController( controllerClass:Class ):void {
-			controller = controllerClass.getInstance.apply();
+			controller = controllerClass.getInstance.apply(null,[MID]);
 		}
 		
 		public function registerView( view:*, name:String = '', component:*= null ):void {
-			if (view is Class) views[views.length] = new view(name, component);
+			if (view is Class) views[views.length] = new view(MID,name, component);
 			else views[views.length] = view;
 		}
 		
@@ -85,5 +85,8 @@ package railk.as3.pattern.mvc.core
 		public function sendNotification(note:String, info:String, data:Object=null):void {
 			dispatchEvent( new Notification( note, info, data ) );
 		}
+		
+		public function get MID():String { return _MID; }
+		public function set MID(value:String):void { _MID=value; }
 	}
 }
