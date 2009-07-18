@@ -6,7 +6,7 @@
 * 
 */
 
-package railk.as3.video.flvplayer 
+package railk.as3.video 
 {	
 	import flash.display.Shape;
 	import flash.display.BitmapData;
@@ -31,7 +31,7 @@ package railk.as3.video.flvplayer
 	import com.adobe.images.PNGEncoder;
 	
 	
-	public class FlvPlayerEngine  
+	public class VideoPlayer  
 	{
 		private var nc                  :NetConnection;
 		private var stream              :NetStream;
@@ -69,7 +69,7 @@ package railk.as3.video.flvplayer
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function FlvPlayerEngine() {}
+		public function VideoPlayer() {}
 		
 		/**
 		 * INIT

@@ -5,7 +5,7 @@
 * @version 0.2
 */
 
-package railk.as3.sound.mp3player 
+package railk.as3.sound
 {	
 	import flash.display.Shape;
 	import flash.events.EventDispatcher;
@@ -21,7 +21,7 @@ package railk.as3.sound.mp3player
 	import flash.system.Security;
 	import flash.system.System;	
 	
-	public class Mp3PlayerEngine extends EventDispatcher
+	public class AudioPlayer extends EventDispatcher
 	{
 		private var url				:String;
 		private var sound           :Sound;
@@ -42,7 +42,7 @@ package railk.as3.sound.mp3player
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function Mp3PlayerEngine() {
+		public function AudioPlayer() {
 			sound = new Sound();
 			volume = new SoundTransform();
 			initListeners();

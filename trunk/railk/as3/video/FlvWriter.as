@@ -1,5 +1,5 @@
 /*
-	SimpleFlvWriter.as
+	FlvWriter.as
 	Lee Felarca
 	http://www.zeropointnine.com/blog
 	5-2007
@@ -30,9 +30,9 @@ package railk.as3.video
     import flash.display.BitmapData;
     import flash.utils.ByteArray;
 
-	public class SimpleFlvWriter
+	public class FlvWriter
 	{
-		static private var _instance:SimpleFlvWriter;
+		static private var _instance:FlvWriter;
 				
 		private var frameWidth:int;
 		private var frameHeight:int;
@@ -48,17 +48,16 @@ package railk.as3.video
 		private var bmp:BitmapData;
 		
 
-		public static function getInstance():SimpleFlvWriter 
-		{
-			if(SimpleFlvWriter._instance == null) 
-				SimpleFlvWriter._instance = new SimpleFlvWriter(new SingletonEnforcer());
-			return SimpleFlvWriter._instance;
+		public static function getInstance():FlvWriter{
+			return Singleton.getInstance(FlvWriter);
 		}
+		
+		/**
+		 * YOU CANNOT INSTANTIATE DIRECTLY PLEASE USE getInstance() INSTEAD
+		 */
+		public function FlvWriter() { Singleton.assertSingle(FlvWriter); }
 
-		public function SimpleFlvWriter(singletonEnforcer:SingletonEnforcer)
-		{
-		}
-
+		
 		public function createFile(pFile:File, pWidth:int, pHeight:int, pFramesPerSecond:Number, pDurationInSeconds:Number=0):void
 		{
 			/*
@@ -304,9 +303,6 @@ package railk.as3.video
 		}		
 	}
 }
-
-class SingletonEnforcer {}
-
 /*
 	FLV structure summary:
 
