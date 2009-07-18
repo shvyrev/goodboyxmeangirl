@@ -14,9 +14,6 @@ package railk.as3.ui
     import flash.external.ExternalInterface;
     import flash.system.Capabilities;
 
-    /**
-     *
-     */
     public class SWFWheel
     {
         public static const EXECUTE_LIBRARY_FUNCTION:String = "SWFWheel.join";
@@ -33,15 +30,12 @@ package railk.as3.ui
          *
          *  @param stage                Stage object.
          */
-        public static function init(stage:Stage):void
-        {
+        public static function init(stage:Stage):void {
             if (!available || isReady) return;
-
             _stage = stage;
 
             // define javascript library.
             ExternalInterface.call(DEFINE_LIBRARY_FUNCTION);
-            // start light hack.
             ExternalInterface.call(EXECUTE_LIBRARY_FUNCTION, ExternalInterface.objectID);
             ExternalInterface.addCallback('checkBrowserScroll', checkBrowserScroll);
 
@@ -61,8 +55,7 @@ package railk.as3.ui
          *
          *  @return bool        if already initialized, this property is true. otherwize it is false.
          */
-        public static function get isReady():Boolean
-        {
+        public static function get isReady():Boolean {
             return _stage != null;
         }
 
@@ -70,22 +63,11 @@ package railk.as3.ui
          *
          *  @return bool        if SWFWheel is available, this property is true. otherwite it is false.
          */
-        public static function get available():Boolean
-        {
+        public static function get available():Boolean {
             var f:Boolean = false;
-
             if (!ExternalInterface.available) return f;
-
-            try
-            {
-                f = Boolean(ExternalInterface.call("function(){return true;}"));
-            }
-            catch (e:Error)
-            {
-                //  FIXME: should show full stack trace?
-                //trace(e.getStackTrace());
-                trace("Warning: turn off SWFWheel because can't access external interface.");
-            }
+            try {  f = Boolean(ExternalInterface.call("function(){return true;}")); } 
+			catch (e:Error) { trace("Warning: turn off SWFWheel because can't access external interface."); }
             return f;
         }
 
@@ -93,8 +75,7 @@ package railk.as3.ui
          *
          *  @return bool        if be allowed browser scrolling, this property is true, otherwise it is false.
          */
-        public static function get browserScroll():Boolean
-        {
+        public static function get browserScroll():Boolean {
             return _browserScroll;
         }
 
@@ -102,8 +83,7 @@ package railk.as3.ui
          *
          *  @param value            specified broswer scrolling.
          */
-        public static function set browserScroll(value:Boolean):void
-        {
+        public static function set browserScroll(value:Boolean):void {
             _browserScroll = value;
         }
 
@@ -112,8 +92,7 @@ package railk.as3.ui
          *
          *  @param  event           MouseEvent object.
          */
-        private static function mouseMoved(event:MouseEvent):void
-        {
+        private static function mouseMoved(event:MouseEvent):void {
             _item = InteractiveObject(event.target);
             _event = MouseEvent(event);
         }
@@ -123,11 +102,9 @@ package railk.as3.ui
          *
          *  @param  delta           mouse wheel delta.
          */
-        private static function triggerMouseEvent(delta:Number):void
-        {
+        private static function triggerMouseEvent(delta:Number):void {
             //  FIXME: should create dummy parameters?
             if (_event == null || _item == null) return;
-
             var event:MouseEvent = new MouseEvent(
                     MouseEvent.MOUSE_WHEEL,
                     true,
@@ -149,8 +126,7 @@ package railk.as3.ui
          *
          *  @return bool
          */
-        private static function checkBrowserScroll():Boolean
-        {
+        private static function checkBrowserScroll():Boolean {
             return _browserScroll;
         }
     }
