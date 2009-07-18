@@ -1,5 +1,5 @@
 /**
-* Flvplayer engine
+* Flvplayer engine rtmp/stream
 * 
 * @author Richard Rodney.
 * @version 0.2
@@ -27,9 +27,7 @@ package railk.as3.video.flvplayer
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 
-	import railk.as3.net.saver.file.FileSaver;
-	import railk.as3.data.parser.Parser;
-	
+	import railk.as3.net.saver.file.FileSaver;	
 	import com.adobe.images.PNGEncoder;
 	
 	
@@ -50,7 +48,8 @@ package railk.as3.video.flvplayer
 		private var played				:Number;
 		private var time  				:String;
 		
-		private var url  				:String;
+		private var path  				:String;
+		private var filename  			:String;
 		private var bufferSize       	:int;
 		private var width          		:Number;
 		private var height         		:Number;
@@ -70,19 +69,7 @@ package railk.as3.video.flvplayer
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function FlvPlayerEngine() {
-			nc = new NetConnection();
-			nc.connect( null );
-			stream = new NetStream( nc );
-			volume = new SoundTransform();
-			stream.soundTransform = volume;
-			
-			var customClient:Object = new Object();
-			customClient.onMetaData = onVideoMetaData;
-			customClient.onCuePoint = onVideoCuePoint;
-			customClient.onPlayStatus = onVideoPlayStatus;
-			stream.client = customClient;
-		}
+		public function FlvPlayerEngine() {}
 		
 		/**
 		 * INIT
@@ -97,33 +84,46 @@ package railk.as3.video.flvplayer
 		/**
 		 * CREATE
 		 * 
-		 * @param	url
+		 * @param	path
+		 * @param	filename
 		 * @param	width
 		 * @param	height
 		 * @param	buffersize
-		 * @param	type               'stream'|'rtpm'
-		 * @param	playListContent
+		 * @param	type		rtmp/stream
+		 * @param	domain
 		 */
-		public function create(url:String, width:Number, height:Number, buffersize:int = 0, type:String = 'stream', domain:String = '' ):void {
+		public function create(path:String, filename:String, width:Number, height:Number, buffersize:int=0, type:String='stream', domain:String='' ):void {
 			if (externalDomain) {
 				Security.allowDomain(domain);
 				Security.loadPolicyFile("http://+"domain+"/crossdomain.xml");
 			}
 			
-			this.url = url;
+			this.path = path;
+			this.filename = filename;
 			this.width = width;
 			this.height = height;
 			this.type = type;
 			this.bufferSize = buffersize;
-			this.playListContent = playListContent;
 			
 			//--Sharing the player + the exact .flv
-			var path:String = ExternalInterface.call("window.location.href.toString");
 			share = '<object width="'+width+'" height="'+height+'">';
 			share += '<param name="allowscriptaccess" value="always" />';
 			share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
 			share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
 			share += '</embed></object>';
+			
+			//connection
+			nc = new NetConnection();
+			nc.connect( ((type=='rtmp')?path:null) );
+			stream = new NetStream( nc );
+			volume = new SoundTransform();
+			stream.soundTransform = volume;
+			
+			var customClient:Object = new Object();
+			customClient.onMetaData = onVideoMetaData;
+			customClient.onCuePoint = onVideoCuePoint;
+			customClient.onPlayStatus = onVideoPlayStatus;
+			stream.client = customClient;
 			
 			//-video
 			video = new Video( width, height );
@@ -136,7 +136,7 @@ package railk.as3.video.flvplayer
 			initListeners();
 			
 			//--launch stream and apuse lecture
-			stream.play( url );
+			stream.play( ((type=='rtmp')?filename:path+filename) );
 			stream.seek(0);
 			stream.togglePause();	
 		}
@@ -231,11 +231,7 @@ package railk.as3.video.flvplayer
 				case Event.OPEN :
 					startTime = getTimer();
 					break;
-				case NetStatusEvent.NET_STATUS :
-					switch( evt.info.code ) {
-						case "NetStream.Play.Start" : responseTime = getTimer(); break;
-					}
-					break;
+				case NetStatusEvent.NET_STATUS : switch( evt.info.code ){ case "NetStream.Play.Start" : responseTime = getTimer(); break;} break;
 				case IOErrorEvent.IO_ERROR : break;
 				case ProgressEvent.PROGRESS :
 				case Event.ENTER_FRAME :
