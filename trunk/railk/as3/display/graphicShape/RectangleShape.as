@@ -9,7 +9,7 @@ package railk.as3.display.graphicShape
 {
 	public class RectangleShape extends GraphicShape
 	{
-		public function RectangleShape(color:uint,X:int,Y:int,W:int,H:int,lineThickness:Number=NaN,lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
+		public function RectangleShape(color:uint,X:Number,Y:Number,W:Number,H:Number,lineThickness:Number=NaN,lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
 			super(copy);
 			_type = 'rectangle';
 			this.graphicsCopy.clear();

@@ -22,7 +22,7 @@ package railk.as3.display.graphicShape
 		* @param	hide
 		* @return
 		*/
-		public function GradientShape(colors:Array,W:int,H:int,rotation:int,type:String,alphas:Array,ratios:Array,hide:Boolean=false,copy:Boolean=false ) {
+		public function GradientShape(colors:Array,W:Number,H:Number,rotation:Number,type:String,alphas:Array,ratios:Array,hide:Boolean=false,copy:Boolean=false ) {
 			super(copy);
 			_type = 'gradient';
 			var matrix:Matrix = new Matrix();

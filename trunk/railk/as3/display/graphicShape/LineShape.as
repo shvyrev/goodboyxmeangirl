@@ -8,6 +8,7 @@
 package railk.as3.display.graphicShape
 {
 	import flash.geom.Matrix;
+	import flash.geom.Point;
 	public class LineShape extends GraphicShape
 	{
 		public function LineShape( color:uint, A:Point, B:Point, thickness:Number=1,copy:Boolean=false ) {
