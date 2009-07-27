@@ -15,7 +15,7 @@ package railk.as3.geom
 			var result:Array = [];
 			while( --number > -1 ) {
 				var rad:Number = angle*0.0174532925;
-				result[result.length] = {x:x+Math.cos(rad)*radius,y:y+Math.sin(rad)*radius,angle:angle-90}  
+				result[result.length] = {x:x+Math.cos(rad)*radius,y:y+Math.sin(rad)*radius,angle:angle}  
 				angle += seg;
 			}
 			return result;
