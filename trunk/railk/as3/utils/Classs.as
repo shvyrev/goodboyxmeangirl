@@ -1,5 +1,5 @@
 ﻿/**
- * ClassManager
+ * Classes Manager in a plugin system thinking.
  * 
  * @author Richard Rodney
  * @version 0.1
@@ -18,13 +18,18 @@ package railk.as3.utils
 		}
 		
 		static public function getInstance(name:String):* {
-			var instance:*;
-			try { instance = new (classes[name] as Class) }
-			catch (e:Error) {
-				try { instance = classes[name].getInstance.apply() }
-				catch (e:Error){ instance = classes[name].getInstance.apply(null,[name]) }
-			}
-			return (classes[name] != undefined)?instance:null;
+			if (classes[name] != undefined) {
+				var instance:*;
+				try { instance = new (classes[name] as Class) }
+				catch (e:Error) {
+					//singleton
+					try { instance = classes[name].getInstance.apply() }
+					//multiton
+					catch (e:Error){ instance = classes[name].getInstance.apply(null,[name]) }
+				}
+				return instance;
+			} 
+			else return null;
 		}
 	}	
 }
