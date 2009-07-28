@@ -69,7 +69,7 @@ package railk.as3.ui
 			this.vToScroll = vToScroll;
 		}
 		
-		public function init(slider:*,bg:*=null,top:*=null,bottom:*=null,rollOver:Function=null,rollOut:Function=null):void {
+		public function create(slider:*,bg:*=null,top:*=null,bottom:*=null,rollOver:Function=null,rollOut:Function=null):void {
 			if (!slider) return;
 			this.top = top;
 			this.bottom = bottom;
@@ -85,7 +85,7 @@ package railk.as3.ui
 		// 																								SETUP
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function setup( evt:Event ):void {
-			if (!inited) throw new Error('scrollbar not inited please use the init function before addchild' );
+			if (!inited) throw new Error('scrollbar not inited please use the create function before addchild' );
 			
 			size={ 	bg:((vScroll)?stage.stageHeight:stage.stageWidth), 
 					slider:slider.height, 
@@ -96,13 +96,13 @@ package railk.as3.ui
 					toScrollX:toScroll.x,
 					toScrollY:toScroll.y }
 			
-			if (bg) { size.bg = bg.height; bg.mouseEnabled = false; this.addChild( bg ); }	
+			if (bg && bg is Number) { size.bg = bg; } else if (bg) { size.bg = bg.height; bg.mouseEnabled = false; this.addChild( bg ); }	
 			if (slider) { slider.name = "slider"; slider.buttonMode = true; this.addChild( slider ); }
 			if (top) { top.y = this.y -2; addChild( top ); }
 			if (bottom) { bottom.y = this.height + 2; addChild( bottom ); }
-			if (resize) { stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true ); }
-			if (autoCheck) {  this.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true ); }
-			if (autoScroll) { this.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true ); }
+			if (resize) stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
+			if (autoCheck) this.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+			if (autoScroll) this.addEventListener( MouseEvent.MOUSE_MOVE, manageEvent, false, 0, true );
 				
 			if ( size.toScrollY+toScroll.height > stage.stageHeight ) {
 				showHide(1, true);
@@ -159,21 +159,22 @@ package railk.as3.ui
 				if ( fullscreen ){
 					if ( slider.y >= size.stageHeight-slider.height ) slider.y = stage.stageHeight-slider.height;
 					else slider.y = ( slider.y * stage.stageHeight )/size.stageHeight;
-					bg.height = ( size.bg*stage.stageHeight )/size.stageHeight;
+					if (bg && bg is Number) bg = ( size.bg*stage.stageHeight )/size.stageHeight;
+					else if (bg) bg.height = ( size.bg * stage.stageHeight )/size.stageHeight;
 					if (bottom) bottom.y = bg.height+2;
 				}
-					
-				distance = size.toScrollY+toScroll.height-stage.stageHeight;
-				slider.height = ((size.bg-distance) > size.slider )?size.bg-distance:size.slider;
-				multiplier = distance/( bg.height-slider.height );
-				delta = baseDelta / ( multiplier*.5);
-				delta = (delta > 6)? delta : 6;
-				rect = new Rectangle(0,0,0,bg.height-slider.height );
+				
+				size.bg = (bg)?((bg is Number)?bg:bg.height):(vScroll?stage.stageHeight:stage.stageWidth);
 				size.stageHeight= stage.stageHeight;
 				size.stageWidth= stage.stageWidth;
-				size.bg = bg.height;
+				distance = size.toScrollY+toScroll.height-stage.stageHeight;
+				slider.height = ((size.bg-distance) > size.slider )?size.bg-distance:size.slider;
+				multiplier = distance/( size.bg-slider.height );
+				delta = baseDelta / ( multiplier*.5);
+				delta = (delta > 6)? delta : 6;
+				rect = new Rectangle(0,0,0,size.bg-slider.height );
 				
-				Engine.to( slider,.5,NaN,0,NaN,null,function(){ toScroll.y = size.toScrollY-(slider.y*multiplier); } );
+				Engine.to( slider,.5,NaN,0,NaN,null,function():void { toScroll.y = size.toScrollY-(slider.y*multiplier); } );
 				
 				if(!listeners){
 					////////////////////////////////////
@@ -182,7 +183,7 @@ package railk.as3.ui
 					////////////////////////////////////
 				}	
 			} else {
-				Engine.to( slider,.4,NaN,y,NaN,null,function(){ toScroll.y= size.toScrollY-(slider.y*((multiplier)?multiplier:0)); } );
+				Engine.to( slider,.4,NaN,y,NaN,null,function():void { toScroll.y= size.toScrollY-(slider.y*((multiplier)?multiplier:0)); } );
 				showHide(0, false);
 				////////////////////////////////////
 				delListeners();
@@ -195,8 +196,8 @@ package railk.as3.ui
 		// 																						   VISIBILITY
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function showHide( alpha:Number, visibility:Boolean ):void {
-			if(alpha) Engine.to( this, .4,NaN,NaN,alpha,function() { this.visible = visibility; } );
-			else Engine.to( this,.4,NaN,NaN,alpha,null,null,function() { this.visible = visibility; } );
+			if(alpha) Engine.to( this, .4,NaN,NaN,alpha,function():void { this.visible = visibility; } );
+			else Engine.to( this,.4,NaN,NaN,alpha,null,null,function():void { this.visible = visibility; } );
 			if(top) top.alpha = alpha;
 			if(bottom) bottom.alpha = alpha;
 		}		
@@ -204,8 +205,8 @@ package railk.as3.ui
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:* ) {
-			var value:Number, p:String = (vToScroll)?'y':'x', s:String = (vToScroll)?'toScrollY':'toScrollX';
+		private function manageEvent( evt:* ):void  {
+			var e:Engine, value:Number, p:String = (vToScroll)?'y':'x', s:String = (vToScroll)?'toScrollY':'toScrollX';
 			switch( evt.type ) {
 				case Event.ENTER_FRAME:
 					if ( toScroll.height != size.toScrollHeight || toScroll.width != size.toScrollWidth ) {
@@ -219,8 +220,8 @@ package railk.as3.ui
 					if ( mouseY >= rect.height ) value = rect.height;
 					else if ( mouseY <= slider.height ) value = 0;
 					else value = mouseY-slider.height*.5;
-					Engine.to( slider,.2,NaN,value);
-					Engine.to( toScroll,.2,((vToScroll)?NaN:size[s]-(value*multiplier)),((vToScroll)?size[s]-(value*multiplier):NaN));
+					e=Engine.to( slider,.2,NaN,value);
+					e=Engine.to( toScroll,.2,((vToScroll)?NaN:size[s]-(value*multiplier)),((vToScroll)?size[s]-(value*multiplier):NaN));
 					evt.updateAfterEvent();
 					break;
 				case MouseEvent.ROLL_OVER : if(rollOver!=null) rollOver.apply(); break;
@@ -250,14 +251,14 @@ package railk.as3.ui
 						if ( mouseY >= rect.height ) value = rect.height;
 						else if ( mouseY <= slider.height ) value = 0;
 						else value = mouseY - slider.height*.5;
-						Engine.to(slider,0,((vToScroll)?NaN:value),((vToScroll)?value:NaN),NaN,null,function(){ toScroll[p]= size[s]-(slider.y*multiplier); } );
+						e=Engine.to(slider,0,((vToScroll)?NaN:value),((vToScroll)?value:NaN),NaN,null,function():void { toScroll[p]= size[s]-(slider.y*multiplier); } );
 					} 
-					else Engine.to( toScroll,0,((vToScroll)?NaN:size[s]-(slider.y*multiplier)),((vToScroll)?size[s]-(slider.y*multiplier):NaN) );
+					else e=Engine.to( toScroll,0,((vToScroll)?NaN:size[s]-(slider.y*multiplier)),((vToScroll)?size[s]-(slider.y*multiplier):NaN) );
 					break;
 				case MouseEvent.MOUSE_WHEEL :
-					if ( slider.y >= 0+evt.delta*delta  && slider.y <= rect.height+evt.delta*delta  ) Engine.to( slider,.4,NaN,slider.y-(evt.delta*delta),NaN,null,function() { toScroll[p] =size[s]-(slider.y*multiplier); });
-					else if( slider.y < 0 + evt.delta*delta ) Engine.to( slider,.2,NaN,0,NaN,null,function() { toScroll[p] =size[s]-(slider.y * multiplier); });
-					else if ( slider.y > rect.height + evt.delta*delta ) Engine.to( slider,.2,NaN,rect.height,NaN,null,function() { toScroll[p] =size[s]-(slider.y*multiplier); });
+					if ( slider.y >= 0+evt.delta*delta  && slider.y <= rect.height+evt.delta*delta  ) e=Engine.to( slider,.4,NaN,slider.y-(evt.delta*delta),NaN,null,function():void  { toScroll[p] =size[s]-(slider.y*multiplier); });
+					else if( slider.y < 0 + evt.delta*delta ) e=Engine.to( slider,.2,NaN,0,NaN,null,function():void { toScroll[p] =size[s]-(slider.y * multiplier); });
+					else if ( slider.y > rect.height + evt.delta*delta ) e=Engine.to( slider,.2,NaN,rect.height,NaN,null,function():void { toScroll[p] =size[s]-(slider.y*multiplier); });
 					break;
 			}
 		}
