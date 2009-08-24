@@ -2,8 +2,8 @@
 <prefgrp name="Soft Selection Options" id="161">
 	<item type="bool" name="Enabled" val="0"></item>
 	<item type="choice" name="Type" val="1"></item>
-	<item type="float" name="Radius" val="1.327495"></item>
-	<item type="float" name="Falloff" val="0.500000"></item>
+	<item type="float" name="Radius" val="1.000000"></item>
+	<item type="float" name="Falloff" val="0.000000"></item>
 </prefgrp>
 <prefgrp name="Bevel Options" id="140">
 	<item type="float" name="Default Amount" val="0.000000"></item>
@@ -29,7 +29,7 @@
 </prefgrp>
 <prefgrp name="Smooth Options" id="244">
 	<item type="int" name="Iterations" val="5"></item>
-	<item type="float" name="Volume Preservation" val="0.100000"></item>
+	<item type="float" name="Volume Preservation" val="0.000000"></item>
 </prefgrp>
 <prefgrp name="Cube Options" id="164">
 	<item type="float" name="Height" val="1.000000"></item>
@@ -116,19 +116,19 @@
 </prefgrp>
 <prefgrp name="Mirror Geometry Options" id="177">
 	<item type="choice" name="Mirror From Axis" val="0"></item>
-	<item type="float" name="Tolerance" val="0.001000"></item>
+	<item type="float" name="Tolerance" val="0.000000"></item>
 	<item type="bool" name="Enable Symmetry" val="1"></item>
 </prefgrp>
 <prefgrp name="Instance Mirror Options" id="124">
 	<item type="choice" name="Mirror From Axis" val="0"></item>
-	<item type="float" name="Tolerance" val="0.001000"></item>
+	<item type="float" name="Tolerance" val="0.000000"></item>
 </prefgrp>
 <prefgrp name="Symmetry Options" id="230">
 	<item type="choice" name="Symmetry Axis" val="0"></item>
-	<item type="float" name="Tolerance" val="0.001000"></item>
+	<item type="float" name="Tolerance" val="0.000000"></item>
 </prefgrp>
 <prefgrp name="Merge Options" id="74">
-	<item type="float" name="Vertex Tolerance" val="0.010000"></item>
+	<item type="float" name="Vertex Tolerance" val="0.000000"></item>
 </prefgrp>
 <prefgrp name="Boolean Options" id="138">
 	<item type="bool" name="Delete Originals" val="1"></item>
@@ -168,59 +168,59 @@
 </prefgrp>
 <prefgrp name="Light Options" id="194">
 	<item type="choice" name="Type" val="2"></item>
-	<item type="color" name="Diffuse Color" val="0.500000 0.500000 0.500000"></item>
-	<item type="color" name="Ambient Color" val="0.700000 0.700000 0.700000"></item>
+	<item type="color" name="Diffuse Color" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Ambient Color" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="Specular Color" val="1.000000 1.000000 1.000000"></item>
 	<item type="float" name="Constant Falloff" val="0.000000"></item>
-	<item type="float" name="Linear Falloff" val="0.050000"></item>
-	<item type="float" name="Quadratic Falloff" val="0.010000"></item>
+	<item type="float" name="Linear Falloff" val="0.000000"></item>
+	<item type="float" name="Quadratic Falloff" val="0.000000"></item>
 	<item type="float" name="Spot Cutoff" val="45.000000"></item>
-	<item type="float" name="Spot Exponent" val="0.500000"></item>
+	<item type="float" name="Spot Exponent" val="0.000000"></item>
 	<item type="bool" name="Lock Lights To Camera" val="0"></item>
 	<item type="bool" name="Use Custom Lights" val="0"></item>
 	<item type="bool" name="Show Lights" val="1"></item>
 </prefgrp>
 <prefgrp name="Color Settings" id="114">
-	<item type="color" name="Viewport Background" val="0.623529 0.623529 0.623529"></item>
-	<item type="color" name="Viewport Background Secondary" val="0.247059 0.247059 0.247059"></item>
-	<item type="color" name="Grid" val="0.980392 0.980392 0.980392"></item>
-	<item type="color" name="Viewport Text" val="0.203922 0.203922 0.203922"></item>
-	<item type="color" name="Viewport Selected" val="0.200000 0.200000 0.200000"></item>
+	<item type="color" name="Viewport Background" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Viewport Background Secondary" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Grid" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Viewport Text" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Viewport Selected" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="Selection Tools" val="1.000000 1.000000 1.000000"></item>
-	<item type="color" name="Manipulator X" val="0.713726 0.000000 0.000000"></item>
-	<item type="color" name="Manipulator Y" val="0.403922 0.749020 0.082353"></item>
-	<item type="color" name="Manipulator Z" val="0.000000 0.129412 0.596078"></item>
-	<item type="color" name="Manipulator Center" val="0.988235 0.709804 0.050980"></item>
+	<item type="color" name="Manipulator X" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Manipulator Y" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Manipulator Z" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Manipulator Center" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="Manipulator Selected" val="1.000000 1.000000 1.000000"></item>
-	<item type="color" name="Soft Selection Near" val="0.988235 0.709804 0.050980"></item>
-	<item type="color" name="Soft Selection Far" val="0.713726 0.000000 0.000000"></item>
-	<item type="color" name="Selection Highlighting" val="0.984314 1.000000 0.650980"></item>
-	<item type="color" name="Shape Wireframe" val="0.074510 0.074510 0.074510"></item>
-	<item type="color" name="Selected Shape Wireframe" val="0.984314 0.721569 0.109804"></item>
-	<item type="color" name="Selected Instance Wireframe" val="0.403922 0.749020 0.082353"></item>
+	<item type="color" name="Soft Selection Near" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Soft Selection Far" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Selection Highlighting" val="0.000000 1.000000 0.000000"></item>
+	<item type="color" name="Shape Wireframe" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Selected Shape Wireframe" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Selected Instance Wireframe" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="Unselected Vertices" val="0.000000 0.000000 0.000000"></item>
-	<item type="color" name="Selected Vertices" val="0.984314 0.721569 0.109804"></item>
-	<item type="color" name="UV Pinned Vertices" val="0.341176 0.619608 0.901961"></item>
-	<item type="color" name="Vertex Mode Wireframe" val="0.145098 0.145098 0.145098"></item>
+	<item type="color" name="Selected Vertices" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="UV Pinned Vertices" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Vertex Mode Wireframe" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="Unselected Edges" val="0.000000 0.000000 0.000000"></item>
-	<item type="color" name="Unselected Creased Edges" val="0.250980 0.607843 0.772549"></item>
-	<item type="color" name="Selected Edges" val="0.984314 0.721569 0.109804"></item>
-	<item type="color" name="Selected Creased Edges" val="0.984314 0.721569 0.109804"></item>
-	<item type="color" name="UV Seam Edges" val="0.341176 0.619608 0.901961"></item>
-	<item type="color" name="Selected Faces" val="0.988235 0.725490 0.109804"></item>
+	<item type="color" name="Unselected Creased Edges" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Selected Edges" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Selected Creased Edges" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="UV Seam Edges" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Selected Faces" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="UV Faces" val="1.000000 1.000000 1.000000"></item>
-	<item type="color" name="Face Mode Wireframe" val="0.145098 0.145098 0.145098"></item>
-	<item type="color" name="Multi Mode Wireframe" val="0.145098 0.145098 0.145098"></item>
-	<item type="color" name="Window" val="0.337255 0.337255 0.337255"></item>
-	<item type="color" name="Window Light" val="0.513726 0.513726 0.513726"></item>
-	<item type="color" name="Window Dark" val="0.266667 0.266667 0.266667"></item>
-	<item type="color" name="Window Text" val="0.949020 0.949020 0.949020"></item>
-	<item type="color" name="Window Highlight" val="0.784314 0.576471 0.239216"></item>
-	<item type="color" name="Window Title Bar" val="0.137255 0.149020 0.172549"></item>
+	<item type="color" name="Face Mode Wireframe" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Multi Mode Wireframe" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Window" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Window Light" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Window Dark" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Window Text" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Window Highlight" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Window Title Bar" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="Window Title Text" val="1.000000 1.000000 1.000000"></item>
-	<item type="color" name="Default Diffuse" val="0.772549 0.749020 0.650980"></item>
-	<item type="color" name="Default Ambient" val="0.596078 0.564706 0.474510"></item>
-	<item type="color" name="Default Specular" val="0.058824 0.058824 0.058824"></item>
+	<item type="color" name="Default Diffuse" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Default Ambient" val="0.000000 0.000000 0.000000"></item>
+	<item type="color" name="Default Specular" val="0.000000 0.000000 0.000000"></item>
 	<item type="color" name="Default Emissive" val="0.000000 0.000000 0.000000"></item>
 	<item type="float" name="Default Shininess" val="127.000000"></item>
 	<item type="string" name="Default Texture Map" val=""></item>
@@ -230,20 +230,20 @@
 	<item type="float" name="Vertex Size" val="3.000000"></item>
 	<item type="float" name="Selected Edge Width" val="1.000000"></item>
 	<item type="float" name="Selected Vertex Size" val="4.000000"></item>
-	<item type="float" name="Edge Alpha" val="0.250000"></item>
-	<item type="float" name="Face Alpha" val="0.400000"></item>
-	<item type="float" name="Normals Length" val="0.300000"></item>
+	<item type="float" name="Edge Alpha" val="0.000000"></item>
+	<item type="float" name="Face Alpha" val="0.000000"></item>
+	<item type="float" name="Normals Length" val="0.000000"></item>
 	<item type="float" name="Camera Field Of View" val="20.000000"></item>
-	<item type="float" name="Near Clipping Plane Ratio" val="0.001000"></item>
+	<item type="float" name="Near Clipping Plane Ratio" val="0.000000"></item>
 	<item type="float" name="Walkthrough Mode Speed" val="1.000000"></item>
 	<item type="float" name="Work Grid Width" val="10.000000"></item>
 	<item type="float" name="Work Grid Spacing" val="1.000000"></item>
 	<item type="int" name="Work Grid Heavy Step" val="5"></item>
-	<item type="float" name="Work Grid Alpha" val="0.100000"></item>
+	<item type="float" name="Work Grid Alpha" val="0.000000"></item>
 	<item type="float" name="UV Grid Width" val="1.000000"></item>
 	<item type="float" name="UV Grid Spacing" val="1.000000"></item>
-	<item type="float" name="UV Grid Alpha" val="0.100000"></item>
-	<item type="float" name="UV Grid Texture Alpha" val="0.500000"></item>
+	<item type="float" name="UV Grid Alpha" val="0.000000"></item>
+	<item type="float" name="UV Grid Texture Alpha" val="0.000000"></item>
 	<item type="choice" name="Texture Resolution" val="1"></item>
 	<item type="int" name="Optimized Face Draw Limit" val="100000"></item>
 	<item type="choice" name="Rotate Camera Around" val="0"></item>
@@ -317,12 +317,12 @@
 <prefgrp name="Topology Tool Options" id="240">
 	<item type="int" name="Maximum Face Size" val="8"></item>
 	<item type="float" name="Offset" val="0.000000"></item>
-	<item type="float" name="Merge Tolerance" val="0.010000"></item>
+	<item type="float" name="Merge Tolerance" val="0.000000"></item>
 	<item type="bool" name="Use Auto Tolerance" val="1"></item>
 </prefgrp>
 <prefgrp name="Manipulator Options" id="147">
 	<item type="int" name="Manipulator Size" val="80"></item>
-	<item type="float" name="Manipulator Handle Offset" val="0.800000"></item>
+	<item type="float" name="Manipulator Handle Offset" val="0.000000"></item>
 	<item type="bool" name="Show Planar Handles" val="1"></item>
 </prefgrp>
 <prefgrp name="Select Special Options" id="119">
@@ -424,7 +424,7 @@
 	<item type="float" name="Degree Tolerance" val="5.000000"></item>
 </prefgrp>
 <prefgrp name="Recreate UVs Options" id="284">
-	<item type="float" name="Layout Spacing" val="0.010000"></item>
+	<item type="float" name="Layout Spacing" val="0.000000"></item>
 </prefgrp>
 <prefgrp name="Nudge UVs Options" id="293">
 	<item type="float" name="Nudge U Amount" val="1.000000"></item>
@@ -435,7 +435,7 @@
 	<item type="int" name="Image Width" val="512"></item>
 	<item type="int" name="Image Height" val="512"></item>
 	<item type="color" name="Background Color" val="1.000000 1.000000 1.000000"></item>
-	<item type="color" name="Line Color" val="0.500000 0.500000 0.500000"></item>
+	<item type="color" name="Line Color" val="0.000000 0.000000 0.000000"></item>
 </prefgrp>
 <prefgrp name="Create Properties" id="254">
 	<item type="string" name="CameraName 0" val="Perspective"></item>
@@ -797,108 +797,108 @@
 	<item type="string" name="Brush 0" val="Push"></item>
 	<item type="int" name="Operation 0" val="0"></item>
 	<item type="float" name="ScreenRadius 0" val="60.000000"></item>
-	<item type="float" name="WorldRadius 0" val="0.448706"></item>
+	<item type="float" name="WorldRadius 0" val="0.000000"></item>
 	<item type="int" name="RadiusType 0" val="1"></item>
-	<item type="float" name="Strength 0" val="1.439435"></item>
+	<item type="float" name="Strength 0" val="1.000000"></item>
 	<item type="float" name="Focus 0" val="0.000000"></item>
 	<item type="bool" name="StrengthFlag 0" val="1"></item>
 	<item type="bool" name="RadiusFlag 0" val="0"></item>
 	<item type="bool" name="FocusFlag 0" val="0"></item>
 	<item type="int" name="ShortcutKey 0" val="65"></item>
 	<item type="point" name="CurvePoint 1" val="0.000000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 2" val="0.550000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 3" val="0.587500 1.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 2" val="0.000000 0.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 3" val="0.000000 1.000000 0.000000"></item>
 	<item type="point" name="CurvePoint 4" val="1.000000 1.000000 0.000000"></item>
 	<item type="bool" name="ActiveBrush" val="1"></item>
 	<item type="string" name="Brush 5" val="Smooth"></item>
 	<item type="int" name="Operation 5" val="1"></item>
 	<item type="float" name="ScreenRadius 5" val="89.000000"></item>
-	<item type="float" name="WorldRadius 5" val="5.580297"></item>
+	<item type="float" name="WorldRadius 5" val="5.000000"></item>
 	<item type="int" name="RadiusType 5" val="1"></item>
-	<item type="float" name="Strength 5" val="1.001596"></item>
-	<item type="float" name="Focus 5" val="0.100000"></item>
+	<item type="float" name="Strength 5" val="1.000000"></item>
+	<item type="float" name="Focus 5" val="0.000000"></item>
 	<item type="bool" name="StrengthFlag 5" val="0"></item>
 	<item type="bool" name="RadiusFlag 5" val="0"></item>
 	<item type="bool" name="FocusFlag 5" val="0"></item>
 	<item type="int" name="ShortcutKey 5" val="83"></item>
 	<item type="point" name="CurvePoint 6" val="0.000000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 7" val="0.600000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 8" val="0.350000 1.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 7" val="0.000000 0.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 8" val="0.000000 1.000000 0.000000"></item>
 	<item type="point" name="CurvePoint 9" val="1.000000 1.000000 0.000000"></item>
 	<item type="string" name="Brush 10" val="Move"></item>
 	<item type="int" name="Operation 10" val="5"></item>
 	<item type="float" name="ScreenRadius 10" val="136.000000"></item>
-	<item type="float" name="WorldRadius 10" val="0.691621"></item>
+	<item type="float" name="WorldRadius 10" val="0.000000"></item>
 	<item type="int" name="RadiusType 10" val="1"></item>
-	<item type="float" name="Strength 10" val="1.487419"></item>
+	<item type="float" name="Strength 10" val="1.000000"></item>
 	<item type="float" name="Focus 10" val="0.000000"></item>
 	<item type="bool" name="StrengthFlag 10" val="0"></item>
 	<item type="bool" name="RadiusFlag 10" val="0"></item>
 	<item type="bool" name="FocusFlag 10" val="0"></item>
 	<item type="int" name="ShortcutKey 10" val="68"></item>
 	<item type="point" name="CurvePoint 11" val="0.000000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 12" val="0.512500 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 13" val="0.350000 1.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 12" val="0.000000 0.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 13" val="0.000000 1.000000 0.000000"></item>
 	<item type="point" name="CurvePoint 14" val="1.000000 1.000000 0.000000"></item>
 	<item type="string" name="Brush 15" val="Flatten"></item>
 	<item type="int" name="Operation 15" val="4"></item>
 	<item type="float" name="ScreenRadius 15" val="73.000000"></item>
-	<item type="float" name="WorldRadius 15" val="0.595016"></item>
+	<item type="float" name="WorldRadius 15" val="0.000000"></item>
 	<item type="int" name="RadiusType 15" val="1"></item>
-	<item type="float" name="Strength 15" val="1.168959"></item>
+	<item type="float" name="Strength 15" val="1.000000"></item>
 	<item type="float" name="Focus 15" val="0.000000"></item>
 	<item type="bool" name="StrengthFlag 15" val="1"></item>
 	<item type="bool" name="RadiusFlag 15" val="0"></item>
 	<item type="bool" name="FocusFlag 15" val="0"></item>
 	<item type="int" name="ShortcutKey 15" val="70"></item>
 	<item type="point" name="CurvePoint 16" val="0.000000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 17" val="0.575000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 18" val="0.512500 1.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 17" val="0.000000 0.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 18" val="0.000000 1.000000 0.000000"></item>
 	<item type="point" name="CurvePoint 19" val="1.000000 1.000000 0.000000"></item>
 	<item type="string" name="Brush 20" val="Smudge"></item>
 	<item type="int" name="Operation 20" val="3"></item>
 	<item type="float" name="ScreenRadius 20" val="69.000000"></item>
-	<item type="float" name="WorldRadius 20" val="-0.233369"></item>
+	<item type="float" name="WorldRadius 20" val="-0.000000"></item>
 	<item type="int" name="RadiusType 20" val="1"></item>
-	<item type="float" name="Strength 20" val="0.586067"></item>
+	<item type="float" name="Strength 20" val="0.000000"></item>
 	<item type="float" name="Focus 20" val="0.000000"></item>
 	<item type="bool" name="StrengthFlag 20" val="1"></item>
 	<item type="bool" name="RadiusFlag 20" val="0"></item>
 	<item type="bool" name="FocusFlag 20" val="0"></item>
 	<item type="int" name="ShortcutKey 20" val="0"></item>
 	<item type="point" name="CurvePoint 21" val="0.000000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 22" val="0.587500 0.012500 0.000000"></item>
-	<item type="point" name="CurvePoint 23" val="0.462500 0.987500 0.000000"></item>
+	<item type="point" name="CurvePoint 22" val="0.000000 0.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 23" val="0.000000 0.000000 0.000000"></item>
 	<item type="point" name="CurvePoint 24" val="1.000000 1.000000 0.000000"></item>
 	<item type="string" name="Brush 25" val="Pinch"></item>
 	<item type="int" name="Operation 25" val="2"></item>
 	<item type="float" name="ScreenRadius 25" val="67.000000"></item>
 	<item type="float" name="WorldRadius 25" val="50.000000"></item>
 	<item type="int" name="RadiusType 25" val="1"></item>
-	<item type="float" name="Strength 25" val="1.404559"></item>
+	<item type="float" name="Strength 25" val="1.000000"></item>
 	<item type="float" name="Focus 25" val="0.000000"></item>
 	<item type="bool" name="StrengthFlag 25" val="0"></item>
 	<item type="bool" name="RadiusFlag 25" val="0"></item>
 	<item type="bool" name="FocusFlag 25" val="0"></item>
 	<item type="int" name="ShortcutKey 25" val="0"></item>
 	<item type="point" name="CurvePoint 26" val="0.000000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 27" val="0.487500 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 28" val="0.487500 1.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 27" val="0.000000 0.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 28" val="0.000000 1.000000 0.000000"></item>
 	<item type="point" name="CurvePoint 29" val="1.000000 1.000000 0.000000"></item>
 	<item type="string" name="Brush 30" val="Sharp Push"></item>
 	<item type="int" name="Operation 30" val="0"></item>
 	<item type="float" name="ScreenRadius 30" val="96.000000"></item>
-	<item type="float" name="WorldRadius 30" val="0.483905"></item>
+	<item type="float" name="WorldRadius 30" val="0.000000"></item>
 	<item type="int" name="RadiusType 30" val="1"></item>
-	<item type="float" name="Strength 30" val="1.589821"></item>
+	<item type="float" name="Strength 30" val="1.000000"></item>
 	<item type="float" name="Focus 30" val="0.000000"></item>
 	<item type="bool" name="StrengthFlag 30" val="1"></item>
 	<item type="bool" name="RadiusFlag 30" val="0"></item>
 	<item type="bool" name="FocusFlag 30" val="0"></item>
 	<item type="int" name="ShortcutKey 30" val="0"></item>
 	<item type="point" name="CurvePoint 31" val="0.000000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 32" val="1.050000 0.000000 0.000000"></item>
-	<item type="point" name="CurvePoint 33" val="0.825000 0.937500 0.000000"></item>
+	<item type="point" name="CurvePoint 32" val="1.000000 0.000000 0.000000"></item>
+	<item type="point" name="CurvePoint 33" val="0.000000 0.000000 0.000000"></item>
 	<item type="point" name="CurvePoint 34" val="1.000000 1.000000 0.000000"></item>
 </prefgrp>
 <prefgrp name="Material Editor" id="87">
@@ -1309,6 +1309,8 @@
 <prefgrp name="" id="100111">
 	<item type="string" name="DirectoryTitle 0" val="Save Keyboard Settings"></item>
 	<item type="string" name="DirectoryFile 0" val="Preferences/Presets/Keyboard Settings/"></item>
+	<item type="string" name="DirectoryTitle 1" val="Open Scene"></item>
+	<item type="string" name="DirectoryFile 1" val="E:/"></item>
 </prefgrp>
 <prefgrp name="" id="100109">
 	<item type="string" name="WindowIsOpen 0" val="Scene Editor"></item>
@@ -1317,5 +1319,8 @@
 	<item type="bool" name="WindowDocked 3" val="1"></item>
 	<item type="string" name="WindowIsOpen 4" val="Object Properties"></item>
 	<item type="bool" name="WindowDocked 5" val="1"></item>
+</prefgrp>
+<prefgrp name="" id="100010">
+	<item type="string" name="RecentFile 0" val="E:/test.sib"></item>
 </prefgrp>
 </preffile>
