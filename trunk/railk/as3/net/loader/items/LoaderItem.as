@@ -13,7 +13,6 @@ package railk.as3.net.loader.items
 	import flash.system.LoaderContext;
 	import flash.system.ApplicationDomain;
 	import flash.system.SecurityDomain;
-	import railk.as3.TopLevel;
 	
 	public class LoaderItem extends SimpleItem
 	{
