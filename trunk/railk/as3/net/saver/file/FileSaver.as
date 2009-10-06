@@ -66,7 +66,7 @@ package railk.as3.net.saver.file
 			this.fileName = fileName;
 			this.fileType = fileType;
 			this.data = data;
-			amf.call( 'File.Save.bin', path+"/"+fileName+"."+fileType, data );
+			amf.directCall( 'File.Save.bin', path+"/"+fileName+"."+fileType, data );
 		}
 		
 		/**
@@ -90,20 +90,17 @@ package railk.as3.net.saver.file
 		 * MANAGE EVENT
 		 */
 		private function manageEvent(evt:AmfphpClientEvent ):void {
-			var args:Object;
-			if ( evt.requester == requester) {
-				switch( evt.type ) {
-					case AmfphpClientEvent.ON_RESULT :
-						dispatchEvent( new FileSaverEvent( FileSaverEvent.ON_SAVE_COMLETE, { info:"file "+ fileName +"saved" } ) );
-						dispose();
-						break;
-						
-					case AmfphpClientEvent.ON_ERROR :
-						dispatchEvent( new FileSaverEvent( FileSaverEvent.ON_ERROR, { info:"problem with "+ fileName +" file" } ) );
-						dispose();
-						break;
-				}
-			}	
+			switch( evt.type ) {
+				case AmfphpClientEvent.ON_RESULT :
+					dispatchEvent( new FileSaverEvent( FileSaverEvent.ON_SAVE_COMLETE, { info:"file "+ fileName +"saved" } ) );
+					dispose();
+					break;
+					
+				case AmfphpClientEvent.ON_ERROR :
+					dispatchEvent( new FileSaverEvent( FileSaverEvent.ON_ERROR, { info:"problem with "+ fileName +" file" } ) );
+					dispose();
+					break;
+			}
 		}
 	}	
 }

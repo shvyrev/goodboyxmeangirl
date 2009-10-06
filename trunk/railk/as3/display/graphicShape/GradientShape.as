@@ -22,11 +22,11 @@ package railk.as3.display.graphicShape
 		* @param	hide
 		* @return
 		*/
-		public function GradientShape(colors:Array,W:Number,H:Number,rotation:Number,type:String,alphas:Array,ratios:Array,hide:Boolean=false,copy:Boolean=false ) {
+		public function GradientShape(colors:Array,W:Number,H:Number,rotation:Number,type:String,alphas:Array,ratios:Array,copy:Boolean=false ) {
 			super(copy);
 			_type = 'gradient';
 			var matrix:Matrix = new Matrix();
-			matrix.createGradientBox(W, H, rotation, 0, 0);
+			matrix.createGradientBox(W, H, rotation*0.0174532925, 0, 0);
 			
 			this.graphicsCopy.clear();
 			this.graphicsCopy.beginGradientFill(type, colors, alphas, ratios, matrix, "pad","RGB"); 
@@ -35,7 +35,6 @@ package railk.as3.display.graphicShape
 			this.graphicsCopy.lineTo(0, H);
 			this.graphicsCopy.lineTo(0, 0);
 			this.graphicsCopy.endFill();
-			(hide == true) ? this.alpha = 0 : this.alpha = 100;
 		}
 	}
 	

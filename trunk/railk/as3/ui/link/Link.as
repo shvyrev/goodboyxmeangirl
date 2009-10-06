@@ -60,7 +60,6 @@ package railk.as3.ui.link
 			this.dummy = dummy;
 			this.data = data;			
 			this.swfAddress = swfAddress;
-			if(!dummy) this.target.buttonMode = true;
 			initListeners();			
 		}
 		
@@ -79,6 +78,7 @@ package railk.as3.ui.link
 		 * LISTENERS
 		 */
 		public function initListeners():void {
+			if(!dummy) this.target.buttonMode = true;
 			if ( type == 'mouse'){
 				target.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
 				target.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
@@ -90,6 +90,7 @@ package railk.as3.ui.link
 		}
 		
 		public function delListeners():void {
+			if(!dummy) this.target.buttonMode = false;
 			if ( type == 'mouse') {
 				target.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent );
 				target.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );

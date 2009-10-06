@@ -45,7 +45,7 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function Text( name:String='', type:String='dynamic', text:String='', color:uint=0xffffff, font:String='arial', embedFont:Boolean=false, size:Number=10, align:String='left', wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, hasAutoSize:Boolean=false, autoSize:String='', width:Number=0, height:Number=0, backgroundColor:uint=0x00FFFFFF, borderColor:uint=0x00FFFFFF )
+		public function Text( name:String='', type:String='dynamic', text:String='', color:uint=0xffffff, font:String='arial', embedFont:Boolean=false, size:Number=10, align:String='left', pixelFont:Boolean=false, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, hasAutoSize:Boolean=false, autoSize:String='', width:Number=0, height:Number=0, backgroundColor:uint=0x00FFFFFF, borderColor:uint=0x00FFFFFF )
 		{
 			_hasAutoSize = hasAutoSize;
 			
@@ -83,7 +83,7 @@ package railk.as3.text
 			super.wordWrap = wordwrap;
 			super.mouseEnabled = selectable;
 			super.multiline = true;
-			super.antiAliasType = AntiAliasType.ADVANCED;
+			if(!pixelFont) super.antiAliasType = AntiAliasType.ADVANCED;
 		}
 		
 		/**

@@ -25,6 +25,10 @@ package railk.as3.display.graphicShape {
 			else graphicsCopy = graphics;
 		}
 		
+		public function execute(method:String,params:Array):void {
+			this.graphicsCopy[method].apply(null, params);
+		}
+		
 		override public function toString():String {
 			return '[ GRAPHICSHAPE > ' + this.name.toUpperCase() + ', (type:' + this._type + ') ]';
 		}

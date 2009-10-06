@@ -80,11 +80,11 @@ package railk.as3.motion
 			return r;
 		}
 		
-		private function txt(r:*,b:*,e:*):* {
-			var i:int, mxL:*=(b.length>e.length)?b.length:e.length, x:*=1/mxL, ind:*=int(r/x), curL:*=[], nxtL:*=[], reg:*=new RegExp(',','g');
-			for (i=0;i<b.length;++i) nxtL.push(b.charAt(i));
-			for (i=0;i<e.length;++i) curL.push(e.charAt(i));
-			for (i=0;i<ind;++i) curL[i]=(nxtL[i])?nxtL[i]:'';
+		private function txt(r:*, b:String, e:String):* {
+			var i:int, mxL:*= ((b.length > e.length)?b.length:e.length), x:*= 1/mxL, ind:*= int(r/x), curL:*= [], nxtL:*= [], reg:*= new RegExp(',', 'g');
+			for (i=0;i<e.length;++i) nxtL.push(e.charAt(i));
+			for (i=0;i<b.length;++i) curL.push(b.charAt(i));
+			for (i=0; i < ind;++i) curL[i] = (nxtL[i])?nxtL[i]:'';
 			return curL.toString().replace(reg, '');
 		}
 		

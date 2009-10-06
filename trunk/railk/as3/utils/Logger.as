@@ -17,7 +17,6 @@ package railk.as3.utils
 		 */
 		static public function init(...info):void { 
 			enabled = true; 
-			if (info) print( '[ ' + inline(info) + ' ]','debug' );  
 		}
 		
 		/**

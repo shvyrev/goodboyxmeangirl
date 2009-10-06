@@ -13,6 +13,7 @@ package railk.as3.net.loader.items
 	import flash.system.LoaderContext;
 	import flash.system.ApplicationDomain;
 	import flash.system.SecurityDomain;
+	import railk.as3.TopLevel;
 	
 	public class LoaderItem extends SimpleItem
 	{
@@ -23,7 +24,7 @@ package railk.as3.net.loader.items
 		
 		override public function start():void {
 			var context:LoaderContext;
-			loader=new Loader();
+			loader = new Loader();
 			if ( mode == 'sameDomain' ) context = new LoaderContext(true, ApplicationDomain.currentDomain);
 			else if ( mode == 'externalDomain' ) context = new LoaderContext(true, ApplicationDomain.currentDomain, SecurityDomain.currentDomain);
 			initListeners(loader.contentLoaderInfo);
