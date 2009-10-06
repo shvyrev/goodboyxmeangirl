@@ -45,8 +45,8 @@ package railk.as3.display.drawingShape
 		
 		
 		/**
-		 * 
-		 * @param	...args   {width:,height:,points:[{A(x,y),B(x,y)},...]}
+		 * @param color 
+		 * @param data   {width:,height:,points:[{A(x,y),B(x,y)},...]}
 		 */
 		public function drawPixelShape( color:uint, data:Object ):void {
 			var result:Bitmap = new Bitmap( new BitmapData( data.width, data.height, true, 0x00FFFFFF ) );
@@ -129,8 +129,7 @@ package railk.as3.display.drawingShape
 				
 				var pixel = data.pixels[pos];
 				if( pixel is int && pixel == 1) result.bitmapData.setPixel32( nx, yLoop, color );
-				else if ( pixel is Array)
-				{
+				else if ( pixel is Array) {
 					color = pixel[0];
 					result.bitmapData.setPixel32( nx, yLoop, color );
 				}

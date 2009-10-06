@@ -30,6 +30,7 @@ package railk.as3.stage
 		private static var isActive   :Number;
 		private static var _stage     :Stage;
 		private static var _framerate :int;
+		private static var _minFramerate :int;
 		
 		
 		/**
@@ -58,13 +59,14 @@ package railk.as3.stage
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, cxMenu:Boolean = false, frameRate:int = 40, align:String = 'TL', quality:String = "high" ):void {
+		public static function init( stage:Stage, cxMenu:Boolean = false, frameRate:int=40, minFramerate:int=5, align:String = 'TL', quality:String = "high" ):void {
 			//initialisation variable mouse idle .2*60*1000 = 30 seconds
 			timeOut = .2*15*1000;
 			
 			//initialisation de la surface
 			_stage = stage;
 			_framerate = frameRate;
+			_minFramerate = minFramerate;
 			stage.align = align;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.quality = quality;
@@ -122,7 +124,7 @@ package railk.as3.stage
 		/**
 		 * FRAMRATE ADAPTER
 		 */
-		public static function minRate():void { _stage.frameRate = 5 };
+		public static function minRate():void { _stage.frameRate = _minFramerate };
 		public static function maxRate():void { _stage.frameRate = _framerate };
 		
 		/**

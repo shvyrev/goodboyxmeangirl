@@ -28,6 +28,7 @@ package railk.as3.display {
 		
 		public function RegistrationPoint() {
 			super();
+			setRegistration(0,0);
 		}
 		
 		public function setRegistration(x:Number, y:Number):void { rp = new Point(x, y); }
@@ -123,10 +124,6 @@ package railk.as3.display {
 		 * UTILITIES
 		 */
 		private function get global():Point {
-			if (!rp) {
-				var bounds:Rectangle = this.getBounds(this.parent);
-				rp = new Point((bounds.left + bounds.width) * .5, (bounds.top + bounds.height) * .5);
-			}
 			if (!this.parent) return this.localToGlobal(rp);
 			return this.parent.globalToLocal(this.localToGlobal(rp));
 		}

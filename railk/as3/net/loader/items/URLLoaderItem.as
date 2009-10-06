@@ -20,7 +20,8 @@ package railk.as3.net.loader.items
 		private var loader:URLLoader;
 		public function URLLoaderItem( url:URLRequest, name:String, args:Object,priority:int, preventCache:Boolean, bufferSize:int, mode:String ):void {			
 			super(url,name,args,priority,preventCache,bufferSize,mode);
-			var type:Array=types[url.url.match(/\.[a-zA-Z0-9]{3,3}/)[url.url.match(/\.[a-zA-Z0-9]{3,3}/).length - 1]].split(',');
+			var file:String = url.url.split('/')[url.url.split('/').length-1];
+			var type:Array=types[file.match(/\.[a-zA-Z0-9]{2,4}/)[file.match(/\.[a-zA-Z0-9]{2,4}/).length-1]].split(',');
 			dataFormat = type[0];
 			contentType = type[type.length-1];
 		}

@@ -29,8 +29,8 @@ package railk.as3.ui.div
 			var X:Number = ((previous)?previous.x:0), Y:Number = ((previous)?previous.y:0);
 			if (current.float == 'none') Y = Y+current.margins.top+((previous)?previous.height+previous.margins.bottom:0);
 			else if (current.float == 'left') X = X + current.margins.left + ((previous)?previous.width + previous.margins.right:0);
-			current.x = X;
-			current.y = Y;
+			current.x += X;
+			current.y += Y;
 			current.state.update();
 			if (previous) previous.addArc(current);
 			previous = current;

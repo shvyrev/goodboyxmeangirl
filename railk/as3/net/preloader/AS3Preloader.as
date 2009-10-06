@@ -13,7 +13,7 @@ package railk.as3.net.preloader
 	import flash.events.Event;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
-	import flash.utils.getDefinitionByName;	
+	import flash.utils.getDefinitionByName;
 	import railk.as3.TopLevel;
 	
 	public class AS3Preloader extends MovieClip

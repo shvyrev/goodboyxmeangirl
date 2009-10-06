@@ -99,7 +99,7 @@ package railk.as3.net.loader
 		 * @param	bufferSize  | 0=loading the whole before playing / XX=the number of second to buffer before playing
 		 */
 		public function add( url:String, name:String="", args:Object=null, priority:int=0, mode:String = 'sameDomain', preventCache:Boolean = false, bufferSize:int = 0 ):void {
-			item = new (getItemClass( url ))( new URLRequest( url ),((name=='')?url:name),args, priority, preventCache, bufferSize, mode );
+			item = new (getItemClass( url.split('/')[url.split('/').length-1] ))( new URLRequest( url ),((name=='')?url:name),args, priority, preventCache, bufferSize, mode );
 			length++;
 			initItemListeners( item );
 			sortList( item );
@@ -210,7 +210,7 @@ package railk.as3.net.loader
 		// 																					   		ITEM CLASS
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		private function getItemClass( url:String ):Class {
-			for ( var o:String in types) if (o.search( url.match(/\.[a-zA-Z0-9]{3,3}/)[url.match(/\.[a-zA-Z0-9]{3,3}/).length - 1].toLowerCase() )!=-1) return getDefinitionByName(types[o]) as Class;
+			for ( var o:String in types) if (o.search( url.match(/\.[a-zA-Z0-9]{2,4}/)[url.match(/\.[a-zA-Z0-9]{2,4}/).length - 1].toLowerCase() )!=-1) return getDefinitionByName(types[o]) as Class;
 			return null;
 		}
 		
