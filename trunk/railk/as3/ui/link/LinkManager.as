@@ -47,7 +47,7 @@ package railk.as3.ui.link
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 * @param   type                   'mouse' | 'roll'
 		 */
-		public static function add( name:String, target:Object=null, action:Function = null, colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):Link {	
+		public static function add( name:String, target:Object=null, action:Function = null, group:String='', colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):Link {	
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
 			else if( swfAdress && !swfAdressEnable ) enable = false;
@@ -55,7 +55,7 @@ package railk.as3.ui.link
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
 			var dummy:Boolean = (target)?false:true;
-			link = new Link( name, target, type, action, colors, enable, dummy, data );
+			link = new Link( name, target, type, action, group, colors, enable, dummy, data );
 			if ( !getLink( name ) || dummy || getLink( name ).data.isDummy() ) {
 				if (!firstLink) firstLink = lastLink = link;
 				else {
@@ -87,16 +87,16 @@ package railk.as3.ui.link
 			l = null;
 		}
 		
-		public static function getLink( name:String ):Link { 
+		public static function getLink( name:String, group:String='' ):Link { 
 			var walker:Link = firstLink;
 			while (walker ) {
-				if (walker.name == name ) return walker;
+				if (walker.name == name && walker.group == group ) return walker;
 				walker = walker.next;
 			}
 			return null;
 		}
 		
-		public static function getLinkContent( name:String ):* { return getLink( name ).target; }
+		public static function getLinkContent( name:String, group:String='' ):* { return getLink( name, group ).target; }
 		
 		/**
 		 * SWFADRESS UTILITIES
@@ -120,9 +120,9 @@ package railk.as3.ui.link
 						var link:String = '';
 						for (var i:int = 0; i < a.length-1; ++i) link+=a[i]+'/';
 						if ( getLink(link) ) getLink(link).deepLinkAction(a[a.length-1]);
-						else setValue('/');
+						else setValue('404');
 					}
-				}				
+				}			
 				if(updateTitle) SWFAddress.setTitle(formatTitle(evt.value));
 				
 			} catch (err:Error) {

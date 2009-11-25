@@ -11,6 +11,14 @@ package railk.as3.text
 	import flash.text.TextField;	
 	public class TextArea extends TextField
 	{
+		public var text:String;
+		public var width:Number;
+		public var height:Number;
+		public var lines:Number;
+		public var lineHeight:Number;
+		public var letterSpacing:Number;
+		public var justify:String;
+		
 		private var _letters:Array=[];
 		private var _words:Array=[];
 		private var _lines:Array = [];
@@ -30,6 +38,17 @@ package railk.as3.text
 		 * @param	justify
 		 */
 		public function TextArea(text:String,width:Number,height:Number,lines:Number=NaN,lineHeight:Number=NaN,letterSpacing:Number=NaN,justify:String='left') {
+			this.text = text;
+			this.width = width;
+			this.height = height;
+			this.lines = lines;
+			this.lineHeight = lineHeight;
+			this.letterSpacing = letterSpacing;
+			this.justify = justify;
+			init();
+		}
+		
+		private function init():void {
 			var font:RegExp = /font:[a-zA-Z0-9 _-]{0,}/;
 			var size:RegExp = /size:[0-9]{0,}/;
 			var color:RegExp = /color:[a-zA-Z0-9 #]{0,}/;

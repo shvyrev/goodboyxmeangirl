@@ -26,12 +26,12 @@ package railk.as3.ui.loading
 			bg = new DonutShape(bgColor,0,0,radius,innerRadius);
 			cercle = new DonutShape(color,0,0,radius,innerRadius);
 			cercle.alpha = 0;
-			masker = new CamembertShape(0x000000,0,0,radius,0,0,100);
+			masker = new CamembertShape(0x000000,0,1,radius,0,0,100);
 			masker.rotation = -90;
 			
 			this.addChild(bg);
 			this.addChild(cercle);
-			this.addChild(mask);
+			this.addChild(masker);
 			cercle.mask = masker;	
 		}
 		

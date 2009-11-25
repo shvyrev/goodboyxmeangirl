@@ -146,7 +146,8 @@ package railk.as3.display
 					case 'scaleX' : break;
 					case 'scaleY' : break;
 					case 'scaleX2' : break;
-					case 'scaleY2' : break;		
+					case 'scaleY2' : break;
+					default : break;
 				}
 			}
 		}

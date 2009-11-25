@@ -51,15 +51,17 @@ package railk.as3.transform.item
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																						  CONSTRUCTEUR
 		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function TransformItem( name:String, parent:*, target:* )
-		{
+		public function TransformItem( name:String, parent:*, target:* ) {
 			//--Vsprite init
 			transformItem = this;
 			super(parent);
 			this.name = name;
 			this.stage = parent.stage;
 			this.target = target;
-			
+			init();
+		}
+		
+		private function init():void {
 			//--bounds and points
 			bounds = new Bounds(target.x, target.y, target.width, target.height);
 			TL = bounds.top_left;
@@ -178,6 +180,7 @@ package railk.as3.transform.item
 					handle.y2 = data[constraint].y;
 					transform.scaleXY( data.dx, data.dy ,data.TL.x, data.TL.y, constraint);
 					break;
+				default : break;
 			}
 			updateHandles(handle.name, data);
 		}
@@ -204,6 +207,8 @@ package railk.as3.transform.item
 				case 'SKEW_RIGHT' :
 					transform.skewY( 0,(stage.mouseY - entryPoint.y), constraint);
 					break;
+				
+				default : break;
 			}
 			
 		}
@@ -255,6 +260,7 @@ package railk.as3.transform.item
 							break;
 						case 'SKEW_LEFT' :
 							break;
+						default : break;
 					}
 				}
 				walker = walker.next;

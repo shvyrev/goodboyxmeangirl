@@ -205,7 +205,9 @@ package railk.as3.transform.item
 					
 				case MouseEvent.ROLL_OUT :
 					if (f.out != null ) f.out.apply();
-					break;	
+					break;
+					
+				default : break;
 			}
 		}
 	}

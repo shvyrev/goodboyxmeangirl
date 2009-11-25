@@ -33,7 +33,7 @@ package railk.as3.net.saver.file
 		public function FileSaver( amf:AmfphpClient ) {
 			this.amf = amf;
 			downloader = new FileReference();
-			initListeners()
+			initListeners();
 		}
 		
 		/**
@@ -100,6 +100,8 @@ package railk.as3.net.saver.file
 					dispatchEvent( new FileSaverEvent( FileSaverEvent.ON_ERROR, { info:"problem with "+ fileName +" file" } ) );
 					dispose();
 					break;
+				
+				default : break;
 			}
 		}
 	}	

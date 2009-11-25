@@ -10,7 +10,7 @@ package railk.as3.display.graphicShape
 	import flash.geom.Point;
 	public class TriangleShape extends GraphicShape
 	{
-		public function TriangleShape((A:Point,B:Point,C:Point,color:uint,lineThickness:Number=NaN, lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
+		public function TriangleShape(A:Point,B:Point,C:Point,color:uint,lineThickness:Number=NaN, lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
 			super(copy);
 			_type = 'triangle';
 			this.graphicsCopy.clear();
@@ -22,5 +22,4 @@ package railk.as3.display.graphicShape
 			this.graphicsCopy.endFill();
 		}
 	}
-	
 }

@@ -267,7 +267,8 @@ package railk.as3.transform {
 					
 				case TransformManagerEvent.ON_ITEM_STOP_MOVING :
 					break;
-					
+				
+				default : break;	
 			}
 		}
 	}

@@ -163,6 +163,7 @@ package railk.as3.ui.witywig
 						}
 					}	
 					break;
+				default : break;
 			}
 		}
 	}

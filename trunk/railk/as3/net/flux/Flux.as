@@ -216,6 +216,7 @@ package railk.as3.net.flux
 					saver.removeEventListener( XmlSaverEvent.ON_SAVE_XML_COMPLETE, manageEvent );
 					saver.dispose();
 					break;
+				default : break;
 			}
 		}
 	}

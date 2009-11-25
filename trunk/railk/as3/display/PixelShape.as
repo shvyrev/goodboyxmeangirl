@@ -13,10 +13,10 @@ package railk.as3.display
 	public class PixelShape extends RegistrationPoint
 	{
 		
-		public function PixelShape()
-		{
+		public function PixelShape() {
 			super();
 		}
+		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					 	PIXEL SURFACE
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -29,8 +29,8 @@ package railk.as3.display
 		* @param	espaceH  minimum = 1
 		* @param	pair
 		*/
-		public function pixel( color:uint, W:int, H:int, espaceW:int, espaceH:int, pair:Boolean = false ):void 
-		{ 	
+		public function pixel( color:uint, W:int, H:int, espaceW:int, espaceH:int, pair:Boolean = false ):void {
+			super();
 			var flagPair:int=0;
 			var X:int = 0;
 			var Y:int = 0;

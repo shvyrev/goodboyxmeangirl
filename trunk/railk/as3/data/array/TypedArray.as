@@ -38,9 +38,7 @@ package railk.as3.data.array
 		}
 
 		 AS3 override function splice(...args):* {
-			if (args.length > 2){
-				for (var i:int=2; i< args.length; i++) if (!(args[i] is dataType)) args.splice(i,1);
-			}
+			if (args.length > 2) for (var i:int=2; i< args.length; i++) if (!(args[i] is dataType)) args.splice(i,1);
 			return (super.splice.apply(this, args));
 		}
 

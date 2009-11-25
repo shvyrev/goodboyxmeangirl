@@ -29,6 +29,7 @@ package railk.as3.text
 		private var textLink                 :Sprite;
 		private var format                   :TextFormat;
 		private var texte                    :TextField;
+		private var textMask                 :Sprite;
 		
 		private var _name                    :String;
 		private var _type                    :String;
@@ -44,6 +45,7 @@ package railk.as3.text
 		private var _height                  :Number; 
 		private var _autoSize                :Boolean; 
 		private var _autoSizeType            :String;
+		private var _letterSpacing           :Number;
 		
 		/**
 		 * CONSTRUCTEUR
@@ -62,8 +64,8 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function TextLink(	name:String='', type:String='dynamic', text:String='', color:uint=0xffffff, font:String='arial', embedFont:Boolean=false, size:Number=10, align:String='left', pixelFont:Boolean=false, wordwrap:Boolean=false, htmlText:Boolean=false, selectable:Boolean=false, autoSize:Boolean=false, autoSizeType:String='', width:Number=0, height:Number=0, backgroundColor:uint=0x00FFFFFF, borderColor:uint=0x00FFFFFF )
-		{
+		public function TextLink(	name:String = '', type:String = 'dynamic', text:String = '', color:uint = 0xffffff, font:String = 'arial', embedFont:Boolean = false, size:Number = 10, align:String = 'left', pixelFont:Boolean = false, wordwrap:Boolean = false, htmlText:Boolean = false, selectable:Boolean = false, autoSize:Boolean = false, autoSizeType:String = '', width:Number = 0, height:Number = 0, hasMask:Boolean = false, backgroundColor:uint = 0x00FFFFFF, borderColor:uint = 0x00FFFFFF ) {
+			super();
 			_name = name;
 			_type = type;
 			_text = text;
@@ -78,8 +80,10 @@ package railk.as3.text
 			_height = height;
 			_autoSize = autoSize;
 			_autoSizeType = autoSizeType;
-			
-			//--textelink
+			init();
+		}
+		
+		private function init():void {
 			textLink = new Sprite();
 			
 				format = new TextFormat();
@@ -105,7 +109,7 @@ package railk.as3.text
 					if( height != 0) texte.height = height;
 				} else {
 					if( width != 0) texte.width = width;
-					if( height != 0) texte.height = height;
+					texte.height = (height!=0)?height:size+2;
 				}
 				if ( backgroundColor != 0x00FFFFFF ) {
 					texte.background = true;
@@ -119,8 +123,31 @@ package railk.as3.text
 				texte.mouseEnabled = selectable;
 				if(!pixelFont) texte.antiAliasType = AntiAliasType.ADVANCED;
 				textLink.addChild( texte );
-			
-			addChild( textLink );	
+				
+			addChild( textLink );
+			if (hasMask) enableMask();
+		}
+		
+		/**
+		 * GESTION DU MASK
+		 * @return
+		 */
+		public function enableMask():void {
+			textMask = new Sprite();
+			textMask.graphics.beginFill(0xff0000);
+			textMask.graphics.drawRect(0, 0, 1, this.height + 3);
+			addChild(textMask);
+			textLink.mask = textMask;
+		}
+		
+		public function get maskWidth():Number { return textMask.width; }
+		public function set maskWidth(value:Number):void {
+			textMask.width = value;
+		}
+		
+		public function get maskHeight():Number { return textMask.height;  }
+		public function set maskHeight(value:Number):void {
+			textMask.height = value;
 		}
 		
 		/**
@@ -140,6 +167,9 @@ package railk.as3.text
 			texte.name = value;
 			_name = value;
 		}
+		
+		public function get thickness():Number { return texte.thickness; } 
+		public function set thickness(value:Number):void { texte.thickness = value; } 
 		
 		public function get type():String { return _type; }
 		public function set type(value:String):void {
@@ -172,6 +202,20 @@ package railk.as3.text
 		public function set embedFont(value:Boolean):void {
 			texte.embedFonts = value;
 			_embedFont = value;
+		}
+		
+		public function get letterSpacing():Number { return _letterSpacing; }
+		public function set letterSpacing(value:Number):void { 
+			format.letterSpacing = value;
+			_letterSpacing = value;
+			texte.setTextFormat( format );
+			//dispatchChange();
+		}
+		
+		public function get bold():Boolean { return format.bold; }
+		public function set bold(value:Boolean):void { 
+			format.bold = value;
+			texte.setTextFormat( format );
 		}
 		
 		public function get size():Number { return _size; }

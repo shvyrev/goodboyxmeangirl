@@ -71,6 +71,7 @@ package railk.as3.external.vimeo
 					
 					loader.unload();
 					break;
+				default : break;
 			}
 		}
 	}

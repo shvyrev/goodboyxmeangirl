@@ -24,24 +24,19 @@ package railk.as3.ui
 		"}";
 		
 		public static function init():void {
-			ExternalInterface.call(FUNCTION_SETCONTENT);
+			if(ExternalInterface.available ) ExternalInterface.call(FUNCTION_SETCONTENT);
 		}
 			
 		public static function setNav(data:Array):void {
 			var content:String="";
-			for (var i:int = 0; i < data.length; i++) content += '<li><a href="'+data[i].link+'">'+data[i].name+'</a></li>';
-			ExternalInterface.call('seo_setContent', 'sitenav', content);
+			for (var i:int = 0; i < data.length; i++) content += data[i] + '\n';
+			if(ExternalInterface.available ) ExternalInterface.call('seo_setContent', 'sitenav', content);
 		}
 		
-		public static function setContent(data:Array):void {
-			var content:String='';
-			for (var i:int = 0; i < data.length; i++) {
-				content += '<div id="'+data[i].id+'">'
-				content += '<h1>'+data[i].id+'</h1>';
-				content += '<p>'+data[i].content+'</p>';
-				content += '</div>';
-			}
-			ExternalInterface.call('seo_setContent', 'copy', content);
+		public static function setContent(data:XML):void {
+			var content:String="";
+			for each ( var l:XML in data) content += l.toString() + '\n';
+			if(ExternalInterface.available ) ExternalInterface.call('seo_setContent', 'copy', content);
 		}
 	}
 }

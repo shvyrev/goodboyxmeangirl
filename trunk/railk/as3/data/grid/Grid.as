@@ -43,8 +43,13 @@ package railk.as3.data.grid
 			this.cellHeight = cellHeight;
 			this.cellWidth = cellWidth;
 			this.columns = Math.round(width/(cellWidth + espaceW));
-			this.rows = Math.round(height/(cellHeight + espaceH));
-			
+			this.rows = Math.round(height / (cellHeight + espaceH));
+			//////////////////
+			init();
+			//////////////////
+		}
+		
+		public function init():void {
 			var X:int=0, Y:int = 0, i:int=0, j:int = 0, m:Boolean = true, pos:int, count:int=0;
 			while (true) {
 				pos = m ? i++ : --i;
@@ -61,13 +66,13 @@ package railk.as3.data.grid
 				X+= cellWidth+espaceW;
 				count++;
 				
-				if (i == columns|| i == 0) {
+				if (i == columns || i == 0) {
 					if (j++ == rows) break;
 					X=0;
 					Y+= cellHeight+espaceH;
 					m = !m;
 				}
-			}		
+			}
 		}
 		
 		/**

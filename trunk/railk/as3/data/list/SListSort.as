@@ -48,6 +48,8 @@ package railk.as3.data.list
 				case ALPHA :
 					result = alphaSort( list, sortMode, sortValue );
 					break;
+				
+				default : throw( new Error("this sort type doesn't exist");
 			}
 			return result;
 		}
@@ -108,6 +110,8 @@ package railk.as3.data.list
 						walker = walker.next;
 					}
 					break;
+				
+				default : throw( new Error("this sort type doesn't exist");
 			}
 			return sortedList;
 		}
@@ -125,6 +129,8 @@ package railk.as3.data.list
 					
 				case ASC :
 					break;
+				
+				default : throw( new Error('this type do no exist');
 			}
 			return sortedList;
 		}

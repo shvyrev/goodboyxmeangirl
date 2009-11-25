@@ -157,6 +157,8 @@ package railk.as3.geom
 					result['dy'] = ((new Vector2D(result.BL, BL)).dy < 0)?-(new Vector2D(result.BL, BL)).distance:(new Vector2D(result.BL, BL)).distance;
 					result['dx'] = ((new Vector2D(result.TR, TR)).dx < 0)?-(new Vector2D(result.TR, TR)).distance:(new Vector2D(result.TR, TR)).distance;
 					break;
+					
+				default : break;
 			}
 			transformedPoints = { TL:((result.TL)?result.TL:TL), L:((result.L)?result.L:L), BL:((result.BL)?result.BL:BL), B:((result.B)?result.B:B), BR:((result.BR)?result.BR:BR), R:((result.R)?result.R:R), TR:((result.TR)?result.TR:TR), T:((result.T)?result.T:T), CENTER:((result.CENTER)?result.CENTER:CENTER), REG:((result.REG)?result.REG:REG), dx:((result.dx)?result.dx:0), dy:((result.dy)?result.dy:0) };
 			return transformedPoints;

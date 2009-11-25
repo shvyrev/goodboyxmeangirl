@@ -30,6 +30,13 @@ package railk.as3.net.tcpClient
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public function TcpClient() {
 			sc = new Socket();
+			initListeners();
+		}
+		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					  MANAGE LISTENER
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		private function initListeners():void {
 			sc.addEventListener( ProgressEvent.SOCKET_DATA, manageEvent, false, 0, true );
 			sc.addEventListener( Event.CONNECT, manageEvent, false, 0, true  );
 			sc.addEventListener( Event.CLOSE, manageEvent, false, 0, true  );
@@ -37,9 +44,16 @@ package railk.as3.net.tcpClient
 			sc.addEventListener( SecurityErrorEvent.SECURITY_ERROR, manageEvent, false, 0, true );
 		}
 		
+		private function delListeners():void {
+			sc.removeEventListener( ProgressEvent.SOCKET_DATA, manageEvent );
+			sc.removeEventListener( Event.CONNECT, manageEvent  );
+			sc.removeEventListener( Event.CLOSE, manageEvent  );
+			sc.removeEventListener( IOErrorEvent.IO_ERROR, manageEvent );
+			sc.removeEventListener( SecurityErrorEvent.SECURITY_ERROR, manageEvent );
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	  CONNECT
+		// 																					MANAGE CONNECTION
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
 		 * 
@@ -47,6 +61,7 @@ package railk.as3.net.tcpClient
 		 * @param	port
 		 */
 		public function connect( adress:String, port:int ):void { sc.connect(  adress, port ); }
+		public function disconnect():void { sc.close(); }
 		
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
@@ -66,6 +81,13 @@ package railk.as3.net.tcpClient
 			dispatchEvent( new TcpClientEvent( TcpClientEvent.ONDATARECEIVED, { info:"data received from server", data:_data } ) );
 		}
 		
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		// 																					    	  DISPOSE
+		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		public function dispose():void {
+			disconnect();
+			delListeners();
+		}
 		
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		// 																					    GETTER/SETTER
@@ -98,6 +120,8 @@ package railk.as3.net.tcpClient
 				case IOErrorEvent.IO_ERROR :
 					Logger.print( 'erreur de connexion '+evt, Logger.ERROR );
 					break;
+				
+				default : break;
 			}
 		}
 	}	

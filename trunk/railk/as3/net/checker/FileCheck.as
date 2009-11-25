@@ -84,6 +84,8 @@ package railk.as3.net.checker
 					dispatchEvent( new FileCheckEvent( FileCheckEvent.ON_FILE_CHECK_ERROR, { info:"check error" } ) );
 					dispose();
 					break;
+					
+				default : break;
 			}
 		}
 	}

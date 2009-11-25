@@ -330,6 +330,7 @@ package railk.as3.ui.scrollList
 				case 'onScrollListDrag' : activeScrollList = evt.name; break;
 				case 'onScrollListOver' : break;
 				case 'onScrollListOut' : break;
+				default : break;
 			}
 		}
 	}

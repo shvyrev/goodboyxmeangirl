@@ -17,7 +17,7 @@ package railk.as3.pattern.mvc.core
 	public class AbstractFacade extends EventDispatcher implements IFacade
 	{
 		protected var _MID:String;
-		protected var container:*;
+		protected var _container:*;
 		protected var model:IModel;
 		protected var controller:IController;
 		protected var views:Array = [];
@@ -30,11 +30,13 @@ package railk.as3.pattern.mvc.core
 		
 		
 		public function registerContainer(container:*):void {
-			this.container = container;
+			_container = container;
 		}
 		
 		public function addChild(child:*):* { return container.addChild(child); }
+		public function addChildAt(child:*,index:int):* { return container.addChildAt(child,index); }
 		public function removeChild(child:*):* { return container.removeChild(child); }
+		public function removeChildAt(index:int):* { return container.removeChildAt(index); }
 		
 		public function registerModel( modelClass:Class ):void {
 			model = modelClass.getInstance.apply(null,[MID]);
@@ -82,11 +84,12 @@ package railk.as3.pattern.mvc.core
 			model.removeProxy(name); 
 		}
 		
-		public function sendNotification(note:String, info:String, data:Object=null):void {
+		public function sendNotification(note:String, info:String='', data:Object=null):void {
 			dispatchEvent( new Notification( note, info, data ) );
 		}
 		
+		public function get container():* { return _container; }
 		public function get MID():String { return _MID; }
-		public function set MID(value:String):void { _MID=value; }
+		public function set MID(value:String):void { _MID = value; }
 	}
 }

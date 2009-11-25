@@ -160,7 +160,8 @@ package railk.as3.ui.drag
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		public static function manageEvent(evt:CustomEvent):void {
 			switch(evt.type) {
-				case 'onScrollListDrag' : dispatchEvent( new CustomEvent( evt.type, {name:evt.name} ) ); break;
+				case 'onScrollListDrag' : dispatchEvent( new CustomEvent( evt.type, { name:evt.name } ) ); break;
+				default : break;
 			}
 		}
 	}

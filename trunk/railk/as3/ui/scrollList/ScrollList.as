@@ -324,6 +324,7 @@ package railk.as3.ui.scrollList
 						}
 					}
 					break;
+				default : break;
 			}
 		}
 	}
