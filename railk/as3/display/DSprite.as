@@ -15,14 +15,9 @@ package railk.as3.display
 			this._extra = (extra)?extra:_extra;
 		}
 		
+		public function get extra():Object { return this._extra; }
 		public function set extra( value:Object ):void {
-			for ( var prop:String in value){
-				_extra[prop] = value[prop];
-			}	
-		}
-		
-		public function get extra():Object{
-			return this._extra;
+			for ( var prop:String in value) _extra[prop] = value[prop];
 		}
 	}
 }

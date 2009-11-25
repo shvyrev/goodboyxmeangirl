@@ -7,46 +7,54 @@
 
 package railk.as3.ui.page
 {
-	import flash.display.Sprite;
-	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.pattern.mvc.interfaces.*
+	import railk.as3.pattern.mvc.observer.Notification;
+	import railk.as3.ui.div.Div;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.UILoader;
+	import railk.as3.ui.SEO;
 	
-	public class Page extends AbstractView implements IView,INotifier
+	public class Page extends AbstractView implements IPage,IView,INotifier
 	{
-		public var next:Page;
-		public var prev:Page;
+		private var _firstChild:IPage;
+		private var _lastChild:IPage;
+		private var _next:IPage;
+		private var _prev:IPage;
 		
-		public var id:String;
-		public var title:String;
-		public var parent:Page;
-		public var layout:Layout;
-		public var loadingView:*;
-		public var src:String;
-		public var loaded:Boolean;
-		public var reload:Boolean;
+		private var _id:String;
+		private var _title:String;
+		private var _parent:IPage;
+		private var _anchor:String;
+		private var _transition:ITransition;
 		
-		public var firstChild:Page;
-		public var lastChild:Page;
-		public var length:Number=0;
+		protected var layout:Layout;
+		protected var src:String;
+		protected var loaded:Boolean;
+		protected var reload:Boolean;
+		protected var transitionName:String;
+		protected var loadingView:IPageLoading;
+		protected var length:Number=0;
+		protected var loader:UILoader;
 		
-		private var loader:UILoader;
-		
-		public function Page( MID:String, id:String, parent:Page, title:String, loadingView:*, layout:Layout, src:String) {
+		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:Layout, src:String, transitionName:String) {
 			super(MID,id);
-			this.id = id;
-			this.parent = parent;
-			this.title = title;
+			_id = id;
+			_parent = parent;
+			_title = title;
 			this.layout = layout;
-			this.loadingView = loadingView;
+			this.loadingView = new (getDefinitionByName(loading))() as IPageLoading;
 			this.src = src;
-			this.component = new Sprite();
+			this.transitionName = transitionName;
+			this.component = new PageDiv(id);
 		}
 		
-		public function addChild( child:Page ):void {
+		/**
+		 * ADD A PAGE CHILD (SUB PAGE)
+		 * @param	child
+		 */
+		public function addChild( child:IPage ):void {
 			if (!firstChild) firstChild = lastChild = child;
 			else {
 				lastChild.next = child;
@@ -56,10 +64,26 @@ package railk.as3.ui.page
 			length++;
 		}
 		
+		/**
+		 * NOTIFICATION HANDLER
+		 * 
+		 * @param	evt
+		 */
+		override public function handleNotification(evt:Notification):void {
+			switch(evt.note) {
+				case 'zoom': zoom(); break;
+				case 'dezoom': dezoom(); break;
+				default : break;
+			}
+		}
+		
+		/**
+		 * SHOW/HIDE
+		 */
 		override public function show():void {
-			facade.addChild( loadingView );
+			component.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
-			var complete:Function = function():void { facade.removeChild( loadingView ); setupViews(layout.views, data); facade.addChild(component); activateViews(layout.views); loaded = true; }
+			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views, data); (facade.container as PageStruct).addDiv(component); activateViews(layout.views); SEO.setContent(data); loaded = true; }
 			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
 			else complete.apply();
 		}
@@ -69,47 +93,74 @@ package railk.as3.ui.page
 			var i:int=0, views:Array = layout.views;
 			try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
 			catch (e:Error) { /*throw e;*/}
-			for (i=0; i < component.numChildren; ++i) component.removeChildAt(i);
-			try { facade.removeChild(component); }
-			catch (e:ArgumentError){/*throw e;*/}
-			component = new Sprite();
+			while(component.numChildren) component.removeChildAt(0);
+			try { (facade.container as PageStruct).delDiv(component); }
+			catch (e:ArgumentError){ throw e; }
+			component = null;
+			component = new Div(id);
 		}
 		
-		override public function dispose():void {
-			layout = null;
-		}
+		/**
+		 * ZOOM/DEZOOM
+		 */
+		public function zoom():void {}
+		public function dezoom():void {}
+		
+		/**
+		 * PLAY/STOP
+		 */
+		public function play():void { }
+		public function stop():void {}
+		
+		override public function dispose():void { layout = null; }
 		
 		/**
 		 * 	UTILITIES
 		 */
-		private function setupViews(views:Array,data:*=null):void { 
+		protected function setupViews(views:Array, data:*= null):void {
 			for (var i:int = 0; i < views.length; i++) {
-				views[i].setup(data)
-				if (!views[i].container) component.addChild( views[i].div );
+				views[i].setup(data);
+				if (!views[i].container)component.addChild( views[i].div );
 				else views[i].container.div.addChild( views[i].div  );
 			}
+			if (transitionName) _transition = new (getDefinitionByName(transitionName))() as ITransition;
 		}
-		private function activateViews(views:Array):void { for (var i:int = 0; i < views.length; i++) views[i].activate(); }
+		protected function activateViews(views:Array):void { for (var i:int = 0; i < views.length; i++) views[i].activate(); }
 		
 		/**
 		 * 	GETTER/SETTER
 		 */
+		public function get id():String { return _id; }
+		public function get title():String { return _title; }
+		public function get parent():IPage { return _parent; }
+		public function get transition():ITransition { return _transition; }
 		public function get isRoot():Boolean { return !Boolean(parent); }
-		
 		public function get isLeaf():Boolean { return length == 0; }
-		
 		public function get hasChildren():Boolean { return length > 0; }
-		
 		public function get depth():int {
 			if (!parent) return 0;
-			var child:Page = this, c:int = 0;
+			var child:IPage = this, c:int = 0;
 			while (child.parent) {
 				c++;
 				child = child.parent;
 			}
 			return c;
 		}
+		public function get firstChild():IPage { return _firstChild; }
+		public function set firstChild(value:IPage):void { _firstChild = value; }
+		public function get lastChild():IPage { return _lastChild; }
+		public function set lastChild(value:IPage):void { _lastChild = value; }
+		public function get next():IPage { return _next; }
+		public function set next(value:IPage):void { _next = value; }
+		public function get prev():IPage { return _prev; }
+		public function set prev(value:IPage):void { _prev = value; }
+		public function get anchor():String { return _anchor; }
+		public function set anchor(value:String):void { _anchor = value; }
 		
+		/**
+		 * TO STRING
+		 * @return
+		 */
 		public function toString():String { return '[ PAGE > '+id+ ' ]'; }
 	}
 }

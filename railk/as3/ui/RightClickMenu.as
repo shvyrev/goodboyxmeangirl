@@ -18,9 +18,10 @@ package railk.as3.ui
 	public class RightClickMenu extends EventDispatcher
 	{
 		public var menu:ContextMenu;
-		private var item:ContextMenuItem;
-		private var actions:Object={};
+		public var menus:Array = [];
 		private var items:Array=[];
+		private var item:ContextMenuItem;
+		private var actions:Object = { };
 		
 		/**
 		 * CONSTRUCTEUR
@@ -33,12 +34,13 @@ package railk.as3.ui
 		/**
 		 * MANAGE ITEMS
 		 */
-		public function add( name:String, action:Function=null, separator:Boolean=false ):void {
-			actions[name] = action;
+		public function add( name:String, action:Function=null, actionParams:Array=null, separator:Boolean=false ):void {
+			actions[name] = {action:action, actionParams:actionParams};
 			item = new ContextMenuItem( name,separator );
 			if(action!=null) item.addEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent, false, 0, true );
 			menu.customItems.push( item );
 			items.push(name);
+			menus[menus.length] = '<li><a href="#/'+name+'/">'+name+'</a></li> '
 		}
 		
 		public function remove( name:String ):void {
@@ -85,7 +87,7 @@ package railk.as3.ui
 		/**
 		 * MANAGE EVENT
 		 */
-		private function manageEvent( evt:ContextMenuEvent ):void { actions[evt.target.caption].apply(); }
+		private function manageEvent( evt:ContextMenuEvent ):void { actions[evt.target.caption].action.apply(null, actions[evt.target.caption].actionParams); }
 		
 		/**
 		 * DISPOSE

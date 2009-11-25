@@ -28,10 +28,12 @@ package railk.as3.display
 		public function AnimatedClip( frames:int = 1 ):void {
 			super();
 			this.frames = frames;
+			init();
+		}
+		
+		public function init():void {
 			framesList = new DLinkedList();
-			for ( var i:int=0; i < frames; i++ ){
-				framesList.add( [String(i),null] );
-			}
+			for ( var i:int=0; i < frames; i++ )framesList.add( [String(i),null] );
 			_current = framesList.head;
 			t = new Timer(1);
 			t.addEventListener( TimerEvent.TIMER, manageEvent, false, 0, true );
@@ -130,11 +132,7 @@ package railk.as3.display
 		// 																						 MANAGE EVENT
 		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		private function manageEvent( evt:TimerEvent ):void {
-			switch( evt.type ){
-				case TimerEvent.TIMER :
-					pushFrameOnScreen();
-					break;
-			}
+			pushFrameOnScreen();
 		}
 		
 		

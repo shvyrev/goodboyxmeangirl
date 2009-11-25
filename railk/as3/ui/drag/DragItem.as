@@ -200,6 +200,8 @@ package railk.as3.ui.drag
 					else absv = v;
 					if ( absv < 0.5 ) v = 0;
 					break;
+					
+				default : break;
 			}
 		}
 	}

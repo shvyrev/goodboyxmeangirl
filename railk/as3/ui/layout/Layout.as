@@ -26,7 +26,8 @@ package railk.as3.ui.layout
 			
 		private function construct(d:XML, master:LayoutView=null, container:LayoutView=null):void {
 			var length:int = d.children().length(), cm:LayoutView;
-			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),((d.component.toString())?pack+'.component::'+d.component:''),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d) );
+			var data:XML = (d.data.toString() == '')?null:new XML(d.data);
+			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d),data );
 			for (var i:int = 0; i < length; i++) if (d.children()[i].name() != 'component') construct( d.children()[i],getView(d.children()[i-1].@id.toString()),viewsDict[d.@id.toString()] );
 		}		
 		
@@ -54,7 +55,7 @@ package railk.as3.ui.layout
 						else for (i=0; i < a.length; i++) result[margins[i]] = Number(a[i]);
 						return result;
 					}
-					if(name == 'class') return pack+'.view::'+xml.@*[i];
+					if(name == 'class') return pack+'.component::'+xml.@*[i];
 					return xml.@*[i];
 				}
 			}	

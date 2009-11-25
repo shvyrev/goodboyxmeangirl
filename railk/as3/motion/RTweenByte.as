@@ -10,6 +10,7 @@ package railk.as3.motion
 	import flash.utils.getTimer;
 	import flash.geom.ColorTransform;
 	import flash.media.SoundTransform;
+	
 	public class RTweenByte
 	{
 		/**
@@ -48,7 +49,7 @@ package railk.as3.motion
 			if (_b) _b.apply();
 			for ( var p:* in _ps ) {
 				if (p.search('rotation')!=-1){ t[p]=t[p]%360+((Math.abs(t[p]%360-_ps[p]%360)<180)?0:(t[p]%360>_ps[p]%360)?-360:360); _ps[p]=_ps[p]%360;}	
-				ps[ps.length] = [p,((t.hasOwnProperty(p))?t[p]:((p=='color')?t.transform.colorTransform.color:((p=='volume')?t.soundTransform.volume:t))),_ps[p]];
+				if(p!='pColor') ps[ps.length] = [p,((t.hasOwnProperty(p))?t[p]:((p=='color')?(_ps.hasOwnProperty('pColor')?_ps['pColor']:t.transform.colorTransform.color):((p=='volume')?t.soundTransform.volume:t))),_ps[p]];
 			}
 			t.addEventListener('enterFrame', tk );
 		}
@@ -67,14 +68,14 @@ package railk.as3.motion
 		}
 
 		private function up( r:* ):* {
-			if (u) u.apply();
+			if (u && r>0) u.apply();
 			var i:int=ps.length;
 			while( --i > -1 ) {
 				var p:*= ps[i];
 				if(p[0]=='volume') t.soundTransform=new SoundTransform(p[2]-(1-r),t.soundTransform.pan)
 				else if(p[0]=='text') t.text = txt(r,p[1],p[2]);
 				else if(p[0]=='textColor') t.textColor = clr(r,p[1],p[2]);
-				else if (p[0] == 'color') { var c:* = new ColorTransform(); c.color=clr(r,p[1],p[2]); t.transform.colorTransform=c; }
+				else if(p[0] == 'color') { var c:* = new ColorTransform(); c.color=clr(r,p[1],p[2]); t.transform.colorTransform=c; }
 				else t[p[0]] = p[1]+(p[2]-p[1])*r+1e-18-1e-18;
 			}
 			return r;

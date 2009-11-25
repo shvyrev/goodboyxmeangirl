@@ -26,6 +26,7 @@ package railk.as3.ui.link
 		public var target:Object;
 		public var content:Object;
 		public var action:Function;
+		public var group:String;
 		public var colors:Object;
 		public var type:String;
 		public var dummy:Boolean;
@@ -50,11 +51,12 @@ package railk.as3.ui.link
 		 * @param	swfAddressEnable
 		 * @param	dummy
 		 */
-		public function Link( name:String, target:Object = null, type:String = 'mouse', action:Function = null, colors:Object = null, swfAddress:Boolean = false, dummy:Boolean = false, data:*=null ) {
+		public function Link( name:String, target:Object = null, type:String = 'mouse', action:Function = null, group:String='', colors:Object = null, swfAddress:Boolean = false, dummy:Boolean = false, data:*=null ) {
 			this.content = new Object();
 			this.name = name;
 			this.target = (dummy)?new Shape():target;
 			this.action = action;
+			this.group = group;
 			this.colors = colors;
 			this.type = type;
 			this.dummy = dummy;
@@ -114,7 +116,11 @@ package railk.as3.ui.link
 		 * 
 		 * @param	data
 		 */
-		public function deepLinkAction(data:*= null):void { action(data).call(); }
+		public function deepLinkAction(anchor:*= null):void {
+			data = anchor;
+			if ( !active ) doAction();
+			else undoAction();
+		}
 		
 		
 		/**
@@ -198,6 +204,7 @@ package railk.as3.ui.link
 						}
 					}	
 					break;
+				default : break;
 			}
 		}
 		

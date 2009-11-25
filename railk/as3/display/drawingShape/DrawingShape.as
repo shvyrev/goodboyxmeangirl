@@ -67,7 +67,7 @@ package railk.as3.display.drawingShape
 					if (dx < 0)  absDx = -dx; else absDx = dx;
 					if (dy < 0)  absDx = -dy; else absDy = dy;
 					if (absDy>absDx) {
-						var swap=dy;
+						var swap:Number=dy;
 						dy=dx;
 						dx=swap;				
 						yLonger=true;
@@ -127,7 +127,7 @@ package railk.as3.display.drawingShape
 				nx = m ? xLoop++ : --xLoop;
 				pos = yLoop * data.width + nx;
 				
-				var pixel = data.pixels[pos];
+				var pixel:* = data.pixels[pos];
 				if( pixel is int && pixel == 1) result.bitmapData.setPixel32( nx, yLoop, color );
 				else if ( pixel is Array) {
 					color = pixel[0];
@@ -161,7 +161,7 @@ package railk.as3.display.drawingShape
 				nx = m ? xLoop++ : --xLoop;
 				pos = yLoop * data.width + nx;
 				
-				var pixel = data.pixels[pos];
+				var pixel:* = data.pixels[pos];
 				if ( pixel is int && pixel == 1){
 					this.graphics.beginFill(color,1);
 					this.graphics.drawRect( nx, yLoop, 1, 1 );

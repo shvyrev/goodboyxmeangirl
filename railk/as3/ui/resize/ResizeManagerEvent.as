@@ -18,10 +18,8 @@ package railk.as3.ui.resize {
 		
 		
 		public function ResizeManagerEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
-				super(type, bubbles, cancelable) ;
-				for(var name:String in data) {
-					this[name] = data[name];
-				}	
+			super(type, bubbles, cancelable) ;
+			for(var name:String in data) this[name] = data[name];
 		}
 	}
 }

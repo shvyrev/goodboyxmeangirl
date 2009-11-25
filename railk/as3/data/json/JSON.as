@@ -106,7 +106,7 @@
 
 // TODO REFACTORING PLEASE - type and co... !!!!!! 
 
-package com.serialization.json
+package railk.as3.data.json
 {
 	
 	public class JSON

@@ -16,6 +16,7 @@ package railk.as3.stage
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.utils.getTimer;		
 	
 	public class StageManager 
@@ -24,6 +25,7 @@ package railk.as3.stage
 		
 		public static var width       :Number;
 		public static var height      :Number;
+		public static var center      :Point;
 		private static var lastMove   :Number;
 		private static var timeOut    :Number;
 		private static var isIdle     :Number;
@@ -77,7 +79,8 @@ package railk.as3.stage
 			
 			//taille de la surface
 			height = stage.stageHeight;
-			width = stage.stageWidth;	
+			width = stage.stageWidth;
+			center = new Point(stage.stageWidth * .5, stage.stageHeight * .5);
 		}
 		
 		/**
@@ -135,6 +138,7 @@ package railk.as3.stage
 				case Event.RESIZE :
 					width = _stage.stageWidth;
 					height = _stage.stageHeight;
+					center = new Point(_stage.stageWidth * .5, _stage.stageHeight * .5);
 					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONSTAGERESIZE, { info:"surface modifiee " + width + " " + height } ) ); 
 					break;
 				case Event.MOUSE_LEAVE : 
@@ -147,6 +151,7 @@ package railk.as3.stage
 					_stage.removeEventListener(MouseEvent.MOUSE_MOVE, manageEvent);
 					maxRate();
 					break;
+				default : break;
 			}
 		}
 	}

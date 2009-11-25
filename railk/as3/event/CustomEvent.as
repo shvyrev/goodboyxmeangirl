@@ -13,7 +13,6 @@ package railk.as3.event
 		public function CustomEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false) {
 			super(type, bubbles, cancelable);
 			if(data) for(var name:String in data) this[name] = data[name];
-		}
-		
+		}	
 	}
 }

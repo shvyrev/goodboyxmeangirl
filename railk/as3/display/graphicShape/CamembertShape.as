@@ -38,10 +38,10 @@ package railk.as3.display.graphicShape
 			this.graphicsCopy.moveTo(X,Y);
 			this.graphicsCopy.moveTo(X+radius*Math.cos(startAngle*rad), Y+radius*Math.sin(startAngle*rad));
 			for (var s:Number = startAngle+segm; s<=endAngle+1; s += segm) {
-				var c_x = radius*Math.cos(s*rad);
-				var c_y = radius*Math.sin(s*rad);
-				var a_x = c_x+radius*Math.tan(segm/2*rad)*Math.cos((s-90)*rad);
-				var a_y = c_y+radius*Math.tan(segm/2*rad)*Math.sin((s-90)*rad);
+				var c_x:Number = radius*Math.cos(s*rad);
+				var c_y:Number = radius*Math.sin(s*rad);
+				var a_x:Number = c_x+radius*Math.tan(segm/2*rad)*Math.cos((s-90)*rad);
+				var a_y:Number = c_y+radius*Math.tan(segm/2*rad)*Math.sin((s-90)*rad);
 				this.graphicsCopy.curveTo(a_x+x, a_y+y, c_x+x, c_y+y);
 			}
 			this.graphicsCopy.lineTo(X, Y);

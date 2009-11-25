@@ -10,6 +10,7 @@ package railk.as3.video
 {	
 	import flash.display.Shape;
 	import flash.display.BitmapData;
+	import flash.events.EventDispatcher;
 	import flash.net.NetStream;
 	import flash.media.Video;
 	import flash.media.SoundTransform;
@@ -26,28 +27,30 @@ package railk.as3.video
 	import flash.system.System;
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
+	import railk.as3.event.CustomEvent;
 
 	import railk.as3.net.saver.file.FileSaver;	
 	import com.adobe.images.PNGEncoder;
 	
 	
-	public class VideoPlayer  
+	public class VideoPlayer extends EventDispatcher
 	{
 		private var nc                  :NetConnection;
 		private var stream              :NetStream;
 		private var ticker				:Shape = new Shape();
 		private var streamMetadata      :Object={};
-		private var streamReady         :Boolean = false;
+		private var ready         		:Boolean = false;
 		private var streamBufferState   :Number = 0;
 		private var previousBytesLoaded :Number = 0;
 		private var previousBytesPLayed :Number = 0;
 		private var bytesPlayed			:Number;
 		private var bytesTotal			:Number;
+		private var startTime           :Number;
 		private var responseTime        :Number;
-		private var loaded				:Number;
-		private var played				:Number;
 		private var time  				:String;
+		private var loaded				:Number;
 		
+		private var url                  :String;
 		private var path  				:String;
 		private var filename  			:String;
 		private var bufferSize       	:int;
@@ -61,8 +64,8 @@ package railk.as3.video
 		public var externalDomain       :Boolean;
 		
 		private var video 				:Video;
-		private var volume				:SoundTransform;										
-		private var share               :String
+		private var sound				:SoundTransform;										
+		private var shareTxt            :String
 		
 		
 		
@@ -95,29 +98,33 @@ package railk.as3.video
 		public function create(path:String, filename:String, width:Number, height:Number, buffersize:int=0, type:String='stream', domain:String='' ):void {
 			if (externalDomain) {
 				Security.allowDomain(domain);
-				Security.loadPolicyFile("http://+"domain+"/crossdomain.xml");
+				Security.loadPolicyFile("http://"+domain+"/crossdomain.xml");
 			}
 			
+			this.url = path + filename;
 			this.path = path;
 			this.filename = filename;
 			this.width = width;
 			this.height = height;
 			this.type = type;
 			this.bufferSize = buffersize;
-			
+			init();
+		}
+		
+		private function init():void {
 			//--Sharing the player + the exact .flv
-			share = '<object width="'+width+'" height="'+height+'">';
-			share += '<param name="allowscriptaccess" value="always" />';
-			share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
-			share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
-			share += '</embed></object>';
+			//shareTxt = '<object width="'+width+'" height="'+height+'">';
+			//shareTxt += '<param name="allowscriptaccess" value="always" />';
+			//shareTxt += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
+			//shareTxt += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
+			//shareTxt += '</embed></object>';
 			
 			//connection
 			nc = new NetConnection();
 			nc.connect( ((type=='rtmp')?path:null) );
 			stream = new NetStream( nc );
-			volume = new SoundTransform();
-			stream.soundTransform = volume;
+			sound = new SoundTransform();
+			stream.soundTransform = sound;
 			
 			var customClient:Object = new Object();
 			customClient.onMetaData = onVideoMetaData;
@@ -126,17 +133,16 @@ package railk.as3.video
 			stream.client = customClient;
 			
 			//-video
-			video = new Video( width, height );
-			video.attachNetStream ( stream );
-				
-			//--enable volume modification
-			
+			video = new Video(width, height);
+			video.width = width;
+			video.height = height;
+			video.attachNetStream ( stream );			
 			
 			//--listeners
 			initListeners();
 			
 			//--launch stream and apuse lecture
-			stream.play( ((type=='rtmp')?filename:path+filename) );
+			stream.play( ((type=='rtmp')?filename:path+filename+'?nocache='+int(Math.random()*100000*getTimer()+getTimer())) );
 			stream.seek(0);
 			stream.togglePause();	
 		}
@@ -145,18 +151,16 @@ package railk.as3.video
 		 * LISTENERS
 		 */
 		private function initListeners():void {
-			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 			stream.addEventListener( IOErrorEvent.IO_ERROR, manageEvent, false, 0, true );
             stream.addEventListener( NetStatusEvent.NET_STATUS, manageEvent, false, 0, true );
             stream.addEventListener( Event.OPEN, manageEvent, false, 0, true );
-			shape.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 		}
 		
 		private function delListeners():void {
-			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
 			stream.removeEventListener( IOErrorEvent.IO_ERROR, manageEvent );
             stream.removeEventListener( NetStatusEvent.NET_STATUS, manageEvent );
-			shape.removeEventListener( Event.ENTER_FRAME, manageEvent );
+			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
 		}
 		
 		/**
@@ -171,13 +175,22 @@ package railk.as3.video
 		 */
 		public function play():void {
 			stream.togglePause();
+			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 		}
 		
 		public function pause():void {
 			stream.togglePause();
+			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
+		}
+		
+		public function stop():void {
+			stream.seek(0);
+			stream.pause();
+			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
 		}
 		
 		public function replay():void {
+			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
 			stream.seek(0);
 		}
 		
@@ -186,8 +199,8 @@ package railk.as3.video
 		}
 		
 		public function volume(pos:Number, size:Number):void {
-			volume.volume = (pos*100)/size;
-			stream.soundTransform = volume;
+			sound.volume = (pos*100)/size;
+			stream.soundTransform = sound;
 		}
 		
 		public function downloadVideo():void {
@@ -195,10 +208,10 @@ package railk.as3.video
 		}
 		
 		public function shareVideo():void {
-			if(share) System.setClipboard( share );
+			if(share) System.setClipboard( shareTxt );
 		}
 		
-		public function screenshot( name:String ):void {
+		/*public function screen( name:String ):void {
 			var toSave:ByteArray;
 			var bmp:BitmapData = new BitmapData( width, height );
 			var saveImg:FileSaver = new FileSaver( name );
@@ -206,6 +219,16 @@ package railk.as3.video
 			bmp.draw( interfaceItemList.getNodeByName('videoContainer').data );
 			toSave = PNGEncoder.encode( bmp );
 			saveImg.create( 'local','assets\images',name, 'png', toSave, true );
+		}*/
+		
+		/**
+		 * gestion du stream
+		 */
+		private function streamReady():void {
+			if ( !ready ) {
+				ready = true;
+				dispatchEvent( new CustomEvent( "stream ready" ));
+			}	
 		}
 		
 		/**
@@ -233,29 +256,34 @@ package railk.as3.video
 					break;
 				case NetStatusEvent.NET_STATUS : switch( evt.info.code ){ case "NetStream.Play.Start" : responseTime = getTimer(); break;} break;
 				case IOErrorEvent.IO_ERROR : break;
-				case ProgressEvent.PROGRESS :
 				case Event.ENTER_FRAME :
 					var timeElapsed:Number = getTimer()-startTime;
-					var currentSpeed:Number = evt.bytesLoaded / (timeElapsed*.001);
-					var downloadTimeLeft:Number = (evt.bytesLoaded-evt.bytesLoaded)/(currentSpeed*.8);
-					var remainingBuffer:Number = streamMetadata.duration - loader.bufferLength ;
-					var buffer = ( bufferSize * evt.bytesTotal ) / streamMetadata.duration;
-					bytesPlayed = Math.round(( Math.round(loader.time) * evt.bytesTotal )/Math.round(streamMetadata.duration));
+					var currentSpeed:Number = stream.bytesLoaded / (timeElapsed*.001);
+					var downloadTimeLeft:Number = (stream.bytesLoaded-stream.bytesLoaded)/(currentSpeed*.8);
+					var remainingBuffer:Number = streamMetadata.duration - stream.bufferLength ;
+					var buffer:Number = ( bufferSize * stream.bytesTotal ) / streamMetadata.duration;
+					bytesPlayed = Math.round(( Math.round(stream.time) * stream.bytesTotal )/Math.round(streamMetadata.duration));
 					
 					if ( !bufferSize ) if ( remainingBuffer > downloadTimeLeft && evt.bytesLoaded > 8 ) streamReady();
 					else {
 						if ( !ready ) {
-							if ( streamBufferState <= buffer ) streamBufferState += evt.bytesLoaded-previousBytesLoaded;
+							if ( streamBufferState <= buffer ) streamBufferState += stream.bytesLoaded-previousBytesLoaded;
 							else stream.togglePause();
 						} else {
-							if ( streamBufferState > buffer*.2 && (evt.bytesLoaded - bytesPlayed) >= loader.bufferLength ) streamBufferState = streamBufferState-(bytesPlayed-previousBytesPLayed);
+							if ( streamBufferState > buffer*.2 && (stream.bytesLoaded - bytesPlayed) >= stream.bufferLength ) streamBufferState = streamBufferState-(bytesPlayed-previousBytesPLayed);
 							else stream.togglePause();
 						}
 					}	
-					previousBytesLoaded = evt.bytesLoaded;
+					previousBytesLoaded = stream.bytesLoaded;
 					previousBytesPLayed = bytesPlayed;
-					bytesTotal = evt.bytesTotal;
+					bytesTotal = stream.bytesTotal;
+					if ( bytesPlayed == bytesTotal ) {
+						ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
+						dispatchEvent( new VideoPlayerEvent( VideoPlayerEvent.ON_COMPLETE ));
+					}
+					dispatchEvent( new VideoPlayerEvent(VideoPlayerEvent.ON_PROGRESS, { percentLoaded:(stream.bytesLoaded / stream.bytesTotal) * 100, percentPlayed:(bytesPlayed / bytesTotal) * 100 } ));
 					break;
+				default : break;
 			}
 		}
 	}	

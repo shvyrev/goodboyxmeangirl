@@ -57,7 +57,8 @@ package railk.as3.ui
 		 * @param	autoScroll          to follow the mouse when the mouse is hover the scrollbar.
 		 * @param	fullScreen          to make the scrollbar fulllscreen
 		 */
-		public function ScrollBar( toScroll:Object,vScroll:Boolean=true,vToScroll:Boolean=true,wheel:Boolean=true,autoCheck:Boolean=true,resize:Boolean=true,fullScreen:Boolean=true,autoScroll:Boolean=false ) {
+		public function ScrollBar( toScroll:Object, vScroll:Boolean = true, vToScroll:Boolean = true, wheel:Boolean = true, autoCheck:Boolean = true, resize:Boolean = true, fullScreen:Boolean = true, autoScroll:Boolean = false ) {
+			super();
 			this.name = 'scrollbar';
 			this.toScroll = toScroll;
 			this.wheel = wheel;
@@ -121,6 +122,7 @@ package railk.as3.ui
 			
 			this.rotation = (vScroll)?0:-90;
 			this.removeEventListener( Event.ADDED_TO_STAGE, setup );
+			trace(size['toScrollY']);
 		}
 		
 		
@@ -260,6 +262,7 @@ package railk.as3.ui
 					else if( slider.y < 0 + evt.delta*delta ) e=Engine.to( slider,.2,NaN,0,NaN,null,function():void { toScroll[p] =size[s]-(slider.y * multiplier); });
 					else if ( slider.y > rect.height + evt.delta*delta ) e=Engine.to( slider,.2,NaN,rect.height,NaN,null,function():void { toScroll[p] =size[s]-(slider.y*multiplier); });
 					break;
+				default : break;
 			}
 		}
 	}

@@ -126,7 +126,9 @@ package railk.as3.transform.matrix
 				case 'BR':
 					scaleX( dx, x, y, 'R', true);
 					scaleY( dy, x, y, 'B', true);
-					break;	
+					break;
+					
+				default : break;
 			}
 		}
 		

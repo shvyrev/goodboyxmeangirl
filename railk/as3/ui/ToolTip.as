@@ -68,6 +68,7 @@ package railk.as3.ui
 		 * 
 		 */
 		public function ToolTip( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int = 0, dropShadow:Boolean = false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' ) {
+			super();
 			_type = type;
 			_thickness = thickness;
 			_orientation = orientation;
@@ -83,7 +84,10 @@ package railk.as3.ui
 			if ( triPoints == null) triPoints = [ new Point(0, 0), new Point(6, -6), new Point(-6, -6) ];
 			_triPoints = triPoints;
 			_filters = new Array();
-			
+			init();
+		}
+		
+		private function init():void {
 			//--dropShadow
 			if (dropShadow) _filters.push( new DropShadowFilter( 8, 45, 0xffffff, .1 ) );
 			
@@ -172,7 +176,9 @@ package railk.as3.ui
 						bulle.x = -(bulle.width + triangle.width - 2);
 						info.x = bulle.x + 10;
 						info.y2 = bulle.y2-1;
-						break;	
+						break;
+						
+					default : break;
 				}
 		}
 		

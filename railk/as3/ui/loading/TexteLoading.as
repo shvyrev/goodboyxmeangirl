@@ -32,7 +32,7 @@ package railk.as3.ui.loading
 			texte.embedFonts = true;
 			texte.selectable = false;
 			texte.setTextFormat( format );
-			texteCont.addChild( texte );
+			addChild( texte );
 		}
 		
 		public function get color():uint { return texte.textColor }

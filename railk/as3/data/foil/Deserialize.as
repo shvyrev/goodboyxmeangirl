@@ -390,6 +390,7 @@ package railk.as3.data.foil
 							stringType = '';
 						}
 						break;
+					default : break;
 				}
 				pos++;
 			}

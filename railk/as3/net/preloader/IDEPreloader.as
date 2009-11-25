@@ -185,6 +185,8 @@ package railk.as3.net.preloader
 				case Event.COMPLETE :
 					launch();
 					break;
+					
+				default : break;
 			}
 		}
 	}

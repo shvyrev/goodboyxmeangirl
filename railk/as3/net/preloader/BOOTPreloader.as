@@ -98,6 +98,7 @@ package railk.as3.net.preloader
 				case Event.RESIZE : case Event.ACTIVATE: resize(); break;
 				case ProgressEvent.PROGRESS : loading.percent = Math.round((evt.bytesLoaded / evt.bytesTotal )*100 ); break;
 				case Event.COMPLETE : main(); break;
+				default : break;
 			}
 		}
 	}

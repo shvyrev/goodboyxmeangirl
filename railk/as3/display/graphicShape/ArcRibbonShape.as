@@ -12,6 +12,7 @@ package railk.as3.display.graphicShape
 		public function ArcRibbonShape(epaisseur:int,color:uint,centerX:Number,centerY:Number,radius:Number,startAngle:Number,arcAngle:Number,precision:int,copy:Boolean=false ) {
 			super(copy);
 			_type = 'arcRibbon';
+			var cornerRadius:Number = 0;
 			var X:Number;
 			var Y:Number;
 			var controlY:Number;
@@ -19,15 +20,15 @@ package railk.as3.display.graphicShape
 			var angle:Number;
 			var radAngle:Number;
 			var tanAngle:Number = Math.tan(toRadians( precision*.5 ));;
-			var padding = Math.round( cornerRadius*.5 );
-			var lineThickness = Math.min( epaisseur, cornerRadius);
-			var outLine = Math.round( lineThickness*.5 );
-			var outerRadius = radius + epaisseur - outLine;
-			var innerRadius = radius + outLine;
-			var outerCornerAngle = padding / (Math.PI * 2 * outerRadius) * 360;
-			var innerCornerAngle  = padding / (Math.PI * 2 * innerRadius) * 360;
-			var radOuterCornerAngle  = toRadians(outerCornerAngle);
-			var radInnerCornerAngle = toRadians(innerCornerAngle);
+			var padding:Number = Math.round( cornerRadius*.5 );
+			var lineThickness:Number = Math.min( epaisseur, cornerRadius);
+			var outLine:Number = Math.round( lineThickness*.5 );
+			var outerRadius:Number = radius + epaisseur - outLine;
+			var innerRadius:Number = radius + outLine;
+			var outerCornerAngle:Number = padding / (Math.PI * 2 * outerRadius) * 360;
+			var innerCornerAngle:Number  = padding / (Math.PI * 2 * innerRadius) * 360;
+			var radOuterCornerAngle:Number  = toRadians(outerCornerAngle);
+			var radInnerCornerAngle:Number = toRadians(innerCornerAngle);
 			var demiAngle:Number;
 			var innerArcAngle:Number;
 			
@@ -122,10 +123,9 @@ package railk.as3.display.graphicShape
 			
 			this.graphicsCopy.endFill();
 		}
+		
+		private function toRadians( degree:Number ):Number {
+			return degree * 0.0174532925;
+		}
 	}
-	
-	private function toRadians( degree:Number ):Number {
-		return degree * 0.0174532925;
-	}
-	
 }

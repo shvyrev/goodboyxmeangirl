@@ -8,19 +8,16 @@
 package railk.as3.ui.layout
 {
 	import flash.utils.getDefinitionByName;
-	import railk.as3.pattern.mvc.interfaces.*;
-	import railk.as3.pattern.mvc.core.AbstractView;
 	import railk.as3.ui.div.*;
 	
 	public class LayoutView
 	{	
-		public var view:IView;
 		public var div:IDiv;
 		public var master:LayoutView;
 		public var container:LayoutView;
 		
-		public var viewClass:String;
 		public var divClass:String;
+		public var data:XML;
 		public var id:String;
 		public var float:String;
 		public var align:String;
@@ -32,11 +29,11 @@ package railk.as3.ui.layout
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutView( container:LayoutView, master:LayoutView, viewClass:String, divClass:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number ) {
+		public function LayoutView( container:LayoutView, master:LayoutView, divClass:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, data:XML=null ) {
 			this.container = container;
 			this.master = master
-			this.viewClass = viewClass;
 			this.divClass = divClass;
+			this.data = data;
 			this.id = id;
 			this.float = float;
 			this.align = align;
@@ -46,9 +43,9 @@ package railk.as3.ui.layout
 			this.y = y;
 		}
 		
-		public function setup(data:*=null):void {
+		public function setup(data:*= null):void {
+			data = (data!=null)?data:this.data;
 			div = (divClass)?new (getDefinitionByName(divClass) as Class)(id, float, align, margins, position, x, y, data):new (getDefinitionByName('railk.as3.ui.div::Div') as Class)(id, float, align, margins, position, x, y, data);
-			view = (viewClass)?new (getDefinitionByName(viewClass) as Class)('S',id,div):new AbstractView('S',id,div);
 		}
 		
 		public function activate():void {
@@ -63,7 +60,6 @@ package railk.as3.ui.layout
 		}
 		
 		public function dispose():void {
-			view=null;
 			div=null;
 			master=null;
 		}

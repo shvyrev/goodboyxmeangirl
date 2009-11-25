@@ -76,6 +76,7 @@ package railk.as3.net.oauth
 					for (param in params) if (!param.toString().indexOf('oauth')) data += ','+param+'=\"'+URLEncoding.escape(params[param])+'\"';
 					return new URLRequestHeader("Authorization",data);
 					break;
+				default : break;
 			}
 		}
 		

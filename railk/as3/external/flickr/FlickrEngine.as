@@ -365,6 +365,8 @@ package railk.as3.external.flickr {
 						dispatchEvent( eErrorEvent );
 					}
 					break;
+					
+				default : break;
 			}
 		}
 		

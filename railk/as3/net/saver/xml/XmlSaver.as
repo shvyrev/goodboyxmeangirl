@@ -51,8 +51,8 @@ package railk.as3.net.saver.xml
 		 * CONSTRUCTEUR
 		 */
 		public function XmlSaver( amf:AmfphpClient ):void {
-			this.amf = amf
-			initListeners()
+			this.amf = amf;
+			initListeners();
 		}
 		
 		/**
@@ -223,6 +223,8 @@ package railk.as3.net.saver.xml
 							dispatchEvent( new XmlSaverEvent( XmlSaverEvent.ON_SAVE_FILE_COMPLETE, { info:"saving file complete "+evt.data } ) );
 							//dispose();
 							break;
+						
+						default : break;
 					}
 					break;
 					
@@ -232,6 +234,8 @@ package railk.as3.net.saver.xml
 					break;
 					
 				case AmfphpClientEvent.ON_CONNEXION_ERROR :break;
+				
+				default : break;
 			}
 		}
 		
@@ -451,7 +455,9 @@ package railk.as3.net.saver.xml
 						}
 					}	
 					nodes = actualXML;
-					break;	
+					break;
+					
+					default : break;
 			}
 			
 			if ( updated ) createXmlFile();

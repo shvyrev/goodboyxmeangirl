@@ -9,7 +9,6 @@
 package railk.as3.external.flickr 
 {
 	import flash.events.Event;
-
 	public dynamic class FlickrEngineErrorEvent extends Event
 	{
 		static public const ON_FROB_ERROR  			            :String = "onFrobError";
@@ -24,10 +23,8 @@ package railk.as3.external.flickr
 		
 		
 		public function FlickrEngineErrorEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
-				super(type, bubbles, cancelable) ;
-				for(var name:String in data) {
-					this[name] = data[name];
-				}
+			super(type, bubbles, cancelable) ;
+			for(var name:String in data) this[name] = data[name];
 		}
 	}	
 }

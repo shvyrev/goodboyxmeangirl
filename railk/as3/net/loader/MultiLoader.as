@@ -323,6 +323,7 @@ package railk.as3.net.loader
 				case MultiLoaderEvent.ON_STREAM_READY : sendEvent( evt.type, { info:evt.info, item:evt.item } ); break;
 				case MultiLoaderEvent.ON_STREAM_BUFFERING : sendEvent( evt.type, { info:evt.info, item:evt.item } ); break;
 				case MultiLoaderEvent.ON_STREAM_PLAYED :sendEvent( evt.type, { info:evt.info, item:evt.item } ); break;
+				default : break;
 			}
 		}
 

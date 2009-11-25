@@ -30,8 +30,7 @@ package railk.as3.data.tree
 			childs = new DLinkedList();
 			this.name = name;
 			
-			if (parent)
-			{
+			if (parent) {
 				this.parent = parent;
 				parent.childs.add([name,this]);
 			}

@@ -18,8 +18,8 @@ package railk.as3.stage {
 		static public const ONMOUSEBACK   :String = "onMouseBack";
 		
 		public function StageManagerEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
-				super(type, bubbles, cancelable) ;
-				for(var name:String in data) this[name] = data[name];
+			super(type, bubbles, cancelable) ;
+			for(var name:String in data) this[name] = data[name];
 		}
 	}
 }

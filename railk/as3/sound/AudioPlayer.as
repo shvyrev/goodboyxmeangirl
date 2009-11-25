@@ -169,6 +169,8 @@ package railk.as3.sound
 					played = current / total;
 					dispatchEvent(evt);
 					break;
+					
+				default : break;
 			}
 		}
 	}	

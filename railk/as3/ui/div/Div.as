@@ -19,9 +19,11 @@ package railk.as3.ui.div
 		protected var _align:String;
 		protected var _margins:Object = { top:0, right:0, bottom:0, left:0 };
 		protected var _options:Object;
+		protected var _constraint:String;
 		
 		
-		public function Div(name:String='undefined', float:String='none', align:String='none', margins:Object=null, position:String='relative', x:Number=0, y:Number=0, options:Object=null ) {
+		public function Div(name:String = 'undefined', float:String = 'none', align:String = 'none', margins:Object = null, position:String = 'relative', x:Number = 0, y:Number = 0, options:Object = null, constraint:String = 'XY' ) {
+			super();
 			this.name = name;
 			if (margins) this.margins = margins;
 			this.float = float;
@@ -30,6 +32,7 @@ package railk.as3.ui.div
 			this.x = x;
 			this.y = y;
 			this.options = options;
+			this.constraint = constraint;
 			this.state = new DivState(this);
 		}
 		
@@ -54,8 +57,8 @@ package railk.as3.ui.div
 		}
 		
 		public function update(from:IDiv):void {
-			if (y >= from.y && y < from.y+from.height ) x = int(state.x+((from.x-from.state.x)+(from.width-from.state.width)));
-			if (x >= from.x && x < from.x + from.width ) y = int(state.y+((from.y-from.state.y)+(from.height-from.state.height)));
+			if (y >= from.y && y < from.y+from.height && (constraint=='XY' || constraint=='X') ) x = int(state.x+((from.x-from.state.x)+(from.width-from.state.width)));
+			if (x >= from.x && x < from.x + from.width && (constraint=='XY' || constraint=='Y') ) y = int(state.y+((from.y-from.state.y)+(from.height-from.state.height)));
 		}
 		
 		/**
@@ -130,6 +133,7 @@ package railk.as3.ui.div
 				
 				case 'CENTERX' : x = stage.stageWidth*.5-width*.5; break;
 				case 'CENTERY' : y = stage.stageHeight*.5-height*.5; break;
+				default : break;
 			}
 		}
 		
@@ -148,6 +152,8 @@ package railk.as3.ui.div
 		public function set margins(value:Object):void { _margins = value; }
 		public function get options():Object { return _options; }
 		public function set options(value:Object):void { _options = value; }
+		public function get constraint():String { return _constraint; }
+		public function set constraint(value:String):void { _constraint = value; }
 		
 		/**
 		 * TO STRING
