@@ -8,5 +8,5 @@
 package railk.as3.motion
 {
 	import railk.as3.motion.tweens.Byte;
-	public function twyn(target:Object):Byte { return new Byte(target); }
+	public function twinByte(target:Object):Byte { return new Byte(target); }
 }
