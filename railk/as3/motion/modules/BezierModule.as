@@ -5,23 +5,21 @@
 
 package railk.as3.motion.modules 
 {
-	import railk.as3.motion.utils.Prop;
-	import railk.as3.motion.utils.BezierSegment;
-	
+	import railk.as3.motion.utils.*;
 	public class BezierModule
 	{	
 		static public function update(target:Object, props:Prop, ratio:Number ):Prop
 		{
-			var segment:BezierSegment, segments:Array = props.start, last:int = length - 1;
-			if (ratio >= 1) target[props.prop] = segments[last].p0 + segments[last].d2;
-			else if (segments.length == 1) target[props.prop] = segments[0].calculate(ratio);
+			var segment:Seg, segments:Array = props.start, last:int = length - 1;
+			if (ratio >= 1) target[props.prop] = segments[last].p + segments[last].d2;
+			else if (segments.length == 1) target[props.prop] = segments[0].calc(ratio);
 			else{
 				var index:int = (ratio*segments.length)>>0;
 				if (index < 0) index = 0;
 				else if (index > last) index = last;
 				segment = segments[index];
 				ratio = length * (ratio - index / length);
-				target[props.prop] = segment.calculate(ratio);
+				target[props.prop] = segment.calc(ratio);
 			}
 			return props;
 		}
@@ -37,12 +35,12 @@ package railk.as3.motion.modules
 				p1 = e[i];
 				p2 = e[++i];
 				if (through) {
-					if (!segments.length) { auto = (p2-p)/4; segments[segments.length] = new BezierSegment(p,p1-auto,p1);}
-					segments[segments.length] = new BezierSegment(p1,p1+auto,p2);
+					if (!segments.length) { auto = (p2-p)/4; segments[segments.length] = new Seg(p,p1-auto,p1);}
+					segments[segments.length] = new Seg(p1,p1+auto,p2);
 					auto = p2-(p1+auto);
 				} else {
 					if (i!=last) p2=(p1+p2)/2;
-					segments[segments.length] = new BezierSegment(p,p1,p2);
+					segments[segments.length] = new Seg(p,p1,p2);
 				}
 			}
 			return segments;
