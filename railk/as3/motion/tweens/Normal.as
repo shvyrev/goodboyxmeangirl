@@ -1,5 +1,5 @@
 /**
- * Regualar Tween (7.3k with all modules) (4,9k alone );
+ * Regualar Tween (7.3k with all modules) (4,47k alone );
  * 		Strong typed with pooling and module system including :
  * 			text / textColor /
  * 			color / 
@@ -18,7 +18,6 @@ package railk.as3.motion.tweens
 	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
-	import flash.filters.BitmapFilter;
 	import flash.geom.ColorTransform;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getTimer;
@@ -52,11 +51,11 @@ package railk.as3.motion.tweens
 		public var _rounded:Boolean;
 		public var _dispose:Boolean=true;
 		public var _onBegin:Function;
-		public var _onBeginParams:Array=[];
+		public var _onBeginA:Array=[];
 		public var _onUpdate:Function;
-		public var _onUpdateParams:Array=[];
+		public var _onUpdateA:Array=[];
 		public var _onComplete:Function;
-		public var _onCompleteParams:Array = [];
+		public var _onCompleteA:Array = [];
 		
 		
 		/**
@@ -97,9 +96,9 @@ package railk.as3.motion.tweens
 		public function reflect( value:Boolean ):Normal { _reflect = value; return this; }
 		public function rounded( value:Boolean ):Normal { _rounded = value; return this; }
 		public function dispose( value:Boolean ):Normal { _dispose = value; return this; }
-		public function onBegin( value:Function, ...args ):Normal { _onBegin = value; _onBeginParams = args; return this; }
-		public function onUpdate( value:Function, ...args ):Normal { _onUpdate = value; _onUpdateParams = args; return this; }
-		public function onComplete( value:Function, ...args ):Normal { _onComplete = value; _onCompleteParams = args; return this; }
+		public function onBegin( value:Function, ...args ):Normal { _onBegin = value; _onBeginA = args; return this; }
+		public function onUpdate( value:Function, ...args ):Normal { _onUpdate = value; _onUpdateA = args; return this; }
+		public function onComplete( value:Function, ...args ):Normal { _onComplete = value; _onCompleteA = args; return this; }
 		
 		/**
 		 * PLAY/PAUSE
@@ -163,11 +162,11 @@ package railk.as3.motion.tweens
 					case 'text': case 'textColor': props[props.length] = new Prop('text',p,target[p],ps[p]); break;
 					case 'color': var c:ColorTransform = target.transform.colorTransform; props[props.length] = new Prop(p, p, c, new ColorTransform(0 - c.redMultiplier, 0 - c.greenMultiplier, 0 - c.blueMultiplier, 0, ((ps[p] >> 16) & 0xff) - c.redOffset, ((ps[p] >> 8) & 0xff) - c.greenOffset, (ps[p] & 0xff) - c.blueOffset)); break;
 					case 'hexColor': props[props.length] = new Prop(p,p,target,ps[p]); break;
-					case 'GlowFilter': case 'BlurFilter': case 'BevelFilter': case 'DropShadowFilter':  props[props.length] = new Prop('filter',p,filter(p,ps[p]),ps[p]); break;
+					case 'GlowFilter': case 'BlurFilter': case 'BevelFilter': case 'DropShadowFilter':  props[props.length] = new Prop('filter',p,getDefinitionByName('railk.as3.motion.modules::FilterModule').init(target,p,ps[p]),ps[p]); break;
 					case 'tint': case 'brightness': case 'contrast': case 'hue': case 'saturation': case 'threshold': colorFilters[p] = [p,null,target.filters,ps[p]]; cf=true; break;
 					default :
 						if( p=='alphaVisible' ){ p='alpha'; autoVisible=true }
-						props[props.length] = new Prop(((ps[p] is Array)?'bezier':p), p, ((ps[p] is Array)?bezier(target[p],ps[p]):target[p]), ps[p], (p.search('rotation') != -1)); 
+						props[props.length] = new Prop(((ps[p] is Array)?'bezier':p), p, ((ps[p] is Array)?getDefinitionByName('railk.as3.motion.modules::BezierModule').init(target[p],ps[p]):target[p]), ps[p], (p.search('rotation') != -1)); 
 						break;
 				}
 			}
@@ -180,7 +179,7 @@ package railk.as3.motion.tweens
 		 */
 		public function update( time:Number, manual:Boolean=false ):void {
 			if ( time >= 0 && _onBegin!=null) {
-				_onBegin.apply(null, _onBeginParams);
+				_onBegin.apply(null, _onBeginA);
 				_onBegin = null;
 				if (hasEventListener(Event.INIT)) dispatchEvent(new Event(Event.INIT));
 			}
@@ -205,7 +204,7 @@ package railk.as3.motion.tweens
 							break;
 					}
 				}
-				if (_onUpdate != null) _onUpdate.apply(null, _onUpdateParams);
+				if (_onUpdate != null) _onUpdate.apply(null, _onUpdateA);
 				if( hasEventListener(Event.CHANGE) ) dispatchEvent(new Event(Event.CHANGE));
 			}
 			return ratio;
@@ -227,7 +226,7 @@ package railk.as3.motion.tweens
 			} else {
 				if (_dispose) killTween();
 				if(id) id = remove( this );
-				if (_onComplete != null) _onComplete.apply(null, _onCompleteParams);
+				if (_onComplete != null) _onComplete.apply(null, _onCompleteA);
 				if (hasEventListener(Event.COMPLETE)) dispatchEvent(new Event(Event.COMPLETE));
 			}	
 		}
@@ -237,37 +236,8 @@ package railk.as3.motion.tweens
 		 * UTILITIES
 		 */
 		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return -c * (t /= d) * (t - 2) + b; }
-		public function cap(str:String):String { return str.substr(0, 1).toUpperCase() +  str.substr(1, str.length); }
-		 
-		private function filter( filter:String, props:Object ):BitmapFilter {
-			var i:int= target.filters.length, classe:Class = getDefinitionByName('flash.filters::'+filter) as Class;
-			while( --i > -1 ) if (target.filters[i] is classe) return target.filters[i];
-			var f:BitmapFilter = new (classe)();
-			for ( var p:String in props ) f[p] = 0;
-			return f;
-		}
 		
-		private function bezier(b:Number, e:Array):Array {
-			var through:Boolean = false, segments:Array=[];
-			if (e[0] is Array) { through = true; e = e[0]; }
-			e.unshift(b);
-			
-			var p:Number, p1:Number, p2:Number = e[0], last:int = e.length-1, i:int = 1, auto:Number = NaN;
-			while (i<last) {
-				p = p2;
-				p1 = e[i];
-				p2 = e[++i];
-				if (through) {
-					if (!segments.length) { auto = (p2-p)/4; segments[segments.length] = new BezierSegment(p,p1-auto,p1);}
-					segments[segments.length] = new BezierSegment(p1,p1+auto,p2);
-					auto = p2-(p1+auto);
-				} else {
-					if (i!=last) p2=(p1+p2)/2;
-					segments[segments.length] = new BezierSegment(p,p1,p2);
-				}
-			}
-			return segments;
-		}
+		public function cap(str:String):String { return str.substr(0, 1).toUpperCase() +  str.substr(1, str.length); }
 		
 		/**
 		 * TICKER
