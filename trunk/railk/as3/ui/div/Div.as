@@ -18,11 +18,11 @@ package railk.as3.ui.div
 		protected var _float:String;
 		protected var _align:String;
 		protected var _margins:Object = { top:0, right:0, bottom:0, left:0 };
-		protected var _options:Object;
+		protected var _data:Object;
 		protected var _constraint:String;
 		
 		
-		public function Div(name:String = 'undefined', float:String = 'none', align:String = 'none', margins:Object = null, position:String = 'relative', x:Number = 0, y:Number = 0, options:Object = null, constraint:String = 'XY' ) {
+		public function Div(name:String = 'undefined', float:String = 'none', align:String = 'none', margins:Object = null, position:String = 'relative', x:Number = 0, y:Number = 0, data:Object = null, constraint:String = 'XY' ) {
 			super();
 			this.name = name;
 			if (margins) this.margins = margins;
@@ -31,7 +31,7 @@ package railk.as3.ui.div
 			this.position = position;
 			this.x = x;
 			this.y = y;
-			this.options = options;
+			this.data = data;
 			this.constraint = constraint;
 			this.state = new DivState(this);
 		}
@@ -95,7 +95,7 @@ package railk.as3.ui.div
 		}
 		 
 		public function resize(evt:Event = null):void {
-			if (_options && _options.hasOwnProperty('onResize')) _options['onResize'].apply(null, _options.hasOwnProperty('onResizeParams')?_options['onResizeParams']:null);
+			if (_data && _data.hasOwnProperty('onResize')) _data['onResize'].apply(null, _data.hasOwnProperty('onResizeParams')?_data['onResizeParams']:null);
 			switch(_align) {
 				case 'TL' : x = y = 0; break;
 				case 'TR' : 
@@ -150,8 +150,8 @@ package railk.as3.ui.div
 		public function set position(value:String):void { _position=value; }
 		public function get margins():Object { return _margins; }
 		public function set margins(value:Object):void { _margins = value; }
-		public function get options():Object { return _options; }
-		public function set options(value:Object):void { _options = value; }
+		public function get data():Object { return _data; }
+		public function set data(value:Object):void { _data = value; }
 		public function get constraint():String { return _constraint; }
 		public function set constraint(value:String):void { _constraint = value; }
 		
