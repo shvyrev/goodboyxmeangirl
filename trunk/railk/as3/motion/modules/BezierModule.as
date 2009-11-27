@@ -25,5 +25,27 @@ package railk.as3.motion.modules
 			}
 			return props;
 		}
+		
+		static public function init(b:Number, e:Array):Array {
+			var through:Boolean = false, segments:Array=[];
+			if (e[0] is Array) { through = true; e = e[0]; }
+			e.unshift(b);
+			
+			var p:Number, p1:Number, p2:Number = e[0], last:int = e.length-1, i:int = 1, auto:Number = NaN;
+			while (i<last) {
+				p = p2;
+				p1 = e[i];
+				p2 = e[++i];
+				if (through) {
+					if (!segments.length) { auto = (p2-p)/4; segments[segments.length] = new BezierSegment(p,p1-auto,p1);}
+					segments[segments.length] = new BezierSegment(p1,p1+auto,p2);
+					auto = p2-(p1+auto);
+				} else {
+					if (i!=last) p2=(p1+p2)/2;
+					segments[segments.length] = new BezierSegment(p,p1,p2);
+				}
+			}
+			return segments;
+		}
 	}
 }
