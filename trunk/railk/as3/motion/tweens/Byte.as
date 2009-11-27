@@ -25,6 +25,7 @@ package railk.as3.motion.tweens
 	import flash.utils.getQualifiedClassName;
 	import flash.geom.ColorTransform;
 	import flash.media.SoundTransform;
+	import railk.as3.motion.utils.*;
 	
 	final public class Byte
 	{	
@@ -142,10 +143,10 @@ package railk.as3.motion.tweens
 		private function bz(r:*, sgs:*):* {
 			var l:* = sgs.length-1, i:int =(r*sgs.length)>>0, rs:*;
 			if ( r >= 1 ) rs = sgs[l].p + sgs[l].d2;
-			else if (sgs.length == 1) rs = sgs[0].c(r);
+			else if (sgs.length == 1) rs = sgs[0].calc(r);
 			else {
 				if(i<0) i=0; else if(i>l) i=l;
-				rs = sgs[i].c(sgs.length*(r-i/sgs.length));
+				rs = sgs[i].calc(sgs.length*(r-i/sgs.length));
 			}
 			return rs;
 		}
@@ -161,12 +162,12 @@ package railk.as3.motion.tweens
 				p1 = e[i];
 				p2 = e[++i];
 				if (thg) {
-					if (!sgs.length) { a = (p2-p)/4; sgs[sgs.length] = new BzS(p,p1-a,p1);}
-					sgs[sgs.length] = new BzS(p1,p1+a,p2);
+					if (!sgs.length) { a = (p2-p)/4; sgs[sgs.length] = new Seg(p,p1-a,p1);}
+					sgs[sgs.length] = new Seg(p1,p1+a,p2);
 					a = p2-(p1+a);
 				} else {
 					if (i!=l) p2=(p1+p2)/2;
-					sgs[sgs.length] = new BzS(p,p1,p2);
+					sgs[sgs.length] = new Seg(p,p1,p2);
 				}
 			}
 			return sgs;
@@ -213,15 +214,7 @@ package railk.as3.motion.tweens
 		 */
 		public function dispose():void {
 			t.removeEventListener('enterFrame', tk );
-			ps = d = e = b = ba = u = ua = c = ca = null;
+			ps = null;
 		}
 	}
-}
-
-internal class BzS {
-	public var p:*;
-	public var d1:*;
-	public var d2:*;
-	public function BzS(p:*, p1:*, p2:*) { this.p=p; d1=p1-p; d2=p2-p; }
-	public function c(t:*):Number { return p+t*(2*(1-t)*d1+t*d2); }
 }
