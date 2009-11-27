@@ -33,14 +33,6 @@ package railk.as3.display.graphicShape {
 			return '[ GRAPHICSHAPE > ' + this.name.toUpperCase() + ', (type:' + this._type + ') ]';
 		}
 		
-		public function get color():uint { return this.transform.colorTransform.color; }
-		public function set color(value:uint):void {
-			var newCol:ColorTransform = new ColorTransform();
-			var t:Transform = new Transform(this);
-			newCol.color = value;
-			t.colorTransform = newCol;
-		}
-		
 		public function get type():String { return _type; }
 	}
 }
