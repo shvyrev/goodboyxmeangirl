@@ -38,14 +38,19 @@ package railk.as3.text
 		private var _font                    :String; 
 		private var _embedFont               :Boolean; 
 		private var _size                    :Number; 
-		private var _align                   :String; 
+		private var _align                   :String;
+		private var _pixelFont               :Boolean;
 		private var _wordwrap                :Boolean; 
+		private var _htmlText                :Boolean; 
 		private var _selectable              :Boolean; 
 		private var _width                   :Number; 
 		private var _height                  :Number; 
 		private var _autoSize                :Boolean; 
+		private var _hasMask                 :Boolean; 
 		private var _autoSizeType            :String;
 		private var _letterSpacing           :Number;
+		private var _backgroundColor         :uint;
+		private var _borderColor             :uint;
 		
 		/**
 		 * CONSTRUCTEUR
@@ -64,7 +69,12 @@ package railk.as3.text
 		 * @param	width
 		 * @param	height
 		 */
-		public function TextLink(	name:String = '', type:String = 'dynamic', text:String = '', color:uint = 0xffffff, font:String = 'arial', embedFont:Boolean = false, size:Number = 10, align:String = 'left', pixelFont:Boolean = false, wordwrap:Boolean = false, htmlText:Boolean = false, selectable:Boolean = false, autoSize:Boolean = false, autoSizeType:String = '', width:Number = 0, height:Number = 0, hasMask:Boolean = false, backgroundColor:uint = 0x00FFFFFF, borderColor:uint = 0x00FFFFFF ) {
+		public function TextLink(	name:String = '', type:String = 'dynamic', text:String = '', color:uint = 0xffffff, 
+									font:String = 'arial', embedFont:Boolean = false, size:Number = 10, align:String = 'left', 
+									pixelFont:Boolean = false, wordwrap:Boolean = false, htmlText:Boolean = false, 
+									selectable:Boolean = false, autoSize:Boolean = false, autoSizeType:String = '', 
+									width:Number = 0, height:Number = 0, hasMask:Boolean = false, 
+									backgroundColor:uint = 0x00FFFFFF, borderColor:uint = 0x00FFFFFF ) {
 			super();
 			_name = name;
 			_type = type;
@@ -74,12 +84,17 @@ package railk.as3.text
 			_embedFont = embedFont;
 			_size = size;
 			_align = align;
+			_pixelFont = pixelFont
 			_wordwrap = wordwrap;
+			_htmlText = htmlText;
 			_selectable = selectable;
 			_width = width;
 			_height = height;
 			_autoSize = autoSize;
 			_autoSizeType = autoSizeType;
+			_hasMask = hasMask;
+			_backgroundColor = backgroundColor;
+			_borderColor = borderColor;
 			init();
 		}
 		
@@ -87,45 +102,45 @@ package railk.as3.text
 			textLink = new Sprite();
 			
 				format = new TextFormat();
-				format.color = color;
-				format.font =  font;
-				format.size = size;
-				format.align = align;
+				format.color = _color;
+				format.font =  _font;
+				format.size = _size;
+				format.align = _align;
 			
 				texte = new TextField();
-				texte.name = name;
-				texte.type = type;
-				if ( !htmlText ){
-					texte.text = (text) ? text : ' ';
+				texte.name = _name;
+				texte.type = _type;
+				if ( !_htmlText ){
+					texte.text = (_text) ? _text : ' ';
 					texte.setTextFormat( format ); 
 				} else { 
-					texte.htmlText = (text) ? text : ' '; 
+					texte.htmlText = (_text) ? _text : ' '; 
 				}
-				texte.embedFonts = embedFont;
-				texte.selectable = selectable;
+				texte.embedFonts = _embedFont;
+				texte.selectable = _selectable;
 				if ( autoSize ) {
-					texte.autoSize = autoSizeType;
-					if( width != 0) texte.width = width;
-					if( height != 0) texte.height = height;
+					texte.autoSize = _autoSizeType;
+					if( width != 0) texte.width = _width;
+					if( height != 0) texte.height = _height;
 				} else {
-					if( width != 0) texte.width = width;
-					texte.height = (height!=0)?height:size+2;
+					if( _width != 0) texte.width = _width;
+					texte.height = (_height!=0)?_height:_size+2;
 				}
-				if ( backgroundColor != 0x00FFFFFF ) {
+				if ( _backgroundColor != 0x00FFFFFF ) {
 					texte.background = true;
-					texte.backgroundColor = backgroundColor;
+					texte.backgroundColor = _backgroundColor;
 				}
-				if ( borderColor != 0x00FFFFFF ) {
+				if ( _borderColor != 0x00FFFFFF ) {
 					texte.border = true;
-					texte.borderColor = borderColor;
+					texte.borderColor = _borderColor;
 				}
-				texte.wordWrap = wordwrap;
-				texte.mouseEnabled = selectable;
-				if(!pixelFont) texte.antiAliasType = AntiAliasType.ADVANCED;
+				texte.wordWrap = _wordwrap;
+				texte.mouseEnabled = _selectable;
+				if(!_pixelFont) texte.antiAliasType = AntiAliasType.ADVANCED;
 				textLink.addChild( texte );
 				
 			addChild( textLink );
-			if (hasMask) enableMask();
+			if (_hasMask) enableMask();
 		}
 		
 		/**
@@ -185,9 +200,15 @@ package railk.as3.text
 			dispatchChange();
 		}
 		
+		public function get textColor():uint { return _color; }
+		public function set textColor(value:uint):void {
+			texte.textColor = value;
+			_color = value;
+		}
+		
 		public function get color():uint { return _color; }
 		public function set color(value:uint):void {
-			format.color = value;
+			texte.textColor = value;
 			_color = value;
 		}
 		
