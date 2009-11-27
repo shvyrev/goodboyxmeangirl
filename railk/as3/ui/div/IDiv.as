@@ -41,7 +41,7 @@ package railk.as3.ui.div
 		function set width(value:Number):void;
 		function get height():Number;
 		function set height(value:Number):void;
-		function get options():Object;
-		function set options(value:Object):void;
+		function get data():Object;
+		function set data(value:Object):void;
 	}
 }
