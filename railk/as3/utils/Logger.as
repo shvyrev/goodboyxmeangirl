@@ -15,8 +15,9 @@ package railk.as3.utils
 		/**
 		 * START
 		 */
-		static public function init(...info):void { 
+		static public function init(...info):void {
 			enabled = true; 
+			log(info);
 		}
 		
 		/**

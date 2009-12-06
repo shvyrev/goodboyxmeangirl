@@ -12,19 +12,19 @@ package railk.as3.ui
 	public class SEO
 	{	
 		private static const FUNCTION_SETCONTENT:String = 
-		"document.insertScript = function ()" +
+		"function ()" +
 		"{ " +
 			"if (document.seo_setContent==null)" +
 			"{" +
 				"seo_setContent = function (id,content)" +
 				"{" +
-					"document.getElementById(id).innerHtml = content"+
+					"document.getElementById(id).innerHTML = content;"+
 				"}" +
 			"}" +
 		"}";
 		
 		public static function init():void {
-			if(ExternalInterface.available ) ExternalInterface.call(FUNCTION_SETCONTENT);
+			if (ExternalInterface.available ) ExternalInterface.call(FUNCTION_SETCONTENT);
 		}
 			
 		public static function setNav(data:Array):void {
@@ -33,10 +33,8 @@ package railk.as3.ui
 			if(ExternalInterface.available ) ExternalInterface.call('seo_setContent', 'sitenav', content);
 		}
 		
-		public static function setContent(data:XML):void {
-			var content:String="";
-			for each ( var l:XML in data) content += l.toString() + '\n';
-			if(ExternalInterface.available ) ExternalInterface.call('seo_setContent', 'copy', content);
+		public static function setContent(data:String):void {
+			if(ExternalInterface.available ) ExternalInterface.call('seo_setContent', 'copy', data);
 		}
 	}
 }

@@ -7,11 +7,13 @@
 
 package railk.as3.ui.div
 {	
-	import railk.as3.display.RegistrationPoint;
+	import flash.geom.Point;
 	import flash.events.Event;
+	import railk.as3.display.RegistrationPoint;
 	
 	public class Div extends RegistrationPoint implements IDiv
 	{	
+		protected var p:Point = new Point();
 		protected var arcs:Array = [];
 		protected var _state:DivState;
 		protected var _position:String;
@@ -21,7 +23,6 @@ package railk.as3.ui.div
 		protected var _data:Object;
 		protected var _constraint:String;
 		
-		
 		public function Div(name:String = 'undefined', float:String = 'none', align:String = 'none', margins:Object = null, position:String = 'relative', x:Number = 0, y:Number = 0, data:Object = null, constraint:String = 'XY' ) {
 			super();
 			this.name = name;
@@ -29,8 +30,8 @@ package railk.as3.ui.div
 			this.float = float;
 			this.align = align;
 			this.position = position;
-			this.x = x;
-			this.y = y;
+			this.x = p.x = x;
+			this.y = p.y = y;
 			this.data = data;
 			this.constraint = constraint;
 			this.state = new DivState(this);
@@ -52,13 +53,13 @@ package railk.as3.ui.div
 			if (align != 'none') stage.removeEventListener(Event.RESIZE, resize );
 		}
 		
-		private function check(evt:Event):void {
+		protected function check(evt:Event):void {
 			for (var i:int = 0; i < arcs.length ; ++i) arcs[i].div.update(this);
 		}
 		
 		public function update(from:IDiv):void {
-			if (y >= from.y && y < from.y+from.height && (constraint=='XY' || constraint=='X') ) x = int(state.x+((from.x-from.state.x)+(from.width-from.state.width)));
-			if (x >= from.x && x < from.x + from.width && (constraint=='XY' || constraint=='Y') ) y = int(state.y+((from.y-from.state.y)+(from.height-from.state.height)));
+			if (y >= from.y && y < from.y+from.height && (constraint=='XY' || constraint=='X') ) x = state.x+((from.x-from.state.x)+(from.width-from.state.width));
+			if (x >= from.x && x < from.x+from.width && (constraint=='XY' || constraint=='Y') ) y = state.y+((from.y-from.state.y)+(from.height-from.state.height));
 		}
 		
 		/**
@@ -88,14 +89,13 @@ package railk.as3.ui.div
 		/**
 		 * RESIZE
 		 */
-		private function initResize(evt:Event = null):void {
+		protected function initResize(evt:Event = null):void {
 			removeEventListener( Event.ADDED_TO_STAGE, initResize);
 			stage.addEventListener(Event.RESIZE, resize, false , 0, true );
 			resize();
 		}
 		 
 		public function resize(evt:Event = null):void {
-			if (_data && _data.hasOwnProperty('onResize')) _data['onResize'].apply(null, _data.hasOwnProperty('onResizeParams')?_data['onResizeParams']:null);
 			switch(_align) {
 				case 'TL' : x = y = 0; break;
 				case 'TR' : 
@@ -130,11 +130,17 @@ package railk.as3.ui.div
 					x = stage.stageWidth*.5-width*.5;
 					y = stage.stageHeight*.5-height*.5;
 					break;
-				
-				case 'CENTERX' : x = stage.stageWidth*.5-width*.5; break;
-				case 'CENTERY' : y = stage.stageHeight*.5-height*.5; break;
+				case 'CENTERX' : 
+					x = stage.stageWidth*.5-width*.5;
+					y = 0;
+					break;
+				case 'CENTERY' :
+					x = 0;
+					y = stage.stageHeight*.5-height*.5;
+					break;
 				default : break;
 			}
+			x += p.x; y += p.y;
 		}
 		
 		/**

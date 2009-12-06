@@ -27,8 +27,8 @@ package railk.as3.ui.layout
 		private function construct(d:XML, master:LayoutView=null, container:LayoutView=null):void {
 			var length:int = d.children().length(), cm:LayoutView;
 			var data:XML = (d.data.toString() == '')?null:new XML(d.data);
-			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d),data );
-			for (var i:int = 0; i < length; i++) if (d.children()[i].name() != 'component') construct( d.children()[i],getView(d.children()[i-1].@id.toString()),viewsDict[d.@id.toString()] );
+			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d),data,A('constraint',d) );
+			for (var i:int = 0; i < length; i++) if (d.children()[i].name() == 'div') construct( d.children()[i],getView(d.children()[i-1].@id.toString()),viewsDict[d.@id.toString()] );
 		}		
 		
 		/**
@@ -43,7 +43,7 @@ package railk.as3.ui.layout
 		/**
 		 * UTILITIES
 		 */
-		private var attributes:Object =  { 'class':'', float:'none', align:'none', margins:null, posistion:'relative', x:0, y:0 };
+		private var attributes:Object =  { 'class':'', float:'none', align:'none', margins:null, posistion:'relative', x:0, y:0, constraint:'XY' };
 		private var margins:Object =  { 0:'top', 1:'right', 2:'bottom', 3:'left' };
 		private function A( name:String, xml:XML ):* {
 			var i:int;

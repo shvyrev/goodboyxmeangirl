@@ -10,6 +10,7 @@ package railk.as3.ui.page
 	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.core.*;
 	import railk.as3.pattern.mvc.interfaces.*;
+	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.pattern.multiton.Multiton;
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.layout.Layout;
@@ -21,6 +22,7 @@ package railk.as3.ui.page
 	public class PageManager extends AbstractFacade implements IFacade
 	{
 		public var index:IPage;
+		public var last:IPage;
 		public var statics:IStatic;
 		public var current:String='';
 		public var menu:RightClickMenu;
@@ -28,7 +30,10 @@ package railk.as3.ui.page
 		public var multiPage:Boolean;
 		public var structure:String;
 		public var adaptToScreen:Boolean;
+		
 		private var multiPageOn:Boolean;
+		private var multiPageId:String;
+		private var multiPageAnchor:String;
 		
 		public static function getInstance():PageManager {
 			return Multiton.getInstance('S',PageManager);
@@ -47,10 +52,11 @@ package railk.as3.ui.page
 			this.structure = structure;
 			this.adaptToScreen = adaptToScreen;
 			menu = new RightClickMenu();
-			menu.add(author, null,null, true);
+			menu.add(author, author, null,null, true);
 			registerModel(AbstractModel);
 			registerController(AbstractController);
 			registerContainer( new PageStruct(structure,adaptToScreen) );
+			if (multiPage) addEventListener( Notification.NOTE, showNext, false, 0, true );
 		}
 		
 		public function addStatic(id:String, classe:String, layout:Layout, onTop:Boolean, src:String):void {
@@ -64,12 +70,16 @@ package railk.as3.ui.page
 			s.show();
 		}
 		
-		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:Layout, src:String, transition:String):void {
-			if (parent==''){
-				index = (classe=='')?new Page(MID,id,null,title,loading,layout,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,src,transition);
-				registerView( index );
+		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:Layout, align:String, src:String, transition:String):void {
+			if (parent == '') {
+				if( !index) registerView( index = last = (classe=='')?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition) );
+				else {
+					var page:IPage;
+					registerView( page = (classe == '')?new Page(MID, id, null, title, loading, layout, align, src, transition):new (getDefinitionByName(classe))(MID, id, null, title, loading, layout, align, src, transition));
+					last.next = page; page.prev = last; last = page;
+				}
 			} else {
-				registerView( ((classe=='')?new Page(MID,id, getPage(parent),title,loading,layout,src,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,loading,layout,src,transition)) );
+				registerView( ((classe=='')?new Page(MID,id, getPage(parent),title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,loading,layout,align,src,transition)) );
 				getPage(parent).addChild(getPage(id));
 			}
 			
@@ -82,10 +92,11 @@ package railk.as3.ui.page
 					case 'do': case 'undo' :
 						if ( !multiPageOn && multiPage ) showAll(id,data);
 						else (multiPage)?goToPage(id,data):setPage(id,data);
+						break;
 					default : break;
 				}
 			}
-			menu.add(title, LinkManager.setValue, [link], ((id == 'index')?true:false) );
+			menu.add(id, title, LinkManager.setValue, [link], ((id == 'index')?true:false) );
 			LinkManager.add(link, null, action, '', null, true);
 		}
 		
@@ -94,23 +105,26 @@ package railk.as3.ui.page
 		 */
 		public function showAll(id:String, anchor:String = ''):void {
 			index.show();
-			var walker:IPage = index.firstChild;
-			while ( walker ) {
-				walker.show();
-				walker = walker.next;
-			}
 			multiPageOn = true;
-			goToPage(id,anchor);
+			multiPageId = id;
+			multiPageAnchor = anchor;
+		}
+		
+		private function showNext(evt:Notification):void {
+			(container as PageStruct).activate((evt.page as IView).component);
+			if ( (evt.page as IPage).next != null ) (evt.page as IPage).next.show();
+			else goToPage(multiPageId, multiPageAnchor);
 		}
 		
 		public function goToPage( id:String, anchor:String = '' ):void {
-			if (current) getPage(current).stop();
-			var page:IPage = getPage(id);
-			page.anchor = anchor;
-			(container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
-			current = id;
+			if(current != id ) {
+				if (current) getPage(current).stop();
+				var page:IPage = getPage(id);
+				page.anchor = anchor;
+				(container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
+				current = id;
+			}	
 		}
-		
 		
 		/**
 		 * SINGLE PAGE NAV

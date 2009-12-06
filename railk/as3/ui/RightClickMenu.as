@@ -34,13 +34,13 @@ package railk.as3.ui
 		/**
 		 * MANAGE ITEMS
 		 */
-		public function add( name:String, action:Function=null, actionParams:Array=null, separator:Boolean=false ):void {
+		public function add( id:String, name:String, action:Function=null, actionParams:Array=null, separator:Boolean=false ):void {
 			actions[name] = {action:action, actionParams:actionParams};
 			item = new ContextMenuItem( name,separator );
 			if(action!=null) item.addEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent, false, 0, true );
 			menu.customItems.push( item );
 			items.push(name);
-			menus[menus.length] = '<li><a href="#/'+name+'/">'+name+'</a></li> '
+			if(action!=null) menus[menus.length] = '<li><a href="/#/'+id+'/">'+name+'</a></li> '
 		}
 		
 		public function remove( name:String ):void {

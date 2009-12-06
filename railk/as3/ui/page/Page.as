@@ -29,6 +29,7 @@ package railk.as3.ui.page
 		private var _anchor:String;
 		private var _transition:ITransition;
 		
+		protected var align:String;
 		protected var layout:Layout;
 		protected var src:String;
 		protected var loaded:Boolean;
@@ -38,16 +39,18 @@ package railk.as3.ui.page
 		protected var length:Number=0;
 		protected var loader:UILoader;
 		
-		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:Layout, src:String, transitionName:String) {
+		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:Layout, align:String, src:String, transitionName:String) {
 			super(MID,id);
 			_id = id;
 			_parent = parent;
 			_title = title;
 			this.layout = layout;
+			this.align = (align)?align:'none';
 			this.loadingView = new (getDefinitionByName(loading))() as IPageLoading;
 			this.src = src;
 			this.transitionName = transitionName;
-			this.component = new PageDiv(id);
+			this.component = new PageDiv(id,'none',align);
+			data = '<h1>'+title+'</h1>\n';
 		}
 		
 		/**
@@ -81,9 +84,10 @@ package railk.as3.ui.page
 		 * SHOW/HIDE
 		 */
 		override public function show():void {
+			(facade.container as PageStruct).addDiv(component);
 			component.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
-			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views, data); (facade.container as PageStruct).addDiv(component); activateViews(layout.views); SEO.setContent(data); loaded = true; }
+			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); activateViews(layout.views); SEO.setContent(data); loaded = true; }
 			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
 			else complete.apply();
 		}
@@ -117,15 +121,20 @@ package railk.as3.ui.page
 		/**
 		 * 	UTILITIES
 		 */
-		protected function setupViews(views:Array, data:*= null):void {
+		protected function setupViews(views:Array):void {
 			for (var i:int = 0; i < views.length; i++) {
-				views[i].setup(data);
+				views[i].setup();
 				if (!views[i].container)component.addChild( views[i].div );
 				else views[i].container.div.addChild( views[i].div  );
+				data += (views[i].div.data!=null)?views[i].div.data:'';
 			}
 			if (transitionName) _transition = new (getDefinitionByName(transitionName))() as ITransition;
 		}
-		protected function activateViews(views:Array):void { for (var i:int = 0; i < views.length; i++) views[i].activate(); }
+		
+		protected function activateViews(views:Array):void { 
+			for (var i:int = 0; i < views.length; i++) views[i].activate();
+			sendNotification('activated', _id, { page:this } );
+		}
 		
 		/**
 		 * 	GETTER/SETTER
