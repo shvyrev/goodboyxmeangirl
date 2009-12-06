@@ -25,13 +25,14 @@ package railk.as3.ui.layout
 		public var position:String;
 		public var x:Number
 		public var y:Number;
+		public var constraint:String;
 		
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutView( container:LayoutView, master:LayoutView, divClass:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, data:XML=null ) {
+		public function LayoutView( container:LayoutView, master:LayoutView, divClass:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, data:XML, constraint:String ) {
 			this.container = container;
-			this.master = master
+			this.master = master;
 			this.divClass = divClass;
 			this.data = data;
 			this.id = id;
@@ -41,11 +42,11 @@ package railk.as3.ui.layout
 			this.position = position;
 			this.x = x;
 			this.y = y;
+			this.constraint = constraint;
 		}
 		
-		public function setup(data:*= null):void {
-			data = (data!=null)?data:this.data;
-			div = (divClass)?new (getDefinitionByName(divClass) as Class)(id, float, align, margins, position, x, y, data):new (getDefinitionByName('railk.as3.ui.div::Div') as Class)(id, float, align, margins, position, x, y, data);
+		public function setup():void {
+			div = (divClass)?new (getDefinitionByName(divClass) as Class)(id, float, align, margins, position, x, y, data, constraint):new (getDefinitionByName('railk.as3.ui.div::Div') as Class)(id, float, align, margins, position, x, y, data, constraint);
 		}
 		
 		public function activate():void {

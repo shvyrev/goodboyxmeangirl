@@ -11,6 +11,7 @@ package railk.as3.ui
 	import railk.as3.pattern.singleton.Singleton;
 	public class Localisation
 	{
+		public var current:String=''
 		public static function getInstance():Localisation{
 			return Singleton.getInstance(Localisation);
 		}
@@ -22,7 +23,8 @@ package railk.as3.ui
 		
 		
 		public function getConfig(lang:String):String {
-			return (TopLevel.root.loaderInfo.url.indexOf("file") == 0)?'../assets/siteLocal'+((lang!='fr')?lang.toUpperCase():'')+'.xml':'site'+((lang!='fr')?lang.toUpperCase():'')+'.xml'
+			current = lang;
+			return (TopLevel.root.loaderInfo.url.indexOf("file") == 0)?'../assets/siteLocal'+((lang!='fr')?lang.toUpperCase():'')+'.xml':'assets/site'+((lang!='fr')?lang.toUpperCase():'')+'.xml'
 		}
 	}
 }

@@ -76,7 +76,7 @@ package railk.as3.ui.page
 		 */		
 		protected function setupViews(views:Array):void { 
 			for (var i:int = 0; i < views.length; i++) {
-				views[i].setup(data);
+				views[i].setup();
 				if (!views[i].container) component.addChild( views[i].div );
 				else views[i].container.div.addChild( views[i].div  );
 			}

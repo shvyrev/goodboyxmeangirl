@@ -44,7 +44,7 @@ package railk.as3.ui
 			for each ( var p:XML in xml..page) {
 				var title:String = A('title', p), src:String = A('src', p);
 				var parent:String = (p.parent().localName() == 'page')?p.parent().@id:'';
-				PageManager.getInstance().addPage(A('id', p),parent,title,A('class',p,A('package',xml)+'.view::'),A('loading',p,A('package',xml)+'.loading::'),getPageLayout( A('package',xml), title, new XML(p.child('body')) ),src,A('package',xml)+'.transition.'+A('transition',p));
+				PageManager.getInstance().addPage(A('id', p),parent,title,A('class',p,A('package',xml)+'.view::'),A('loading',p,A('package',xml)+'.loading::'),getPageLayout( A('package',xml), title, new XML(p.child('body')) ),A('align',p),src,A('package',xml)+'.transition.'+A('transition',p));
 			}
 		}
 		

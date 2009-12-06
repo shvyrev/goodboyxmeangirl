@@ -23,6 +23,8 @@ package railk.as3.ui.div
 		function getChildAt(index:int):DisplayObject;
 		function getChildByName(name:String):DisplayObject;
 		function getChildIndex(child:DisplayObject):int;
+		function get name():String;
+		function set name(value:String):void;
 		function get state():DivState;
 		function set state(value:DivState):void;
 		function get float():String;
@@ -43,5 +45,7 @@ package railk.as3.ui.div
 		function set height(value:Number):void;
 		function get data():Object;
 		function set data(value:Object):void;
+		function get constraint():String;
+		function set constraint(value:String):void;
 	}
 }
