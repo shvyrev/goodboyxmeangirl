@@ -35,12 +35,6 @@ package railk.as3.ui.loading
 			cercle.mask = masker;	
 		}
 		
-		public function get color():uint { return _color; }
-		public function set color( value:uint ):void {
-			cercle.color = value; 
-			_color = value;
-		}
-		
 		public function get percent():Number { return _percent; }
 		public function set percent(value:Number):void {
 			_percent = value;

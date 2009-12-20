@@ -35,9 +35,6 @@ package railk.as3.ui.loading
 			addChild( text );
 		}
 		
-		public function get color():uint { return text.color; }
-		public function set color( value:uint ):void { text.color = value; }
-		
 		public function get percent():Number { return _percent; }
 		public function set percent(value:Number):void {
 			_percent = value;

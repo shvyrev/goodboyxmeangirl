@@ -108,10 +108,10 @@ package railk.as3.video
 			this.height = height;
 			this.type = type;
 			this.bufferSize = buffersize;
-			init();
+			execute();
 		}
 		
-		private function init():void {
+		private function execute():void {
 			//--Sharing the player + the exact .flv
 			//shareTxt = '<object width="'+width+'" height="'+height+'">';
 			//shareTxt += '<param name="allowscriptaccess" value="always" />';

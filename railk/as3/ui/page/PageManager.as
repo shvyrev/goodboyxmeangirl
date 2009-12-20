@@ -13,6 +13,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.pattern.multiton.Multiton;
 	import railk.as3.ui.div.Div;
+	import railk.as3.ui.div.IDiv;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
@@ -56,7 +57,7 @@ package railk.as3.ui.page
 			registerModel(AbstractModel);
 			registerController(AbstractController);
 			registerContainer( new PageStruct(structure,adaptToScreen) );
-			if (multiPage) addEventListener( Notification.NOTE, showNext, false, 0, true );
+			addEventListener( Notification.NOTE, placePage, false, 0, true );
 		}
 		
 		public function addStatic(id:String, classe:String, layout:Layout, onTop:Boolean, src:String):void {
@@ -110,20 +111,18 @@ package railk.as3.ui.page
 			multiPageAnchor = anchor;
 		}
 		
-		private function showNext(evt:Notification):void {
-			(container as PageStruct).activate((evt.page as IView).component);
-			if ( (evt.page as IPage).next != null ) (evt.page as IPage).next.show();
+		private function showNext(page:IPage):void {
+			if (page.next != null) page.next.show();
 			else goToPage(multiPageId, multiPageAnchor);
 		}
 		
 		public function goToPage( id:String, anchor:String = '' ):void {
-			if(current != id ) {
-				if (current) getPage(current).stop();
-				var page:IPage = getPage(id);
-				page.anchor = anchor;
-				(container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
-				current = id;
-			}	
+			if (current == id ) return; 
+			if (current) getPage(current).stop();
+			var page:IPage = getPage(id);
+			page.anchor = anchor;
+			(container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
+			current = id;
 		}
 		
 		/**
@@ -132,20 +131,30 @@ package railk.as3.ui.page
 		public function getPage( id:String ):IPage { return getView(id) as IPage; }
 		
 		public function setPage( id:String, anchor:String = '' ):void {
-			if (current != id) {
-				if (current) unsetPage(current);
-				var page:IPage = getPage(id);
-				page.anchor = anchor;
-				page.show();
-				if (page.transition) page.transition.easeIn((page as IView).component);
-				current = id;
-			}
+			if (current == id) return;
+			if (current) unsetPage(current);
+			var page:IPage = getPage(id);
+			page.anchor = anchor;
+			page.show();
+			page.play();
+			if (page.transition) page.transition.easeIn((page as IView).component);
+			current = id;
 		}
 		
 		public function unsetPage( id:String ):void {
 			var page:IPage = getPage(id);
+			page.stop();
 			if (page.transition) page.transition.easeOut((page as IView).component, function():void { page.hide(); } );
 			else page.hide();
+		}
+		
+		/**
+		 * NAV UTILITIES
+		 */
+		private function placePage(evt:Notification):void {
+			if (evt.note != 'onPageActivated') return;
+			(container as PageStruct).placeDiv((evt.page as IView).component);
+			if (multiPage) showNext(evt.page as IPage);
 		}
 		
 		/**
