@@ -26,8 +26,7 @@ package railk.as3.ui.layout
 			
 		private function construct(d:XML, master:LayoutView=null, container:LayoutView=null):void {
 			var length:int = d.children().length(), cm:LayoutView;
-			var data:XML = (d.data.toString() == '')?null:new XML(d.data);
-			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d),data,A('constraint',d) );
+			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d),D(d),A('constraint',d) );
 			for (var i:int = 0; i < length; i++) if (d.children()[i].name() == 'div') construct( d.children()[i],getView(d.children()[i-1].@id.toString()),viewsDict[d.@id.toString()] );
 		}		
 		
@@ -60,6 +59,11 @@ package railk.as3.ui.layout
 				}
 			}	
 			return attributes[name];
+		}
+		private function D(xml:XML):XML {
+			var result:XML = new XML('<data></data>')
+			for (var i:int; i < xml.children().length(); i++ ) if (xml.children()[i].name() != 'div') result.appendChild(xml.children()[i]);
+			return (result.children().length() == 0)?null:result;
 		}
 	}
 }

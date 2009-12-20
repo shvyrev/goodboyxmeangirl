@@ -31,15 +31,6 @@ package railk.as3.ui.loading
 			this.addChild(bar)
 		}
 		
-		public function get color():uint { return _color; }
-		public function set color( value:uint ):void {
-			var c:ColorTransform = new ColorTransform();
-			var t:Transform = new Transform(bar);
-			c.color = value;
-			t.colorTransform = c;
-			_color = value;
-		}
-		
 		public function get percent():Number { return _percent; }
 		public function set percent(value:Number):void {
 			_percent = value;

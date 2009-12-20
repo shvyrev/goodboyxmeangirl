@@ -25,7 +25,7 @@ package railk.as3.ui.div
 			return current;
 		}
 		
-		protected function placeDiv(current:IDiv):void {
+		public function placeDiv(current:IDiv):void {
 			var X:Number = ((last)?last.x:0), Y:Number = ((last)?last.y:0);
 			if (current.float == 'none') Y = Y+current.margins.top+((last)?last.height+last.margins.bottom:0);
 			else if (current.float == 'left') X = X + current.margins.left + ((last)?last.width + last.margins.right:0);

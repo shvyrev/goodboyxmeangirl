@@ -87,7 +87,7 @@ package railk.as3.ui.page
 			(facade.container as PageStruct).addDiv(component);
 			component.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
-			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); activateViews(layout.views); SEO.setContent(data); loaded = true; }
+			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); activateViews(layout.views); loaded = true; }
 			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
 			else complete.apply();
 		}
@@ -95,13 +95,13 @@ package railk.as3.ui.page
 		override public function hide():void {
 			loader.stop();
 			var i:int=0, views:Array = layout.views;
+			(component as PageDiv).unbind();
 			try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
 			catch (e:Error) { /*throw e;*/}
 			while(component.numChildren) component.removeChildAt(0);
 			try { (facade.container as PageStruct).delDiv(component); }
-			catch (e:ArgumentError){ throw e; }
-			component = null;
-			component = new Div(id);
+			catch (e:ArgumentError){ /*throw e;*/ }
+			component = new PageDiv(id,'none',align);
 		}
 		
 		/**
@@ -113,9 +113,12 @@ package railk.as3.ui.page
 		/**
 		 * PLAY/STOP
 		 */
-		public function play():void { }
+		public function play():void { SEO.setContent(data); }
 		public function stop():void {}
 		
+		/**
+		 * DISPOSE
+		 */
 		override public function dispose():void { layout = null; }
 		
 		/**
@@ -133,7 +136,7 @@ package railk.as3.ui.page
 		
 		protected function activateViews(views:Array):void { 
 			for (var i:int = 0; i < views.length; i++) views[i].activate();
-			sendNotification('activated', _id, { page:this } );
+			sendNotification('onPageActivated', _id, { page:this } );
 		}
 		
 		/**

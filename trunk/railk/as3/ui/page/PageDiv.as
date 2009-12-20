@@ -31,6 +31,7 @@ package railk.as3.ui.page
 			this.ratio = ratio;
 			this.type = type;
 			this.adaptToScreen = adaptToScreen;
+			//for (var i:int = 0; i < numChildren; i++) getChildAt(i).addEventListener(Event.CHANGE, dispatchChange); 
 			pos = new Point(x, y);
 			oldStage = new Point(stage.stageWidth, stage.stageHeight);
 			oppsStage = oldStage.clone();
@@ -42,7 +43,7 @@ package railk.as3.ui.page
 			return ratio;
 		}
 		
-		override public function resize(evt:Event=null):void {
+		override public function resize(evt:Event = null):void {
 			super.resize(evt);
 			switch(type) {
 				case 'horizontal' : x += pos.x; break;
@@ -56,7 +57,8 @@ package railk.as3.ui.page
 		
 		override public function update(from:IDiv):void {
 			super.update(from);
-			//trace( ratio, init(ratio, type, adaptToScreen) );
+			//ratio = (pos.x + width) / stage.stageWidth;
+			//opps('x');
 		}
 		 
 		/**
