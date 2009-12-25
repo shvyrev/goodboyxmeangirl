@@ -230,7 +230,6 @@ package railk.as3.text
 			format.letterSpacing = value;
 			_letterSpacing = value;
 			texte.setTextFormat( format );
-			//dispatchChange();
 		}
 		
 		public function get bold():Boolean { return format.bold; }

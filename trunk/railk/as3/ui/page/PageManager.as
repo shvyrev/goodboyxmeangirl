@@ -13,7 +13,6 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.pattern.multiton.Multiton;
 	import railk.as3.ui.div.Div;
-	import railk.as3.ui.div.IDiv;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;

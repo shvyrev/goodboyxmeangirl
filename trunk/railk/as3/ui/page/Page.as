@@ -105,10 +105,11 @@ package railk.as3.ui.page
 		}
 		
 		/**
-		 * ZOOM/DEZOOM
+		 * ZOOM/DEZOOM/ADAPT
 		 */
 		public function zoom():void {}
 		public function dezoom():void {}
+		public function adapt():void {}
 		
 		/**
 		 * PLAY/STOP
