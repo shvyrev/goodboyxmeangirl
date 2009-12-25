@@ -2,7 +2,10 @@
  * PageDiv Structure
  * 
  * @author Richard Rodney
- * @version 0.1 
+ * @version 0.1
+ * 
+ * TODO CHECK FEW LIMITS BUGS (HORIZONTAL/CENTERX)
+ * 
  */
 
 package railk.as3.ui.page
@@ -10,37 +13,48 @@ package railk.as3.ui.page
 	import flash.events.Event;
 	import flash.geom.Point;
 	import railk.as3.ui.div.*;
-	import railk.as3.stage.StageManager;
 	
 	public class PageDiv extends Div implements IDiv
 	{
+		public var prev:PageDiv;
+		public var gap:Number=0;
+		
 		public var ratio:Number;
-		public var type:String;
-		public var adaptToScreen:Boolean;		
+		public var type:String;		
 		public var onScreen:Boolean;
+		public var adaptToScreen:Boolean;
+		public var adapt:Function;
+		
 		public var pos:Point;
-		public var oppsPos:Point = new Point();
-		public var oppsStage:Point;
-		public var oldStage:Point;
+		public var oppsPos:Point;
+		private var oppsStage:Point;
+		private var hasOpps:Boolean;
 		
 		public function PageDiv(name:String='undefined',float:String='none',align:String='none',margins:Object=null,position:String='relative',x:Number=0,y:Number=0,data:Object=null) {
 			super(name,float,align,margins,position,x,y,data);
 		}
 		
-		public function init(ratio:Number, type:String, adaptToScreen:Boolean ):Number {
+		public function init(ratio:Number, type:String, adaptToScreen:Boolean ):void {
+			// vars
 			this.ratio = ratio;
 			this.type = type;
 			this.adaptToScreen = adaptToScreen;
-			//for (var i:int = 0; i < numChildren; i++) getChildAt(i).addEventListener(Event.CHANGE, dispatchChange); 
+			
+			// init
 			pos = new Point(x, y);
-			oldStage = new Point(stage.stageWidth, stage.stageHeight);
-			oppsStage = oldStage.clone();
-			if ( type.search('Single') != -1 ) { 
-				ratio = ((pos.x + width) / stage.stageWidth>ratio+1)?(pos.x + width) / stage.stageWidth:++ratio; 
-				if(this.ratio) opps((type=='verticalSingle')?'y':'x'); 
-			} 
-			else ++ratio;
-			return ratio;
+			oppsPos = new Point();
+			oppsStage = new Point(stage.stageWidth, stage.stageHeight);
+			
+			// ratio
+			if ( type.search('Single') != -1 && ratio) opps((type=='verticalSingle')?'y':'x');
+			for (var i:int = 0; i < numChildren; i++) getChildAt(i).addEventListener(Event.CHANGE, dispatchChange); 
+		}
+		
+		override protected function check(evt:Event):void {
+			removeEventListener( Event.CHANGE, check );
+			resize();
+			addEventListener( Event.CHANGE, check );
+			super.check(evt);
 		}
 		
 		override public function resize(evt:Event = null):void {
@@ -52,38 +66,25 @@ package railk.as3.ui.page
 				case 'verticalSingle' : opps('y'); break;
 				default: break;
 			}
-			if (adaptToScreen) adapt();
+			if (adaptToScreen && adapt != null ) adapt.apply();
 		}
 		
 		override public function update(from:IDiv):void {
-			super.update(from);
-			//ratio = (pos.x + width) / stage.stageWidth;
-			//opps('x');
+			if (hasOpps) resize();
+			else { super.update(from); pos.x = x; pos.y = y; }
 		}
-		 
+		
 		/**
 		 * ONE PAGE PER SCREEN
 		 * @param	type
 		 */
 		public function opps(type:String):void {
-			var size:Number = (type=='x')?stage.stageWidth:stage.stageHeight;
-			oppsPos[type] = (size - oppsStage[type])*ratio;
-			this[type] += pos[type] = size*ratio;
-			if(onScreen) (parent as PageStruct).opps(oppsPos,type);
-		}
-		
-		public function adapt():void {
-			if ( stage.stageWidth - width > stage.stageHeight -height ) {
-				var oldW:Number = width;
-				width = (width*stage.stageWidth)/oldStage.x;
-				height = (width*height)/oldW;
-			} else {
-				var oldH:Number = height;
-				height = (height*stage.stageHeight)/oldStage.y
-				width = (width*height)/oldH
-			}
-			oldStage.x = stage.stageWidth;
-			oldStage.y = stage.stageHeight;
+			var size:Number = (type == 'x')?stage.stageWidth:stage.stageHeight;
+			gap = ((prev)?(prev.width-size>0?prev.width-size:0)+prev.gap:0);
+			oppsPos[type] = (size-oppsStage[type])*ratio + gap;
+			this[type] += pos[type] = size*ratio + gap;
+			if (onScreen) (parent as PageStruct).opps(oppsPos, type);
+			hasOpps = true;
 		}
 	}
-}	
+}

@@ -41,7 +41,10 @@ package railk.as3.ui.div
 		 * MONITOR CHANGES
 		 */
 		public function bind():void { 
-			if(position!='asbolute') this.addEventListener(Event.CHANGE, check);
+			if (position != 'asbolute') {
+				this.addEventListener(Event.CHANGE, check);
+				activate(this);
+			}
 			if (align != 'none') {
 				if (stage) initResize(); 
 				else addEventListener(Event.ADDED_TO_STAGE, initResize );
@@ -49,7 +52,10 @@ package railk.as3.ui.div
 		}
 		
 		public function unbind():void {
-			if(position!='asbolute') this.removeEventListener(Event.CHANGE, check);
+			if (position != 'asbolute') {
+				this.removeEventListener(Event.CHANGE, check);
+				desactivate(this);
+			}
 			if (align != 'none') stage.removeEventListener(Event.RESIZE, resize );
 		}
 		
@@ -60,6 +66,30 @@ package railk.as3.ui.div
 		public function update(from:IDiv):void {
 			if (y >= from.y && y < from.y+from.height && (constraint=='XY' || constraint=='X') ) x = state.x+((from.x-from.state.x)+(from.width-from.state.width));
 			if (x >= from.x && x < from.x+from.width && (constraint=='XY' || constraint=='Y') ) y = state.y+((from.y-from.state.y)+(from.height-from.state.height));
+		}
+		
+		/**
+		 * MANAGE CHANGE EVENTS
+		 * @param	child
+		 */
+		private function activate(child:Object):void {
+			for (var i:int = 0; i < child.numChildren; i++) {
+				var subChild:Object = child.getChildAt(i);
+				if (!subChild.hasEventListener(Event.CHANGE)) {
+					subChild.addEventListener( Event.CHANGE, child.dispatchChange );
+					if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) activate(subChild);
+				}
+			}
+		}
+		
+		private function desactivate(child:Object):void {
+			for (var i:int = 0; i < child.numChildren; i++) {
+				var subChild:Object = child.getChildAt(i);
+				if (subChild.hasEventListener(Event.CHANGE)) {
+					subChild.removeEventListener( Event.CHANGE, child.dispatchChange );
+					if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) desactivate(subChild);
+				}
+			}
 		}
 		
 		/**

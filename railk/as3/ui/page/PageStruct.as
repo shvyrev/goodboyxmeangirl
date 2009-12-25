@@ -12,6 +12,7 @@ package railk.as3.ui.page
 	
 	public class PageStruct extends DivStruct implements IDiv
 	{
+		private var lastPage:PageDiv;
 		private var ratio:Number = 0;
 		private var structure:String;
 		private var adaptToScreen:Boolean;
@@ -37,6 +38,8 @@ package railk.as3.ui.page
 			current = (div)?div:new PageDiv( name, float, align, margins, position, x, y, data);
 			if (!onScreen) { onScreen = current as PageDiv; onScreen.onScreen = true; }
 			divs[divs.length] = addChild(current as Div );
+			(current as PageDiv).prev = lastPage;
+			lastPage = current as PageDiv;
 			return current;
 		}
 		
@@ -54,7 +57,7 @@ package railk.as3.ui.page
 		override public function placeDiv(current:IDiv):void {
 			if (structure.search('horizontal') != -1) { current.float = 'left'; current.constraint = 'X';}
 			else if (structure.search('vertical') != -1) current.constraint = 'Y';
-			if (structure != 'single') { super.placeDiv(current); ratio = (current as PageDiv).init(ratio, structure, adaptToScreen ); }
+			if (structure != 'single') { super.placeDiv(current); (current as PageDiv).init(ratio++,structure,adaptToScreen); }
 			current.bind();
 		}
 		

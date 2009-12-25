@@ -15,6 +15,7 @@ package railk.as3.ui.page
 		function hide():void;
 		function zoom():void;
 		function dezoom():void;
+		function adapt():void;
 		function play():void;
 		function stop():void;
 		function dispose():void;

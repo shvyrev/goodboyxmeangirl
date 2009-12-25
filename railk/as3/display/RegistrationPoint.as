@@ -6,8 +6,8 @@
  * @version 0.3
  */
 
-package railk.as3.display {
-	
+package railk.as3.display 
+{	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -17,14 +17,13 @@ package railk.as3.display {
 
 	public class RegistrationPoint extends Sprite
 	{
-		private var rp			:Point;
-		private var _x2        	:Number=0;
-		private var _y2        	:Number=0;
-		private var _scaleX2   	:Number=1;
-		private var _scaleY2   	:Number=1;
-		private var _scaleXY   	:Number=1;
-		private var _rotation2 	:Number=0;
-		
+		private var rp:Point;
+		private var _x2:Number=0;
+		private var _y2:Number=0;
+		private var _scaleX2:Number=1;
+		private var _scaleY2:Number=1;
+		private var _scaleXY:Number=1;
+		private var _rotation2:Number=0;
 		
 		public function RegistrationPoint() {
 			super();
@@ -41,22 +40,6 @@ package railk.as3.display {
 		override public function set y(value:Number):void { super.y = value; dispatchChange(); }
 		override public function set width(value:Number):void { super.width = value; dispatchChange(); }
 		override public function set height(value:Number):void { super.height = value; dispatchChange(); }
-		override public function addChild(child:DisplayObject):DisplayObject {
-			if (hasEventListener(Event.CHANGE)) child.addEventListener(Event.CHANGE, dispatchChange, false, 0, true );
-			return super.addChild( child);
-		}
-		override public function addChildAt(child:DisplayObject, index:int):DisplayObject { 
-			if(hasEventListener(Event.CHANGE)) child.addEventListener(Event.CHANGE, dispatchChange, false, 0, true);
-			return super.addChildAt(child,index); 
-		}
-		override public function addEventListener(type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false):void {
-			if( type == Event.CHANGE ) for(var i:int=0;i<this.numChildren;++i) if(!this.getChildAt(i).hasEventListener(Event.CHANGE)) this.getChildAt(i).addEventListener(Event.CHANGE, dispatchChange); 
-			super.addEventListener(type, listener, useCapture, priority, useWeakReference);
-		}
-		override public function removeEventListener(type:String, listener:Function, useCapture:Boolean = false):void {
-			if( type == Event.CHANGE ) for(var i:int=0;i<this.numChildren;++i) if(this.getChildAt(i).hasEventListener(Event.CHANGE)) this.getChildAt(i).removeEventListener(Event.CHANGE, dispatchChange);
-			super.removeEventListener(type, listener, useCapture);
-		}
 		
 		/**
 		 * X2
@@ -65,7 +48,6 @@ package railk.as3.display {
 		public function set x2(value:Number):void {
 			this.x += value - global.x;
 			this._x2 = value;
-			dispatchChange();
 		}
 
 		/**
@@ -75,7 +57,6 @@ package railk.as3.display {
 		public function set y2(value:Number):void {
 			this.y += value - global.y;
 			this._y2 = value;
-			dispatchChange();
 		}
 		
 		/**
@@ -138,10 +119,8 @@ package railk.as3.display {
 		}
 		
 		/**
-		 * EVENT DISPATCH
+		 * EVENT MANAGEMENT
 		 */
-		protected function dispatchChange(evt:Event = null):void {
-			if(hasEventListener(Event.CHANGE)) dispatchEvent( new Event(Event.CHANGE) );
-		}
+		public function dispatchChange(evt:Event = null):void { if (hasEventListener(Event.CHANGE)) dispatchEvent( evt?evt:new Event(Event.CHANGE,false,true) ); }
 	}
 }
