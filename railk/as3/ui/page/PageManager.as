@@ -45,7 +45,7 @@ package railk.as3.ui.page
 		}
 		
 		public function init( author:String, title:String, hasMenu:Boolean, multiPage:Boolean, structure:String, adaptToScreen:Boolean ):void {
-			SEO.init();
+			//SEO.init();
 			LinkManager.init( title, true, true);
 			this.hasMenu = hasMenu;
 			this.multiPage = multiPage;
@@ -161,7 +161,7 @@ package railk.as3.ui.page
 		 */
 		public function setContextMenu():void {
 			TopLevel.main.contextMenu = menu.menu;
-			SEO.setNav(menu.menus);
+			//SEO.setNav(menu.menus);
 		}		
 	}
 }
