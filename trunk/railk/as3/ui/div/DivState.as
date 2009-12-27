@@ -15,19 +15,15 @@ package railk.as3.ui.div
 		public var height:Number;
 		protected var div:IDiv;
 		
-		public function DivState(div:IDiv) {
-			this.div = div;
+		public function DivState(div:IDiv) { this.div = div; }
+		
+		public function init():void {
 			this.x = div.x;
 			this.y = div.y;
 			this.width = div.width;
 			this.height = div.height;
 		}
 		
-		public function update():void {
-			x = div.x;
-			y = div.y;
-			width = div.width;
-			height = div.height;
-		}
+		public function dispose():void { div = null; }
 	}
 }

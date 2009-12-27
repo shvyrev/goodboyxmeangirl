@@ -87,7 +87,7 @@ package railk.as3.ui.page
 			(facade.container as PageStruct).addDiv(component);
 			component.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; }
-			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); activateViews(layout.views); loaded = true; }
+			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); initViews(layout.views); activateViews(layout.views); loaded = true; }
 			if (!loaded && !reload) loader = new UILoader( src, complete, ((loadingView)?progress:null) );
 			else complete.apply();
 		}
@@ -135,6 +135,7 @@ package railk.as3.ui.page
 			if (transitionName) _transition = new (getDefinitionByName(transitionName))() as ITransition;
 		}
 		
+		protected function initViews(views:Array):void { for (var i:int = 0; i < views.length; i++) views[i].init(); }
 		protected function activateViews(views:Array):void { 
 			for (var i:int = 0; i < views.length; i++) views[i].activate();
 			sendNotification('onPageActivated', _id, { page:this } );

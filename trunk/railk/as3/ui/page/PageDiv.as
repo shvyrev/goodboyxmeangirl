@@ -50,13 +50,6 @@ package railk.as3.ui.page
 			for (var i:int = 0; i < numChildren; i++) getChildAt(i).addEventListener(Event.CHANGE, dispatchChange); 
 		}
 		
-		override protected function check(evt:Event):void {
-			removeEventListener( Event.CHANGE, check );
-			resize();
-			addEventListener( Event.CHANGE, check );
-			super.check(evt);
-		}
-		
 		override public function resize(evt:Event = null):void {
 			super.resize(evt);
 			switch(type) {

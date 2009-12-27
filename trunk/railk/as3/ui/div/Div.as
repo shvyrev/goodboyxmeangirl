@@ -7,14 +7,14 @@
 
 package railk.as3.ui.div
 {	
-	import flash.geom.Point;
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import railk.as3.display.RegistrationPoint;
 	
 	public class Div extends RegistrationPoint implements IDiv
 	{	
-		protected var p:Point = new Point();
 		protected var arcs:Array = [];
+		protected var isDiv:Boolean;
 		protected var _state:DivState;
 		protected var _position:String;
 		protected var _float:String;
@@ -30,17 +30,26 @@ package railk.as3.ui.div
 			this.float = float;
 			this.align = align;
 			this.position = position;
-			this.x = p.x = x;
-			this.y = p.y = y;
+			this.x = x;
+			this.y = y;
 			this.data = data;
 			this.constraint = constraint;
 			this.state = new DivState(this);
+			addEventListener(Event.ADDED_TO_STAGE, added );
+		}
+		
+		/**
+		 * ADDED TO STAGE
+		 */
+		private function added(evt:Event):void { 
+			removeEventListener(Event.ADDED_TO_STAGE, added ),
+			isDiv = ('addDiv' in parent)?false:true;
 		}
 		
 		/**
 		 * MONITOR CHANGES
 		 */
-		public function bind():void { 
+		public function bind():void {
 			if (position != 'asbolute') {
 				this.addEventListener(Event.CHANGE, check);
 				activate(this);
@@ -60,17 +69,19 @@ package railk.as3.ui.div
 		}
 		
 		protected function check(evt:Event):void {
+			dispatch = false;
+			resize();
+			dispatch = true;
 			for (var i:int = 0; i < arcs.length ; ++i) arcs[i].div.update(this);
 		}
 		
 		public function update(from:IDiv):void {
-			if (y >= from.y && y < from.y+from.height && (constraint=='XY' || constraint=='X') ) x = state.x+((from.x-from.state.x)+(from.width-from.state.width));
-			if (x >= from.x && x < from.x+from.width && (constraint=='XY' || constraint=='Y') ) y = state.y+((from.y-from.state.y)+(from.height-from.state.height));
+			if (y >= from.y && y < from.y+from.height && (constraint=='XY' || constraint=='X') ) x = _state.x+((from.x-from.state.x)+(from.width-from.state.width));
+			if (x >= from.x && x < from.x+from.width && (constraint=='XY' || constraint=='Y') ) y = _state.y+((from.y-from.state.y)+(from.height-from.state.height));
 		}
 		
 		/**
 		 * MANAGE CHANGE EVENTS
-		 * @param	child
 		 */
 		private function activate(child:Object):void {
 			for (var i:int = 0; i < child.numChildren; i++) {
@@ -126,14 +137,19 @@ package railk.as3.ui.div
 		}
 		 
 		public function resize(evt:Event = null):void {
+			var W:Number = (!isDiv)?stage.stageWidth:parent.width;
+			var H:Number = (!isDiv)?stage.stageHeight:parent.height;
 			switch(_align) {
-				case 'TL' : x = y = 0; break;
+				case 'TL' : 
+					x = state.x;
+					y = state.y; 
+					break;
 				case 'TR' : 
-					x = stage.stageWidth - width;
-					y = 0;
+					x = W - width;
+					y = state.y;
 					break;
 				case 'BR' :
-					x = stage.stageWidth - width;
+					x = W - width;
 					y = stage.stageHeight - height;
 					break;
 				case 'BL' : 
@@ -141,36 +157,35 @@ package railk.as3.ui.div
 					y = stage.stageHeight - height;
 					break;
 				case 'T' :
-					x = stage.stageWidth*.5-width*.5;
-					y = 0;
+					x = W*.5-width*.5;
+					y = state.y;
 					break;
 				case 'L' :
-					x = 0;
-					y = stage.stageHeight*.5-height*.5;
+					x = state.x;
+					y = H*.5-height*.5;
 					break;
 				case 'R' :
-					x = stage.stageWidth - width;
-					y = stage.stageHeight*.5-height*.5;
+					x = W - width;
+					y = H*.5-height*.5;
 					break;
 				case 'B' :
-					x = stage.stageWidth*.5-width*.5;
+					x = W*.5-width*.5;
 					y = stage.stageHeight - height;
 					break;
 				case 'CENTER' :
-					x = stage.stageWidth*.5-width*.5;
-					y = stage.stageHeight*.5-height*.5;
+					x = W*.5-width*.5;
+					y = H*.5-height*.5;
 					break;
 				case 'CENTERX' : 
-					x = stage.stageWidth*.5-width*.5;
-					y = 0;
+					x = W*.5-width*.5;
+					y = state.y;
 					break;
 				case 'CENTERY' :
-					x = 0;
-					y = stage.stageHeight*.5-height*.5;
+					x = state.x;
+					y = H*.5-height*.5;
 					break;
 				default : break;
 			}
-			x += p.x; y += p.y;
 		}
 		
 		/**
@@ -195,7 +210,7 @@ package railk.as3.ui.div
 		 * TO STRING
 		 */
 		override public function toString():String {
-			return '[ DIV > name:'+name+' ]'
+			return '['+super.toString().split(' ')[1].split(']')[0].toUpperCase()+'::'+name+']'
 		}
 	}
 }
