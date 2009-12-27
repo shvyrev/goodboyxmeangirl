@@ -18,12 +18,13 @@ package railk.as3.display
 	public class RegistrationPoint extends Sprite
 	{
 		private var rp:Point;
-		private var _x2:Number=0;
-		private var _y2:Number=0;
-		private var _scaleX2:Number=1;
-		private var _scaleY2:Number=1;
-		private var _scaleXY:Number=1;
-		private var _rotation2:Number=0;
+		private var _x2:Number = 0;
+		private var _y2:Number = 0;
+		private var _scaleX2:Number = 1;
+		private var _scaleY2:Number = 1;
+		private var _scaleXY:Number = 1;
+		private var _rotation2:Number = 0;
+		public var dispatch:Boolean = true;
 		
 		public function RegistrationPoint() {
 			super();
@@ -121,6 +122,6 @@ package railk.as3.display
 		/**
 		 * EVENT MANAGEMENT
 		 */
-		public function dispatchChange(evt:Event = null):void { if (hasEventListener(Event.CHANGE)) dispatchEvent( evt?evt:new Event(Event.CHANGE,false,true) ); }
+		public function dispatchChange(evt:Event = null):void { if (hasEventListener(Event.CHANGE) && dispatch) dispatchEvent( evt?evt:new Event(Event.CHANGE,false,true) ); }
 	}
 }

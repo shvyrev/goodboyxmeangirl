@@ -47,22 +47,17 @@ package railk.as3.ui.layout
 		
 		public function setup():void {
 			div = (divClass)?new (getDefinitionByName(divClass) as Class)(id, float, align, margins, position, x, y, data, constraint):new (getDefinitionByName('railk.as3.ui.div::Div') as Class)(id, float, align, margins, position, x, y, data, constraint);
-		}
-		
-		public function activate():void {
 			var X:Number = ((master)?master.div.x:0), Y:Number = ((master)?master.div.y:0);
 			if (float == 'none') Y = Y+div.margins.top+((master)?master.div.height+master.div.margins.bottom:0);
 			else if (float == 'left') X = X+div.margins.left + ((master)?master.div.width + master.div.margins.right:0);
 			div.x += X;
 			div.y += Y;
-			div.state.update();
 			if (master && position!='absolute') master.div.addArc(div);
-			div.bind();
 		}
 		
-		public function dispose():void {
-			div=null;
-			master=null;
-		}
+		public function init():void { div.state.init(); }
+		public function activate():void { div.bind(); }
+		
+		public function dispose():void { div=null; }
 	}
 }

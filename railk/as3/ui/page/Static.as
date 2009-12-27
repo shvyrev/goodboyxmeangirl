@@ -11,7 +11,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.ui.layout.Layout;
-	import railk.as3.ui.div.Div;
+	import railk.as3.ui.div.DivStruct;
 	import railk.as3.ui.UILoader;
 	
 	public class Static extends AbstractView implements IStatic,IView,INotifier
@@ -31,7 +31,7 @@ package railk.as3.ui.page
 			this.layout = layout;
 			this.onTop = onTop;
 			this.src = src;
-			this.component = new Div(id);
+			this.component = new DivStruct(id);
 		}
 		
 		/**
@@ -62,7 +62,7 @@ package railk.as3.ui.page
 			loader.stop();
 			for (var i:int = 0; i < component.numChildren; i++) component.removeChildAt(i);
 			(facade.container as PageStruct).delStatic(component);
-			component = new Div();
+			component = new DivStruct(id);
 		}
 		
 		/**

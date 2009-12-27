@@ -21,13 +21,16 @@ package railk.as3.ui.layout
 		public function Layout( pack:String, name:String, body:XML ) {
 			this.pack = pack;
 			this.name = name;
-			for (var i:int=0; i < body.children().length(); i++) construct( body.children()[i] );
+			construct(body);
 		}
 			
-		private function construct(d:XML, master:LayoutView=null, container:LayoutView=null):void {
-			var length:int = d.children().length(), cm:LayoutView;
-			views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container,master,A('class',d),d.@id,A('float',d),A('align',d),A('margins',d),A('position',d),A('x',d), A('y',d),D(d),A('constraint',d) );
-			for (var i:int = 0; i < length; i++) if (d.children()[i].name() == 'div') construct( d.children()[i],getView(d.children()[i-1].@id.toString()),viewsDict[d.@id.toString()] );
+		private function construct(xml:XML, container:LayoutView=null, master:LayoutView=null):void {
+			for (var i:int = 0; i < xml.children().length(); i++) {
+				var d:XML = xml.children()[i];
+				if (d.name() != 'div') continue;
+				master = views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container, master, A('class', d), d.@id, A('float', d), A('align', d), A('margins', d), A('position', d), A('x', d), A('y', d), D(d), A('constraint', d) );
+				if ( d.children().length() > 0 ) construct( d, master );
+			}
 		}		
 		
 		/**

@@ -17,10 +17,21 @@ package railk.as3.ui.div
 			super(name, float, align, margins, position, x, y, data);
 		}
 		
+		/**
+		 * ACTIVATE
+		 */
+		public function activate():void {
+			var i:int;
+			for (i = 0; i < divs.length; i++) divs[i].state.init();
+			for (i = 0; i < divs.length; i++) divs[i].bind();
+		}
+		
+		/**
+		 * MANAGE DIVS
+		 */
 		public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='none', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):IDiv {
 			current = (div)?div:new Div( name, float, align, margins, position, x, y, data);
 			if (current.position == 'relative') placeDiv(current);
-			current.bind();
 			divs[divs.length] = addChild(current as Div);
 			return current;
 		}
@@ -31,7 +42,6 @@ package railk.as3.ui.div
 			else if (current.float == 'left') X = X + current.margins.left + ((last)?last.width + last.margins.right:0);
 			current.x += X;
 			current.y += Y;
-			current.state.update();
 			if (last) last.addArc(current);
 			last = current;
 		}

@@ -26,7 +26,7 @@ package railk.as3.ui.page
 		 * @param	adaptToScreen		true/false reisze the content coresponding to screen size
 		 */
 		public function PageStruct(structure:String='horizontal',adaptToScreen:Boolean=false) {
-			super('container');
+			super('structure');
 			this.structure = structure;
 			this.adaptToScreen = adaptToScreen;
 		}
@@ -58,6 +58,7 @@ package railk.as3.ui.page
 			if (structure.search('horizontal') != -1) { current.float = 'left'; current.constraint = 'X';}
 			else if (structure.search('vertical') != -1) current.constraint = 'Y';
 			if (structure != 'single') { super.placeDiv(current); (current as PageDiv).init(ratio++,structure,adaptToScreen); }
+			current.state.init();
 			current.bind();
 		}
 		
