@@ -14,7 +14,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.UILoader;
-	import railk.as3.ui.SEO;
+	//import railk.as3.ui.SEO;
 	
 	public class Page extends AbstractView implements IPage,IView,INotifier
 	{
@@ -114,7 +114,7 @@ package railk.as3.ui.page
 		/**
 		 * PLAY/STOP
 		 */
-		public function play():void { SEO.setContent(data); }
+		public function play():void { /*SEO.setContent(data);*/ }
 		public function stop():void {}
 		
 		/**
