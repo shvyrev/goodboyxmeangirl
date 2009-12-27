@@ -13,7 +13,7 @@ package railk.as3.ui.div
 		protected var last:IDiv;
 		protected var divs:Array = [];
 		
-		public function DivStruct(name:String='undefined', float:String='none', align:String='none', margins:Object=null, position:String='relative', x:Number=0, y:Number=0, data:*=null):void {
+		public function DivStruct(name:String='undefined', float:String='none', align:String='TL', margins:Object=null, position:String='relative', x:Number=0, y:Number=0, data:*=null):void {
 			super(name, float, align, margins, position, x, y, data);
 		}
 		
@@ -29,7 +29,7 @@ package railk.as3.ui.div
 		/**
 		 * MANAGE DIVS
 		 */
-		public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='none', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):IDiv {
+		public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='TL', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):IDiv {
 			current = (div)?div:new Div( name, float, align, margins, position, x, y, data);
 			if (current.position == 'relative') placeDiv(current);
 			divs[divs.length] = addChild(current as Div);

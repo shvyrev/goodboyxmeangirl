@@ -4,7 +4,7 @@
  * @author Richard Rodney
  * @version 0.1
  * 
- * TODO CHECK FEW LIMITS BUGS (HORIZONTAL/CENTERX)
+ * (HORIZONTAL/VERTICAL + ALIGN != POSSIBLE)
  * 
  */
 
@@ -30,7 +30,7 @@ package railk.as3.ui.page
 		private var oppsStage:Point;
 		private var hasOpps:Boolean;
 		
-		public function PageDiv(name:String='undefined',float:String='none',align:String='none',margins:Object=null,position:String='relative',x:Number=0,y:Number=0,data:Object=null) {
+		public function PageDiv(name:String='undefined',float:String='none',align:String='TL',margins:Object=null,position:String='relative',x:Number=0,y:Number=0,data:Object=null) {
 			super(name,float,align,margins,position,x,y,data);
 		}
 		
@@ -52,13 +52,8 @@ package railk.as3.ui.page
 		
 		override public function resize(evt:Event = null):void {
 			super.resize(evt);
-			switch(type) {
-				case 'horizontal' : x += pos.x; break;
-				case 'vertical' : y += pos.y; break;
-				case 'horizontalSingle' : opps('x'); break;
-				case 'verticalSingle' : opps('y'); break;
-				default: break;
-			}
+			if (type == 'horizontalSingle') opps('x');
+			else if (type == 'verticalSingle') opps('y');
 			if (adaptToScreen && adapt != null ) adapt.apply();
 		}
 		

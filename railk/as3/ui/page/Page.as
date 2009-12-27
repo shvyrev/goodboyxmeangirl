@@ -45,11 +45,11 @@ package railk.as3.ui.page
 			_parent = parent;
 			_title = title;
 			this.layout = layout;
-			this.align = (align)?align:'none';
+			this.align = (align)?align:'TL';
 			this.loadingView = new (getDefinitionByName(loading))() as IPageLoading;
 			this.src = src;
 			this.transitionName = transitionName;
-			this.component = new PageDiv(id,'none',align);
+			this.component = new PageDiv(id,'none',this.align);
 			data = '<h1>'+title+'</h1>\n';
 		}
 		
