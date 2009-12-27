@@ -7,7 +7,6 @@
 
 package railk.as3.ui.div
 {	
-	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import railk.as3.display.RegistrationPoint;
 	
