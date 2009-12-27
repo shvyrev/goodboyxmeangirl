@@ -22,7 +22,7 @@ package railk.as3.ui.div
 		protected var _data:Object;
 		protected var _constraint:String;
 		
-		public function Div(name:String = 'undefined', float:String = 'none', align:String = 'none', margins:Object = null, position:String = 'relative', x:Number = 0, y:Number = 0, data:Object = null, constraint:String = 'XY' ) {
+		public function Div(name:String = 'undefined', float:String = 'none', align:String = 'TL', margins:Object = null, position:String = 'relative', x:Number = 0, y:Number = 0, data:Object = null, constraint:String = 'XY' ) {
 			super();
 			this.name = name;
 			if (margins) this.margins = margins;
@@ -53,10 +53,8 @@ package railk.as3.ui.div
 				this.addEventListener(Event.CHANGE, check);
 				activate(this);
 			}
-			if (align != 'none') {
-				if (stage) initResize(); 
-				else addEventListener(Event.ADDED_TO_STAGE, initResize );
-			}
+			if (stage) initResize(); 
+			else addEventListener(Event.ADDED_TO_STAGE, initResize );
 		}
 		
 		public function unbind():void {
@@ -64,7 +62,7 @@ package railk.as3.ui.div
 				this.removeEventListener(Event.CHANGE, check);
 				desactivate(this);
 			}
-			if (align != 'none') stage.removeEventListener(Event.RESIZE, resize );
+			stage.removeEventListener(Event.RESIZE, resize );
 		}
 		
 		protected function check(evt:Event):void {

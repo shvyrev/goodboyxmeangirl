@@ -25,7 +25,7 @@ package railk.as3.ui.page
 		 * @param	type				single/horizontal/vertical/horizontalSingle/verticalSingle/other to come
 		 * @param	adaptToScreen		true/false reisze the content coresponding to screen size
 		 */
-		public function PageStruct(structure:String='horizontal',adaptToScreen:Boolean=false) {
+		public function PageStruct(structure:String='single',adaptToScreen:Boolean=false) {
 			super('structure');
 			this.structure = structure;
 			this.adaptToScreen = adaptToScreen;
@@ -34,7 +34,7 @@ package railk.as3.ui.page
 		/**
 		 * ADD PAGE
 		 */
-		override public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='none', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):IDiv {
+		override public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='TL', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):IDiv {
 			current = (div)?div:new PageDiv( name, float, align, margins, position, x, y, data);
 			if (!onScreen) { onScreen = current as PageDiv; onScreen.onScreen = true; }
 			divs[divs.length] = addChild(current as Div );
@@ -55,10 +55,10 @@ package railk.as3.ui.page
 		 * @param	current
 		 */
 		override public function placeDiv(current:IDiv):void {
+			current.state.init();
 			if (structure.search('horizontal') != -1) { current.float = 'left'; current.constraint = 'X';}
 			else if (structure.search('vertical') != -1) current.constraint = 'Y';
-			if (structure != 'single') { super.placeDiv(current); (current as PageDiv).init(ratio++,structure,adaptToScreen); }
-			current.state.init();
+			if (structure != 'single') { super.placeDiv(current); (current as PageDiv).init(ratio++, structure, adaptToScreen); }
 			current.bind();
 		}
 		
