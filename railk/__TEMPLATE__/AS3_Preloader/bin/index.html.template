@@ -15,10 +15,10 @@
 	<style type="text/css">
 		/* hide from ie on mac \*/
 		html { height: 100%; }
-		#altContent { height: 100%; font-family:arial; font-size:12px; color: #FFFFFF; }
+		#flashContent { height: 100%; font-family:arial; font-size:12px; color: #000000; }
 		/* end hide */
-		#altContent a { color: #000000; background-color: #FFFFFF;}
-		#altContent a:hover { color: #000000; background-color: #00FFCC; }
+		#flashContent a { color: #000000; background-color: #FFFFFF;}
+		#flashContent a:hover { color: #000000; background-color: #00FFCC; }
 		body { height: 100%; margin: 0; padding: 0; }
 	</style>
 	<script type="text/javascript" src="js/swfobject.js"></script>
@@ -59,8 +59,8 @@
 			</div>
 		</div>
 		<div id="noflash">
-				<p><strong>You need to upgrade your Flash Player</strong></p>
-				<p><a href="http://www.adobe.com/go/getflashplayer">DOWNLOAD FLASH PLAYER</a></p>
+			<p><strong>You need to upgrade your Flash Player</strong></p>
+			<p><a href="http://www.adobe.com/go/getflashplayer">DOWNLOAD FLASH PLAYER</a></p>
 		</div>
 	</div>
 </body>
