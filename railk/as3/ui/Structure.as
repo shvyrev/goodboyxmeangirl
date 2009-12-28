@@ -9,6 +9,7 @@ package railk.as3.ui
 {
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.page.PageManager;
+	import railk.as3.ui.link.LinkManager;
 	
 	public class Structure
 	{
@@ -29,7 +30,7 @@ package railk.as3.ui
 			if(proxys) for (i = 0; i < proxys.length; i++) PageManager.getInstance().registerProxy(proxys[i].classe, proxys[i].name ); 
 		}
 		
-		public function view( page:String ):void { PageManager.getInstance().setPage(page); }
+		public function view( page:String ):void { LinkManager.setValue(page); }
 		
 		private function getSiteInfo( xml:XML ):void {
 			PageManager.getInstance().init(A('author',xml),A('title',xml),B(A('menu',xml)),B(A('multiPage',xml)),A('structure',xml),B(A('adaptToScreen',xml)));
