@@ -8,12 +8,9 @@
 
 package railk.as3.display 
 {	
-	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Point;
-	import flash.geom.Matrix;
-	import flash.geom.Rectangle;
 
 	public class RegistrationPoint extends Sprite
 	{
@@ -47,8 +44,8 @@ package railk.as3.display
 		 */
 		public function get x2():Number { return global.x; }
 		public function set x2(value:Number):void {
-			this.x += value - global.x;
-			this._x2 = value;
+			x += value - global.x;
+			_x2 = value;
 		}
 
 		/**
@@ -56,66 +53,66 @@ package railk.as3.display
 		 */
 		public function get y2():Number { return global.y; }
 		public function set y2(value:Number):void {
-			this.y += value - global.y;
-			this._y2 = value;
+			y += value - global.y;
+			_y2 = value;
 		}
 		
 		/**
 		 * SCALEX2
 		 */
-		public function get scaleX2():Number { return this._scaleX2; }
+		public function get scaleX2():Number { return _scaleX2; }
 		public function set scaleX2(value:Number):void {
-			this.setProperty( value, 'scaleX' );
-			this._scaleX2 = value;
+			setProperty( value, 'scaleX' );
+			_scaleX2 = value;
 		}
 		
 		/**
 		 * SCALEY2
 		 */
-		public function get scaleY2():Number { return this._scaleY2; }
+		public function get scaleY2():Number { return _scaleY2; }
 		public function set scaleY2(value:Number):void {
-			this.setProperty( value, 'scaleY' );
-			this._scaleY2 = value;
+			setProperty( value, 'scaleY' );
+			_scaleY2 = value;
 		}
 		
 		/**
 		 * SCALEXY
 		 */
-		public function get scaleXY():Number { return this._scaleXY; }
+		public function get scaleXY():Number { return _scaleXY; }
 		public function set scaleXY(value:Number):void {
-			this.setProperty( value, 'scaleX', 'scaleY' );
-			this._scaleXY = value;
+			setProperty( value, 'scaleX', 'scaleY' );
+			_scaleXY = value;
 		}
 		
 		/**
 		 * ROTATION2
 		 */
-		public function get rotation2():Number { return this._rotation2; }
+		public function get rotation2():Number { return _rotation2; }
 		public function set rotation2(value:Number):void {
-			this.setProperty( value, 'rotation' );
-			this._rotation2 = value;
+			setProperty( value, 'rotation' );
+			_rotation2 = value;
 		}
 		
 		/**
 		 * MOUSE
 		 */
-		public function get mouseX2():Number { return this.mouseX - global.x; }
-		public function get mouseY2():Number { return this.mouseY - global.y; }
+		public function get mouseX2():Number { return mouseX - global.x; }
+		public function get mouseY2():Number { return mouseY - global.y; }
 		
 		/**
 		 * UTILITIES
 		 */
 		private function get global():Point {
-			if (!this.parent) return this.localToGlobal(rp);
-			return this.parent.globalToLocal(this.localToGlobal(rp));
+			if (!parent) return localToGlobal(rp);
+			return parent.globalToLocal(localToGlobal(rp));
 		}
 		
 		private function setProperty(value:Number, ...props):void {
 			var a:Point = global;
 			for (var i:int = 0; i < props.length; ++i) this[props[i]] = value;
 			var b:Point = global;
-			this.x -= b.x -a.x;
-			this.y -= b.y -a.y;
+			x -= b.x -a.x;
+			y -= b.y -a.y;
 			dispatchChange();
 		}
 		

@@ -9,143 +9,161 @@ package railk.as3.display
 {
 	import flash.utils.Timer;
 	import flash.events.TimerEvent;
-	import railk.as3.data.list.DLinkedList;
-	import railk.as3.data.list.DListNode;
 	
-	public class AnimatedClip extends RegistrationPoint
+	public final class AnimatedClip extends RegistrationPoint
 	{
 		public var frames:int = 0;
+		public var first:Frame;
+		public var last:Frame;
+		public var current:Frame;
+		
 		private var _frameRate:Number=1;
-		private var _current:DListNode;
-		private var framesList:DLinkedList;
-		private var walker:DListNode;
 		private var t:Timer;
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		* CONSTRUCTEUR
+		*/
 		public function AnimatedClip( frames:int = 1 ):void {
 			super();
 			this.frames = frames;
 			init();
 		}
 		
-		public function init():void {
-			framesList = new DLinkedList();
-			for ( var i:int=0; i < frames; i++ )framesList.add( [String(i),null] );
-			_current = framesList.head;
+		private function init():void {
+			for ( var i:int = 0; i < frames; i++ ) {
+				
+			}
 			t = new Timer(1);
-			t.addEventListener( TimerEvent.TIMER, manageEvent, false, 0, true );
+			t.addEventListener( TimerEvent.TIMER, pushFrameOnScreen, false, 0, true );
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 		 PLAY
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		
+		/**
+		* PLAY
+		*/
 		public function play( frameRate:int=1 ):void {
-			_frameRate = frameRate;
-			t.delay = frameRate;
+			this.frameRate = frameRate;
 			t.start();
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 		 STOP
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		* STOP
+		*/
 		public function stop():void {
 			t.stop();
 			t.reset();
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					  FRAME SELECTION
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function goToFrame( frame:int ):void {
-			_current = framesList.getNodeByID( frame );
+		/**
+		* FRAME SELECTION
+		*/
+		public function goToFrame( frame:* ):void {
+			current = getFrame(frame);
 			pushFrameOnScreen();
 		}
 		
 		
 		public function nextFrame():void {
-			_current = _current.next;
+			current = current.next;
 			pushFrameOnScreen();
 		}
 		
 		public function previousFrame():void {
-			_current = _current.prev;
-			pushFrameOnScreen();
-		}
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE FRAME
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function addFrameContent( frame:int, data:*, script:Function = null ):void {
-			framesList.getNodeByID( frame ).data = data;
+			current = current.prev;
 			pushFrameOnScreen();
 		}
 		
 		/**
-		 * 
-		 * @param	type   'before' | 'after'
-		 * @param	place
-		 * @param	content
-		 * @param	script
-		 */
-		public function addFrame( type:String, place:int, data:*= null, script:Function = null ):void {
-			if ( type == 'before' ) framesList.insertBefore( framesList.getNodeByID( place ), String(place - 1), data, "", script );
-			else if ( type == 'after' ) framesList.insertAfter( framesList.getNodeByID( place ), String(place + 1), data, "", script );
-			_frames += 1;
-		}
+		* MANAGE FRAME
+		*/
 		
-		public function removeFrame( frame:int ):void {
-			framesList.remove( String( frame ) );
-			_frames -= 1;
-		}
-		
-		public function addFrameScript( frame:int, script:Function ):void {
-			framesList.getNodeByID( frame ).action = script;
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				 PUSH FRAME ON SCREEN
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function pushFrameOnScreen():void {
-			if( this.numChildren > 0 ) this.removeChildAt( 0 );
-			this.addChild( _current.data );
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	  DISPOSE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function dispose():void {
-			t.removeEventListener( TimerEvent.TIMER, manageEvent );
-			walker = framesList.head;
-			loop:while ( walker ) {
-				walker.dispose();
-				walker = walker.next;
+		private function getFrame(frame:*):Frame {
+			var f:Frame = first;
+			while ( f ) {
+				if ( frame == f.name || frame == f.id ) return f;
+				f = f.next;
 			}
+			return null;
 		}
 		
+		public function addFrame( data:Object = null, action:Function = null, ...params ):void {
+			var frame:Frame = new Frame();
+			frame.id = i;
+			frame.data = data;
+			frame.action = action;
+			frame.actionParams = params;
+			if (!first) current = first = last = frame;
+			else {
+				last.next = frame;
+				frame.prev = last;
+				last = frame;
+			}
+			frames++;
+		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function manageEvent( evt:TimerEvent ):void {
+		public function removeFrame( frame:* ):void {
+			var f:Frame = getFrame(frame);
+			if (f == first) f.next = null;
+			else if (f == last) f.prev = null;
+			else {
+				f.prev.next = f.next;
+				f.next.prev = f.prev;
+			}
+			f.data=null;
+			f = null;
+			frames--;
+		}
+		
+		public function addFrameContent( frame:*, data:Object ):void {
+			getFrame( frame ).data = data;
 			pushFrameOnScreen();
 		}
 		
+		public function addFrameScript( frame:*, action:Function, ...params ):void {
+			var f:Frame = getFrame(frame);
+			f.action = action;
+			f.actionParams = params;
+		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get currentFrame():DListNode { return _current; }
+		/**
+		* PUSH FRAME ON SCREEN
+		*/
+		private function pushFrameOnScreen(evt:TimerEvent=null):void {
+			if(numChildren) removeChildAt(0);
+			addChild( current );
+		}
+		
+		/**
+		* DISPOSE
+		*/
+		public function dispose():void {
+			t.removeEventListener( TimerEvent.TIMER, manageEvent );
+			var f:Frame = first;
+			while ( f ) {
+				f.data = null;
+				f = f.next;
+			}
+			f = null;
+		}
+		
+		/**
+		* GETTER/SETTER
+		*/
 		public function get frameRate():Number { return _frameRate; }
 		public function set frameRate( value:Number ):void {
 			_frameRate = value;
-			t.delay = value
-		}
-		
+			t.delay = value;
+		}	
 	}
-	
+}
+
+internal class Frame 
+{
+	public var next:Frame;
+	public var prev:Frame;
+	public var id:int;
+	public var name:String;
+	public var data:Object;
+	public var action:Function;
+	public var actionParams:Function;
 }
