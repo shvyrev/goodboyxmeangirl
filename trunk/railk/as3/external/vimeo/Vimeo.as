@@ -1,78 +1,149 @@
 ﻿/**
- * VIMEO Player loader
+ * VimeoPlayer
  * 
- * @author Richard Rodney
- * @version 0.1
+ * A wrapper class for Vimeo's video player (codenamed Moogaloop)
+ * that allows you to embed easily into any AS3 application.
+ * 
+ * Example on how to use:
+ * 	var vimeo_player = new VimeoPlayer(2, 400, 300);
+ * 	vimeo_player.addEventListener(Event.COMPLETE, vimeoPlayerLoaded);	
+ * 	addChild(vimeo_player);
+ * 
+ * http://vimeo.com/api/docs/moogaloop
  */
+package railk.as3.external.vimeo {
+  
+  import flash.net.URLRequest;
+  import flash.display.Loader;
+  import flash.display.Sprite;
+  import flash.events.Event;
+  import flash.events.TimerEvent;
+  import flash.events.MouseEvent;
+  import flash.utils.Timer;
+  import flash.system.Security;
+  import railk.as3.display.UISprite;
+  
+  public class Vimeo extends UISprite 
+  {
+		private var container:Sprite = new Sprite();
+		private var moogaloop:Object = false;
+		private var player_mask:Sprite = new Sprite();
 
-package railk.as3.external.vimeo
-{	
-	import flash.display.Sprite;
-	import flash.events.Event;
-	import flash.events.ProgressEvent;
-	import flash.display.Loader;
-	import flash.net.URLRequest;
-	import flash.system.Security;
-	
-	public class Vimeo extends Sprite
-	{
-		public var id:String;
-		public var pWidth :int;
-		public var pHeight:int;
-		
-		private var loader:Loader;
-		
-		private var moogaloop:Sprite;
-		private var moogaplayer:*;
-		private var masker:Sprite;
-		
-		public function Vimeo(id:String, width:int=550, height:int=400):void {
-			this.id = id;
-			this.pWidth = width;
-			this.pHeight = height;
-			this.getPlayer( id );
+		private var player_width:int = 400;
+		private var player_height:int = 300;
+
+		private var load_timer:Timer = new Timer(200);
+
+		public function Vimeo(clip_id:int, w:int, h:int) {
+			this.setDimensions(w, h);
+
+			Security.allowDomain("http://www.vimeo.com"); //("http://bitcast.vimeo.com");
+
+			var loader:Loader = new Loader();
+			var request:URLRequest = new URLRequest("http://www.vimeo.com/moogaloop.swf?clip_id=" + clip_id + "&width=" + w + "&height=" + h + "&fullscreen=0"); //loader.load(new URLRequest("http://bitcast.vimeo.com/vimeo/swf/moogaloop.swf?server=vimeo.com&force_embed=0&clip_id=" + id + "&width=" + pWidth + "&height=" + pHeight));
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onComplete);
+			loader.load(request); 
 		}
 
-		private function getPlayer ( id:String ):void {
-			Security.allowDomain("http://bitcast.vimeo.com");
-			loader = new Loader();
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, manageEvent, false, 0, true);
-			loader.contentLoaderInfo.addEventListener(ProgressEvent.PROGRESS, manageEvent, false, 0, true);
-			loader.load(new URLRequest("http://bitcast.vimeo.com/vimeo/swf/moogaloop.swf?server=vimeo.com&force_embed=0&clip_id=" + id + "&width=" + pWidth + "&height=" + pHeight));
+		private function setDimensions(w:int, h:int):void {
+			player_width  = w;
+			player_height = h;
 		}
 
-		public function getVideo( id:String ):void { if(moogaplayer) moogaplayer.api_loadVideo( id ); }
-		public function getRandomVideo():void {
-			var randomId:int = int( Math.random()*10000 + 260000);
-			getVideo( String(randomId) );
+		private function onComplete(e:Event) {
+			// Finished loading moogaloop
+			container.addChild(e.target.loader.content);
+			moogaloop = e.target.loader.content;
+
+			// Create the mask for moogaloop
+			addChild(player_mask);
+			container.mask = player_mask;
+			addChild(container);
+
+			redrawMask();
+
+			load_timer.addEventListener(TimerEvent.TIMER, playerLoadedCheck);
+			load_timer.start();
 		}
 
-		public function play():void { if(moogaplayer) moogaplayer.api_play(); }
-		public function stop():void { if(moogaplayer) moogaplayer.api_unload(); }
-		public function dispose():void { 
-			if (moogaplayer) moogaplayer.api_unload();
-			loader.close();
-		}
-		
-		private function manageEvent(evt:*):void {
-			switch( evt.type ) {
-				case ProgressEvent.PROGRESS : dispatchEvent(evt); break;
-				case Event.COMPLETE :
-					moogaloop = new Sprite();
-					moogaplayer = moogaloop.addChild(evt.currentTarget.content);
-					masker = new Sprite();
-					masker.graphics.beginFill(0x000000);
-					masker.graphics.drawRect(0,0,pWidth,pHeight);
-					masker.graphics.endFill();
-					
-					addChild(masker);
-					this.addChild(moogaloop);
-					moogaloop.mask = masker;
-					
-					loader.unload();
-					break;
-				default : break;
+		/**
+		 * Wait for Moogaloop to finish setting up
+		 */
+		private function playerLoadedCheck(e:TimerEvent):void {
+			if (moogaloop.player_loaded) {
+				// Moogaloop is finished configuring
+				load_timer.stop();
+				load_timer.removeEventListener(TimerEvent.TIMER, playerLoadedCheck);
+
+				// remove moogaloop's mouse listeners listener
+				moogaloop.disableMouseMove(); 
+				stage.addEventListener(MouseEvent.MOUSE_MOVE, mouseMove);
+
+				dispatchEvent(new Event(Event.COMPLETE));
 			}
+		}
+
+		/**
+		 * Fake the mouse move/out events for Moogaloop
+		 */
+		private function mouseMove(e:MouseEvent):void {
+			if (e.stageX >= this.x && e.stageX <= this.x + this.player_width &&
+				e.stageY >= this.y && e.stageY <= this.y + this.player_height) {
+				moogaloop.mouseMove(e);
+			}
+			else {
+				moogaloop.mouseOut();
+			}
+		}
+
+		private function redrawMask():void {
+			with (player_mask.graphics) {
+				beginFill(0x000000, 1);
+				drawRect(container.x, container.y, player_width, player_height);
+				endFill();
+			}
+		}
+
+		public function play():void {
+			moogaloop.api_play();
+		}
+
+		public function pause():void {
+			moogaloop.api_pause();
+		}
+
+		/**
+		 * returns duration of video in seconds
+		 */
+		public function getDuration():int {
+			return moogaloop.api_getDuration();
+		}
+
+		/**
+		 * Seek to specific loaded time in video (in seconds)
+		 */
+		public function seekTo(time:int):void {
+			moogaloop.api_seekTo(time);
+		}
+
+		/**
+		 * Change the primary color (i.e. 00ADEF)
+		 */
+		public function changeColor(hex:String):void {
+			moogaloop.api_changeColor(hex);
+		}
+
+		/**
+		 * Load in a different video
+		 */
+		public function loadVideo(id:int):void {
+			moogaloop.api_loadVideo(id);
+		}
+
+		public function setSize(w:int, h:int):void {
+			this.setDimensions(w, h);
+			moogaloop.api_setSize(w, h);
+			this.redrawMask();
 		}
 	}
 }

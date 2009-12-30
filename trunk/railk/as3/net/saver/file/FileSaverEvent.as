@@ -16,9 +16,7 @@ package railk.as3.net.saver.file
 		
 		public function FileSaverEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
 			super(type, bubbles, cancelable) ;
-			for(var name:String in data) {
-				this[name] = data[name];
-			}	
+			for(var name:String in data) this[name] = data[name];
 		}
 	}
 }

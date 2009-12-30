@@ -12,10 +12,10 @@ package railk.as3.ui
 	import flash.events.MouseEvent;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	
 	
-	public class ScrollBar extends RegistrationPoint 
+	public class ScrollBar extends UISprite 
 	{	
 		private var toScroll        :Object;		
 		public var slider           :*;

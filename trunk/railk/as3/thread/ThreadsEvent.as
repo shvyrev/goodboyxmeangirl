@@ -6,11 +6,11 @@
 * @version 0.1
 */
 
-package railk.as3.thread {
-
+package railk.as3.thread 
+{
 	import flash.events.Event;
-	public dynamic class ThreadsEvent extends Event{
-			
+	public dynamic class ThreadsEvent extends Event
+	{
 		static public const ON_THREAD_COMPLETE :String = "onThreadComplete";		
 		public var thread:Function;
 		

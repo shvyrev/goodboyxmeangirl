@@ -9,9 +9,9 @@ package railk.as3.display.graphicShape {
 	
 	import flash.geom.ColorTransform;
 	import flash.geom.Transform;
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	
-	public class GraphicShape extends RegistrationPoint 
+	public class GraphicShape extends UISprite 
 	{	
 		public var graphicsCopy:*;
 		protected var copy:Boolean;

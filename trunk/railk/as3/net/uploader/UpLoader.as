@@ -14,7 +14,6 @@ package railk.as3.net.uploader
 	import flash.net.URLVariables;
 	import flash.events.*;
 	
-
 	public class UpLoader extends EventDispatcher {
 		
 		private var uploadURL              :URLRequest;
@@ -23,10 +22,10 @@ package railk.as3.net.uploader
 		private var fileType               :String;
 		private var uploadBT               :Object;
 		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  CONSTRUCTEUR
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * CONSTRUCTEUR
+		 * @param	uploadFilePath
+		 */
 		public function UpLoader( uploadFilePath:String ) {
 			uploadURL = new URLRequest( uploadFilePath );
 			uploadURL.method = URLRequestMethod.POST;
@@ -36,10 +35,10 @@ package railk.as3.net.uploader
 			configListenersFile( fileRef );
 		}
 		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 FILEREF LISTENERS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE LISTENERS
+		 * @param	dispatcher
+		 */
 		private function configListenersFile( dispatcher:IEventDispatcher ):void {
             dispatcher.addEventListener( Event.CANCEL, onCancel, false, 0, true );
 			dispatcher.addEventListener( Event.SELECT, onSelect, false, 0, true );
@@ -65,9 +64,10 @@ package railk.as3.net.uploader
         }
 		
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																		  FILEREF LISTERNERS FONCTIONS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE EVENT
+		 * @param	evt
+		 */
 		private function onCancel( evt:Event ):void {
 			dispatchEvent( new UpLoaderEvent( UpLoaderEvent.ON_CANCEL, { info:"upload annule" } ) );
 		}
@@ -113,16 +113,14 @@ package railk.as3.net.uploader
 		}
 		
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						        CREATE
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * DECORATE THE BUTTON
 		 * 
 		 * @param	button
 		 * @param	type UpLoaderFilters.IMGFILE/TXTFILE/SWFFILE/XMLFILE/
 		 * @param	url the folder where to save the file
 		 */
-		public function create( button:Object, type:String, urlFolder:String ):void {
+		public function decorate( button:Object, type:String, urlFolder:String ):void {
 			fileType = type;
 			uploadBT = button;
 			uploadVAR.folder = urlFolder;
@@ -130,9 +128,10 @@ package railk.as3.net.uploader
 			configListernersButton( uploadBT );
 		}
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					  BUTTON LISTENERS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE BUTTON LISTENERS
+		 * @param	button
+		 */
 		private function configListernersButton( button:Object ):void {
 			button.buttonMode = true;
 			button.addEventListener( MouseEvent.CLICK, browse, false, 0, true );
@@ -148,19 +147,17 @@ package railk.as3.net.uploader
 			fileRef.browse( [UpLoaderFilters.Type( fileType )] );
 		}
 		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																			      DELETE ALL LISTENERS
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		public function destroy():void {
+		/**
+		 * DISPOSE
+		 */
+		public function dispose():void {
 			delListenersButton( uploadBT );
 			delListenersFile( fileRef );
 		}
 		
-		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   GETTER FILENAME
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * GETTER/SETTER
+		 */
 		public function get fileName():String {
 			return fileRef.name;
 		}

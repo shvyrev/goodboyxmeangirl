@@ -10,10 +10,10 @@ package railk.as3.transform.group
 {
 	import railk.as3.data.list.DLinkedList;
 	import railk.as3.data.list.DListNode;
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	import railk.as3.transform.item.TransformItem;
 	
-	public class TransformGroup extends RegistrationPoint
+	public class TransformGroup extends UISprite
 	{	
 		private var itemsList:DLinkedList;
 		private var parentsList:DLinkedList;

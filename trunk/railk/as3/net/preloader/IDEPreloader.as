@@ -31,33 +31,30 @@ package railk.as3.net.preloader
 	import flash.display.StageScaleMode;
 	
 	import railk.as3.TopLevel;
-	import railk.as3.display.DSprite;
+	import railk.as3.display.UISprite;
 	import railk.as3.ui.loading.*;
 	import railk.as3.display.graphicShape.*;
-
-	
 	
 	public class IDEPreloader extends MovieClip
 	{
-		private var container  :DSprite;
-		private var foreground :DSprite;
-		private var background :DSprite;
-		private var masker     :DSprite;
+		private var container  :UISprite;
+		private var foreground :UISprite;
+		private var background :UISprite;
+		private var masker     :UISprite;
 		private var loading    :RectLoading
 		
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * CONSTRUCTEUR
+		 */
 		public function IDEPreloader():void {
 			super();
 			init();
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																								 INIT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * INIT
+		 */
 		private function init():void {
 			//--
 			stop();
@@ -72,7 +69,7 @@ package railk.as3.net.preloader
 			stage.addEventListener( Event.RESIZE, manageEvent, false, 0, true );
 			
 			//--create loading bar
-			container = new DSprite();
+			container = new UISprite();
 			this.addChild( container );
 			
 				background =  createBackground();
@@ -106,48 +103,39 @@ package railk.as3.net.preloader
 			}
 		}
 		
+		/**
+		 * CREATE BACKGROUND
+		 * @return
+		 */
+		protected function createBackground():UISprite { return new UISprite(); }
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 		CREATE BG
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createBackground():DSprite {
-			return new DSprite();
-		}
+		/**
+		 * CREATE FOREGROUND
+		 * @return
+		 */
+		protected function createForeground():UISprite { return new UISprite(); }
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					CREATE FOREGROUND
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createForeground():DSprite {
-			return new DSprite();
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					CREATE FOREGROUND
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createMask():DSprite {
-			var s:DSprite= new DSprite();
-			
-				var m:RectangleShape = new RectangleShape(0xFF0000,0,0,200,6);
-				s.addChild( m );
-			
+		/**
+		 * CREATE MASK
+		 * @return
+		 */
+		protected function createMask():UISprite {
+			var s:UISprite= new UISprite();
+			var m:RectangleShape = new RectangleShape(0xFF0000,0,0,200,6);
+			s.addChild( m );
 			return s;
 		}
 		
+		/**
+		 * CREATE LOADING
+		 * @return
+		 */
+		protected function createLoading():ILoading { return new RectLoading(0xFFFFFF,0x111111,0,0,200,6);	}	
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   CREATE LOADING
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		protected function createLoading():* {
-			var loadBar:RectLoading = new RectLoading(0xFFFFFF,0x111111,0,0,6,200);			
-			return loadBar;
-		}	
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							  DESTROY
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function destroy():void {
+		/**
+		 * DESTROY
+		 */
+		private function dispose():void {
 			this.loaderInfo.removeEventListener( ProgressEvent.PROGRESS, manageEvent);
 			this.loaderInfo.removeEventListener( Event.COMPLETE, manageEvent);
 			stage.removeEventListener( Event.RESIZE, manageEvent );
@@ -156,20 +144,20 @@ package railk.as3.net.preloader
 			this.removeChild( container );
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							   LAUNCH
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * LAUNCH
+		 */
 		private function launch():void {	
-			destroy();
+			dispose();
 			gotoAndStop(2);
 			trace("                                    Preloader done");
 			trace("---------------------------------------------------------------------------------------");
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE EVENT
+		 * @param	evt
+		 */
 		private function manageEvent( evt:* ):void {
 			switch( evt.type ) {
 				case Event.RESIZE : case Event.ACTIVATE:

@@ -6,11 +6,11 @@
 * @version 0.1
 */
 
-package railk.as3.stage {
-
+package railk.as3.stage 
+{
 	import flash.events.Event;
-	public dynamic class StageManagerEvent extends Event{
-			
+	public dynamic class StageManagerEvent extends Event
+	{
 		static public const ONSTAGERESIZE :String = "onStageResize";
 		static public const ONMOUSEACTIVE :String = "onMouseActive";
 		static public const ONMOUSEIDLE   :String = "onMouseIdle";

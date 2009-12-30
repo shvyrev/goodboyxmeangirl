@@ -6,15 +6,13 @@
 * @version 0.1
 */
 
-package railk.as3.transform {
-	
-	// _________________________________________________________________________________________ IMPORT FLASH
+package railk.as3.transform 
+{
 	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	
-	// _________________________________________________________________________________________ IMPORT RAILK
 	import railk.as3.transform.item.*;
 	import railk.as3.transform.utils.*;
 	import railk.as3.display.MarchingAntsSelect;
@@ -36,9 +34,11 @@ package railk.as3.transform {
 		private static var itemInteracting:Boolean=false;
 		
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  		  INIT
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * INIT
+		 * 
+		 * @param	stage
+		 */
 		public static function init( stage:Stage ):void
 		{
 			_stage = stage;
@@ -46,9 +46,9 @@ package railk.as3.transform {
 			if ( !Key.initialized ) Key.initialize( stage );
 		}
 		
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   MANAGE LISTENER
-		// ———————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE LISTENERS
+		 */
 		private function initListeners():void
 		{
 			_stage.addEventListener( MouseEvent.MOUSE_DOWN, manageEvent, false, 0, true );
