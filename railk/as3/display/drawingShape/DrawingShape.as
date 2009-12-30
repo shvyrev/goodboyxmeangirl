@@ -10,12 +10,11 @@ package railk.as3.display.drawingShape
 	import flash.geom.Point;
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	
 	
-	public class DrawingShape extends RegistrationPoint
+	public class DrawingShape extends UISprite
 	{
-		
 		public function DrawingShape(){
 			super();
 		}

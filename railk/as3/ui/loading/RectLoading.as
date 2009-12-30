@@ -10,9 +10,9 @@ package railk.as3.ui.loading
 	import flash.geom.ColorTransform;
 	import flash.geom.Transform;
 	import railk.as3.display.graphicShape.RectangleShape;
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	
-	public class RectLoading extends RegistrationPoint implements ILoading
+	public class RectLoading extends UISprite implements ILoading
 	{	
 		public var bar:RectangleShape;
 		public var bg:RectangleShape;

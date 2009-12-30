@@ -15,15 +15,14 @@ package railk.as3.ui
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFormat;
 	
-	import railk.as3.display.DSprite;
 	import railk.as3.display.graphicShape.*;
-	import railk.as3.display.RegistrationPoint;	
+	import railk.as3.display.UISprite;	
 	
-	public class ToolTip extends RegistrationPoint
+	public class ToolTip extends UISprite
 	{
 		private var bulle                          :RoundRectangleShape;
 		private var triangle                       :TriangleShape;
-		private var info                           :DSprite;
+		private var info                           :UISprite;
 		private var txt                            :TextField;
 		private var format                         :TextFormat;
 		
@@ -98,7 +97,7 @@ package railk.as3.ui
 			format.font = font;
 			format.size =  fontSize;
 			
-			info = new DSprite();
+			info = new UISprite();
 			
 				txt = new TextField();
 				txt.name = 'txt';

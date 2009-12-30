@@ -6,15 +6,12 @@
 * @version 0.1
 */
 
-package railk.as3.transform.item {
-	
-	import flash.display.Stage;
-	
+package railk.as3.transform.item 
+{	
+	import flash.display.Stage;	
 	public class TransformText extends TransformItem
 	{
-		
-		public function TransformText( stage:Stage, name:String, object:* )
-		{	
+		public function TransformText( stage:Stage, name:String, object:* ) {	
 			super( stage, name, object );
 		}
 		

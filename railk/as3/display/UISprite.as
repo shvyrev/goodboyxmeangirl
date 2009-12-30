@@ -1,6 +1,5 @@
 ﻿/**
- * 
- * dynamic registration point with change event for each value
+ * UI Sprite with set registration and change events
  * 
  * @author Richard Rodney
  * @version 0.3
@@ -12,7 +11,7 @@ package railk.as3.display
 	import flash.events.Event;
 	import flash.geom.Point;
 
-	public class RegistrationPoint extends Sprite
+	public class UISprite extends Sprite
 	{
 		private var rp:Point;
 		private var _x2:Number = 0;
@@ -23,7 +22,7 @@ package railk.as3.display
 		private var _rotation2:Number = 0;
 		public var dispatch:Boolean = true;
 		
-		public function RegistrationPoint() {
+		public function UISprite() {
 			super();
 			setRegistration(0,0);
 		}

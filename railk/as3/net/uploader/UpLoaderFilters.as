@@ -6,11 +6,11 @@
 * @version 0.1
 */
 
-package railk.as3.net.uploader {
-
+package railk.as3.net.uploader 
+{
 	import flash.net.FileFilter;
-	public class UpLoaderFilters {
-		
+	public class UpLoaderFilters 
+	{	
 		static public const IMGFILE                  :String ="IMGFile";
 		static public const TXTFILE                  :String ="TXTFile";
 		static public const SWFFILE                  :String ="SWFFile";

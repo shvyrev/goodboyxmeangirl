@@ -10,17 +10,17 @@ package railk.as3.display
 	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	
-	public class PixelShape extends RegistrationPoint
+	public class PixelShape extends UISprite
 	{
-		
+		/**
+		 * CONSTRUCTEUR
+		 */
 		public function PixelShape() {
 			super();
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 	PIXEL SURFACE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		* PIXEL SURFACE
 		* 
 		* @param	color
 		* @param	W
@@ -71,11 +71,8 @@ package railk.as3.display
 			this.removeChild( this.getChildByName( 'bmp' ) );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 	PIXEL PATTERN
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		* PIXEL PATTERN
 		* 
 		* @param	W 	largeur de la surface sur laquelle appliquer le pattern
 		* @param	H 	hauteur de la surface sur laquelle appliquer le pattern
@@ -131,11 +128,8 @@ package railk.as3.display
 			this.addChild( bmp );
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					 	 PERLIN NOISE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		* PERLIN NOISE
 		* 
 		* @param	bmp            bitmapdata ou ecrire le perlinnoise
 		* @param	grayscale      true or false
@@ -148,5 +142,4 @@ package railk.as3.display
 			return bmp;
 		}
 	}
-	
 }

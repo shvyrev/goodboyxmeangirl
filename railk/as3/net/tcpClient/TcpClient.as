@@ -10,8 +10,8 @@
 
 package railk.as3.net.tcpClient 
 {
-	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.IOErrorEvent;
 	import flash.events.ProgressEvent;
 	import flash.events.SecurityErrorEvent;
@@ -19,23 +19,22 @@ package railk.as3.net.tcpClient
 	import railk.as3.utils.Logger;
 	
 	
-	public class TcpClient extends Sprite 
+	public class TcpClient extends EventDispatcher
 	{	
-		private var sc                                 :Socket;
-		private var _data                              :String;
+		private var sc:Socket;
+		private var data:String;
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * CONSTRUCTEUR
+		 */
 		public function TcpClient() {
 			sc = new Socket();
 			initListeners();
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					  MANAGE LISTENER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE LISTENERS
+		 */
 		private function initListeners():void {
 			sc.addEventListener( ProgressEvent.SOCKET_DATA, manageEvent, false, 0, true );
 			sc.addEventListener( Event.CONNECT, manageEvent, false, 0, true  );
@@ -52,10 +51,8 @@ package railk.as3.net.tcpClient
 			sc.removeEventListener( SecurityErrorEvent.SECURITY_ERROR, manageEvent );
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					MANAGE CONNECTION
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * MANAGE CONNECTION
 		 * 
 		 * @param	adress
 		 * @param	port
@@ -63,41 +60,42 @@ package railk.as3.net.tcpClient
 		public function connect( adress:String, port:int ):void { sc.connect(  adress, port ); }
 		public function disconnect():void { sc.close(); }
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 	SEND DATA
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * SEND DATA
+		 * @param	data
+		 */
 		public function sendData( data:String ):void {
 			sc.writeUTFBytes( data );
 			sc.flush();
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																							 GET DATA
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * GET DATA
+		 * @param	data
+		 */
 		public function getData( data:String ):void {
-			_data = data;
+			this.data = data;
 			dispatchEvent( new TcpClientEvent( TcpClientEvent.ONDATARECEIVED, { info:"data received from server", data:_data } ) );
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					    	  DISPOSE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * DISPOSE
+		 */
 		public function dispose():void {
 			disconnect();
 			delListeners();
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					    GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get receivedData():String { return _data; }
+		/**
+		 * GETTER/SETTER
+		 */
+		public function get receivedData():String { return data; }
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 MANAGE EVENT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * MANAGE EVENT
+		 * @param	evt
+		 */
 		private function manageEvent( evt:* ):void {
 			switch( evt.type ) {
 				case SecurityErrorEvent.SECURITY_ERROR : Logger.print( 'security error '+evt, Logger.ERROR ); break;

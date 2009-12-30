@@ -9,9 +9,9 @@ package railk.as3.ui.loading
 {
 	import flash.display.Shape;
 	import railk.as3.text.TextLink;
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	
-	public class ProgressTexteLoading extends RegistrationPoint implements ILoading
+	public class ProgressTexteLoading extends UISprite implements ILoading
 	{	
 		private var text:TextLink;
 		private var textBG:TextLink;

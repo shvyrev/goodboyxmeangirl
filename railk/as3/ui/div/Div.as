@@ -8,9 +8,9 @@
 package railk.as3.ui.div
 {	
 	import flash.events.Event;
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	
-	public class Div extends RegistrationPoint implements IDiv
+	public class Div extends UISprite implements IDiv
 	{	
 		protected var arcs:Array = [];
 		protected var isDiv:Boolean;

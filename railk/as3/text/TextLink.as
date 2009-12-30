@@ -15,10 +15,10 @@ package railk.as3.text
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
 	import flash.text.AntiAliasType;	
-	import railk.as3.display.RegistrationPoint;
+	import railk.as3.display.UISprite;
 	
 	
-	public class  TextLink extends RegistrationPoint
+	public class  TextLink extends UISprite
 	{
 		public static const AUTOSIZE_LEFT    :String = TextFieldAutoSize.LEFT;
 		public static const AUTOSIZE_RIGHT   :String = TextFieldAutoSize.RIGHT;
