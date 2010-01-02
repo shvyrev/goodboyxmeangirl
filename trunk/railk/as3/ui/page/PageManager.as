@@ -7,6 +7,7 @@
 
 package railk.as3.ui.page
 {
+	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.core.*;
 	import railk.as3.pattern.mvc.interfaces.*;
@@ -24,7 +25,8 @@ package railk.as3.ui.page
 		public var index:IPage;
 		public var last:IPage;
 		public var statics:IStatic;
-		public var current:String='';
+		public var current:String = '';
+		public var anchors:Dictionary = new Dictionary(true);
 		public var menu:RightClickMenu;
 		public var hasMenu:Boolean;
 		public var multiPage:Boolean;
@@ -116,12 +118,15 @@ package railk.as3.ui.page
 		}
 		
 		public function goToPage( id:String, anchor:String = '' ):void {
-			if (current == id ) return; 
+			var change:String  = changePage(id,anchor);
+			if (!change) return; 
 			if (current) getPage(current).stop();
 			var page:IPage = getPage(id);
 			page.anchor = anchor;
-			(container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
+			if (change == 'id') (container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
+			else page.play();
 			current = id;
+			anchors[current] = anchor;
 		}
 		
 		/**
@@ -130,26 +135,34 @@ package railk.as3.ui.page
 		public function getPage( id:String ):IPage { return getView(id) as IPage; }
 		
 		public function setPage( id:String, anchor:String = '' ):void {
-			if (current == id) return;
+			var change:String  = changePage(id,anchor);
+			if (!change) return; 
 			if (current) unsetPage(current);
 			var page:IPage = getPage(id);
 			page.anchor = anchor;
 			page.show();
-			page.play();
-			if (page.transition) page.transition.easeIn((page as IView).component);
+			if (page.transition && change == 'id') page.transition.easeIn((page as IView).component, page.play );
+			else page.play();
 			current = id;
+			anchors[current] = anchor;
 		}
 		
 		public function unsetPage( id:String ):void {
 			var page:IPage = getPage(id);
 			page.stop();
-			if (page.transition) page.transition.easeOut((page as IView).component, function():void { page.hide(); } );
+			if (page.transition) page.transition.easeOut((page as IView).component, page.hide );
 			else page.hide();
 		}
 		
 		/**
 		 * NAV UTILITIES
 		 */
+		private function changePage(id:String, anchor:String):String {
+			if (current != id) return 'id';
+			if (current == id && anchors[current] != anchor) return 'anchor';
+			return '';
+		}
+		
 		private function placePage(evt:Notification):void {
 			if (evt.note != 'onPageActivated') return;
 			(container as PageStruct).placeDiv((evt.page as IView).component);

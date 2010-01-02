@@ -105,17 +105,21 @@ package railk.as3.ui.page
 		}
 		
 		/**
-		 * ZOOM/DEZOOM/ADAPT
+		 * ZOOM/DEZOOM/ADAPT/ANCHOR
 		 */
 		public function zoom():void {}
 		public function dezoom():void {}
-		public function adapt():void {}
+		public function adapt():void { }
+		public function castAnchor(anchor:String):void {}
 		
 		/**
 		 * PLAY/STOP
 		 */
-		public function play():void { /*SEO.setContent(data);*/ }
 		public function stop():void {}
+		public function play():void { 
+			/*SEO.setContent(data);*/ 
+			if (anchor) castAnchor(anchor);
+		}
 		
 		/**
 		 * DISPOSE

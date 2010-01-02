@@ -19,21 +19,21 @@ package railk.as3.ui.link
 		private static var lastLink:Link
 		private static var siteTitre:String;
 		private static var swfAdress:Boolean;
-		private static var updateTitle:Boolean;
+		private static var hasUpdateTitle:Boolean;
 		private static var state:String;		
 		private static var link:Link;
 		
 		/**
 		 * INIT
 		 */
-		public static function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnabled:Boolean=false ):void {
+		public static function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnable:Boolean=false ):void {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
 				SWFAddress.setTitle( siteTitre );
 				swfAdress = swfAdressEnable;
 			}
-			updateTitle = updateTitleEnabled;
+			hasUpdateTitle = updateTitleEnable;
 			inited = true;
 		}
 		
@@ -101,32 +101,48 @@ package railk.as3.ui.link
 		/**
 		 * SWFADRESS UTILITIES
 		 */
+		public static function forward():void { SWFAddress.forward(); } 
+		public static function back():void { SWFAddress.back(); }
+		public static function blanc(url:String):void { SWFAddress.href(url, '_blanc'); }
 		public static function setValue(value:String):void { SWFAddress.setValue(value); }
 		private static function replace(str:String, find:String, replace:String):String { return str.split(find).join(replace); }	
 		private static function toTitleCase(str:String):String { return str.substr(0,1).toUpperCase() + str.substr(1); }
 		private static function formatTitle(title:String):String { return siteTitre + (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : ''); }
+		private static function updateTitle(title:String):void {
+			if (title.charAt(title.length - 1) != '/') title += '/';
+			SWFAddress.setTitle(formatTitle(title));
+		}
 		
 		/**
 		 * MANAGE EVENT
 		 */
 		private static function manageEvent( evt:SWFAddressEvent ):void {
 			try {
-				state= (evt.value == '/')?"home":evt.value;
+				state = (evt.value == '/')?"/home":evt.value;
 				if ( getLink(evt.value) ) getLink(evt.value).deepLinkAction();
 				else {
 					if ( getLink(evt.value + '/') ) getLink(evt.value + '/').deepLinkAction();
 					else {
-						var a:Array = evt.value.split('/');
-						var link:String = '';
-						for (var i:int = 0; i < a.length-1; ++i) link+=a[i]+'/';
-						if ( getLink(link) ) getLink(link).deepLinkAction(a[a.length-1]);
-						else setValue('404');
+						var a:Array = evt.value.split('/'), i:int = a.length, anchor:String='', link:String = (evt.value.charAt(evt.value.length-1)!='/')?evt.value+'/':'/'+evt.value;
+						while( --i > -1 ) {
+							link = link.replace(a[i] + '/', '');
+							if(a[i]) anchor = a[i] + '/' + anchor;
+							if (getLink(link)) {
+								getLink(link).deepLinkAction(anchor);
+								state = link;
+								return;
+							}
+						}
+						setValue('404');
+						state = "/unknown";
 					}
 				}			
-				if(updateTitle) SWFAddress.setTitle(formatTitle(evt.value));
+				if (hasUpdateTitle) updateTitle(state);
 				
 			} catch (err:Error) {
-				state = "erreur 404";
+				setValue('404');
+				state = "/unknown";
+				if(hasUpdateTitle) updateTitle(state);
 			}
 		}
 		
