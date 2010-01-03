@@ -12,7 +12,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.div.DivStruct;
-	import railk.as3.ui.UILoader;
+	import railk.as3.ui.loader.*;
 	
 	public class Static extends AbstractView implements IStatic,IView,INotifier
 	{
@@ -53,7 +53,7 @@ package railk.as3.ui.page
 		 * 	SHOW/HIDE
 		 */
 		override public function show():void {
-			loader = new UILoader(src, function():void {
+			loader = loadUI(src).complete(function():void {
 				setupViews(layout.views);
 				(facade.container as PageStruct).addStatic(component,onTop);
 				activateViews(layout.views);
