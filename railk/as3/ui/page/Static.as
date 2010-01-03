@@ -18,6 +18,7 @@ package railk.as3.ui.page
 	{
 		private var _prev:IStatic;
 		private var _next:IStatic;
+		private var _anchor:String;
 		
 		public var id:String;
 		public var layout:Layout;
@@ -43,6 +44,7 @@ package railk.as3.ui.page
 			switch(evt.note) {
 				case 'zoom': zoom(); break;
 				case 'dezoom': dezoom(); break;
+				case 'adapt': adapt(); break;
 				default : break;
 			}
 		}
@@ -55,6 +57,7 @@ package railk.as3.ui.page
 				setupViews(layout.views);
 				(facade.container as PageStruct).addStatic(component,onTop);
 				activateViews(layout.views);
+				if (anchor) castAnchor(anchor);
 			} );
 		}
 		
@@ -70,6 +73,8 @@ package railk.as3.ui.page
 		 */
 		protected function zoom():void {}
 		protected function dezoom():void {}
+		protected function adapt():void {}
+		protected function castAnchor(anchor:String):void {}
 		
 		/**
 		 * 	UTILITIES
@@ -91,5 +96,8 @@ package railk.as3.ui.page
 		public function set prev(value:IStatic):void { _prev = value; }
 		public function get next():IStatic { return _next; }
 		public function set next(value:IStatic):void { _next = value; }
+		public function get anchor():String { return _anchor; }
+		public function set anchor(value:String):void { _anchor = value; }
+
 	}
 }

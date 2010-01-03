@@ -61,7 +61,7 @@ package railk.as3.ui.page
 			addEventListener( Notification.NOTE, placePage, false, 0, true );
 		}
 		
-		public function addStatic(id:String, classe:String, layout:Layout, onTop:Boolean, src:String):void {
+		public function addStatic(id:String, classe:String, layout:Layout, onTop:Boolean, visible:Boolean, src:String):void {
 			var s:Static = (classe == '')?new Static(MID, id, layout, onTop, src ):new (getDefinitionByName(classe))(MID, id, layout, onTop, src );
 			if (statics == null ) statics = s;
 			else {
@@ -69,7 +69,23 @@ package railk.as3.ui.page
 				s.prev = statics;
 				statics = s;
 			}
-			s.show();
+			if (visible) s.show();
+			else {
+				registerView(s);
+				var action:Function = function(type:String, requester:*, data:*):void {
+					switch(type) {
+						case 'do': case 'undo' : 
+							if (changePage(id, data)) {
+								var p:IStatic = (getView(id) as IStatic);
+								p.anchor = data;
+								p.show();
+							}
+							break;
+						default : break;
+					}
+				}
+				LinkManager.add('/'+id+'/', null, action, '', null, true);
+			}
 		}
 		
 		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:Layout, align:String, src:String, transition:String):void {
