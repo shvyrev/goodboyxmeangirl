@@ -122,10 +122,10 @@ package railk.as3.ui.page
 		 * MULTIPAGE NAV
 		 */
 		public function showAll(id:String, anchor:String = ''):void {
-			index.show();
 			multiPageOn = true;
 			multiPageId = id;
 			multiPageAnchor = anchor;
+			index.show();
 		}
 		
 		private function showNext(page:IPage):void {
@@ -152,7 +152,7 @@ package railk.as3.ui.page
 		
 		public function setPage( id:String, anchor:String = '' ):void {
 			var change:String  = changePage(id,anchor);
-			if (!change) return; 
+			if (!change) return;
 			if (current) unsetPage(current);
 			var page:IPage = getPage(id);
 			page.anchor = anchor;

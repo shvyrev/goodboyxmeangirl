@@ -14,13 +14,13 @@ package railk.as3.ui.link
 	public class LinkManager 
 	{	
 		public static var inited:Boolean;
+		public static var state:String;
 		
 		private static var firstLink:Link
 		private static var lastLink:Link
 		private static var siteTitre:String;
 		private static var swfAdress:Boolean;
-		private static var hasUpdateTitle:Boolean;
-		private static var state:String;		
+		private static var hasUpdateTitle:Boolean;	
 		private static var link:Link;
 		
 		/**
