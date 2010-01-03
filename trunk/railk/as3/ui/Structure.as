@@ -38,7 +38,7 @@ package railk.as3.ui
 		
 		private function getStatics( xml:XML ):void {
 			if ( xml..static.toString() == '' ) return;
-			for each ( var s:XML in xml..static) if (s.@id.toString() != '') PageManager.getInstance().addStatic(s.@id,A('class',s,A('package',xml)+'.view::'), getPageLayout( A('package', xml), s.@id, new XML(s.child('body')) ), B(A('onTop',s)), s.@src);
+			for each ( var s:XML in xml..static) if (s.@id.toString() != '') PageManager.getInstance().addStatic(s.@id,A('class',s,A('package',xml)+'.view::'), getPageLayout( A('package', xml), s.@id, new XML(s.child('body')) ), B(A('onTop',s)), B(A('visible',s)), s.@src);
 		}
 		
 		private function getPages( xml:XML ):void {

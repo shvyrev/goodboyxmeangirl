@@ -16,5 +16,7 @@ package railk.as3.ui.page
 		function set prev(value:IStatic):void;
 		function get next():IStatic;
 		function set next(value:IStatic):void;
+		function get anchor():String;
+		function set anchor(value:String):void;
 	}
 }
