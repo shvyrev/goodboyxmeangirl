@@ -21,7 +21,7 @@ package railk.as3.ui.loader
 	public class UILoader extends EventDispatcher
 	{
 		public var content:Object;
-		private var url:URLRequest;
+		public var url:URLRequest;
 		private var type:Array;
 		private var loader:Object;
 		private var listener:Object;
@@ -36,7 +36,7 @@ package railk.as3.ui.loader
 		}
 		
 		private function init(url:String):void {
-			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'swf', 'flash.net.URLLoader,,data':'xml,zip,json' };
+			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'jpg,gif,png,swf', 'flash.net.URLLoader,,data':'xml,zip,json' };
 			for ( var t:String in types) if (types[t].search(url.split('.')[url.split('.').length - 1]) != -1) { type = t.split(','); break; }
 			loader = new (getDefinitionByName(type[0]))();
 			listener = (type[1])?loader[type[1]]:loader;
@@ -62,7 +62,7 @@ package railk.as3.ui.loader
 			switch(evt.type) {
 				case Event.COMPLETE :
 					content = (type[1])?listener.content:listener.data;
-					if(!type[1]) cArgs[cArgs.length] = content;
+					if(!type[1] || content.toString().search('Bitmap') != -1) cArgs[cArgs.length] = content;
 					_complete.apply(null,cArgs);
 					if(type[1]) loader.unload();
 					dispose();

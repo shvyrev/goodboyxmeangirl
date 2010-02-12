@@ -9,14 +9,14 @@
 package railk.as3.text
 {
 	import flash.events.Event;
-	import flash.text.TextField;
 	import flash.text.TextFormat;
 	import flash.text.TextFieldAutoSize;
 	import flash.text.TextFieldType;
 	import flash.text.AntiAliasType;
+	import railk.as3.display.UITextField;
 	
 	
-	public class  Text extends TextField
+	public class  Text extends UITextField
 	{
 		public static const AUTOSIZE_LEFT   :String = TextFieldAutoSize.LEFT;
 		public static const AUTOSIZE_RIGHT  :String = TextFieldAutoSize.RIGHT;
@@ -25,7 +25,6 @@ package railk.as3.text
 		public static const INPUT_TYPE      :String = TextFieldType.INPUT;
 		
 		private var format                  :TextFormat;
-		private var texte                   :TextField;
 		private var _hasAutoSize            :Boolean; 
 		
 		/**
