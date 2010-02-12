@@ -8,24 +8,25 @@
 
 package railk.as3.text
 {	
-	import flash.text.TextField;	
-	public class TextArea extends TextField
+	import flash.display.Loader;
+	import flash.display.Sprite;
+	import flash.text.TextFormat;
+	import flash.utils.Dictionary;
+	import railk.as3.display.UITextField;
+	import railk.as3.ui.loader.*;
+	
+	public class TextArea extends UITextField
 	{
-		public var text:String;
-		public var width:Number;
-		public var height:Number;
-		public var lines:Number;
-		public var lineHeight:Number;
-		public var letterSpacing:Number;
-		public var justify:String;
-		
 		private var _letters:Array=[];
 		private var _words:Array=[];
-		private var _lines:Array = [];
+		private var _lines:Dictionary = new Dictionary();
 		
-		private var firstFormat:Format;
-		private var lastFormat:Format;
-		private var currentFormat:Format;
+		private var firstTag:Tag;
+		private var lastTag:Tag;
+		
+		private var lineHeight:Number;
+		private var letterSpacing:Number;
+		private var justify:String;
 		
 		/**
 		 * CONSTRUCTEUR
@@ -37,74 +38,114 @@ package railk.as3.text
 		 * @param	letterSpacing
 		 * @param	justify
 		 */
-		public function TextArea(text:String,width:Number,height:Number,lines:Number=NaN,lineHeight:Number=NaN,letterSpacing:Number=NaN,justify:String='left') {
-			this.text = text;
-			this.width = width;
-			this.height = height;
-			this.lines = lines;
+		public function TextArea(text:String, width:Number, height:Number, lineHeight:Number = NaN, letterSpacing:Number = NaN, justify:String = 'left') {
 			this.lineHeight = lineHeight;
 			this.letterSpacing = letterSpacing;
 			this.justify = justify;
-			init();
-		}
-		
-		private function init():void {
-			var font:RegExp = /font:[a-zA-Z0-9 _-]{0,}/;
-			var size:RegExp = /size:[0-9]{0,}/;
-			var color:RegExp = /color:[a-zA-Z0-9 #]{0,}/;
-			var underlined:RegExp = /underlined:[true|false]/;
-			
-			var trimmed:String = ''; 
-			var format:String = ''; 
-			var style:Boolean;
-			
-			for (i= 0; i < text.length; i++) {
-				if ( text.substr(i, 6) == "<style" ) {
-					style = true;
-				}
-				else if ( text.substr(i, 8) == "</style>" ) {
-					currentFormat.place[currentFormat.place.length-1].end = trimmed.length;
-					currentFormat = currentFormat.prev;
-					text = text.replace(/<\/style>/, '');
-				}
-				else  if (text.charAt(i) == ">" && format.search(/\<style/) != -1) {
-					addformat(	has(format.match(font), 'arial','font'), 
-								Number(has(format.match(size), '12','size')), 
-								stringToColor(has(format.match(color), '0x000000','color')), 
-								stringToBoolean(has(format.match(underlined), 'false','underlined')), 
-								lineHeight, 
-								letterSpacing, 
-								justify
-					);
-					currentFormat.place.push( { begin:trimmed.length } );
-					format = '';
-					style = false;
-					i++;
-				}
-				else if ( text.substr(i, 5) == "<br/>") text = text.replace(/<br\/>/, '\n');
-				
-				if (style) format += text.charAt(i);
-				else {
-					trimmed += text.charAt(i);
-					if(text.charAt(i)!=' ') _letters[_letters.length] = text.charAt(i);
-				}
-			}
-			
-			this.text = trimmed;
+			this.wordWrap = true;
 			this.width = width;
 			this.height = height;
-			if (lines) for (var i:int = 0; i < lines-this.numLines; i++) trimmed += '\r';
-			this.text = (trimmed)?trimmed:' ';
+			this.htmlText = analyse(text);
 			
-			var walker:Format = firstFormat;
+			(this.getImageReference('image') as Loader).alpha = .1;
+			
+			var walker:Tag = firstTag;
 			while (walker) {
-				for (i=0; i < walker.place.length; i++) this.setTextFormat(walker.textFormat, walker.place[i].begin, walker.place[i].end);
+				this.setTextFormat(walker.textFormat, walker.begin, walker.end);
 				walker = walker.next;
 			}
 		}
 		
 		/**
-		 * ADD A NEW TEXTFORMAT FOR THE SPECIFY PART OF THE TEXT
+		 * ANALYSE
+		 * 
+		 * @param	text
+		 */
+		private function analyse(text:String):String {
+			var style:RegExp = /style="[a-zA-Z0-9,:\-# ]{1,}"/;
+			var font:RegExp = /font:[a-zA-Z0-9_-]{0,}/;
+			var size:RegExp = /size:[0-9]{0,}/;
+			var color:RegExp = /color:[a-zA-Z0-9#]{0,}/;
+			var align:RegExp = /align:[a-zA-Z]{0,}/;
+			var link:RegExp = /href="[a-zA-Z0-9-_.#:\/]{0,}"/;
+			var target:RegExp = /target="[a-zA-Z_]{0,}"/;
+			var img:RegExp = /src="[a-zA-Z0-9-_.#:\/]{0,}"/;
+			var underlined:RegExp = /underlined:[true|false]/;
+			var htmlTag:RegExp = /(<([\/@!?#]?[^\W_]+)(?:\s|(?:\s(?:[^'">\s]|'[^']*'|"[^"]*")*))*\/?>)|(<\!--[^-]*-->)/g;
+			var openTag:RegExp = /<[a-zA-Z0-9]{1,}/;
+			var closeTag:RegExp = /<\/[a-zA-Z0-9 ]{1,}>/;
+			var singleTag:RegExp = /<[a-zA-Z0-9=",.: ]{1,}\/>/;
+			var trimmed:String = text;
+			
+			var tags:Array = trimmed.match(htmlTag), openTags:Array=[], currentTag:String, index:int=0;
+			for (var i:int = 0; i < tags.length; i++) {
+				var tag:String = tags[i], format:TextFormat, attributes:Array;
+				//format ?
+				if (tag.search(style) != -1) {
+					var s:String = tag.match(style)[0];
+					format = getFormat(getStyle(s, font), getStyle(s, size), getStyle(s, color), getStyle(s, underlined), getStyle(s, align));
+					tag.replace(style, '');
+				}
+				else format = (lastTag)?lastTag.textFormat:getFormat();
+				
+				//img
+				if ( tag.search(img) != -1) {
+					
+				}
+				
+				//video
+				
+				
+				//link
+				if ( tag.search(link) != -1) {
+					format.url = tag.match(link)[0].split('"')[1];
+					format.target = (tag.match(target))?tag.match(target)[0]:'_blanc';
+				}
+				
+				//create tag and trimm text
+				if (tag.search(singleTag) != -1) {
+					if (tag.search('br') != -1) {
+						text = text.replace(tag, '\n');
+						trimmed = trimmed.replace(tag, '\n');
+					}
+					else addTag( new Tag(tagName(tag.match(singleTag)[0]), trimmed.indexOf(tag, index), format));
+					lastTag.end = lastTag.begin;
+				}
+				else if (tag.search(openTag) != -1) {
+					openTags.unshift( tagName(tag.match(openTag)[0]) );
+					addTag( new Tag(tagName(tag.match(openTag)[0]), trimmed.indexOf(tag, index), format));
+				}
+				else if (tag.search(closeTag) != -1) getTag(openTags.shift()).end = trimmed.indexOf(tag, index);
+				trimmed = trimmed.replace(tag, '');
+			}
+			return text;
+		}
+		
+		/**
+		 * MANAGE TAG
+		 */
+		private function getTag(name:String):Tag {
+			var walker:Tag = firstTag;
+			while (walker) {
+				if (walker.name == name) return walker;
+				walker = walker.next;
+			}
+			return null;
+		}
+		 
+		private function addTag(tag:Tag):void {
+			if (!firstTag) firstTag = lastTag = tag;
+			else {
+				lastTag.next = tag;
+				tag.prev = lastTag;
+				lastTag = tag;
+			}
+		}
+		
+		private function tagName(tag:String):String { return tag.replace(/[<|\/>]{0,}/g, ''); }
+		
+		/**
+		 * GET A NEW TEXTFORMAT FOR THE SPECIFY PART OF THE TEXT
 		 * 
 		 * @param	font
 		 * @param	size
@@ -114,21 +155,30 @@ package railk.as3.text
 		 * @param	letterSpacing
 		 * @param	justify
 		 */
-		private function addformat(font:String, size:Number, color:uint, underlined:Boolean, lineHeight:Number, letterSpacing:Number, justify:String ):void {
-			var format:Format = new Format(font, size, color, underlined, lineHeight, letterSpacing, justify);
-			if (firstFormat ==  null ) firstFormat = lastFormat = currentFormat = format;
-			else {
-				lastFormat.next = format;
-				format.prev = lastFormat;
-				lastFormat = currentFormat = format;
-			}
+		private function getFormat(font:String='', size:String='', color:String='', underlined:String='',justify:String='' ):TextFormat {
+			var textFormat:TextFormat = new TextFormat(	(font)?font:((lastTag)?lastTag.textFormat.font:'arial'), 
+														(size)?Number(size):((lastTag)?lastTag.textFormat.size:12), 
+														(color)?stringToColor(color):((lastTag)?lastTag.textFormat.color:0x000000),
+														null, null,
+														(underlined)?stringToBoolean(underlined):((lastTag)?lastTag.textFormat.underline:false),
+														null,
+														null,
+														(justify)?justify:this.justify,
+														null, null, null, 
+														lineHeight);
+			textFormat.letterSpacing = letterSpacing;
+			return textFormat;
 		}
 		
 		/**
 		 * UTILITIES
 		 */
 		public function getLine(line:int):Line {
-			return new Line(this, line,lastFormat);
+			var diff:int = line-(this.numLines - 1);
+			if (diff > 0) for (var i:int = 0; i < diff; i++) this.appendText('\r');
+			if (_lines[line] != undefined) return _lines[line];
+			_lines[line] = new Line(this, line, new TextFormat('arial',12,0x000000));
+			return _lines[line];
 		}
 		 
 		private function stringToBoolean(bool:String):Boolean {
@@ -142,26 +192,51 @@ package railk.as3.text
 			return uint(color);
 		}
 		
-		private function has(result:Array,defaut:String,what:String):* {
-			return (result!=null)?result[0].split(':')[1]:((currentFormat!=null)?currentFormat[what]:defaut);
-		}
+		private function getStyle(s:String, r:RegExp):String { return (s.match(r))?s.match(r)[0].split(':')[1]:''; }
 		
 		/**
 		 * GETTER/SETTER
 		 */
-		public function get lines():Array { return _lines; }
 		public function get words():Array { return _words; }
 		public function get letters():Array { return _letters; }
+		public function get lines():Array { 
+			var a:Array = [];
+			for each (var value:Object in _lines) a[a.length]=value;
+			return a; 
+		}
 	}
 }
 
+import flash.text.TextFormat;
+internal class Tag
+{
+	public var next:Tag;
+	public var prev:Tag;
+
+	public var name:String;
+	public var begin:int;
+	public var end:int;
+	public var textFormat:TextFormat;
+	public var attributes:Array;
+	
+	public function Tag(name:String, begin:int, textFormat:TextFormat, attributes:Array=null) {
+		this.name = name;
+		this.begin = begin;
+		this.textFormat = textFormat;
+		this.attributes = attributes;
+	}
+	
+	public function toString():String { return '[TAG > name:' + name + ', begin:'+begin+', end:'+end+']'; }
+}
+
 import flash.text.TextField;
-class Line {
+import flash.text.TextFormat;
+internal class Line {
 	private var textField:TextField;
 	private var line:int;
-	private var format:Format;
+	private var format:TextFormat;
 	
-	public function Line(textField:TextField,line:int,format:Format) {
+	public function Line(textField:TextField,line:int,format:TextFormat) {
 		this.textField = textField;
 		this.line = line-1;
 		this.format = format;
@@ -178,29 +253,6 @@ class Line {
 	public function get text():String { return textField.getLineText(line); }
 	public function set text(txt:String):void { 
 		textField.replaceText( textField.getLineOffset(line),  textField.getLineOffset(line) + textField.getLineLength(line)-1, txt );
-		textField.setTextFormat(format.textFormat,textField.getLineOffset(line),textField.getLineOffset(line) + textField.getLineLength(line)-1);
-	}
-}
-
-import flash.text.TextFormat;
-class Format {
-	public var prev:Format;
-	public var next:Format;
-	
-	public var font:String;
-	public var size:Number;
-	public var color:uint;
-	public var underlined:Boolean;
-	public var textFormat:TextFormat;
-	
-	public var place:Array = [];
-	
-	public function Format(font:String, size:Number, color:uint, underlined:Boolean, lineHeight:Number, letterSpacing:Number, justify:String) {
-		this.font = font;
-		this.size = size;
-		this.color = color;
-		this.underlined = underlined;
-		textFormat = new TextFormat(font, size, color, null, null, underlined, null, null, justify, null, null, null, lineHeight);
-		textFormat.letterSpacing = letterSpacing;
+		textField.setTextFormat(format,textField.getLineOffset(line),textField.getLineOffset(line) + textField.getLineLength(line)-1);
 	}
 }

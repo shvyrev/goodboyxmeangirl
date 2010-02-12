@@ -83,7 +83,8 @@ package railk.as3.motion.tweens
 		}
 
 		private function up( r:* ):* {
-			if (u && r) u.apply(null,ua);
+			if (!r) return r;
+			if (u) u.apply(null,ua);
 			var i:int=ps.length;
 			while( --i > -1 ) {
 				var p:*= ps[i];
