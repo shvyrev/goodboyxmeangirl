@@ -13,7 +13,6 @@ package railk.as3.ui.styleSheet
 		private static const CSS_BLOCS:RegExp = /[^{]*\{([^}]*)*}/g;
         private static const CSS_COMMENT:RegExp = /\/\*[a-zA-Z0-9,:\-# ]{0,}\*\//g;
         private static const CSS_INLINE:RegExp = /[\t\n\r]/g;
-        private static const FIND_A_HREF_CLASS:RegExp = /a\.([^\:]+)/gi;
 		private static var styleSheets:Dictionary = new Dictionary(true);
 		
 		private var styleSheet:String;
