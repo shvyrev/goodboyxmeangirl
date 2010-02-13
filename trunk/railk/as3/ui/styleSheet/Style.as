@@ -68,7 +68,7 @@ package railk.as3.ui.styleSheet
 		public function getValue(id:String):* { return hasValue(id)?pairs[id]:null; }
 		
 		private function stringTo(value:String):* {
-			if (value.match(NUMBER)) return Number(value);
+			if (value.match(NUMBER)) return Number(value.replace('px',''));
 			else if (value.match(COLOR)) return stringToColor(value);
 			else if (value.match(BOOLEAN)) return stringToBoolean(value);
 			else if (colors.hasOwnProperty(value)) return colors[value];
