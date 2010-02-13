@@ -101,5 +101,10 @@ package railk.as3.ui.styleSheet
 			for (var id:String in pairs) str+=' '+id+':'+pairs[id]+';'; 
 			return '[STYLE TYPE_'+((type!=TYPE_SUBSTYLE)?type.toUpperCase()+' ':'ELEMENT A:')+this.id.toUpperCase()+' >'+str+' ]';
 		}
+		
+		/**
+		 * GETTER/SETTER
+		 */
+		public function get data():Dictionary { return pairs; }
     }
 }
