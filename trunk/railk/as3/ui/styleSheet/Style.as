@@ -20,8 +20,8 @@ package railk.as3.ui.styleSheet
 		private static const BOOLEAN:RegExp = /true|false/;
 		
 		public var id:String;
-		public var type:String;		
-		public var related:Array = [];
+		public var type:String;
+		private var related:Dictionary = new Dictionary(true);
 		private var pairs:Dictionary = new Dictionary(true);
 		private var colors:Object = {red:0xff0000,green:0x00ff00,yellow:0xffff00,blue:0x0000ff,white:0xffffff,black:0x000000}
 		
@@ -53,8 +53,12 @@ package railk.as3.ui.styleSheet
 		 * MANAGE RELATED
 		 */
 		public function addRelated(style:Style):Style {
-			related[related.length] = style;
-			return this;
+			related[style.id] = style;
+			return style;
+		}
+		
+		public function getRelated(id:String):Style {
+			return (related[id] != undefined)?related[id]:null;
 		}
 		
 		/**
@@ -95,7 +99,7 @@ package railk.as3.ui.styleSheet
 		public function toString():String { 
 			var str:String='';
 			for (var id:String in pairs) str+=' '+id+':'+pairs[id]+';'; 
-			return '[STYLE TYPE_'+type.toUpperCase()+' '+this.id.toUpperCase()+' >'+str+' ]';
+			return '[STYLE TYPE_'+((type!=TYPE_SUBSTYLE)?type.toUpperCase()+' ':'ELEMENT A:')+this.id.toUpperCase()+' >'+str+' ]';
 		}
     }
 }
