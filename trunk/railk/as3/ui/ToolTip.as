@@ -3,263 +3,91 @@
 * 
 * @author Richard Rodney
 * @version 0.1
-* 
-* TODO:AUTHORISE SPECIAL GRAPHIC PART INSTEAD OF TEXT OR WITH THE TEXT AND ADD THE CIRCLE TYPE AND ORIENTATION
 */
 
 package railk.as3.ui
 {
 	import flash.filters.DropShadowFilter;
-	import flash.geom.Point;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.text.TextFormat;
-	
-	import railk.as3.display.graphicShape.*;
-	import railk.as3.display.UISprite;	
+	import railk.as3.display.UISprite;
+	import railk.as3.text.Text;
+	import railk.as3.ui.FontManager
 	
 	public class ToolTip extends UISprite
 	{
-		private var bulle                          :RoundRectangleShape;
-		private var triangle                       :TriangleShape;
-		private var info                           :UISprite;
-		private var txt                            :TextField;
-		private var format                         :TextFormat;
+		private var _font:uint;
+		private var _color:uint;
+		private var _size:uint;
+		private var _align:String;
+		private var _texte:String;
+		private var _graphics:Object;
+		private var _dropShadow:Boolean;
+		private var txt:Text;
 		
-		private var _filters                       :Array;
-		private var _type                          :String;
-		private var _thickness                     :Number;
-		private var _width                         :Number;
-		private var _height                        :Number;
-		private var _orientation                   :String;
-		private var _bulleColor                    :uint;
-		private var _texteColor                    :uint;
-		private var _texte                         :String;
-		private var _font                          :String;
-		private var _fontSize                      :int;
-		private var _corner                        :int;
-		private var _dropShadow                    :Boolean;
-		private var _tri                           :Boolean;
-		private var _triPoints                     :Array;
-		private var _triPlace                      :String;
-		
-		private var engaged                        :Boolean = false;
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
+		 * CONSTRUCTEUR
 		 * 
-		 * @param	type           'rectangle'
-		 * @param	thickness      width or height of the infobulle considering the orientation
-		 * @param	orientation    H | V
-		 * @param	bulleColor     uint
-		 * @param	texte          Text to put inside the infobulle
-		 * @param	texteColor     color of the text
-		 * @param	font           font to be used ( embeded font is obligatory )
-		 * @param	fontSize       size of the font
-		 * @param	corner         size of the round corner if type is rectangular
-		 * @param	dropShadow     false | true
-		 * @param	tri            enabled or not the small marker for the infobulle
-		 * @param   triPoints      [ A:Point,B:Point,C:Point ]
-		 * @param	triPlace       place of the marker top | bottom | left | right
-		 * 
+		 * @param	texte
+		 * @param	color
+		 * @param	size
+		 * @param	graphics
+		 * @param	dropShadow
 		 */
-		public function ToolTip( type:String, thickness:Number, orientation:String, bulleColor:uint, texte:String, texteColor:uint, font:String, fontSize:int, corner:int = 0, dropShadow:Boolean = false, tri:Boolean = false, triPoints:Array = null, triPlace:String = 'bottom' ) {
+		public function ToolTip( texte:String, font:String, color:uint, size:Number, align:String, graphics:Object, dropShadow:Boolean=false ) {
 			super();
-			_type = type;
-			_thickness = thickness;
-			_orientation = orientation;
-			_bulleColor = bulleColor;
-			_texteColor = texteColor;
-			_texte = texte;
 			_font = font;
-			_fontSize = fontSize;
-			_corner = corner;
+			_color = color;
+			_size = size;
+			_texte = texte;
+			_graphics = addChild(graphics);
 			_dropShadow = dropShadow;
-			_tri= tri;
-			_triPlace = triPlace;
-			if ( triPoints == null) triPoints = [ new Point(0, 0), new Point(6, -6), new Point(-6, -6) ];
-			_triPoints = triPoints;
-			_filters = new Array();
+			if (_dropShadow) _graphics.filters.push( new DropShadowFilter( 8, 45, 0xffffff, .1 ) );
+			txt = addChild( new Text('tooltip','dynamic',_texte,_color,FontManager.getFont(_font),true,_size,_align,false, true) ) as Text;
 			init();
 		}
 		
 		private function init():void {
-			//--dropShadow
-			if (dropShadow) _filters.push( new DropShadowFilter( 8, 45, 0xffffff, .1 ) );
-			
-			//--texte
-			format = new TextFormat();
-			format.align = 'left';
-			format.color = texteColor; 
-			format.font = font;
-			format.size =  fontSize;
-			
-			info = new UISprite();
-			
-				txt = new TextField();
-				txt.name = 'txt';
-				txt.text = texte;
-				txt.type = "dynamic";
-				txt.autoSize = TextFieldAutoSize.LEFT;
-				txt.selectable = false;
-				txt.embedFonts = true;
-				txt.setTextFormat( format );
-			
-			info.addChild( txt );
-			
-			if ( txt.textWidth >= 20 ) _width = txt.textWidth + 20
-			else _width = txt.textWidth;
-			
-			//--bulle
-			bulle = new RoundRectangleShape(bulleColor, 0, 0, _width, thickness, corner, corner);
-			bulle.y = -thickness;
-			bulle.filters = _filters;
-			addChild( bulle );
-			info.x = bulle.x + 10;
-			info.y2 = bulle.y2-1;
-			addChild( info );
-			
-			//--triangle
-			if(tri){
-				triangle = new TriangleShape(triPoints[0], triPoints[1], triPoints[2], bulleColor);
-				triangle.filters = _filters;
-				addChild( triangle );
-				placeTriangle( triPlace );
-			}
-					
-			_width = txt.textWidth;
-			_height = thickness;
+			_graphics.height = (_graphics.height*txt.width+20)/_graphics.width;
+			_graphics.width = txt.width+20;
+			txt.x2 = _graphics.x2;
+			txt.y2 = _graphics.y2;
 		}
 		
+		/**
+		 * GETTER/SETTER
+		 */
+		public function get font():uint { return _font; }
+		public function set font(value:uint):void { txt.font = _font = value; }
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					   TRIANGLE PLACE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private function placeTriangle( place:String ):void {
-			switch( place )
-				{
-					case 'top' :
-						triangle.rotation = 180;
-						bulle.x2 = 0;
-						bulle.y += triangle.height+bulle.height;
-						info.x = bulle.x + 10;
-						info.y2 = bulle.y2-1;
-						break;
-					
-					case 'bottom' :
-						triangle.rotation = 0;
-						bulle.x2 = 0;
-						bulle.y -= triangle.height;
-						info.x = bulle.x + 10;
-						info.y2 = bulle.y2-1;
-						break;
-						
-					case 'left' :
-						triangle.rotation2 = 90;
-						triangle.y = 0;
-						triangle.x = 0;
-						bulle.y2 = triangle.y2;
-						bulle.x = triangle.x + triangle.width - 2;
-						info.x = bulle.x + 10;
-						info.y2 = bulle.y2-1;
-						break;
-						
-					case 'right' :
-						triangle.rotation2 = -90;
-						triangle.y = 0;
-						triangle.x = 0;
-						bulle.y2 = triangle.y2;
-						bulle.x = -(bulle.width + triangle.width - 2);
-						info.x = bulle.x + 10;
-						info.y2 = bulle.y2-1;
-						break;
-						
-					default : break;
-				}
-		}
+		public function get color():uint { return _color; }
+		public function set color(value:uint):void { _color = txt.color = value; }
 		
+		public function get size():uint { return _size; }
+		public function set size(value:uint):void { _size = txt.size = value; }
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function get thickness():Number { return _thickness; }
-		
-		public function set thickness( value:Number ):void {
-			bulle.roundRectangle( bulleColor, 0, 0, value, _thickness, _corner, _corner );
-			if (_tri) placeTriangle( _triPlace );
-			_thickness = value;
-		}
-		
-		public function get orientation():String { return _orientation; }
-		
-		public function set orientation( value:String ):void { _orientation = value; }
-		
-		public function get font():String { return _font; }
-		
-		public function set font( value:String ):void { _font = value; }
-		
-		public function get fontSize():int { return _fontSize; }
-		
-		public function set fontSize( value:int ):void { _fontSize = value; }
-		
-		public function get corner():int { return _corner; }
-		
-		public function set corner( value:int ):void {
-			bulle.roundRectangle( bulleColor, 0, 0, _width, _thickness, value, value );
-			if (_tri) placeTriangle( _triPlace );
-			_corner = value;
-		}
-		
-		public function get bulleColor():uint { return _bulleColor; }
-		
-		public function set bulleColor( value:uint ):void { _bulleColor = value; }
-		
-		public function get texteColor():uint { return _texteColor; }
-		
-		public function set texteColor( value:uint ):void { _texteColor = value; }
+		public function get align():String { return _align; }
+		public function set align(value:String):void { _align = txt.align = value; }
 		
 		public function get texte():String { return _texte; }
-		
 		public function set texte( value:String ):void {
 			txt.appendText( '' );
-			txt.text = value;
-			var add:int=0;
-			if ( txt.textWidth >= 20 ) {
-				add = 20;
-				triangle.alpha = 1;
-				engaged = false;
-			} else {
-				if(_tri && !engaged ){
-					triangle.alpha = 0;
-					engaged = true;
-				}	
-			}		
-			
-			bulle.roundRectangle( bulleColor, 0, 0, txt.textWidth+add, _height, _corner, _corner );
-			if (_tri) placeTriangle( _triPlace );
-			_width = bulle.width;	
-			_texte = value;
+			_texte = txt.text = value;
+			init();
+		}	
+		
+		public function get graphics():Object { return _graphics; }
+		public function set graphics(value:Object):void {
+			_graphics = value;
+			removeChild( _graphics );
+			addChild( _graphics );
+			init();
 		}
 		
-		public function get triEnabled():Boolean { return _tri; }
-		
-		public function set triEnabled( value:Boolean ):void {
-			triangle.visible = false;
-			_tri = value;
-		}
-		
-		public function get triPoints():Array { return _triPoints; }
-		
-		public function set triPoints( value:Array ):void { _triPoints = value; }
-		
-		public function get triPlace():String { return _triPlace; }
-		
-		public function set triPlace( value:String ):void {
-			_triPlace = value;
-			placeTriangle( _triPlace );
+		public function get dropShadow():Boolean { return _dropShadow; }
+		public function set dropShadow(value:Boolean):void {
+			_dropShadow = value;
+			var filters:Array = _graphics.filters;
+			for (var i:int = 0; i < filters.length; i++) if ( filters[i] is DropShadowFilter) filters.slice(i, 1);
+			_graphics.filters = filters;
 		}
 	}
 }
