@@ -87,9 +87,16 @@ package railk.as3.ui.styleSheet
 		/**
 		 * UTILITIES
 		 */
-		public function hasStyle(name:String):Boolean { return (styles[name] != undefined)?true:false; }
-		public function getStyle(name:String):Style { return hasStyle(name)?styles[name]:null; }
 		private function getType(name:String):String { return (name.indexOf('#') != -1)?Style.TYPE_ID:(name.indexOf('.') != -1)?Style.TYPE_CLASS:Style.TYPE_ELEMENT; }
+		public function hasStyle(name:String):Boolean { return (styles[name] != undefined)?true:false; }
+		public function getStyle(name:String):Style {
+			if (name.indexOf(':') != -1) {
+				var a:Array = name.split(':');
+				return hasStyle(a[0])?styles[a[0]].getRelated(a[1]):null; 
+			}
+			return hasStyle(name)?styles[name]:null; 
+		}
+		
 		
 		/**
 		 * GETTER/SETTER
