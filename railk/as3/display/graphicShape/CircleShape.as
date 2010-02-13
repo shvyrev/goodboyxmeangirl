@@ -9,9 +9,10 @@ package railk.as3.display.graphicShape
 {
 	public class CircleShape extends GraphicShape
 	{
-		public function CircleShape(color:uint,X:Number,Y:Number,radius:Number,lineThickness:Number=NaN,lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
+		public function CircleShape(color:uint=0x000000,X:Number=0,Y:Number=0,radius:Number=10,lineThickness:Number=NaN,lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
 			super(copy);
 			_type = 'cercle';
+			this.color = color;
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color,alpha);

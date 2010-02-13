@@ -9,9 +9,10 @@ package railk.as3.display.graphicShape
 {
 	public class ArcCircleShape extends GraphicShape
 	{
-		public function ArcCircleShape(epaisseur:Number,color:uint,centerX:Number,centerY:Number,radius:Number,startAngle:Number,arcAngle:Number,precision:int,copy:Boolean=false ) {
+		public function ArcCircleShape(epaisseur:Number=1,color:uint=0x000000,centerX:Number=0,centerY:Number=0,radius:Number=10,startAngle:Number=0,arcAngle:Number=360,precision:int=100,copy:Boolean=false ) {
 			super(copy);
 			_type = 'arcCircle';
+			this.color = color;
 			this.graphicsCopy.clear();
 			startAngle = startAngle/360;
 			arcAngle = arcAngle/360;

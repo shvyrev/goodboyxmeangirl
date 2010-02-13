@@ -61,7 +61,7 @@ package railk.as3.motion.tweens
 			for ( var p:* in _ps ) {
 				if (p.search('rotation')!=-1){ t[p]=t[p]%360+((Math.abs(t[p]%360-_ps[p]%360)<180)?0:(t[p]%360>_ps[p]%360)?-360:360); _ps[p]=_ps[p]%360;}	
 				if (p=='color') var c:* = t.transform.colorTransform;
-				ps[ps.length] = [((p.search('Filter')!=-1)?'filter':p),((p in t)?((_ps[p] is Array)?ibz(t[p],_ps[p]):t[p]):((p.search('Filter')!=-1)?iflt(p,_ps[p]):((p=='color')?c:((p=='volume')?t.soundTransform.volume:t)))),(p=='color')?new ColorTransform(0-c.redMultiplier,0-c.greenMultiplier,0-c.blueMultiplier,0,((_ps[p]>>16)&0xff)-c.redOffset,((_ps[p]>>8)&0xff)-c.greenOffset,(_ps[p]&0xff)-c.blueOffset):_ps[p]];
+				ps[ps.length] = [((p.search('Filter')!=-1)?'filter':p),((p in t && p!='color')?((_ps[p] is Array)?ibz(t[p],_ps[p]):t[p]):((p.search('Filter')!=-1)?iflt(p,_ps[p]):((p=='color')?c:((p=='volume')?t.soundTransform.volume:t)))),(p=='color')?new ColorTransform(0-c.redMultiplier,0-c.greenMultiplier,0-c.blueMultiplier,0,((_ps[p]>>16)&0xff)-c.redOffset,((_ps[p]>>8)&0xff)-c.greenOffset,(_ps[p]&0xff)-c.blueOffset):_ps[p]];
 			}
 			t.addEventListener('enterFrame', tk );
 			return this;

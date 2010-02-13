@@ -8,8 +8,12 @@
 package railk.as3.display.graphicShape
 {
 	import flash.geom.Matrix;
-	public class GradientShape extends GraphicShape
+	public class GradientShape
 	{
+		public var graphicsCopy:*;
+		protected var copy:Boolean;
+		protected var _type:String;
+		
 		/**
 		* 
 		* @param	colors     [ 0xffffff, ... ]
@@ -23,7 +27,11 @@ package railk.as3.display.graphicShape
 		* @return
 		*/
 		public function GradientShape(colors:Array,W:Number,H:Number,rotation:Number,type:String,alphas:Array,ratios:Array,copy:Boolean=false ) {
-			super(copy);
+			super();
+			this.copy = copy;
+			if ( copy ) graphicsCopy = new GraphicCopy(graphics);
+			else graphicsCopy = graphics;
+			
 			_type = 'gradient';
 			var matrix:Matrix = new Matrix();
 			matrix.createGradientBox(W, H, rotation*0.0174532925, 0, 0);
@@ -36,6 +44,12 @@ package railk.as3.display.graphicShape
 			this.graphicsCopy.lineTo(0, 0);
 			this.graphicsCopy.endFill();
 		}
+		
+		override public function toString():String {
+			return '[ GRAPHICSHAPE > ' + this.name.toUpperCase() + ', (type:' + this._type + ') ]';
+		}
+		
+		public function get type():String { return _type; }
 	}
 	
 }
