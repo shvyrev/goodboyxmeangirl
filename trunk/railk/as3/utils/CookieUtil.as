@@ -1,7 +1,6 @@
 package railk.as3.utils
 {
 	import flash.external.ExternalInterface;
-	
 	public class CookieUtil
 	{
 		private static const FUNCTION_SETCOOKIE:String = 
@@ -70,6 +69,5 @@ package railk.as3.utils
 			
 			ExternalInterface.call("snw_setCookie", name, "", -1);
 		}
-
 	}
 }
