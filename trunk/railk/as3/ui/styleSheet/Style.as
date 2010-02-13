@@ -18,6 +18,7 @@ package railk.as3.ui.styleSheet
 		private static const NUMBER:RegExp = /[0-9][px|]{1,}/;
 		private static const COLOR:RegExp = /[a-zA-Z0-9#]{7,}/;
 		private static const BOOLEAN:RegExp = /true|false/;
+		private static const URL:RegExp = /url([a-zA-Z0-9 .\/_-]{0,})/;
 		
 		public var id:String;
 		public var type:String;
@@ -71,6 +72,7 @@ package railk.as3.ui.styleSheet
 			if (value.match(NUMBER)) return Number(value.replace('px',''));
 			else if (value.match(COLOR)) return stringToColor(value);
 			else if (value.match(BOOLEAN)) return stringToBoolean(value);
+			else if (value.match(URL)) return value.replace("url(",'').replace(")",'');
 			else if (colors.hasOwnProperty(value)) return colors[value];
 			return value;
 		}
