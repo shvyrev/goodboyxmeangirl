@@ -14,15 +14,24 @@ package railk.as3.ui.styleSheet
         private static const CSS_COMMENT:RegExp = /\/\*[a-zA-Z0-9,:\-# ]{0,}\*\//g;
         private static const CSS_INLINE:RegExp = /[\t\n\r]/g;
         private static const FIND_A_HREF_CLASS:RegExp = /a\.([^\:]+)/gi;
+		private static var styleSheets:Dictionary = new Dictionary(true);
 		
 		private var styleSheet:String;
 		private var styles:Dictionary = new Dictionary(true);
 		private var stylesToArray:Array = [];
 		
+		/**
+		 * STATICS
+		 */
+		static public function getStyleSheet(name:String):CSS {
+			return styleSheets[name];
+		}
+		
         /**
          * CONSTRUCTEUR
          */
-        public function CSS(styleSheet:String) {
+        public function CSS(styleSheet:String, name:String = 'undefined') {
+			styleSheets[name] = this;
             this.styleSheet = parse(styleSheet);
 		}
 		

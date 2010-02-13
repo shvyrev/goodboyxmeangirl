@@ -44,9 +44,9 @@ package railk.as3.ui.styleSheet
 				for (var i:int = 0; i < length; i++) values[values.length] = stringTo(splitValue[i]);
 				pairs[id] = values;
 			}
-			else pairs[id] = stringTo(value); 
+			else pairs[id] = stringTo(value);
 		}
-		public function update(id:String, value:*):void { add(id, value); }
+		public function update(id:String,value:*):void { add(id, value); }
 		public function del(id:String):void { delete pairs[id]; }
 		
 		/**
