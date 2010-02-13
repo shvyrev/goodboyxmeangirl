@@ -5,15 +5,15 @@
  * @version 0.1
  */
 
-package railk.as3.ui
+package railk.as3.utils
 {
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;
-	public class LinkedObject extends Proxy {
+	public class ObjectLinker extends Proxy {
 		public var master:*;
 		private var linked:Array;
 		
-		public function LinkedObject( master:*, ...args ) {
+		public function ObjectLinker( master:*, ...args ) {
 			this.master = master;
 			linked = args;
 		}
