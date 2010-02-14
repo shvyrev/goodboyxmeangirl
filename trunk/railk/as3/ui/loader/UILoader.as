@@ -36,7 +36,7 @@ package railk.as3.ui.loader
 		}
 		
 		private function init(url:String):void {
-			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'jpg,gif,png,swf', 'flash.net.URLLoader,,data':'xml,zip,json' };
+			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'jpg,gif,png,swf', 'flash.net.URLLoader,,data':'xml,zip,json,css' };
 			for ( var t:String in types) if (types[t].search(url.split('.')[url.split('.').length - 1]) != -1) { type = t.split(','); break; }
 			loader = new (getDefinitionByName(type[0]))();
 			listener = (type[1])?loader[type[1]]:loader;

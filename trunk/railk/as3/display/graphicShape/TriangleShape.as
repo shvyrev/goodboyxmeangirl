@@ -16,7 +16,6 @@ package railk.as3.display.graphicShape
 			A = (A)?A: new Point(0, -8);
 			B = (B)?B: new Point(10, 10);
 			C = (C)?C: new Point(-10, 10);
-			this.color = color;
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
@@ -24,6 +23,7 @@ package railk.as3.display.graphicShape
 			this.graphicsCopy.lineTo( B.x, B.y );
 			this.graphicsCopy.lineTo( C.x, C.y );
 			this.graphicsCopy.endFill();
+			this.color = color;
 		}
 	}
 }

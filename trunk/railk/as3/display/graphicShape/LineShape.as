@@ -14,11 +14,11 @@ package railk.as3.display.graphicShape
 		public function LineShape( color:uint, A:Point, B:Point, thickness:Number=1,copy:Boolean=false ) {
 			super(copy);
 			_type = 'line';
-			this.color = color;
 			this.graphicsCopy.clear();
 			this.graphicsCopy.lineStyle( thickness, color, 1);
 			this.graphicsCopy.moveTo(A.x, A.y);
 			this.graphicsCopy.lineTo(B.x, B.y);
+			this.color = color;
 		}
 	}
 }

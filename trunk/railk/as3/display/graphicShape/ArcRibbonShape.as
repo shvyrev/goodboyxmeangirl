@@ -12,7 +12,6 @@ package railk.as3.display.graphicShape
 		public function ArcRibbonShape(epaisseur:int=1,color:uint=0x000000,centerX:Number=0,centerY:Number=0,radius:Number=10,startAngle:Number=0,arcAngle:Number=360,precision:int=100,copy:Boolean=false ) {
 			super(copy);
 			_type = 'arcRibbon';
-			this.color = color;
 			var cornerRadius:Number = 0;
 			var X:Number;
 			var Y:Number;
@@ -123,6 +122,7 @@ package railk.as3.display.graphicShape
 			}
 			
 			this.graphicsCopy.endFill();
+			this.color = color;
 		}
 		
 		private function toRadians( degree:Number ):Number {
