@@ -24,13 +24,13 @@ package railk.as3.display.graphicShape
 		public function CamembertShape(color:uint=0x000000,X:Number=0,Y:Number=0,radius:Number=10,startAngle:Number=0,endAngle:Number=360,segments:int=100,holeRadius:Number=5,lineThickness:Number=NaN,lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
 			super(copy);
 			_type = 'camembert';
-			this.color = color;
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color,1);
 			this.drawCamembert(X, Y, radius, startAngle, endAngle, segments);
 			if(holeRadius) this.drawCamembert(X, Y, holeRadius, startAngle, endAngle, segments);
 			this.graphicsCopy.endFill();
+			this.color = color;
 		}
 		
 		private function drawCamembert( X:Number, Y:Number, radius:Number, startAngle:Number, endAngle:Number, segments:int):void {

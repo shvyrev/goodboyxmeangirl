@@ -23,7 +23,6 @@ package railk.as3.display.graphicShape {
 			this.copy = copy;
 			if ( copy ) graphicsCopy = new GraphicCopy(graphics);
 			else graphicsCopy = graphics;
-			c = this.transform.colorTransform;
 		}
 		
 		public function execute(method:String,params:Array):void {
@@ -50,7 +49,8 @@ package railk.as3.display.graphicShape {
 		public function get type():String { return _type; }
 		public function get color():uint { return this.transform.colorTransform.color; }
 		public function set color(value:uint):void {
-			this.transform.colorTransform = new ColorTransform(0-c.redMultiplier, 0-c.greenMultiplier, 0-c.blueMultiplier, 1, ((value >> 16) & 0xff)-c.redOffset, ((value >> 8) & 0xff)-c.greenOffset, (value & 0xff)-c.blueOffset);
+			c = this.transform.colorTransform;
+			this.transform.colorTransform = new ColorTransform(0,0,0,1,((value >> 16) & 0xff),((value >> 8) & 0xff),(value & 0xff));
 		}
 	}
 }

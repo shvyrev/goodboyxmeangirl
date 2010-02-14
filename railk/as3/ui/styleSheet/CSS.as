@@ -13,6 +13,8 @@ package railk.as3.ui.styleSheet
 		private static const CSS_BLOCS:RegExp = /[^{]*\{([^}]*)*}/g;
         private static const CSS_COMMENT:RegExp = /\/\*[a-zA-Z0-9,:\-# ]{0,}\*\//g;
         private static const CSS_INLINE:RegExp = /[\t\n\r]/g;
+        private static const CSS_LINK_RELATED:RegExp = /a:[hover|visited|link|active]*/;
+        private static const CSS_RELATED:RegExp = /[a-zA-Z0-9#.]{1,}[ ]{1,}[a-zA-Z0-9#.]{1,}/;
 		private static var styleSheets:Dictionary = new Dictionary(true);
 		
 		private var styleSheet:String;
@@ -57,11 +59,17 @@ package railk.as3.ui.styleSheet
 			
 			for (var i:int = 0; i < splitStyle.length; i++) {
 				// style
-				var styleName:String = splitStyle[i].replace(/[ ]/g,'');
-				var splitId:Array = styleName.split(":"), id:String = splitId[0].replace(/[.#]{0,}/, '');
+				var styleName:String = splitStyle[i], splitId:Array=[], link:Boolean, j:int;
+				if ( styleName.match(CSS_LINK_RELATED) ){ splitId = styleName.match(CSS_LINK_RELATED)[0].split(":"); link = true}
+				else if ( styleName.match(CSS_RELATED) ) splitId = styleName.match(CSS_RELATED)[0].split(/[ ]{1,}/);
+				else splitId[splitId.length] = styleName;
+				for (j = 0; j < splitId.length; j++) splitId[j] = splitId[j].replace(/[ ]/g, '');
+					
+				var id:String = splitId[0].replace(/[.#]{0,}/, '');
 				if (splitId.length > 1) {
-					if (hasStyle(id)) style = getStyle(id).addRelated( new Style(splitId[1], Style.TYPE_SUBSTYLE) );
-					else stylesToArray[stylesToArray.length] = styles[id] = style = (new Style( id, getType(splitId[0]) )).addRelated( new Style(splitId[1], Style.TYPE_SUBSTYLE) );
+					var subid:String = splitId[1].replace(/[.#]{0,}/, '');
+					if (hasStyle(id)) style = getStyle(id).addRelated( new Style(subid, (link)?Style.TYPE_LINK:getType(splitId[1])) );
+					else stylesToArray[stylesToArray.length] = styles[id] = style = (new Style( id, getType(splitId[0]) )).addRelated( new Style(subid, (link)?Style.TYPE_LINK:getType(splitId[1])) );
 				} else {
 					if (hasStyle(id)) style = getStyle(id);
 					else stylesToArray[stylesToArray.length] = styles[id] = style = new Style( id, getType(splitId[0]) );
@@ -69,7 +77,7 @@ package railk.as3.ui.styleSheet
 				
 				// pairs
 				var pairs:Array = String(splitBlock[1]).substr(0, String(splitBlock[1]).length - 1).split(';');
-				for (var j:int = 0; j < pairs.length - 1; j++) {
+				for (j = 0; j < pairs.length - 1; j++) {
 					var a:Array = pairs[j].replace(/:[ ]{0,}/, ':').split(':');
 					style.add(a[0].replace(/[ ]/g,''), a[1]);
 				}
@@ -98,8 +106,12 @@ package railk.as3.ui.styleSheet
 		private function getType(name:String):String { return (name.indexOf('#') != -1)?Style.TYPE_ID:(name.indexOf('.') != -1)?Style.TYPE_CLASS:Style.TYPE_ELEMENT; }
 		public function hasStyle(name:String):Boolean { return (styles[name] != undefined)?true:false; }
 		public function getStyle(name:String):Style {
+			var a:Array;
 			if (name.indexOf(':') != -1) {
-				var a:Array = name.split(':');
+				a = name.split(':');
+				return hasStyle(a[0])?styles[a[0]].getRelated(a[1]):null; 
+			} else if (name.indexOf(' ') != -1) {
+				a = name.split(' ');
 				return hasStyle(a[0])?styles[a[0]].getRelated(a[1]):null; 
 			}
 			return hasStyle(name)?styles[name]:null; 

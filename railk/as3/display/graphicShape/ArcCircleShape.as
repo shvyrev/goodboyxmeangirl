@@ -12,7 +12,6 @@ package railk.as3.display.graphicShape
 		public function ArcCircleShape(epaisseur:Number=1,color:uint=0x000000,centerX:Number=0,centerY:Number=0,radius:Number=10,startAngle:Number=0,arcAngle:Number=360,precision:int=100,copy:Boolean=false ) {
 			super(copy);
 			_type = 'arcCircle';
-			this.color = color;
 			this.graphicsCopy.clear();
 			startAngle = startAngle/360;
 			arcAngle = arcAngle/360;
@@ -28,6 +27,7 @@ package railk.as3.display.graphicShape
 				Y = centerY + Math.sin(angle * twoPI) * radius;
 				this.graphicsCopy.lineTo(X, Y);
 			}
+			this.color = color;
 		}
 	}
 	

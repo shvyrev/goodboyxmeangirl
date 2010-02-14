@@ -12,12 +12,12 @@ package railk.as3.display.graphicShape
 		public function RectangleShape(color:uint=0x000000,X:Number=0,Y:Number=0,W:Number=10,H:Number=10,lineThickness:Number=NaN,lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
 			super(copy);
 			_type = 'rectangle';
-			this.color = color;
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
 			this.graphicsCopy.drawRect(X,Y,W,H);
 			this.graphicsCopy.endFill();
+			this.color = color;
 		}
 	}
 }

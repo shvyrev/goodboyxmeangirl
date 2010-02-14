@@ -13,7 +13,7 @@ package railk.as3.ui.styleSheet
 		public static const TYPE_ID:String = 'id';
 		public static const TYPE_CLASS:String = 'class';
 		public static const TYPE_ELEMENT:String = 'element';
-		public static const TYPE_SUBSTYLE:String = 'substyle';
+		public static const TYPE_LINK:String = 'link';
 		
 		private static const NUMBER:RegExp = /[0-9][px|]{1,}/;
 		private static const COLOR:RegExp = /[a-zA-Z0-9#]{7,}/;
@@ -101,7 +101,7 @@ package railk.as3.ui.styleSheet
 		public function toString():String { 
 			var str:String='';
 			for (var id:String in pairs) str+=' '+id+':'+pairs[id]+';'; 
-			return '[STYLE TYPE_'+((type!=TYPE_SUBSTYLE)?type.toUpperCase()+' ':'ELEMENT A:')+this.id.toUpperCase()+' >'+str+' ]';
+			return '[STYLE TYPE_'+((type!=TYPE_LINK)?type.toUpperCase()+' ':'ELEMENT A:')+this.id.toUpperCase()+' >'+str+' ]';
 		}
 		
 		/**
