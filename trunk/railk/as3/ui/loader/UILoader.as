@@ -15,72 +15,152 @@ package railk.as3.ui.loader
 	import flash.net.URLLoader;
 	import flash.system.LoaderContext;
 	import flash.system.ApplicationDomain;
+	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	import flash.utils.getDefinitionByName;
 
 	public class UILoader extends EventDispatcher
 	{
-		public var content:Object;
-		public var url:URLRequest;
-		private var type:Array;
-		private var loader:Object;
-		private var listener:Object;
+		public static const CONTENT:String = 'content';
+		public static const FILE:String = 'current';
+		public static const PERCENT:String = 'percent';
+		
+		public var percent:Number;
+		public var content:Dictionary = new Dictionary(true);
+		
+		private var urls:Dictionary = new Dictionary(true);
+		private var loaders:Dictionary = new Dictionary(true);
+		private var listeners:Dictionary = new Dictionary(true);
+		private var types:Dictionary = new Dictionary(true);
+		private var percents:Dictionary = new Dictionary(true);
 		private var _progress:Function;
 		private var _complete:Function;
+		private var _file:Function;
 		private var pArgs:Array=[];
-		private var cArgs:Array=[];
+		private var cArgs:Array = [];
+		private var fArgs:Array = [];
+		private var active:int;
+		private var count:int;
+		private var current:Object;
 		
-		public function UILoader(url:String, noCache:Boolean=true) {
-			this.url = new URLRequest(url+(noCache?'?nocache='+int(Math.random()*1000)*getTimer()+''+getTimer():''));
-			init(url);
+		/**
+		 * CONSTRUCTEUR
+		 * @param	url
+		 * @param	noCache
+		 */
+		public function UILoader(url:String, noCache:Boolean=true) { add(url,noCache); }
+		
+		/**
+		 * ADD FILE TO LOAD
+		 */
+		public function add(url:String, noCache:Boolean = true):UILoader {
+			urls[url] = new URLRequest(init( url )+(noCache?'?nocache='+int(Math.random()*1000)*getTimer()+''+getTimer():''));
+			return this;
 		}
 		
-		private function init(url:String):void {
-			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'jpg,gif,png,swf', 'flash.net.URLLoader,,data':'xml,zip,json,css' };
-			for ( var t:String in types) if (types[t].search(url.split('.')[url.split('.').length - 1]) != -1) { type = t.split(','); break; }
-			loader = new (getDefinitionByName(type[0]))();
-			listener = (type[1])?loader[type[1]]:loader;
-			if(type[1]) loader.load(this.url,new LoaderContext(true, ApplicationDomain.currentDomain));
-			else loader.load(this.url);
+		private function init(url:String):String {
+			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'jpg,gif,png,swf', 'flash.net.URLLoader,,data':'xml,zip,json,css' }, type:Array;
+			for ( var t:String in types) if (types[t].search(url.split('.')[url.split('.').length - 1]) != -1) { this.types[url] = type = t.split(','); break; }
+			loaders[url] = new (getDefinitionByName(type[0]))();
+			listeners[url] = (type[1])?loaders[url][type[1]]:loaders[url];
+			percents[url] = 0;
+			active = count++;
+			return url;
 		}
 		
+		/**
+		 * PROGRESS
+		 * 
+		 * @param	action
+		 * @param	...args  CAN BE UILOADER.PERCENT
+		 * @return
+		 */
 		public function progress(action:Function, ...args):UILoader {
 			_progress = action;
 			pArgs = (args.length>0)?args:pArgs;
-			listener.addEventListener(ProgressEvent.PROGRESS, manageEvent );
+			for (var url:String in listeners) listeners[url].addEventListener(ProgressEvent.PROGRESS, manageEvent );
 			return this;
 		}
 		
+		/**
+		 * FILE COMPLETE
+		 * 
+		 * @param	action
+		 * @param	...args  CAN BE UILOADER.FILE
+		 * @return
+		 */
+		public function file(action:Function, ...args):UILoader {
+			_file = action;
+			fArgs = (args.length > 0)?args:fArgs;
+			for (var url:String in listeners) listeners[url].addEventListener(Event.COMPLETE, manageEvent );
+			return this;
+		}
+		
+		/**
+		 * COMPLETE
+		 * 
+		 * @param	action
+		 * @param	...args CAN BE UILOADER.CONTENT
+		 * @return
+		 */
 		public function complete(action:Function, ...args):UILoader {
 			_complete = action;
 			cArgs = (args.length>0)?args:cArgs;
-			listener.addEventListener(Event.COMPLETE, manageEvent );
+			for (var url:String in listeners) listeners[url].addEventListener(Event.COMPLETE, manageEvent );
 			return this;
 		}
 		
-		private function manageEvent(evt:*):void {
-			switch(evt.type) {
+		private function manageEvent(e:*):void {
+			var listener:*= e.currentTarget, url:String, i:int;
+			switch(e.type) {
 				case Event.COMPLETE :
-					content = (type[1])?listener.content:listener.data;
-					if(!type[1] || content.toString().search('Bitmap') != -1) cArgs[cArgs.length] = content;
-					_complete.apply(null,cArgs);
-					if(type[1]) loader.unload();
-					dispose();
+					content[getUrl(listener)] = current = (listener is URLLoader)?listener.data:listener.content;
+					if (_file != null) _file.apply(null, checkArgs(fArgs, FILE));
+					if (!active) { 
+						for (url in loaders) if (types[url][1]) loaders[url].unload();
+						if(_complete!=null) _complete.apply(null, checkArgs(cArgs,CONTENT)); 
+						dispose(); 
+					}
+					active--;
 					break;
 				case ProgressEvent.PROGRESS :
-					pArgs[(pArgs.length>0)?pArgs.length-1:pArgs.length] = int(evt.bytesLoaded / evt.bytesTotal * 100);
-					_progress.apply(null, pArgs); 
+					percent=0;
+					percents[getUrl(listener)] = int(e.bytesLoaded/e.bytesTotal*100);
+					for (url in percents) percent += percents[url]/count;
+					_progress.apply(null, checkArgs(pArgs,PERCENT));
 					break;
 				default : break;
 			}
 		}
 		
-		public function stop():void { if (loader) { loader.close(); dispose(); } }	
+		/**
+		 * START/STOP
+		 */
+		public function stop():void { if (loaders) { for (var url:String in loaders){ loaders[url].close(); } dispose(); } }
+		public function start(max:int=0):UILoader {
+			for (var url:String in types) {
+				if(types[url][1]) loaders[url].load(urls[url],new LoaderContext(true, ApplicationDomain.currentDomain));
+				else loaders[url].load(urls[url]);
+			}
+			return this;
+		}
+		
+		/**
+		 * DISPOSE
+		 */
 		private function dispose():void {
-			listener.removeEventListener(Event.COMPLETE, manageEvent );
-			if (_progress != null) listener.removeEventListener(ProgressEvent.PROGRESS, manageEvent );
-			content = loader = listener = null;
+			for (var url:String in listeners) {
+				listeners[url].removeEventListener(Event.COMPLETE, manageEvent );
+				if (_progress != null) listeners[url].removeEventListener(ProgressEvent.PROGRESS, manageEvent );
+			}
+			content = urls = loaders = listeners = types = null;
 			_complete = _progress = null;
 		}
+		
+		/**
+		 * UTILITIES
+		 */
+		private function checkArgs(args:Array, type:String):Array { var a:Array = args.slice(); for (var i:int = 0; i < a.length; i++) { if (a[i] == type) a[i] = this[type]; } return a; }
+		private function getUrl(listener:*):String { for (var url:String in listeners){ if (listeners[url] == listener) return url; } return ''; }
 	}
 }
