@@ -24,6 +24,7 @@ package railk.as3.ui.page
 		public var layout:Layout;
 		public var onTop:Boolean;
 		public var src:String;
+		public var css:String;
 		public var loader:UILoader;
 		
 		public function Static( MID:String, id:String, layout:Layout, onTop:Boolean, src:String ) {
@@ -58,7 +59,7 @@ package railk.as3.ui.page
 				(facade.container as PageStruct).addStatic(component,onTop);
 				activateViews(layout.views);
 				if (anchor) castAnchor(anchor);
-			} );
+			} ).start();
 		}
 		
 		override public function hide():void {

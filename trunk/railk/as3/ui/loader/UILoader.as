@@ -160,7 +160,11 @@ package railk.as3.ui.loader
 		/**
 		 * UTILITIES
 		 */
-		private function checkArgs(args:Array, type:String):Array { var a:Array = args.slice(); for (var i:int = 0; i < a.length; i++) { if (a[i] == type) a[i] = this[type]; } return a; }
 		private function getUrl(listener:*):String { for (var url:String in listeners){ if (listeners[url] == listener) return url; } return ''; }
+		private function checkArgs(args:Array, type:String):Array {
+			var a:Array = args.slice();
+			for (var i:int = 0; i < a.length; i++) if (a[i] == type) a[i] = this[type];
+			return a; 
+		}
 	}
 }

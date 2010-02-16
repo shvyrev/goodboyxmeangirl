@@ -10,6 +10,7 @@ package railk.as3.ui
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.page.PageManager;
 	import railk.as3.ui.link.LinkManager;
+	import railk.as3.ui.loader.*;
 	
 	public class Structure
 	{
@@ -21,19 +22,25 @@ package railk.as3.ui
 		 * @param	commands	commands Class
 		 * @param	proxys		proxys Class
 		 */
-		public function Structure( xml:XML, loadings:Array=null, views:Array=null, commands:Array=null, proxys:Array=null ) {
-			getSiteInfo(xml);
+		public function Structure( xml:XML, loadings:Array = null, views:Array = null, commands:Array = null, proxys:Array = null ) {
+			if (commands) for (var i:int = 0; i < commands.length; i++) PageManager.getInstance().registerCommand(commands[i].classe, commands[i].name ); 
+			if (proxys) for (i = 0; i < proxys.length; i++) PageManager.getInstance().registerProxy(proxys[i].classe, proxys[i].name );
+			init(xml);
+		}
+		
+		private function init( xml:XML ):void {
+			var css:String = A('stylesheet', xml);
+			PageManager.getInstance().init(A('author',xml),B(A('menu',xml)),B(A('multiPage',xml)),A('structure',xml),B(A('adaptToScreen',xml)));
+			if (css) loadUI(css).file(setup, xml, UILoader.FILE, css.split('/')[css.split('/').length-1].split('.')[0]).start();
+			else setup(xml);
+		}
+		
+		private function setup(xml:XML, css:String = '', name:String = ''):void {
+			LinkManager.init( A('title',xml), true, true);
 			getStatics(xml);
 			getPages(xml);
 			PageManager.getInstance().setContextMenu();
-			if(commands) for (var i:int = 0; i < commands.length; i++) PageManager.getInstance().registerCommand(commands[i].classe, commands[i].name ); 
-			if(proxys) for (i = 0; i < proxys.length; i++) PageManager.getInstance().registerProxy(proxys[i].classe, proxys[i].name ); 
-		}
-		
-		public function view( page:String ):void { LinkManager.setValue(page); }
-		
-		private function getSiteInfo( xml:XML ):void {
-			PageManager.getInstance().init(A('author',xml),A('title',xml),B(A('menu',xml)),B(A('multiPage',xml)),A('structure',xml),B(A('adaptToScreen',xml)));
+			if (css) PageManager.getInstance().setStyleSheet(name, css);
 		}
 		
 		private function getStatics( xml:XML ):void {
@@ -57,6 +64,8 @@ package railk.as3.ui
 		}
 		
 		private function B( value:String ):Boolean { return (value == 'true')?true:false; }
+		
+		public function view( page:String ):void { LinkManager.setValue(page); }
 		
 		public function get container():* { return PageManager.getInstance().container; } 
 	}	
