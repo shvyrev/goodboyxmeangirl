@@ -15,8 +15,10 @@ package railk.as3.ui.page
 	import railk.as3.pattern.multiton.Multiton;
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.layout.Layout;
+	import railk.as3.ui.loader.*;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
+	import railk.as3.ui.styleSheet.CSS;
 	import railk.as3.TopLevel;
 	//import railk.as3.ui.SEO;
 	
@@ -29,6 +31,7 @@ package railk.as3.ui.page
 		public var anchors:Dictionary = new Dictionary(true);
 		public var menu:RightClickMenu;
 		public var hasMenu:Boolean;
+		public var styleSheet:CSS
 		public var multiPage:Boolean;
 		public var structure:String;
 		public var adaptToScreen:Boolean;
@@ -46,15 +49,14 @@ package railk.as3.ui.page
 			MID = Multiton.assertSingle(id,PageManager); 
 		}
 		
-		public function init( author:String, title:String, hasMenu:Boolean, multiPage:Boolean, structure:String, adaptToScreen:Boolean ):void {
-			//SEO.init();
-			LinkManager.init( title, true, true);
+		public function init( author:String, hasMenu:Boolean, multiPage:Boolean, structure:String, adaptToScreen:Boolean ):void {
+			/*SEO.init();*/
 			this.hasMenu = hasMenu;
 			this.multiPage = multiPage;
 			this.structure = structure;
 			this.adaptToScreen = adaptToScreen;
 			menu = new RightClickMenu();
-			menu.add(author, author, null,null, true);
+			menu.add(author, author, null, null, true);
 			registerModel(AbstractModel);
 			registerController(AbstractController);
 			registerContainer( new PageStruct(structure,adaptToScreen) );
@@ -93,7 +95,7 @@ package railk.as3.ui.page
 				if( !index) registerView( index = last = (classe=='')?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition) );
 				else {
 					var page:IPage;
-					registerView( page = (classe == '')?new Page(MID, id, null, title, loading, layout, align, src, transition):new (getDefinitionByName(classe))(MID, id, null, title, loading, layout, align, src, transition));
+					registerView( page = (classe == '')?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition));
 					last.next = page; page.prev = last; last = page;
 				}
 			} else {
@@ -191,6 +193,11 @@ package railk.as3.ui.page
 		public function setContextMenu():void {
 			TopLevel.main.contextMenu = menu.menu;
 			//SEO.setNav(menu.menus);
-		}		
+		}
+		
+		/**
+		 * STYLESHEET
+		 */
+		public function setStyleSheet(name:String, css:String):void { styleSheet = new CSS(css, name); }
 	}
 }

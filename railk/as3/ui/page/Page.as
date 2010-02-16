@@ -14,7 +14,6 @@ package railk.as3.ui.page
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.loader.*;
-	import railk.as3.ui.styleSheet.CSS;
 	//import railk.as3.ui.SEO;
 	
 	public class Page extends AbstractView implements IPage,IView,INotifier
@@ -89,7 +88,7 @@ package railk.as3.ui.page
 			component.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; };
 			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); initViews(layout.views); activateViews(layout.views); loaded = true; };
-			if (!loaded && !reload) loader = loadUI(src).complete(complete).progress(((loadingView)?progress:null));
+			if (!loaded && !reload) loader = loadUI(src).complete(complete).progress(((loadingView)?progress:null),((loadingView)?UILoader.PERCENT:null)).start();
 			else complete.apply();
 		}
 		
