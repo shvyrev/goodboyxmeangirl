@@ -11,7 +11,7 @@ package railk.as3.ui.page
 	import flash.geom.Point;
 	public interface ITransition
 	{
-		function easeIn(component:Sprite, complete:Function):void;
+		function easeIn(component:Sprite):void;
 		function easeOut(component:Sprite, complete:Function):void;
 		function easeInOut(component:Sprite, position:Point, complete:Function):void;
 	}

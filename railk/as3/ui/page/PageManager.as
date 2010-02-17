@@ -159,8 +159,7 @@ package railk.as3.ui.page
 			var page:IPage = getPage(id);
 			page.anchor = anchor;
 			page.show();
-			if (page.transition && change == 'id') page.transition.easeIn((page as IView).component, page.play );
-			else page.play();
+			if (page.transition && change == 'id') page.transition.easeIn((page as IView).component );
 			current = id;
 			anchors[current] = anchor;
 		}
@@ -182,9 +181,10 @@ package railk.as3.ui.page
 		}
 		
 		private function placePage(evt:Notification):void {
-			if (evt.note != 'onPageActivated') return;
+			if (evt.note != 'onPageShow') return;
 			(container as PageStruct).placeDiv((evt.page as IView).component);
 			if (multiPage) showNext(evt.page as IPage);
+			else evt.page.play();
 		}
 		
 		/**

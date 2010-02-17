@@ -142,7 +142,7 @@ package railk.as3.ui.page
 		protected function initViews(views:Array):void { for (var i:int = 0; i < views.length; i++) views[i].init(); }
 		protected function activateViews(views:Array):void { 
 			for (var i:int = 0; i < views.length; i++) views[i].activate();
-			sendNotification('onPageActivated', _id, { page:this } );
+			sendNotification('onPageShow', _id, { page:this } );
 		}
 		
 		/**
