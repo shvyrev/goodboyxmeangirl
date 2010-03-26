@@ -12,8 +12,8 @@ package railk.as3.font
 	public class Glyph
 	{
 		public var id:String;
-		public var width:Number=200;
-		public var height:Number=200;
+		public var width:Number=0;
+		public var height:Number=0;
 		public var precision:int;
 		public var firstLine:ILine;
 		public var lastLine:ILine;
@@ -51,18 +51,24 @@ package railk.as3.font
 					(l as Curve).startRad = prevRad;
 					var j:int=0, segs:Number=l.length/precision;
 					while (j < precision+1) {
-						var p:Point = l.getPoint(j * segs);
+						var p:Point = S(l.getPoint(j * segs));
 						if ( prevPoint.toString() != p.toString()) path[path.length] = prevPoint = p;
 						j++
 					}
 				} else {
-					if (!prevPoint) path[path.length] = l.begin;
-					path[path.length] = prevPoint = l.end;
+					if (!prevPoint) path[path.length] = S(l.begin);
+					path[path.length] = prevPoint = S(l.end);
 					prevRad = l.rad;
 				}
 				l = l.next;
 			}
 			return this;
+		}
+		
+		private function S(p:Point):Point {
+			width += p.x-((prevPoint)?prevPoint.x:0);
+			height += p.y-((prevPoint)?prevPoint.y:0);
+			return p;
 		}
 	}
 }
