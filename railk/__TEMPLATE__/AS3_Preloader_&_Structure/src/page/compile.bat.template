@@ -1,0 +1,4 @@
+set sdk=C:\progra~1\adobe\flex_sdk\bin\mxmlc.exe
+set buildfile=src\page\config.xml
+call %sdk% -load-config+=%buildfile% -debug=false -incremental=false -benchmark=false -o bin\flash\boot.swf -file-specs src\Boot.as
+call %sdk% -load-config+=%buildfile% -debug=false -incremental=false -benchmark=false -o bin\flash\.swf -file-specs src\page\.as
