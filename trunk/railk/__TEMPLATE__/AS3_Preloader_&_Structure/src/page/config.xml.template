@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<flex-config>
+  <target-player>9.0.0</target-player>
+  <compiler>
+    <source-path append="true">
+      <path-element>PROJECT_PATH\src</path-element>
+      <path-element>E:\X_DEVELOPPEMENT_X\flash_developpment</path-element>
+      <path-element>C:\Program Files\FlashDevelop\Library\AS3\classes</path-element>
+    </source-path>
+  </compiler>
+  <default-frame-rate>40</default-frame-rate>
+  <default-size>
+    <width>200</width>
+    <height>200</height>
+  </default-size>
+</flex-config>

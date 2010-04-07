@@ -1,0 +1,42 @@
+/**
+$(CBI)* $(ProjectName)
+$(CBI)* @author $(DefaultUser)
+$(CBI)*/
+
+package $(CSLB)
+{
+	import flash.display.Sprite;
+	import com.millermedeiros.swffit.SWFFit;
+	
+	import railk.as3.TopLevel;
+	import railk.as3.stage.*;
+	import railk.as3.ui.SWFWheel;
+	import railk.as3.ui.Structure;
+	import railk.as3.ui.Localisation;
+	import railk.as3.ui.div.DivStruct;
+	import railk.as3.ui.loader.*;
+	//import railk.as3.utils.Logger;
+	
+	public class Main extends Sprite $(CSLB)
+	{	
+		public var struct:Structure;
+		public function Main() {
+			StageManager.init( TopLevel.stage, true );
+			FullScreenMode.init( TopLevel.stage );
+			//SWFWheel.init( TopLevel.stage );
+			//Logger.init('[ DEBUG MODE ON ]');
+			
+			///////////STARTUP/////////////
+			loadUI(Localisation.getInstance().getConfig('fr')).file(startup,UILoader.FILE).start();
+			///////////////////////////////
+		}
+		
+		private function startup(data:String):void {
+			struct = new Structure( new XML(data), [], [],[ ], [] );
+			TopLevel.main.addChild( struct.container );
+			if (TopLevel.root.loaderInfo.parameters.page )struct.view((TopLevel.root.loaderInfo.parameters.page=='index')?'/':TopLevel.root.loaderInfo.parameters.page);
+		}
+		
+		private function O(classe:Class, name:String ):Object { return { name:name, classe:classe }; }
+	}
+}

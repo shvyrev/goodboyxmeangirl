@@ -1,0 +1,4 @@
+<IfModule mod_rewrite.c>
+RewriteEngine on
+RewriteRule ^([^/\.]+).html?$ index.php?page=$1 [L]
+</IfModule>
