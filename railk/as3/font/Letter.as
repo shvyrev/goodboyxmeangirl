@@ -39,7 +39,7 @@ package railk.as3.font
 			if(!_vector) {
 				_vector = new Shape();
 				_vector.graphics.clear();
-				_vector.graphics.lineStyle(thickness, color, 1, false, 'normal', 'circle', 'round', 1);
+				_vector.graphics.lineStyle(thickness, color, 1, true, 'normal', 'circle', 'round', 1);
 				
 				var length:int = struct.path.length, i:int = 0;
 				while ( i < length ) {

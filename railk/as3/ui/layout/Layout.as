@@ -57,7 +57,7 @@ package railk.as3.ui.layout
 						else for (i=0; i < a.length; i++) result[margins[i]] = Number(a[i]);
 						return result;
 					}
-					if(name == 'class') return pack+'.component::'+xml.@*[i];
+					if(name == 'class') return pack+'.component'+(xml.@*[i].search(':')!=-1?'.':'::')+xml.@*[i];
 					return xml.@*[i];
 				}
 			}	
