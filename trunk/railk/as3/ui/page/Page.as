@@ -8,7 +8,7 @@
 package railk.as3.ui.page
 {
 	import flash.utils.getDefinitionByName;
-	import railk.as3.pattern.mvc.core.AbstractView;
+	import railk.as3.pattern.mvc.core.View;
 	import railk.as3.pattern.mvc.interfaces.*
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.ui.div.Div;
@@ -16,7 +16,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.loader.*;
 	//import railk.as3.ui.SEO;
 	
-	public class Page extends AbstractView implements IPage,IView,INotifier
+	public class Page extends View implements IPage,IView,INotifier
 	{
 		private var _firstChild:IPage;
 		private var _lastChild:IPage;
@@ -135,11 +135,18 @@ package railk.as3.ui.page
 				if (!views[i].container)component.addChild( views[i].div );
 				else views[i].container.div.addChild( views[i].div  );
 				data += (views[i].div.data!=null)?views[i].div.data:'';
+				facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data);
+				if(views[i].visible) facade.getView(views[i].id).show();
 			}
 			if (transitionName) _transition = new (getDefinitionByName(transitionName))() as ITransition;
 		}
 		
-		protected function initViews(views:Array):void { for (var i:int = 0; i < views.length; i++) views[i].init(); }
+		protected function initViews(views:Array):void { 
+			for (var i:int = 0; i < views.length; i++) {
+				views[i].init(); 
+			}
+		}	
+		
 		protected function activateViews(views:Array):void { 
 			for (var i:int = 0; i < views.length; i++) views[i].activate();
 			sendNotification('onPageShow', _id, { page:this } );

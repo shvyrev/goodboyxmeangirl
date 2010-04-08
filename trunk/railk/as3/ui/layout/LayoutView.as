@@ -8,6 +8,7 @@
 package railk.as3.ui.layout
 {
 	import flash.utils.getDefinitionByName;
+	import railk.as3.pattern.mvc.core.View;
 	import railk.as3.ui.div.*;
 	
 	public class LayoutView
@@ -15,25 +16,29 @@ package railk.as3.ui.layout
 		public var div:IDiv;
 		public var master:LayoutView;
 		public var container:LayoutView;
+		public var viewClass:Class;
 		
-		public var divClass:String;
-		public var data:XML;
 		public var id:String;
-		public var float:String;
-		public var align:String;
-		public var margins:Object;
-		public var position:String;
-		public var x:Number
-		public var y:Number;
-		public var constraint:String;
+		public var view:String;
+		public var data:XML;
+		public var visible:Boolean;
+		
+		protected var float:String;
+		protected var align:String;
+		protected var margins:Object;
+		protected var position:String;
+		protected var x:Number
+		protected var y:Number;
+		protected var constraint:String;
+		
 		
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutView( container:LayoutView, master:LayoutView, divClass:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, data:XML, constraint:String ) {
+		public function LayoutView( container:LayoutView, master:LayoutView, view:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, data:XML, constraint:String, visible:Boolean ) {
 			this.container = container;
 			this.master = master;
-			this.divClass = divClass;
+			this.view = view;
 			this.data = data;
 			this.id = id;
 			this.float = float;
@@ -43,10 +48,12 @@ package railk.as3.ui.layout
 			this.x = x;
 			this.y = y;
 			this.constraint = constraint;
+			this.visible = visible;
 		}
 		
 		public function setup():void {
-			div = (divClass)?new (getDefinitionByName(divClass) as Class)(id, float, align, margins, position, x, y, data, constraint):new (getDefinitionByName('railk.as3.ui.div::Div') as Class)(id, float, align, margins, position, x, y, data, constraint);
+			viewClass = (view)?getDefinitionByName(view) as Class:View;
+			div = new Div(id, float, align, margins, position, x, y, data, constraint);
 			var X:Number = ((master)?master.div.x:0), Y:Number = ((master)?master.div.y:0);
 			if (float == 'none') Y = Y+div.margins.top+((master)?master.div.height+master.div.margins.bottom:0);
 			else if (float == 'left') X = X+div.margins.left + ((master)?master.div.width + master.div.margins.right:0);

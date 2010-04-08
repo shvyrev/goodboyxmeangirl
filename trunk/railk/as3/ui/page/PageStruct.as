@@ -34,8 +34,8 @@ package railk.as3.ui.page
 		/**
 		 * ADD PAGE
 		 */
-		override public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='TL', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null):IDiv {
-			current = (div)?div:new PageDiv( name, float, align, margins, position, x, y, data);
+		override public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='TL', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null, constraint:String='XY'):IDiv {
+			current = (div)?div:new PageDiv( name, float, align, margins, position, x, y, data, constraint);
 			if (!onScreen) { onScreen = current as PageDiv; onScreen.onScreen = true; }
 			divs[divs.length] = addChild(current as Div );
 			(current as PageDiv).prev = lastPage;

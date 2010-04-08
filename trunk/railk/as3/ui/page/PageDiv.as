@@ -30,8 +30,8 @@ package railk.as3.ui.page
 		private var oppsStage:Point;
 		private var hasOpps:Boolean;
 		
-		public function PageDiv(name:String='undefined',float:String='none',align:String='TL',margins:Object=null,position:String='relative',x:Number=0,y:Number=0,data:Object=null) {
-			super(name,float,align,margins,position,x,y,data);
+		public function PageDiv(name:String='undefined',float:String='none',align:String='TL',margins:Object=null,position:String='relative',x:Number=0,y:Number=0,data:Object=null,constraint:String='XY') {
+			super(name,float,align,margins,position,x,y,data,constraint);
 		}
 		
 		public function init(ratio:Number, type:String, adaptToScreen:Boolean ):void {

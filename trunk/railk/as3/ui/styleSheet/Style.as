@@ -105,6 +105,15 @@ package railk.as3.ui.styleSheet
 		}
 		
 		/**
+		 * TOOBJECT
+		 */
+		public function toObject():Object {
+			var o:Object={};
+			for (var id:String in pairs) o[id] = pairs[id]; 
+			return o;
+		}
+		
+		/**
 		 * GETTER/SETTER
 		 */
 		public function get data():Dictionary { return pairs; }
