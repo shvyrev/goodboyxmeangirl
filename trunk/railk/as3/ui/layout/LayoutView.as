@@ -8,7 +8,7 @@
 package railk.as3.ui.layout
 {
 	import flash.utils.getDefinitionByName;
-	import railk.as3.pattern.mvc.core.View;
+	import railk.as3.ui.view.UIView;
 	import railk.as3.ui.div.*;
 	
 	public class LayoutView
@@ -20,6 +20,7 @@ package railk.as3.ui.layout
 		
 		public var id:String;
 		public var view:String;
+		public var style:String;
 		public var data:XML;
 		public var visible:Boolean;
 		
@@ -35,7 +36,7 @@ package railk.as3.ui.layout
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutView( container:LayoutView, master:LayoutView, view:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, data:XML, constraint:String, visible:Boolean ) {
+		public function LayoutView( container:LayoutView, master:LayoutView, view:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, style:String, data:XML, constraint:String, visible:Boolean ) {
 			this.container = container;
 			this.master = master;
 			this.view = view;
@@ -47,12 +48,13 @@ package railk.as3.ui.layout
 			this.position = position;
 			this.x = x;
 			this.y = y;
+			this.style = style;
 			this.constraint = constraint;
 			this.visible = visible;
 		}
 		
 		public function setup():void {
-			viewClass = (view)?getDefinitionByName(view) as Class:View;
+			viewClass = (view)?getDefinitionByName(view) as Class:UIView;
 			div = new Div(id, float, align, margins, position, x, y, data, constraint);
 			var X:Number = ((master)?master.div.x:0), Y:Number = ((master)?master.div.y:0);
 			if (float == 'none') Y = Y+div.margins.top+((master)?master.div.height+master.div.margins.bottom:0);

@@ -47,9 +47,9 @@ package railk.as3.pattern.mvc.core
 			controller = controllerClass.getInstance.apply(null,[MID]);
 		}
 		
-		public function registerView( view:*, name:String = '', component:*= null, data:*=null ):void {
-			if (view is Class) views[name] = new view(MID, name, component, data);
-			else views[view.name] = view;
+		public function registerView( view:*, name:String = '', component:*= null, data:*=null ):IView {
+			if (view is Class) return views[name] = new view(MID, name, component, data);
+			return views[view.name] = view;
 		}
 		
 		public function removeView( name:String ):void {
