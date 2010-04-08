@@ -7,14 +7,14 @@
 
 package railk.as3.ui.page
 {	
-	import railk.as3.pattern.mvc.core.AbstractView;
+	import railk.as3.pattern.mvc.core.View;
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.div.DivStruct;
 	import railk.as3.ui.loader.*;
 	
-	public class Static extends AbstractView implements IStatic,IView,INotifier
+	public class Static extends View implements IStatic,IView,INotifier
 	{
 		private var _prev:IStatic;
 		private var _next:IStatic;
@@ -85,6 +85,8 @@ package railk.as3.ui.page
 				views[i].setup();
 				if (!views[i].container) component.addChild( views[i].div );
 				else views[i].container.div.addChild( views[i].div  );
+				facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data);
+				if(views[i].visible) facade.getView(views[i].id).show();
 			}
 		}
 		

@@ -22,7 +22,7 @@ package railk.as3.ui.page
 	import railk.as3.TopLevel;
 	//import railk.as3.ui.SEO;
 	
-	public class PageManager extends AbstractFacade implements IFacade
+	public class PageManager extends Facade implements IFacade
 	{
 		public var index:IPage;
 		public var last:IPage;
@@ -57,8 +57,8 @@ package railk.as3.ui.page
 			this.adaptToScreen = adaptToScreen;
 			menu = new RightClickMenu();
 			menu.add(author, author, null, null, true);
-			registerModel(AbstractModel);
-			registerController(AbstractController);
+			registerModel(Model);
+			registerController(Controller);
 			registerContainer( new PageStruct(structure,adaptToScreen) );
 			addEventListener( Notification.NOTE, placePage, false, 0, true );
 		}
