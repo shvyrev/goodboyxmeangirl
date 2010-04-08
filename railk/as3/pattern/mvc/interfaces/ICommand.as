@@ -1,1 +1,0 @@
-/*** *  ICommand* * @author Richard Rodney* @version 0.1*/package railk.as3.pattern.mvc.interfaces{	public interface ICommand	{		function execute( name:String,params:Array=null ):void;		function addAction( name:String, action:Function ):void;		function get name():String;	}}
