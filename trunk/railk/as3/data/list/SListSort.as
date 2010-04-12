@@ -8,58 +8,40 @@
 * 	ALPHABETIC SORT
 */
 
-
 package railk.as3.data.list
 {	
-	
 	public class  SListSort
 	{
-		// _______________________________________________________________________________________ CONSTANTES
 		public static const NUMERIC                         :String = 'numeric';
 		public static const ALPHA                           :String = 'alpha';
 		public static const DESC                            :String = 'desc';
 		public static const ASC                             :String = 'asc';
 		
-		// ____________________________________________________________________________ VARIABLES OBJECT LIST
 		private static var sortedList                       :SLinkedList;	
 		private static var walker                           :SListNode;	
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  SORT A LIST
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
-		 * 
+		 * SORT A LIST
 		 * @param	list
 		 * @param	sortType
 		 * @param	sortMode
 		 * @param	sortValue
 		 * @return
 		 */
-		public static function sort( list:SLinkedList, sortType:String, sortMode:String, sortValue:String ):SLinkedList 
-		{
-			var result:SLinkedList;
-			switch( sortType )
-			{
-				case NUMERIC:
-					result = numericSort( list, sortMode, sortValue );
-					break;
-					
-				case ALPHA :
-					result = alphaSort( list, sortMode, sortValue );
-					break;
-				
-				default : throw( new Error("this sort type doesn't exist");
-			}
-			return result;
+		public static function sort( list:SLinkedList, sortType:String, sortMode:String, sortValue:String ):SLinkedList {
+			if (sortType == NUMERIC) return numericSort( list, sortMode, sortValue );
+			else if (sortType==ALPHA) return alphaSort( list, sortMode, sortValue );
+			return null;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 NUMERICAL SORT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function numericSort(list:SLinkedList, mode:String, value:String):SLinkedList
-		{
+		/**
+		 * NUMERICAL SORT
+		 * @param	list
+		 * @param	mode
+		 * @param	value
+		 * @return
+		 */
+		private static function numericSort(list:SLinkedList, mode:String, value:String):SLinkedList {
 			var currentValue = list.head.data[value];
 			var currentNode:SListNode;
 			var previousNode:SListNode = null;
@@ -116,23 +98,17 @@ package railk.as3.data.list
 			return sortedList;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					ALPHABETICAL SORT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function alphaSort(list:SLinkedList, mode:String, value:String):SLinkedList
-		{
-			sortedList = new SLinkedList();
-			switch( mode )
-			{
-				case DESC :
-					break;
-					
-				case ASC :
-					break;
-				
-				default : throw( new Error('this type do no exist');
-			}
-			return sortedList;
+		/**
+		 * ALPHABETIC SORT
+		 * @param	list
+		 * @param	mode
+		 * @param	value
+		 * @return
+		 */
+		private static function alphaSort(list:SLinkedList, mode:String, value:String):SLinkedList {
+			if (mode == DESC) return new SLinkedList();;
+			else if (mode == ASC) return new SLinkedList();;
+			return null;
 		}
 	}	
 }

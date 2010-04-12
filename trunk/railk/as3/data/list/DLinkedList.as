@@ -10,278 +10,182 @@ package railk.as3.data.list
 {
 	public class DLinkedList
 	{
-		// ____________________________________________________________________________ VARIABLES OBJECT LIST
-		private var _head                                   :DListNode;
-		private var _tail                                   :DListNode;
-		private var _length                                 :int;
-		private var node                                    :DListNode;
+		private var _head:DListNode;
+		private var _tail:DListNode;
+		private var _length:int;
+		private var node:DListNode;
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 CONSTRUCTEUR
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
-		 * 
-		 * @param	...args    ['name',data:*,'group'=null,action:Function=null,args:Object=null],...
+		 * ADD NODE
+		 * @param	name
+		 * @param	data
 		 */
-		public function DLinkedList( ...args )
-		{
-			_head = _tail = null;
-			if ( args.length > 0) add.apply( this, args );
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   				  ADD
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		/**
-		 * 
-		 * @param	...args ['name',data:*,'group'=null,action:Function=null,args:Object=null],...
-		 */
-		public function add( ...args ):void
-		{
-			if ( ! _head ) _head = _tail = new DListNode( 0, args[0][0], args[0][1], args[0][2], args[0][3], args[0][4] );
-			else 
-			{ 
-				_tail.insertAfter( new DListNode( _tail.id + 1, args[0][0], args[0][1], args[0][2], args[0][3], args[0][4] ) ); 
+		public function add(name:String, data:*):DLinkedList {
+			if (!_head) _head = _tail = new DListNode(0,name,data);
+			else  { 
+				_tail.insertAfter( new DListNode(_tail.id+1,name,data) ); 
 				_tail = _tail.next; 
 			}
-			
-			if ( args.length > 1 )
-			{
-				for ( var i:int = 1; i < args.length; i++)
-				{
-					node = new DListNode( _tail.id+1, args[i][0], args[i][1], args[i][2], args[i][3], args[i][4] );
-					_tail.insertAfter(node);
-					_tail = _tail.next;
-				}
-			}
-			_length += args.length;
+			_length++;
+			return this;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   			   UPDATE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function update(name:String, data:*=null, group:String='', action:Function=null, args:Object=null):void {
-			var n:DListNode = getNodeByName( name );
-			n.data = (data != null)?data:n.data;
-			n.group = (group != '')?group:n.group;
-			n.action = (action != null)?action:n.action;
-			n.args = (args != null)?args:n.args;
-			
-		}
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   		 INSERT AFTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertAfter( node:DListNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
-		{
-			node.insertAfter( new DListNode( node.id + 1, name, data, group, action, args ) );
-			_length += 1;
+		/**
+		 * INSERT AFTER
+		 * @param	node
+		 * @param	name
+		 * @param	data
+		 */
+		public function insertAfter( node:DListNode, name:String, data:* ):DLinkedList {
+			node.insertAfter( new DListNode(node.id+1,name,data) );
 			if ( node === _tail ) _tail = tail.next;
 			else rebuildID();
+			_length++;
+			return this;
 		}
 		
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   		INSERT BEFORE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function insertBefore( node:DListNode, name:String, data:*, group:String='', action:Function=null, args:Object=null ):void
-		{
-			node.insertBefore( new DListNode( node.id - 1, name, data, group, action, args ) );
-			_length += 1;
+		/**
+		 * INSERT BEFORE
+		 * @param	node
+		 * @param	name
+		 * @param	data
+		 */
+		public function insertBefore( node:DListNode, name:String, data:* ):DLinkedList {
+			node.insertBefore( new DListNode(node.id-1,name,data) );
 			if ( node === _head ) _head = _head.prev;
+			_length++;
 			rebuildID();
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   		       REMOVE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
-		 * 
+		 * UPDATE
+		 * @param	name
+		 * @param	data
+		 */
+		public function update(name:String, data:*=null):void {
+			getNodeByName( name ).data = (data != null)?data:n.data;
+		}
+		
+		/**
+		 * REMOVE
 		 * @param	value  an ID/ a NAME / or an Object
 		 * @return
 		 */
-		public function remove( value:* ):Boolean
-		{
-			var result:Boolean;
-			var type:String;
-			var current:DListNode = _head;
-			loop:while ( current )
-			{
-				if ( value is String ) type = 'name';
-				else if ( value is int ) type = 'id';
-				else  type = 'data';
-				
-				if (current[type] == value )
-				{ 
-					removeNode( current );
-					result = true;
-					break loop; 
-				}	
-				else result = false;
-				current = current.next;
+		public function remove( value:* ):void {
+			var n:DListNode = _head;
+			while ( n ) {
+				var type:String = (value is String)?'name':(value is int)?'id':'data';	
+				if (n[type] == value ) { removeNode( n ); return; }	
+				n = n.next;
 			}
-			return result;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   		DIRECT REMOVE
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function removeNode( n:DListNode ):void
-		{
-			if ( _length > 1 )
-			{
-				if ( n == _head )
-				{
-					_head = _head.next;
-					_head.prev = null;
-				}
-				else if ( n == _tail )
-				{
-					_tail = _tail.prev;
-					_tail.next = null;
-				}
-				else
-				{
-					n.prev.next = n.next;
-					n.next.prev = n.prev;
-				}
-			}
-			else 
-			{ 
-				_tail = _head = null; 
-			}
+		/**
+		 * REMOVE NODE
+		 * @param	n
+		 */
+		public function removeNode( n:DListNode ):void {
+			if ( _length > 1 ) {
+				if ( n == _head ) { _head = _head.next; _head.prev = null; }
+				else if ( n == _tail ) { _tail = _tail.prev; _tail.next = null; }
+				else { n.prev.next = n.next; n.next.prev = n.prev; }
+			} 
+			else _tail = _head = null; 
 			n.dispose();
-			_length -= 1;
 			rebuildID();
+			_length--;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   		   REBUILD ID
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * REBUILD ID
+		 */
 		private function rebuildID():void {
-			var current:DListNode = _head;
-			var id:int = 0;
-			loop:while ( current )
-			{
-				current.id = id;
-				id += 1;
-				current = current.next;
+			var id:int = 0, n:DListNode = _head;
+			while ( n ) {
+				n.id = id++;
+				n = n.next;
 			}
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   	CLEAR OBJECT LIST
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function clear():void
-		{
-			var next:DListNode;
-			var current:DListNode = _head;
+		/**
+		 * DISPOSE
+		 */
+		public function dispose():void {
+			var next:DListNode, n:DListNode = _head;
 			_head = null;
-			while ( current )
-			{
-				next = current.next;
-				current.next = current.prev = null;
-				current = next;
+			while ( n ) {
+				next = n.next;
+				n.next = n.prev = null;
+				n = next;
 			}
 			_tail = null;
 			_length = 0;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   GET OBJECT BY NAME
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getNodeByName( name:String ):DListNode
-		{
-			var result:*;
-			var current:DListNode = _head;
-			loop:while ( current )
-			{
-				if (current.name == name ){ result = current; break loop; }	
-				else { result = null; }	
-				current = current.next;
+		/**
+		 * GET OBJECT BY NAME
+		 * @param	name
+		 * @return
+		 */
+		public function getNodeByName( name:String ):DListNode {
+			var n:DListNode = _head;
+			while ( n ) {
+				if (n.name == name ) return n;
+				n = n.next;
 			}
-			return result;
+			return null;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				   	 GET OBJECT BY ID
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getNodeByID( id:int ):DListNode
-		{
-			var result:DListNode;
-			var current:DListNode = _head;
-			loop:while ( current )
-			{
-				if (current.id == id ){ result = current;  break loop; }	
-				else { result = null; }	
-				current = current.next;
+		/**
+		 * GET OBJECT BY ID
+		 * @param	id
+		 * @return
+		 */
+		public function getNodeByID( id:int ):DListNode {
+			var n:DListNode = _head;
+			while ( n ) {
+				if (n.id == id ) return n;
+				n = n.next;
 			}
-			return result;
+			return null;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																				  GET OBJECT BY GROUP
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function getNodeByGroup( name:String ):Array
-		{
-			var result:Array = new Array();
-			var current:DListNode = _head;
-			loop:while ( current )
-			{
-				if (current.group == name ) { result.push( current ); break loop; }	
-				else { result = null; }	
-				current = current.next;
-			}
-			return result;
-		}
-		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						    TO STRING
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		public function toString():String 
-		{
+		/**
+		 * TO STRING
+		 * @return
+		 */
+		public function toString():String {
 			var result:String = '';
-			var current:DListNode = _head;
-			while ( current )
+			var n:DListNode = _head;
+			while ( n )
 			{
-				result += current.toString()+'\n';
-				current = current.next;
+				result += n.toString()+'\n';
+				n = n.next;
 			}
-			if( ! result ) result = '[ empty ]'
+			if (!result) result = '[ empty ]'
 			return result;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						     TO ARRAY
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * TO ARRAY
+		 * @return
+		 */
 		public function toArray():Array {
-			var result:Array = new Array();
-			var current:DListNode = _head;
-			while ( current )
-			{
-				result.push( current.data );
-				current = current.next;
+			var result:Array = [];
+			var n:DListNode = _head;
+			while ( n ) {
+				result[result.length] = n.data;
+				n = n.next;
 			}
 			return result;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						GETTER/SETTER
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
+		/**
+		 * GETTER/SETTER
+		 */
 		public function get head():DListNode { return _head; }
-		
 		public function get tail():DListNode { return _tail; }
-		
 		public function get length():int { return _length; }
 	}
 }

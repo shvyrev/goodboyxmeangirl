@@ -11,62 +11,44 @@
 
 package railk.as3.data.list
 {	
-	
 	public class  DListSort
 	{
-		// _______________________________________________________________________________________ CONSTANTES
 		public static const NUMERIC                         :String = 'numeric';
 		public static const ALPHA                           :String = 'alpha';
 		public static const DESC                            :String = 'desc';
 		public static const ASC                             :String = 'asc';
 		
-		// ____________________________________________________________________________ VARIABLES OBJECT LIST
 		private static var sortedList                       :DLinkedList;	
 		private static var walker                           :DListNode;	
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						  SORT A LIST
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
 		/**
-		 * 
+		 * SORT A LIST 
 		 * @param	list
 		 * @param	sortType
 		 * @param	sortMode
 		 * @param	sortValue
 		 * @return
 		 */
-		public static function sort( list:DLinkedList, sortType:String, sortMode:String, sortValue:String ):DLinkedList 
-		{
-			var result:DLinkedList;
-			switch( sortType )
-			{
-				case NUMERIC:
-					result = numericSort( list, sortMode, sortValue );
-					break;
-					
-				case ALPHA :
-					result = alphaSort( list, sortMode, sortValue );
-					break;
-				
-				default : throw( new Error("this sort type doesn't exist");
-			}
-			return result;
+		public static function sort( list:DLinkedList, sortType:String, sortMode:String, sortValue:String ):DLinkedList {
+			if (sortType==NUMERIC) return numericSort( list, sortMode, sortValue );
+			else if (sortType==ALPHA) return alphaSort( list, sortMode, sortValue );
+			return null;
 		}
 		
-		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																						 NUMERICAL SORT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function numericSort(list:DLinkedList, mode:String, value:String):DLinkedList
-		{
+		/**
+		 * SORT NUERICAL
+		 * @param	list
+		 * @param	mode
+		 * @param	value
+		 * @return
+		 */
+		private static function numericSort(list:DLinkedList, mode:String, value:String):DLinkedList {
 			var currentValue = list.head.data[value];
 			var currentNode:DListNode;
 			sortedList = new DLinkedList();
 			walker = list.head;
 			
-			switch( mode )
-			{
+			switch( mode ) {
 				case DESC :
 					while ( walker ) {
 						if ( sortedList.length == 0 ) {
@@ -112,23 +94,17 @@ package railk.as3.data.list
 			return sortedList;
 		}
 		
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		// 																					ALPHABETICAL SORT
-		// ——————————————————————————————————————————————————————————————————————————————————————————————————
-		private static function alphaSort(list:DLinkedList, mode:String, value:String):DLinkedList
-		{
-			sortedList = new DLinkedList();
-			switch( mode )
-			{
-				case DESC :
-					break;
-					
-				case ASC :
-					break;
-				
-				default : throw( new Error("this sort type doesn't exist");
-			}
-			return sortedList;
+		/**
+		 * ALPHABETIC SORT
+		 * @param	list
+		 * @param	mode
+		 * @param	value
+		 * @return
+		 */
+		private static function alphaSort(list:DLinkedList, mode:String, value:String):DLinkedList {
+			if (mode==DESC) return new DLinkedList();
+			else if (mode == ASC) return new DLinkedList();
+			return null
 		}
 	}	
 }
