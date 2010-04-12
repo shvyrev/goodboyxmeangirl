@@ -15,7 +15,6 @@ package railk.as3.ui.page
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.loader.*;
 	import railk.as3.ui.view.UIView;
-	//import railk.as3.ui.SEO;
 	
 	public class Page extends View implements IPage,IView,INotifier
 	{
@@ -88,7 +87,7 @@ package railk.as3.ui.page
 			(facade.container as PageStruct).addDiv(component);
 			component.addChild( loadingView );
 			var progress:Function = function(p:Number):void { loadingView.percent = p; };
-			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); initViews(layout.views); activateViews(layout.views); loaded = true; };
+			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); loaded = true; };
 			if (!loaded && !reload) loader = loadUI(src).complete(complete).progress(((loadingView)?progress:null),((loadingView)?UILoader.PERCENT:null)).start();
 			else complete.apply();
 		}
@@ -100,7 +99,7 @@ package railk.as3.ui.page
 			try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
 			catch (e:Error) { /*throw e;*/}
 			while(component.numChildren) component.removeChildAt(0);
-			try { (facade.container as PageStruct).delDiv(component); }
+			try { (facade.container as PageStruct).removeChild(component); }
 			catch (e:ArgumentError){ /*throw e;*/ }
 			component = new PageDiv(id,'none',align);
 		}
@@ -118,7 +117,6 @@ package railk.as3.ui.page
 		 */
 		public function stop():void {}
 		public function play():void { 
-			/*SEO.setContent(data);*/ 
 			if (anchor) castAnchor(anchor);
 		}
 		
@@ -133,24 +131,14 @@ package railk.as3.ui.page
 		protected function setupViews(views:Array):void {
 			for (var i:int = 0; i < views.length; i++) {
 				views[i].setup();
-				if (!views[i].container)component.addChild( views[i].div );
-				else views[i].container.div.addChild( views[i].div  );
-				data += (views[i].div.data!=null)?views[i].div.data:'';
+				if (!views[i].container)component.addDiv( views[i].div );
+				else views[i].container.div.addDiv( views[i].div  );
+				data += (views[i].div.data != null)?views[i].div.data:'';
 				(facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data) as UIView).style = views[i].style;
-				if(views[i].visible) facade.getView(views[i].id).show();
+				if (views[i].visible) facade.getView(views[i].id).show();
 			}
 			if (transitionName) _transition = new (getDefinitionByName(transitionName))() as ITransition;
-		}
-		
-		protected function initViews(views:Array):void { 
-			for (var i:int = 0; i < views.length; i++) {
-				views[i].init(); 
-			}
-		}	
-		
-		protected function activateViews(views:Array):void { 
-			for (var i:int = 0; i < views.length; i++) views[i].activate();
-			sendNotification('onPageShow', _id, { page:this } );
+			(facade as PageManager).enablePage(this);
 		}
 		
 		/**

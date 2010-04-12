@@ -7,7 +7,9 @@
 
 package railk.as3.ui.div
 {	
+	import flash.display.DisplayObject;
 	import flash.events.Event;
+	import flash.geom.Point;
 	import railk.as3.display.UISprite;
 	
 	public class Div extends UISprite implements IDiv
@@ -15,6 +17,7 @@ package railk.as3.ui.div
 		protected var arcs:Array = [];
 		protected var isDiv:Boolean;
 		protected var _state:DivState;
+		protected var _padding:Point;
 		protected var _position:String;
 		protected var _float:String;
 		protected var _align:String;
@@ -22,18 +25,24 @@ package railk.as3.ui.div
 		protected var _data:Object;
 		protected var _constraint:String;
 		
-		public function Div(name:String = 'undefined', float:String = 'none', align:String = 'TL', margins:Object = null, position:String = 'relative', x:Number = 0, y:Number = 0, data:Object = null, constraint:String = 'XY' ) {
+		protected var _master:Object;
+		protected var _numDiv:int=0;
+		protected var _next:IDiv;
+		protected var _prev:IDiv;
+		protected var first:IDiv;
+		protected var last:IDiv;
+		
+		public function Div(name:String='undefined', float:String='none', align:String='none', margins:Object=null, position:String='relative', x:Number=0, y:Number=0, data:Object=null, constraint:String='XY' ) {
 			super();
 			this.name = name;
 			if (margins) this.margins = margins;
 			this.float = float;
 			this.align = align;
 			this.position = position;
-			this.x = x;
-			this.y = y;
+			this.padding = new Point(x,y);
 			this.data = data;
 			this.constraint = constraint;
-			this.state = new DivState(this);
+			_state = new DivState(this);
 			addEventListener(Event.ADDED_TO_STAGE, added );
 		}
 		
@@ -41,8 +50,105 @@ package railk.as3.ui.div
 		 * ADDED TO STAGE
 		 */
 		private function added(evt:Event):void { 
-			removeEventListener(Event.ADDED_TO_STAGE, added ),
-			isDiv = ('addDiv' in parent)?false:true;
+			removeEventListener(Event.ADDED_TO_STAGE, added );
+			isDiv = (master)?('addDiv' in master):false;
+		}
+		
+		/**
+		 * CHILD MANAGEMENT
+		 */
+		override public function addChild(child:DisplayObject):DisplayObject { activate(this); super.addChild(child); boulderDash(); return child; }
+		override public function addChildAt(child:DisplayObject, index:int):DisplayObject { activate(this); super.addChildAt(child, index); boulderDash(); return child; }
+		override public function removeChild(child:DisplayObject):DisplayObject { activate(this); super.removeChild(child); check(); boulderDash(); return child; }
+		override public function removeChildAt(index:int):DisplayObject { activate(this); var c:DisplayObject = super.removeChildAt(index); check(); boulderDash(); return c; }
+		
+		/**
+		 * MANAGE DIVS
+		 */
+		public function addDiv(div:IDiv):IDiv {
+			div.master = getMaster();
+			if (div.position == 'relative') setupDiv(div);
+			addChild(div as Div);
+			if (!first) first = last = div;
+			else {
+				last.next = div;
+				div.prev = last;
+				last = div;
+			}
+			_numDiv++;
+			return this;
+		}
+		
+		public function insertDivBefore(before:*,div:IDiv):IDiv {
+			var d:IDiv = getDiv((before is String)?before:before.name);
+			if (!d) return null;
+			div.next = d;
+			div.prev = d.prev;
+			if (d.prev) d.prev.next = div;
+			d.prev = div;
+			
+			div.prev.addArc(div);
+			d.prev.removeArc(div.next);
+			placeDiv(div,div.prev);
+			insert(div);
+			return this;
+		}
+		
+		public function insertDivAfter(after:*,div:IDiv):IDiv {
+			var d:IDiv = getDiv((after is String)?after:after.name);
+			if (!d) return null;
+			div.next = d.next;
+			div.prev = d;
+			if (d.next) d.next.prev = div;
+			d.next = div;
+			
+			d.addArc(div);
+			d.removeArc(div.next);
+			placeDiv(div,d);
+			insert(div);
+			return this;
+		}
+		
+		public function delDiv(div:*):void {
+			var d:IDiv = getDiv((div is String)?div:div.name);
+			if (!d) return;
+			if(d.prev) d.prev.removeArc(d);
+			d.unbind();
+			d.resetArcs();
+			d.delAllDiv();
+			if (d.next) {
+				if(d.prev) d.prev.addArc(d.next)
+				placeDiv(d.next,d.prev);
+				var n:IDiv = d.next;
+				while (n) { n.state.init(); n = n.next; }
+			}
+			if ( first != last ) {
+				if ( d == first ) { first = first.next; first.prev = null; }
+				else if ( d == last ) { last = last.prev; last.next = null; }
+				else { d.prev.next = d.next; d.next.prev = d.prev; }
+			}
+			else first = last = null;
+			removeChild(d as Div);
+			_numDiv--;
+		}
+		
+		public function getDiv(name:String):IDiv {
+			var d:IDiv = first;
+			while (d) {
+				if (d.name == name ) return d;
+				d = d.next;
+			}
+			return null;
+		}
+		
+		public function delAllDiv():void {
+			var d:IDiv = first, n:IDiv;
+			while (d) {
+				n = d.next;
+				d.delAllDiv();
+				delDiv(d)
+				d = n;
+			}
 		}
 		
 		/**
@@ -54,7 +160,7 @@ package railk.as3.ui.div
 				activate(this);
 			}
 			if (stage) initResize(); 
-			else addEventListener(Event.ADDED_TO_STAGE, initResize );
+			else addEventListener(Event.ADDED_TO_STAGE, initResize, false, 0, true );
 		}
 		
 		public function unbind():void {
@@ -65,7 +171,7 @@ package railk.as3.ui.div
 			stage.removeEventListener(Event.RESIZE, resize );
 		}
 		
-		protected function check(evt:Event):void {
+		protected function check(evt:Event=null):void {
 			dispatch = false;
 			resize();
 			dispatch = true;
@@ -83,20 +189,16 @@ package railk.as3.ui.div
 		private function activate(child:Object):void {
 			for (var i:int = 0; i < child.numChildren; i++) {
 				var subChild:Object = child.getChildAt(i);
-				if (!subChild.hasEventListener(Event.CHANGE)) {
-					subChild.addEventListener( Event.CHANGE, child.dispatchChange );
-					if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) activate(subChild);
-				}
+				subChild.addEventListener( Event.CHANGE, child.dispatchChange );
+				if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) activate(subChild);
 			}
 		}
 		
 		private function desactivate(child:Object):void {
 			for (var i:int = 0; i < child.numChildren; i++) {
 				var subChild:Object = child.getChildAt(i);
-				if (subChild.hasEventListener(Event.CHANGE)) {
-					subChild.removeEventListener( Event.CHANGE, child.dispatchChange );
-					if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) desactivate(subChild);
-				}
+				subChild.removeEventListener( Event.CHANGE, child.dispatchChange );
+				if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) desactivate(subChild);
 			}
 		}
 		
@@ -119,77 +221,70 @@ package railk.as3.ui.div
 		/**
 		 * UTILITIES
 		 */
-		public function setFocus():void { 
-			parent.swapChildren( this, parent.getChildAt(parent.numChildren-1) );
-			if (parent is IDiv) (parent as IDiv).setFocus();
+		protected function setupDiv(div:IDiv):void {
+			placeDiv(div,last);
+			if (last) last.addArc(div);
+			state.init();
+			div.state.init();
+			div.bind();
+		}
+		
+		protected function placeDiv(div:IDiv, prev:IDiv):void {
+			var X:Number = ((prev)?prev.x:0), Y:Number = ((prev)?prev.y:0);
+			if (div.float == 'none') Y = Y+div.margins.top+((prev)?prev.height+prev.margins.bottom:0)+div.padding.y;
+			else if (div.float == 'left') X = X+div.margins.left+((prev)?prev.width+prev.margins.right:0)+div.padding.x;
+			div.x = X;
+			div.y = Y;
+		}
+		
+		protected function insert(div:IDiv):void {
+			div.master = this;
+			div.addArc(div.next);
+			placeDiv(div.next,div);
+			state.init();
+			var n:IDiv = div;
+			while (n) { n.state.init(); n = n.next; }
+			div.bind();
+			addChild(div as Div);
+			_numDiv++;
+		}
+		
+		protected function getMaster():* { return this; }
+		
+		protected function boulderDash():void {
+			state.init();
+			if (stage) initResize();
+			else if(!hasEventListener(Event.ADDED_TO_STAGE)) addEventListener(Event.ADDED_TO_STAGE, initResize);
+			var m:* = master;
+			while (m && m is IDiv) { m.state.init(); m.resize(); m = m.master; }
 		}
 		
 		/**
 		 * RESIZE
 		 */
-		protected function initResize(evt:Event = null):void {
+		protected function initResize(evt:Event=null):void {
 			removeEventListener( Event.ADDED_TO_STAGE, initResize);
 			stage.addEventListener(Event.RESIZE, resize, false , 0, true );
 			resize();
 		}
 		 
-		public function resize(evt:Event = null):void {
-			var W:Number = (!isDiv)?stage.stageWidth:parent.width;
-			var H:Number = (!isDiv)?stage.stageHeight:parent.height;
-			switch(_align) {
-				case 'TL' : 
-					x = state.x;
-					y = state.y; 
-					break;
-				case 'TR' : 
-					x = W - width;
-					y = state.y;
-					break;
-				case 'BR' :
-					x = W - width;
-					y = stage.stageHeight - height;
-					break;
-				case 'BL' : 
-					x = 0;
-					y = stage.stageHeight - height;
-					break;
-				case 'T' :
-					x = W*.5-width*.5;
-					y = state.y;
-					break;
-				case 'L' :
-					x = state.x;
-					y = H*.5-height*.5;
-					break;
-				case 'R' :
-					x = W - width;
-					y = H*.5-height*.5;
-					break;
-				case 'B' :
-					x = W*.5-width*.5;
-					y = stage.stageHeight - height;
-					break;
-				case 'CENTER' :
-					x = W*.5-width*.5;
-					y = H*.5-height*.5;
-					break;
-				case 'CENTERX' : 
-					x = W*.5-width*.5;
-					y = state.y;
-					break;
-				case 'CENTERY' :
-					x = state.x;
-					y = H*.5-height*.5;
-					break;
-				default : break;
-			}
+		public function resize(evt:Event=null):void {
+			var W:Number = (!isDiv)?stage.stageWidth:parent.width, H:Number = (!isDiv)?stage.stageHeight:parent.height, a:String=_align;
+			x = (a=='TL' || a=='L' || a=='CENTERY' )?state.x:(a=='TR' || a=='BR' || a=='R')?W-width:(a=='BL')?0:(a=='T' || a=='B' || a=='CENTER' || a=='CENTERX')?W*.5-width*.5:x;
+			y = (a=='TL' || a=='TR' || a=='T' || a=='CENTERX')?state.y:(a=='BR' || a=='BL' || a=='B')?stage.stageHeight-height:(a=='L' || a=='R' || a=='CENTER' || a=='CENTERY')?H*.5-height*.5:y;
 		}
 		
 		/**
 		 * GETTER/SETTER
 		 */
+		public function get numDiv():int { return _numDiv; }
 		public function get state():DivState { return _state; }
-		public function set state(value:DivState):void { _state=value; }
+		public function get prev():IDiv { return _prev; }
+		public function set prev(value:IDiv):void { _prev = value; }
+		public function get next():IDiv { return _next; }	
+		public function set next(value:IDiv):void { _next = value; }
+		public function get master():Object { return _master; }
+		public function set master(value:Object):void { _master = value; }
 		public function get float():String { return _float; }
 		public function set float(value:String):void { _float=value; }
 		public function get align():String { return _align; }
@@ -202,6 +297,8 @@ package railk.as3.ui.div
 		public function set data(value:Object):void { _data = value; }
 		public function get constraint():String { return _constraint; }
 		public function set constraint(value:String):void { _constraint = value; }
+		public function get padding():Point { return _padding; }
+		public function set padding(value:Point):void { _padding = value; }
 		
 		/**
 		 * TO STRING

@@ -11,7 +11,6 @@ package railk.as3.ui.page
 	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.core.*;
 	import railk.as3.pattern.mvc.interfaces.*;
-	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.pattern.multiton.Multiton;
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.layout.Layout;
@@ -19,8 +18,6 @@ package railk.as3.ui.page
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.styleSheet.CSS;
-	import railk.as3.TopLevel;
-	//import railk.as3.ui.SEO;
 	
 	public class PageManager extends Facade implements IFacade
 	{
@@ -50,7 +47,6 @@ package railk.as3.ui.page
 		}
 		
 		public function init( author:String, hasMenu:Boolean, multiPage:Boolean, structure:String, adaptToScreen:Boolean ):void {
-			/*SEO.init();*/
 			this.hasMenu = hasMenu;
 			this.multiPage = multiPage;
 			this.structure = structure;
@@ -60,11 +56,10 @@ package railk.as3.ui.page
 			registerModel(Model);
 			registerController(Controller);
 			registerContainer( new PageStruct(structure,adaptToScreen) );
-			addEventListener( Notification.NOTE, placePage, false, 0, true );
 		}
 		
-		public function addStatic(id:String, classe:String, layout:Layout, onTop:Boolean, visible:Boolean, src:String):void {
-			var s:Static = (classe == '')?new Static(MID, id, layout, onTop, src ):new (getDefinitionByName(classe))(MID, id, layout, onTop, src );
+		public function addStatic(id:String, classe:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean, src:String):void {
+			var s:Static = (classe == '')?new Static(MID, id, layout, align, onTop, src ):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, src );
 			if (statics == null ) statics = s;
 			else {
 				statics.next = s;
@@ -180,19 +175,9 @@ package railk.as3.ui.page
 			return '';
 		}
 		
-		private function placePage(evt:Notification):void {
-			if (evt.note != 'onPageShow') return;
-			(container as PageStruct).placeDiv((evt.page as IView).component);
-			if (multiPage) showNext(evt.page as IPage);
-			else evt.page.play();
-		}
-		
-		/**
-		 * ENABLE RIGHT CLICK MENU
-		 */
-		public function setContextMenu():void {
-			TopLevel.main.contextMenu = menu.menu;
-			//SEO.setNav(menu.menus);
+		public function enablePage(page:IPage):void {
+			if (multiPage) showNext(page);
+			else page.play();
 		}
 		
 		/**

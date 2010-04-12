@@ -45,7 +45,7 @@ package railk.as3.ui.layout
 		/**
 		 * UTILITIES
 		 */
-		private var attributes:Object =  { 'class':'', float:'none', align:'none', margins:null, posistion:'relative', x:0, y:0, constraint:'XY', visible:true, style:'' };
+		private var attributes:Object =  { 'class':'', float:'none', align:'none', margins:null, position:'relative', x:0, y:0, constraint:'XY', visible:true, style:'' };
 		private var margins:Object =  { 0:'top', 1:'right', 2:'bottom', 3:'left' };
 		private function A( name:String, xml:XML ):* {
 			var i:int;

@@ -11,7 +11,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.ui.layout.Layout;
-	import railk.as3.ui.div.DivStruct;
+	import railk.as3.ui.div.Div;
 	import railk.as3.ui.loader.*;
 	
 	public class Static extends View implements IStatic,IView,INotifier
@@ -22,18 +22,20 @@ package railk.as3.ui.page
 		
 		public var id:String;
 		public var layout:Layout;
+		public var align:String;
 		public var onTop:Boolean;
 		public var src:String;
 		public var css:String;
 		public var loader:UILoader;
 		
-		public function Static( MID:String, id:String, layout:Layout, onTop:Boolean, src:String ) {
+		public function Static( MID:String, id:String, layout:Layout, align:String, onTop:Boolean, src:String ) {
 			super(MID, id);
 			this.id = id;
 			this.layout = layout;
+			this.align = align;
 			this.onTop = onTop;
 			this.src = src;
-			this.component = new DivStruct(id);
+			this.component = new Div(id,'none',align);
 		}
 		
 		/**
@@ -54,10 +56,9 @@ package railk.as3.ui.page
 		 * 	SHOW/HIDE
 		 */
 		override public function show():void {
+			(facade.container as PageStruct).addStatic(component,onTop);
 			loader = loadUI(src).complete(function():void {
 				setupViews(layout.views);
-				(facade.container as PageStruct).addStatic(component,onTop);
-				activateViews(layout.views);
 				if (anchor) castAnchor(anchor);
 			} ).start();
 		}
@@ -66,7 +67,7 @@ package railk.as3.ui.page
 			loader.stop();
 			for (var i:int = 0; i < component.numChildren; i++) component.removeChildAt(i);
 			(facade.container as PageStruct).delStatic(component);
-			component = new DivStruct(id);
+			component = new Div(id,'none',align);
 		}
 		
 		/**
@@ -80,17 +81,15 @@ package railk.as3.ui.page
 		/**
 		 * 	UTILITIES
 		 */		
-		protected function setupViews(views:Array):void { 
+		protected function setupViews(views:Array):void {
 			for (var i:int = 0; i < views.length; i++) {
 				views[i].setup();
-				if (!views[i].container) component.addChild( views[i].div );
-				else views[i].container.div.addChild( views[i].div  );
+				if (!views[i].container) component.addDiv( views[i].div );
+				else views[i].container.div.addDiv( views[i].div  );
 				facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data);
 				if(views[i].visible) facade.getView(views[i].id).show();
 			}
 		}
-		
-		protected function activateViews(views:Array):void { for (var i:int = 0; i < views.length; i++) views[i].activate(); }
 		
 		/**
 		 * 	GETTER/SETTERS
