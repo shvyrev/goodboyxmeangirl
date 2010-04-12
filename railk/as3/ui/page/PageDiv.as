@@ -5,7 +5,6 @@
  * @version 0.1
  * 
  * (HORIZONTAL/VERTICAL + ALIGN != POSSIBLE)
- * 
  */
 
 package railk.as3.ui.page
@@ -16,9 +15,7 @@ package railk.as3.ui.page
 	
 	public class PageDiv extends Div implements IDiv
 	{
-		public var prev:PageDiv;
-		public var gap:Number=0;
-		
+		public var gap:Number=0;		
 		public var ratio:Number;
 		public var type:String;		
 		public var onScreen:Boolean;
@@ -47,10 +44,9 @@ package railk.as3.ui.page
 			
 			// ratio
 			if ( type.search('Single') != -1 && ratio) opps((type=='verticalSingle')?'y':'x');
-			for (var i:int = 0; i < numChildren; i++) getChildAt(i).addEventListener(Event.CHANGE, dispatchChange); 
 		}
 		
-		override public function resize(evt:Event = null):void {
+		override public function resize(evt:Event=null):void {
 			super.resize(evt);
 			if (type == 'horizontalSingle') opps('x');
 			else if (type == 'verticalSingle') opps('y');
@@ -67,7 +63,7 @@ package railk.as3.ui.page
 		 * @param	type
 		 */
 		public function opps(type:String):void {
-			var size:Number = (type == 'x')?stage.stageWidth:stage.stageHeight;
+			var size:Number = (type == 'x')?stage.stageWidth:stage.stageHeight, prev:PageDiv=_prev as PageDiv;
 			gap = ((prev)?(prev.width-size>0?prev.width-size:0)+prev.gap:0);
 			oppsPos[type] = (size-oppsStage[type])*ratio + gap;
 			this[type] += pos[type] = size*ratio + gap;

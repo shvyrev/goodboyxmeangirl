@@ -7,7 +7,7 @@
 
 package railk.as3.ui.div
 {	
-	internal class DivState
+	internal final class DivState
 	{
 		public var x:Number;
 		public var y:Number;

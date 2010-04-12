@@ -7,12 +7,12 @@
 
 package railk.as3.ui.page
 {	
+	import flash.events.Event;
 	import flash.geom.Point;
 	import railk.as3.ui.div.*;
 	
-	public class PageStruct extends DivStruct implements IDiv
+	internal class PageStruct extends Div implements IDiv
 	{
-		private var lastPage:PageDiv;
 		private var ratio:Number = 0;
 		private var structure:String;
 		private var adaptToScreen:Boolean;
@@ -34,32 +34,28 @@ package railk.as3.ui.page
 		/**
 		 * ADD PAGE
 		 */
-		override public function addDiv(div:IDiv=null, name:String='', float:String='none', align:String='TL', margins:Object=null, posistion:String='relative', x:Number=0, y:Number=0, data:*= null, constraint:String='XY'):IDiv {
-			current = (div)?div:new PageDiv( name, float, align, margins, position, x, y, data, constraint);
-			if (!onScreen) { onScreen = current as PageDiv; onScreen.onScreen = true; }
-			divs[divs.length] = addChild(current as Div );
-			(current as PageDiv).prev = lastPage;
-			lastPage = current as PageDiv;
-			return current;
+		override public function addDiv(div:IDiv):IDiv {
+			if (!onScreen) { onScreen = div as PageDiv; onScreen.onScreen = true; }
+			var d:IDiv = super.addDiv(div);
+			if (structure != 'single') (div as PageDiv).init(ratio++, structure, adaptToScreen);
+			return d;
 		}
 		
 		/**
 		 * MANAGE STATIC PAGE
 		 */
-		public function addStatic( div:IDiv, onTop:Boolean ):IDiv { return parent.addChildAt( div as Div, (onTop)?parent.numChildren-1:0 ) as IDiv; }
-		public function delStatic( div:IDiv ):void { parent.removeChild(div as Div); }
+		public function addStatic(div:IDiv,onTop:Boolean):IDiv { return parent.addChildAt( div as Div, (onTop)?parent.numChildren-1:0 ) as IDiv; }
+		public function delStatic(div:IDiv):void { parent.removeChild(div as Div); }
 		
 		/**
 		 * PLACE THE CURRENT PAGE DEPENDING ON THE STRUCTURE TYPE
 		 * 
 		 * @param	current
 		 */
-		override public function placeDiv(current:IDiv):void {
-			current.state.init();
-			if (structure.search('horizontal') != -1) { current.float = 'left'; current.constraint = 'X';}
-			else if (structure.search('vertical') != -1) current.constraint = 'Y';
-			if (structure != 'single') { super.placeDiv(current); (current as PageDiv).init(ratio++, structure, adaptToScreen); }
-			current.bind();
+		override protected function setupDiv(div:IDiv):void {
+			if (structure.search('horizontal') != -1) { div.float = 'left'; div.constraint = 'X';}
+			else if (structure.search('vertical') != -1) div.constraint = 'Y';
+			if (structure != 'single') super.setupDiv(div);
 		}
 		
 		/**
@@ -79,5 +75,7 @@ package railk.as3.ui.page
 			oppsPos = onScreen.oppsPos.clone();
 			transition.apply(null,[this,new Point( -onScreen.pos.x, -onScreen.pos.y),complete]);
 		}
+		
+		override protected function getMaster():* { return stage; }
 	}
 }
