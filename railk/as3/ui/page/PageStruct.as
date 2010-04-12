@@ -7,7 +7,6 @@
 
 package railk.as3.ui.page
 {	
-	import flash.events.Event;
 	import flash.geom.Point;
 	import railk.as3.ui.div.*;
 	
