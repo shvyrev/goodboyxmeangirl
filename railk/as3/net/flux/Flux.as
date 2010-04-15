@@ -14,6 +14,7 @@ package railk.as3.net.flux
 	import railk.as3.net.amfphp.AmfphpClient;
 	import railk.as3.net.saver.xml.XmlSaver;
 	import railk.as3.net.saver.xml.XmlSaverEvent;	
+	import railk.as3.pattern.singleton.Singleton;
 	
 	
 	public class Flux extends EventDispatcher  
@@ -54,7 +55,7 @@ package railk.as3.net.flux
 		/**
 		 * SINGLETON
 		 */
-		public function getInstance():Flux{
+		public static function getInstance():Flux {
 			return Singleton.getInstance(Flux);
 		}
 		
@@ -154,7 +155,7 @@ package railk.as3.net.flux
 		 */
 		public function Publish( fluxID:String, amf:AmfphpClient ):void {	
 			saver = new XmlSaver( amf );
-			saver.update( filePath, FluxList[fluxID] );
+			saver.update( '', filePath, FluxList[fluxID] );
 			saver.addEventListener( XmlSaverEvent.ON_ERROR, manageEvent, false, 0, true );
 			saver.addEventListener( XmlSaverEvent.ON_SAVE_XML_COMPLETE, manageEvent,false,0,true );
 		}
@@ -208,7 +209,7 @@ package railk.as3.net.flux
 		/**
 		 * MANAGE EVENT
 		 */
-		private function manageEvent( evt:XmlSaverEvent ) {
+		private function manageEvent( evt:XmlSaverEvent ):void {
 			switch( evt.type ) {
 				case XmlSaverEvent.ON_ERROR: dispatchEvent( new FluxEvent( FluxEvent.ON_FLUX_PUBLISH_ERROR, { info:"flux error " } ) ); break;
 				case XmlSaverEvent.ON_SAVE_XML_COMPLETE :

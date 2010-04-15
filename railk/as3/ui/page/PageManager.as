@@ -32,6 +32,7 @@ package railk.as3.ui.page
 		public var multiPage:Boolean;
 		public var structure:String;
 		public var adaptToScreen:Boolean;
+		public var nameSpace:String;
 		
 		private var multiPageOn:Boolean;
 		private var multiPageId:String;
@@ -46,11 +47,12 @@ package railk.as3.ui.page
 			MID = Multiton.assertSingle(id,PageManager); 
 		}
 		
-		public function init( author:String, hasMenu:Boolean, multiPage:Boolean, structure:String, adaptToScreen:Boolean ):void {
+		public function init( author:String, hasMenu:Boolean, multiPage:Boolean, structure:String, adaptToScreen:Boolean, nameSpace:String ):void {
 			this.hasMenu = hasMenu;
 			this.multiPage = multiPage;
 			this.structure = structure;
 			this.adaptToScreen = adaptToScreen;
+			this.nameSpace = nameSpace;
 			menu = new RightClickMenu();
 			menu.add(author, author, null, null, true);
 			registerModel(Model);

@@ -27,7 +27,7 @@ package railk.as3.net.saver.xml
 	import nochump.util.zip.*;
 	
 	import railk.as3.net.amfphp.*;
-	import railk.as3.data.parser.Parser;
+	import railk.as3.data.parser.XMLItem;
 	
 
 	public class XmlSaver extends EventDispatcher 
@@ -163,8 +163,8 @@ package railk.as3.net.saver.xml
 		private function saveFile( xml:XML ):void {
 			if (zip) {
 				current = 'file';
-				var entryName = file.split('/')[file.split('/').length - 1];
-				var zipName = file.split('.')[0];
+				var entryName:String = file.split('/')[file.split('/').length - 1];
+				var zipName:String = file.split('.')[0];
 				zipFile = new ZipOutput();
 				var ze:ZipEntry = new ZipEntry( entryName );
 				zipFile.putNextEntry(ze);
@@ -373,7 +373,7 @@ package railk.as3.net.saver.xml
 			switch( updateType )
 			{
 				case 'add' :
-					var nextID = actualXML.length + 1;
+					var nextID:int = actualXML.length + 1;
 					for (i= 0; i < newXML.length; i++) 
 					{
 						actualXML.push( newXML[i] );

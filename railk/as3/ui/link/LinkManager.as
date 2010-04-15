@@ -107,7 +107,7 @@ package railk.as3.ui.link
 		public static function setValue(value:String):void { SWFAddress.setValue(value); }
 		private static function replace(str:String, find:String, replace:String):String { return str.split(find).join(replace); }	
 		private static function toTitleCase(str:String):String { return str.substr(0,1).toUpperCase() + str.substr(1); }
-		private static function formatTitle(title:String):String { return siteTitre + (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : ''); }
+		private static function formatTitle(title:String):String { return siteTitre+' '+ (title != '/' ? ' / ' + toTitleCase(replace(title.substr(1, title.length - 2), '/', ' / ')) : ''); }
 		private static function updateTitle(title:String):void {
 			if (title.charAt(title.length - 1) != '/') title += '/';
 			SWFAddress.setTitle(formatTitle(title));
