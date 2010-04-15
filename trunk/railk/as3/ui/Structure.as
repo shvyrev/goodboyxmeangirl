@@ -34,10 +34,10 @@ package railk.as3.ui
 		 * @param	proxys		proxys Class
 		 */
 		public function init( container:*, xml:XML, loadings:Array = null, views:Array = null, commands:Array = null, proxys:Array = null ):void {
+			pageManager.init(A('author', xml), B(A('menu', xml)), B(A('multiPage', xml)), A('structure', xml), B(A('adaptToScreen', xml)), A('package',xml));
+			container.addChild( pageManager.container );
 			if (commands) for (var i:int = 0; i < commands.length; i++) pageManager.registerCommand(commands[i].classe, commands[i].name ); 
 			if (proxys) for (i = 0; i < proxys.length; i++) pageManager.registerProxy(proxys[i].classe, proxys[i].name );
-			pageManager.init(A('author', xml), B(A('menu', xml)), B(A('multiPage', xml)), A('structure', xml), B(A('adaptToScreen', xml)));
-			container.addChild( pageManager.container );
 			var css:String = A('stylesheet', xml);
 			if (css) loadUI(css).file(setup, container, xml, UILoader.FILE, css.split('/')[css.split('/').length-1].split('.')[0]).start();
 			else setup(container, xml);

@@ -22,9 +22,9 @@ package railk.as3.ui
 		public function Localisation() { Singleton.assertSingle(Localisation); }
 		
 		
-		public function getConfig(lang:String):String {
+		public function getConfig(lang:String,zip:Boolean=false):String {
 			current = lang;
-			return (TopLevel.root.loaderInfo.url.indexOf("file") == 0)?'../assets/siteLocal'+((lang!='fr')?lang.toUpperCase():'')+'.xml':'assets/site'+((lang!='fr')?lang.toUpperCase():'')+'.xml'
+			return (TopLevel.root.loaderInfo.url.indexOf("file") == 0)?'../assets/siteLocal'+((lang!='fr')?lang.toUpperCase():'')+'.xml':'assets/site'+((lang!='fr')?lang.toUpperCase():'')+((zip)?'.zip':'.xml');
 		}
 	}
 }
