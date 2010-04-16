@@ -187,18 +187,20 @@ package railk.as3.ui.div
 		 * MANAGE CHANGE EVENTS
 		 */
 		private function activate(child:Object):void {
+			if (!('numChildren' in child)) return;
 			for (var i:int = 0; i < child.numChildren; i++) {
 				var subChild:Object = child.getChildAt(i);
 				subChild.addEventListener( Event.CHANGE, child.dispatchChange );
-				if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) activate(subChild);
+				if ('dispatchChange' in subChild) activate(subChild);
 			}
 		}
 		
 		private function desactivate(child:Object):void {
+			if (!('numChildren' in child)) return;
 			for (var i:int = 0; i < child.numChildren; i++) {
 				var subChild:Object = child.getChildAt(i);
 				subChild.removeEventListener( Event.CHANGE, child.dispatchChange );
-				if ( subChild.hasOwnProperty('dispatchChange') && subChild.numChildren > 0) desactivate(subChild);
+				if ('dispatchChange' in subChild) desactivate(subChild);
 			}
 		}
 		

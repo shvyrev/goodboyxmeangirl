@@ -1,6 +1,6 @@
 ﻿/**
 * 
-* MVC Abstract View
+* MVC View
 * 
 * @author Richard Rodney
 * @version 0.1
