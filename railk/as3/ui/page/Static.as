@@ -18,22 +18,24 @@ package railk.as3.ui.page
 	{
 		private var _prev:IStatic;
 		private var _next:IStatic;
+		private var _visible:Boolean;
 		private var _anchor:String;
 		
-		public var id:String;
-		public var layout:Layout;
-		public var align:String;
-		public var onTop:Boolean;
-		public var src:String;
-		public var css:String;
-		public var loader:UILoader;
+		protected var id:String;
+		protected var layout:Layout;
+		protected var align:String;
+		protected var onTop:Boolean;
+		protected var src:String;
+		protected var css:String;
+		protected var loader:UILoader;
 		
-		public function Static( MID:String, id:String, layout:Layout, align:String, onTop:Boolean, src:String ) {
+		public function Static( MID:String, id:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean, src:String ) {
 			super(MID, id);
 			this.id = id;
 			this.layout = layout;
 			this.align = align;
 			this.onTop = onTop;
+			this.visible = visible;
 			this.src = src;
 			this.component = new Div(id,'none',align);
 		}
@@ -53,7 +55,7 @@ package railk.as3.ui.page
 		}
 		
 		/**
-		 * 	SHOW/HIDE
+		 * 	SHOW/HIDE/UPDATE
 		 */
 		override public function show():void {
 			(facade.container as PageStruct).addStatic(component,onTop);
@@ -69,6 +71,8 @@ package railk.as3.ui.page
 			(facade.container as PageStruct).delStatic(component);
 			component = new Div(id,'none',align);
 		}
+		
+		public function update():void {}
 		
 		/**
 		 * ZOOM/DEZOOM
@@ -100,6 +104,7 @@ package railk.as3.ui.page
 		public function set next(value:IStatic):void { _next = value; }
 		public function get anchor():String { return _anchor; }
 		public function set anchor(value:String):void { _anchor = value; }
-
+		public function get visible():Boolean { return _visible; }
+		public function set visible(value:Boolean):void { _visible = value; }
 	}
 }

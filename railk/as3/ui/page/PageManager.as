@@ -61,7 +61,7 @@ package railk.as3.ui.page
 		}
 		
 		public function addStatic(id:String, classe:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean, src:String):void {
-			var s:Static = (classe == '')?new Static(MID, id, layout, align, onTop, src ):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, src );
+			var s:Static = (classe == '')?new Static(MID, id, layout, align, onTop, visible, src ):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible, src );
 			if (!statics) statics = s;
 			else {
 				statics.next = s;
@@ -136,6 +136,7 @@ package railk.as3.ui.page
 			var change:String  = changePage(id,anchor);
 			if (!change) return; 
 			if (current) getPage(current).stop();
+			if (statics) updateStatics();
 			var page:IPage = getPage(id);
 			page.anchor = anchor;
 			if (change == 'id') (container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
@@ -153,6 +154,7 @@ package railk.as3.ui.page
 			var change:String  = changePage(id,anchor);
 			if (!change) return;
 			if (current) unsetPage(current);
+			if (statics) updateStatics();
 			var page:IPage = getPage(id);
 			page.anchor = anchor;
 			page.show();
@@ -180,6 +182,14 @@ package railk.as3.ui.page
 		public function enablePage(page:IPage):void {
 			if (multiPage) showNext(page);
 			else page.play();
+		}
+		
+		private function updateStatics():void {
+			var s:IStatic = statics;
+			while (s) { 
+				if (s.visible) s.update();
+				s = s.next;
+			}
 		}
 		
 		/**

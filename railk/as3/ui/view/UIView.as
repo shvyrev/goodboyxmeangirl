@@ -14,7 +14,7 @@ package railk.as3.ui.view
 	
 	public class UIView extends View implements IView
 	{
-		private var _style:String;
+		private var _style:String;		
 		public function UIView( MID:String, name:String='',component:*=null, data:*=null ) {
 			super(MID, name, component, data);
 		}
