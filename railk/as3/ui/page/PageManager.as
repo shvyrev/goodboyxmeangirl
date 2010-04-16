@@ -62,7 +62,7 @@ package railk.as3.ui.page
 		
 		public function addStatic(id:String, classe:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean, src:String):void {
 			var s:Static = (classe == '')?new Static(MID, id, layout, align, onTop, src ):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, src );
-			if (statics == null ) statics = s;
+			if (!statics) statics = s;
 			else {
 				statics.next = s;
 				s.prev = statics;

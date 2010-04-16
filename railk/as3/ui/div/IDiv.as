@@ -7,9 +7,10 @@
 
 package railk.as3.ui.div
 {	
+	import railk.as3.display.IDisplayObject;
 	import flash.events.Event;
 	import flash.geom.Point;
-	public interface IDiv
+	public interface IDiv extends IDisplayObject
 	{	
 		function bind():void;
 		function unbind():void;
