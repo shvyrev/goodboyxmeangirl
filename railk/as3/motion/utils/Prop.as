@@ -10,6 +10,7 @@ package railk.as3.motion.utils
 {	
 	public class Prop 
 	{
+		public var prev:Prop;
 		public var type:String;
 		public var prop:String;
 		public var current:*;

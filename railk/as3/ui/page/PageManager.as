@@ -136,13 +136,13 @@ package railk.as3.ui.page
 			var change:String  = changePage(id,anchor);
 			if (!change) return; 
 			if (current) getPage(current).stop();
-			if (statics) updateStatics();
 			var page:IPage = getPage(id);
 			page.anchor = anchor;
 			if (change == 'id') (container as PageStruct).goTo(id, page.transition.easeInOut, page.play );
 			else page.play();
 			current = id;
 			anchors[current] = anchor;
+			if (statics) updateStatics();
 		}
 		
 		/**
@@ -154,13 +154,13 @@ package railk.as3.ui.page
 			var change:String  = changePage(id,anchor);
 			if (!change) return;
 			if (current) unsetPage(current);
-			if (statics) updateStatics();
 			var page:IPage = getPage(id);
 			page.anchor = anchor;
 			page.show();
 			if (page.transition && change == 'id') page.transition.easeIn((page as IView).component );
 			current = id;
 			anchors[current] = anchor;
+			if (statics) updateStatics();
 		}
 		
 		public function unsetPage( id:String ):void {
@@ -188,7 +188,7 @@ package railk.as3.ui.page
 			var s:IStatic = statics;
 			while (s) { 
 				if (s.visible) s.update();
-				s = s.next;
+				s = s.prev;
 			}
 		}
 		
