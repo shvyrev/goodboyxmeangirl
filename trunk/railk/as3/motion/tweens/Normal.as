@@ -1,5 +1,5 @@
 /**
- * Regualar Tween (7.3k with all modules) (4,47k alone );
+ * Regualar Tween (6.39k with all modules) (3,6k alone );
  * 		Strong typed with a module system including :
  * 			text / textColor /
  * 			color / 
@@ -108,7 +108,15 @@ package railk.as3.motion.tweens
 		 * KILL TWEEN
 		 */
 		public function killTween():void { 
-			target = props = null;
+			target = null;
+			_ease = _onBegin = _onComplete = _onUpdate = null;
+			_onBeginA = _onCompleteA = _onUpdateA = null;
+			while (props) {
+				var p:Prop = props;
+				props = props.prev;
+				p.dispose();
+				p = null;
+			}
 		}
 		
 		/**
@@ -207,8 +215,8 @@ package railk.as3.motion.tweens
 							p = getDefinitionByName('railk.as3.motion.modules::'+cap(p.type)+'Module').update( target, p, ratio ); 
 							break;
 						default :
-							var value:Number = value = Number(p.start)+Number(p.end-p.start)*ratio+ 1e-18-1e-18;
-							target[p.type] = p.current = (_rounded)?Math.round(value):value;
+							var value:Number = value = p.sNum+(p.eNum-p.sNum)*ratio+ 1e-18-1e-18;
+							p.current = target[p.type] = (_rounded)?Math.round(value):value;
 							if ( autoVisible && p.type == 'alpha' ) target.visible = value > 0;
 							break;
 					}
