@@ -16,12 +16,12 @@ package railk.as3.ui.page
 	
 	public class Static extends View implements IStatic,IView,INotifier
 	{
-		private var _prev:IStatic;
-		private var _next:IStatic;
-		private var _visible:Boolean;
-		private var _anchor:String;
+		protected var _prev:IStatic;
+		protected var _next:IStatic;
+		protected var _visible:Boolean;
+		protected var _anchor:String;
+		protected var _id:String;
 		
-		protected var id:String;
 		protected var layout:Layout;
 		protected var align:String;
 		protected var onTop:Boolean;
@@ -77,10 +77,10 @@ package railk.as3.ui.page
 		/**
 		 * ZOOM/DEZOOM
 		 */
-		protected function zoom():void {}
-		protected function dezoom():void {}
-		protected function adapt():void {}
-		protected function castAnchor(anchor:String):void {}
+		public function zoom():void {}
+		public function dezoom():void {}
+		public function adapt():void {}
+		public function castAnchor(anchor:String):void {}
 		
 		/**
 		 * 	UTILITIES
@@ -106,5 +106,8 @@ package railk.as3.ui.page
 		public function set anchor(value:String):void { _anchor = value; }
 		public function get visible():Boolean { return _visible; }
 		public function set visible(value:Boolean):void { _visible = value; }
+		public function get id():String { return _id; }
+		public function set id(value:String):void { _id = value; }
+
 	}
 }

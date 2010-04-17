@@ -1,6 +1,6 @@
 /**
  * Regualar Tween (7.3k with all modules) (4,47k alone );
- * 		Strong typed with pooling and module system including :
+ * 		Strong typed with a module system including :
  * 			text / textColor /
  * 			color / 
  * 			tint / brightness / saturation / contrast / hue / treshold /
@@ -25,22 +25,17 @@ package railk.as3.motion.tweens
 	
 	final public class Normal extends EventDispatcher
 	{
-		static private const tweens:Array=[];
 		static private const ticker:Shape = new Shape();
-		static private const pool:Pool = Pool.getInstance();
+		static private var tweens:Normal;
 		
-		static private var length:int;
-		static private var head:Normal;
-		private var prev:Normal;
-		private var next:Normal;
-		
-		public var id:int=0;
+		public var prev:Normal;		
+		public var running:Boolean;
 		public var target:Object;
 		public var startTime:Number;
 		public var position:Number=0;
 		public var duration:Number;
 		public var elapsedTime:Number=0;
-		public var props:Array=[];
+		public var props:Prop;
 		public var autoStart:Boolean=true;
 		public var autoVisible:Boolean;
 		
@@ -63,11 +58,9 @@ package railk.as3.motion.tweens
 		 * 
 		 * @param	target
 		 */
-		public function Normal() { super(); }
-		public function init(target:Object = null, autoStart:Boolean=true):Normal {
+		public function Normal(target:Object = null, autoStart:Boolean = true) { 
 			this.target = target; 
 			this.autoStart
-			return this;
 		}
 		
 		/**
@@ -88,7 +81,6 @@ package railk.as3.motion.tweens
 		 * ACTIONS
 		 */
 		public function setPosition(pos:Number):Normal { position = pos; update(pos, true); return this; }
-		public function scalePool(size:int,growth:int):Normal { pool.scale(size,growth); return this; }
 		public function setModule(...modules):Normal { return this; }
 		public function delay( value:Number ):Normal { _delay = value; return this; }
 		public function ease( value:Function ):Normal { _ease = value; return this; }
@@ -103,11 +95,11 @@ package railk.as3.motion.tweens
 		/**
 		 * PLAY/PAUSE
 		 */
-		public function play():void { if (!id && target) id = add( this ); }
+		public function play():void { if (!running && target) add( this ); }
 		
 		public function pause():void {
-			if(id && target){
-				id = remove( this );
+			if(running && target){
+				running = false;
 				position += elapsedTime;
 			}
 		}
@@ -117,8 +109,6 @@ package railk.as3.motion.tweens
 		 */
 		public function killTween():void { 
 			target = props = null;
-			props=[];
-			pool.release(this);
 		}
 		
 		/**
@@ -126,16 +116,16 @@ package railk.as3.motion.tweens
 		 */
 		public function setProps( os:Object ):void { for ( var o:String in os ) setProp( o, os[o] ); }
 		public function setProp(name:String, value:*):void {
-			var o:Object={}, i:int=props.length;
+			var o:Object={}, p:Prop=props;
 			if ( hasOwnProperty(name) ) this[name]=value;
 			else {
-				while( --i > -1 ){
-					var p:Prop= props[i];
+				while(p){
 					if (p.type == name) { 
 						p.end = value; 
 						p.start = p.current;
 						return; 
 					}
+					p = p.prev;
 				}
 				o[name]=value; stripProps(o);
 			}
@@ -144,35 +134,55 @@ package railk.as3.motion.tweens
 		}
 		
 		public function getProp(name:String):* {
-			var i:int=props.length;
 			if ( this.hasOwnProperty(name) ) return this[name];
-			else while( --i > -1 ) if (props[i].type == name) return props[i].current;
+			else {
+				var p:Prop = props;
+				while (p) {
+					if (p.type == name) return p.current;
+					p = p.prev;
+				}
+			}
 		}
 		
-		public function delProp(name:String):* {
-			var i:int = props.length;
-			while( --i > -1 ) if (props[i].type == name) props.splice(i,1);
+		public function delProp(name:String):void {
+			var p:Prop = props, n:Prop;
+			while (p) {
+				if (p.type == name) {
+					if (n) n.prev = p.prev;
+					else props = p.prev;
+					return;
+				}
+				n = p;
+				p = p.prev;
+			}
 		}
 		
 		protected function stripProps( ps:Object ):void {
 			var cf:Boolean=false, colorFilters:Object={};
 			for ( var p:String in ps ) {
 				switch( p ) {
-					case 'volume': case 'pan': props[props.length] = new Prop('sound',p,target.soundTransform[p],ps[p]); break;
-					case 'text': case 'textColor': props[props.length] = new Prop('text',p,target[p],ps[p]); break;
-					case 'color': var c:ColorTransform = target.transform.colorTransform; props[props.length] = new Prop(p, p, c, new ColorTransform(0 - c.redMultiplier, 0 - c.greenMultiplier, 0 - c.blueMultiplier, 0, ((ps[p] >> 16) & 0xff) - c.redOffset, ((ps[p] >> 8) & 0xff) - c.greenOffset, (ps[p] & 0xff) - c.blueOffset)); break;
-					case 'hexColor': props[props.length] = new Prop(p,p,target,ps[p]); break;
-					case 'GlowFilter': case 'BlurFilter': case 'BevelFilter': case 'DropShadowFilter':  props[props.length] = new Prop('filter',p,getDefinitionByName('railk.as3.motion.modules::FilterModule').init(target,p,ps[p]),ps[p]); break;
+					case 'volume': case 'pan': addProp( new Prop('sound',p,target.soundTransform[p],ps[p]) ); break;
+					case 'text': case 'textColor': addProp( new Prop('text',p,target[p],ps[p]) ); break;
+					case 'color': var c:ColorTransform = target.transform.colorTransform; addProp( new Prop(p, p, c, new ColorTransform(0 - c.redMultiplier, 0 - c.greenMultiplier, 0 - c.blueMultiplier, 0, ((ps[p] >> 16) & 0xff) - c.redOffset, ((ps[p] >> 8) & 0xff) - c.greenOffset, (ps[p] & 0xff) - c.blueOffset)) ); break;
+					case 'hexColor': addProp( new Prop(p,p,target,ps[p]) ); break;
+					case 'GlowFilter': case 'BlurFilter': case 'BevelFilter': case 'DropShadowFilter': addProp( new Prop('filter',p,getDefinitionByName('railk.as3.motion.modules::FilterModule').init(target,p,ps[p]),ps[p]) ); break;
 					case 'tint': case 'brightness': case 'contrast': case 'hue': case 'saturation': case 'threshold': colorFilters[p] = [p,null,target.filters,ps[p]]; cf=true; break;
 					default :
 						if( p=='alphaVisible' ){ p='alpha'; autoVisible=true }
-						props[props.length] = new Prop(((ps[p] is Array)?'bezier':p), p, ((ps[p] is Array)?getDefinitionByName('railk.as3.motion.modules::BezierModule').init(target[p],ps[p]):target[p]), ps[p], (p.search('rotation') != -1)); 
+						addProp( new Prop(((ps[p] is Array)?'bezier':p), p, ((ps[p] is Array)?getDefinitionByName('railk.as3.motion.modules::BezierModule').init(target[p],ps[p]):target[p]), ps[p], (p.search('rotation') != -1)) ); 
 						break;
 				}
 			}
-			if (cf) props[props.length] = new Prop('colorFilter','', null, colorFilters);
+			if (cf) addProp( new Prop('colorFilter','', null, colorFilters) );
 		}
 		
+		protected function addProp(p:Prop):void {
+			if (!props) props = p;
+			else {
+				p.prev = props;
+				props = p;
+			}
+		}
 		
 		/**
 		 * UPDATE
@@ -189,13 +199,12 @@ package railk.as3.motion.tweens
 		}
 		
 		private function updateProps( ratio:Number ):Number {
-			var i:int=props.length;
 			if ( target && ratio ) {
-				while( --i > -1 ) {
-					var p:Prop=props[i];
+				var p:Prop = props;
+				while( p ) {
 					switch( p.type ) {
 						case 'sound': case 'text': case 'color': case 'hexColor': case 'colorFilter': case 'filter': case 'bezier': 
-							props[i] = getDefinitionByName('railk.as3.motion.modules::'+cap(p.type)+'Module').update( target, p, ratio ); 
+							p = getDefinitionByName('railk.as3.motion.modules::'+cap(p.type)+'Module').update( target, p, ratio ); 
 							break;
 						default :
 							var value:Number = value = Number(p.start)+Number(p.end-p.start)*ratio+ 1e-18-1e-18;
@@ -203,6 +212,7 @@ package railk.as3.motion.tweens
 							if ( autoVisible && p.type == 'alpha' ) target.visible = value > 0;
 							break;
 					}
+					p = p.prev;
 				}
 				if (_onUpdate != null) _onUpdate.apply(null, _onUpdateA);
 				if( hasEventListener(Event.CHANGE) ) dispatchEvent(new Event(Event.CHANGE));
@@ -213,19 +223,19 @@ package railk.as3.motion.tweens
 		private function complete():void {
 			if (_repeat>1 || _repeat==-1) {
 				if (_reflect) {
-					var i:int=props.length, start:*;
-					while( --i > -1 ) {
-						start = props[i].start;
-						props[i].start = props[i].end;
-						props[i].end = start;
+					var p:Prop=props, start:*;
+					while(p) {
+						start = p.start;
+						p.start = p.end;
+						p.end = start;
+						p = p.prev;
 					}
 				}
 				position = 0;
 				reset(this);
 				if(_repeat!=-1) _repeat--;
 			} else {
-				if (_dispose) killTween();
-				if(id) id = remove( this );
+				running = false
 				if (_onComplete != null) _onComplete.apply(null, _onCompleteA);
 				if (hasEventListener(Event.COMPLETE)) dispatchEvent(new Event(Event.COMPLETE));
 			}	
@@ -242,39 +252,38 @@ package railk.as3.motion.tweens
 		/**
 		 * TICKER
 		 */
-		static private function add( tween:Normal ):int {
-			tweens[length++] = tween;
-			start( tween );
-			return length;
-		}
-		
-		static private function remove( tween:Normal ):int {
-			loop:for (var i:int=0;i<length;i++) {
-				var t:Normal = tweens[i];
-				if (t == tween) {
-					tweens.splice(i, 1);
-					break loop;
-				}
+		static private function add( tween:Normal ):void {
+			tween.running = true;
+			if (!tweens) tweens = tween;
+			else {
+				tween.prev = tweens;
+				tweens = tween;
 			}
-			length--;
-			return 0;
+			start( tween );
 		}
 		
 		static private function reset(tween:Normal):void { tween.startTime = getTimer()*.001; }
-		static private function stop():void { ticker.removeEventListener(Event.ENTER_FRAME, tick ) };
+		static private function stop():void { ticker.removeEventListener(Event.ENTER_FRAME, tick ); };
 		static private function start( tween:Normal ):void {
 			tween.startTime = getTimer()*.001;
 			if (!ticker.hasEventListener(Event.ENTER_FRAME)) ticker.addEventListener(Event.ENTER_FRAME, tick, false, 0, true ); 
 		}
 		
 		static private function tick(evt:Event):void {
-			if ( length > 0 ) {
-				for (var i:int=0;i<length;i++) {
-					var t:Normal = tweens[i];
-					t.update( getTimer()*.001 );
+			if (tweens) {
+				var t:Normal = tweens, n:Normal;
+				while (t) {
+					if (!t.running) {
+						if (n) n.prev = t.prev;
+						else  tweens = t.prev;
+						if (t._dispose) t.killTween();
+					}
+					else t.update( getTimer()*.001 );
+					n = t;
+					t = t.prev;
 				}
 			}
-			else  stop();
+			else stop();
 		}
 	}
 }

@@ -21,5 +21,7 @@ package railk.as3.ui.page
 		function set anchor(value:String):void;
 		function get visible():Boolean;
 		function set visible(value:Boolean):void;
+		function get id():String;
+		function set id(value:String):void;
 	}
 }
