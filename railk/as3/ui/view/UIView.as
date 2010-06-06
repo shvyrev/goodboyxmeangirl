@@ -8,9 +8,11 @@
 package railk.as3.ui.view
 {	
 	import flash.display.Stage;
+	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.interfaces.IView;
 	import railk.as3.pattern.mvc.core.View;
 	import railk.as3.ui.div.IDiv;
+	import railk.as3.utils.hasDefinition;
 	
 	public class UIView extends View implements IView
 	{
@@ -18,6 +20,14 @@ package railk.as3.ui.view
 		private var _nameSpace:String;
 		public function UIView( MID:String, name:String='',component:*=null, data:*=null ) {
 			super(MID, name, component, data);
+		}
+		
+		/**
+		 * GET CLASS
+		 */
+		public function classe(name:String):Class {
+			name = name.charAt()+name.substring(1);
+			return hasDefinition(name)?getDefinitionByName(name):null; 
 		}
 		
 		/**
