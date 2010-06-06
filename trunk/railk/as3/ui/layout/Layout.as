@@ -28,7 +28,7 @@ package railk.as3.ui.layout
 			for (var i:int = 0; i < xml.children().length(); i++) {
 				var d:XML = xml.children()[i];
 				if (d.name() != 'div') continue;
-				master = views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container, master, A('class', d), d.@id, A('float', d), A('align', d), A('margins', d), A('position', d), A('x', d), A('y', d), A('style', d), D(d), A('constraint', d), A('visible',d) );
+				master = views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container, master, A('id', d), d.@id, A('float', d), A('align', d), A('margins', d), A('position', d), A('x', d), A('y', d), A('style', d), D(d), A('constraint', d), A('visible',d) );
 				if ( d.children().length() > 0 ) construct( d, master );
 			}
 		}		
@@ -45,7 +45,7 @@ package railk.as3.ui.layout
 		/**
 		 * UTILITIES
 		 */
-		private var attributes:Object =  { 'class':'', float:'none', align:'none', margins:null, position:'relative', x:0, y:0, constraint:'XY', visible:true, style:'' };
+		private var attributes:Object =  { float:'none', align:'none', margins:null, position:'relative', x:0, y:0, constraint:'XY', visible:true, style:'' };
 		private var margins:Object =  { 0:'top', 1:'right', 2:'bottom', 3:'left' };
 		private function A( name:String, xml:XML ):* {
 			var i:int;
@@ -57,13 +57,14 @@ package railk.as3.ui.layout
 						else for (i=0; i < a.length; i++) result[margins[i]] = Number(a[i]);
 						return result;
 					}
-					if(name == 'class') return pack+'.view'+(xml.@*[i].search(':')!=-1?'.':'::')+xml.@*[i];
+					if(name == 'id') return pack+(xml.@*[i].search(':')!=-1?'.':'::')+C(xml.@*[i]);
 					if(name == 'visible') return (xml.@*[i]=='true'?true:false);
 					return xml.@*[i];
 				}
 			}	
 			return attributes[name];
 		}
+		private function C( value:String ):String { return value.charAt().toUpperCase()+value.substring(1);  }
 		private function D(xml:XML):XML {
 			var result:XML = new XML('<data></data>')
 			for (var i:int; i < xml.children().length(); i++ ) if (xml.children()[i].name() != 'div') result.appendChild(xml.children()[i]);

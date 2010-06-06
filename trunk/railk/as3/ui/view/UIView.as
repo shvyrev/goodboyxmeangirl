@@ -14,7 +14,8 @@ package railk.as3.ui.view
 	
 	public class UIView extends View implements IView
 	{
-		private var _style:String;		
+		private var _style:String;
+		private var _nameSpace:String;
 		public function UIView( MID:String, name:String='',component:*=null, data:*=null ) {
 			super(MID, name, component, data);
 		}
@@ -27,6 +28,8 @@ package railk.as3.ui.view
 		/**
 		 * GETTER/SETTER
 		 */
+		public function get nameSpace():String { return _nameSpace; } 
+		public function set nameSpace(value:String):void { _nameSpace = value; } 
 		public function get style():String { return _style; }
 		public function set style(value:String):void { _style = value; }
 		public function get container():IDiv { return _component as IDiv; }

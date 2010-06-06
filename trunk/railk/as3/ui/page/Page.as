@@ -134,7 +134,7 @@ package railk.as3.ui.page
 				if (!views[i].container)component.addDiv( views[i].div );
 				else views[i].container.div.addDiv( views[i].div  );
 				data += (views[i].div.data != null)?views[i].div.data:'';
-				(facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data) as UIView).style = views[i].style;
+				views[i].populate(facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data) as UIView);
 				if (views[i].visible) facade.getView(views[i].id).show();
 			}
 			if (transitionName) _transition = new (getDefinitionByName(transitionName))() as ITransition;

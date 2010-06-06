@@ -10,6 +10,7 @@ package railk.as3.ui.layout
 	import flash.utils.getDefinitionByName;
 	import railk.as3.ui.view.UIView;
 	import railk.as3.ui.div.*;
+	import railk.as3.utils.hasDefinition;
 	
 	public class LayoutView
 	{	
@@ -32,7 +33,6 @@ package railk.as3.ui.layout
 		protected var y:Number;
 		protected var constraint:String;
 		
-		
 		/**
 		 * CONSTRUCTEUR
 		 */
@@ -54,9 +54,11 @@ package railk.as3.ui.layout
 		}
 		
 		public function setup():void {
-			viewClass = (view)?getDefinitionByName(view) as Class:UIView;
+			viewClass = hasDefinition(view)?getDefinitionByName(view) as Class:UIView;
 			div = new Div(id, float, align, margins, position, x, y, data, constraint);
 		}
+		
+		public function populate(v:UIView):void { v.style = style; v.nameSpace = view.split('::')[0]; }
 		
 		public function dispose():void { div=null; }
 	}
