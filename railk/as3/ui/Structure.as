@@ -53,25 +53,27 @@ package railk.as3.ui
 		
 		private function getStatics( xml:XML ):void {
 			if ( xml..static.toString() == '' ) return;
-			for each ( var s:XML in xml..static) if (s.@id.toString() != '') pageManager.addStatic(s.@id,A('class',s,A('package',xml)+'.view::'), getPageLayout( A('package', xml), s.@id, new XML(s.child('body')) ),A('align',s), B(A('onTop',s)), B(A('visible',s)), s.@src);
+			for each ( var s:XML in xml..static) if (s.@id.toString() != '') pageManager.addStatic(s.@id,A('id',s,A('package',xml)+'.view::'), getPageLayout( A('package', xml)+'.view.'+s.@id, s.@id, new XML(s.child('body')) ),A('align',s), B(A('onTop',s)), B(A('visible',s)), s.@src);
 		}
 		
 		private function getPages( xml:XML ):void {
 			for each ( var p:XML in xml..page) {
 				var title:String = A('title', p), src:String = A('src', p);
 				var parent:String = (p.parent().localName() == 'page')?p.parent().@id:'';
-				pageManager.addPage(A('id', p),parent,title,A('class',p,A('package',xml)+'.view::'),A('loading',p,A('package',xml)+'.loading::'),getPageLayout( A('package',xml), title, new XML(p.child('body')) ),A('align',p),src,A('package',xml)+'.transition.'+A('transition',p));
+				pageManager.addPage(A('id', p),parent,title,A('id',p,A('package',xml)+'.view::'),A('loading',p,A('package',xml)+'.loading::'),getPageLayout( A('package',xml)+'.view.'+A('id', p), title, new XML(p.child('body')) ),A('align',p),src,A('package',xml)+'.transition.'+A('transition',p));
 			}
 		}
 		
 		private function getPageLayout( pack:String, page:String, xml:XML ):Layout { return new Layout(pack,page,xml); }
 		
 		private function A( name:String, xml:XML, pack:String='' ):String {
-			for (var i:int=0; i < xml.@*.length(); ++i) if(name == xml.@*[i].name()) return pack+xml.@*[i];
+			for (var i:int=0; i < xml.@*.length(); ++i) if(name == xml.@*[i].name()) return (pack)?pack+C(xml.@*[i]):xml.@*[i];
 			return '';
 		}
 		
 		private function B( value:String ):Boolean { return (value == 'true')?true:false; }
+		
+		private function C( value:String ):String { return value.charAt().toUpperCase()+value.substring(1);  }
 		
 		public function view( page:String ):void { LinkManager.setValue(page); }
 	}	

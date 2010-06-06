@@ -18,6 +18,8 @@ package railk.as3.ui.page
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.styleSheet.CSS;
+	import railk.as3.utils.hasDefinition;
+	
 	
 	public class PageManager extends Facade implements IFacade
 	{
@@ -61,7 +63,7 @@ package railk.as3.ui.page
 		}
 		
 		public function addStatic(id:String, classe:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean, src:String):void {
-			var s:Static = (classe == '')?new Static(MID, id, layout, align, onTop, visible, src ):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible, src );
+			var s:Static = !hasDefinition(classe)?new Static(MID, id, layout, align, onTop, visible, src ):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible, src );
 			if (!statics) statics = s;
 			else {
 				statics.next = s;
@@ -89,14 +91,14 @@ package railk.as3.ui.page
 		
 		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:Layout, align:String, src:String, transition:String):void {
 			if (parent == '') {
-				if( !index) registerView( index = last = (classe=='')?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition) );
+				if( !index) registerView( index = last = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition) );
 				else {
 					var page:IPage;
-					registerView( page = (classe == '')?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition));
+					registerView( page = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition));
 					last.next = page; page.prev = last; last = page;
 				}
 			} else {
-				registerView( ((classe=='')?new Page(MID,id, getPage(parent),title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,loading,layout,align,src,transition)) );
+				registerView( (!hasDefinition(classe)?new Page(MID,id, getPage(parent),title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,loading,layout,align,src,transition)) );
 				getPage(parent).addChild(getPage(id));
 			}
 			
