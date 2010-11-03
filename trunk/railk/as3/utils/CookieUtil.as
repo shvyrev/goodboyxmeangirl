@@ -29,8 +29,6 @@ package railk.as3.utils
 		 * @param	name
 		 * @param	value
 		 * @param	expire
-		 * @param	path
-		 * @param	domain
 		 */
 		public static function add(name:String, value:String, expire:int):void {
 			if (!available) return;
@@ -41,8 +39,6 @@ package railk.as3.utils
 		 * REMOVE
 		 * 
 		 * @param	name
-		 * @param	path
-		 * @param	domain
 		 */
 		public static function remove(name:String):void {
 			if (!available) return;
