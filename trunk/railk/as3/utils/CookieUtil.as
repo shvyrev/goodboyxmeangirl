@@ -1,8 +1,8 @@
 /**
-*   COOKIE UTILS
+*   COOKIE UTIL	/ REWRITE FROM SCRATCH
 * 
-* 	@author Alexander
-*	http://myflex.wordpress.com/2008/11/12/actionscript-cookie-util/
+* 	@author Richard Rodney
+* 	@version 0.1
 */
 
 package railk.as3.utils
@@ -10,71 +10,78 @@ package railk.as3.utils
 	import flash.external.ExternalInterface;
 	public class CookieUtil
 	{
-		private static const FUNCTION_SETCOOKIE:String = 
-            "document.insertScript = function ()" +
-            "{ " +
-                "if (document.snw_setCookie==null)" +
-                "{" +
-                    "snw_setCookie = function (name, value, days)" +
-                    "{" +
-                        "if (days) {"+
-							"var date = new Date();"+
-							"date.setTime(date.getTime()+(days*24*60*60*1000));"+
-							"var expires = '; expires='+date.toGMTString();"+
-						"}" +
-						"else var expires = '';"+
-						"document.cookie = name+'='+value+expires+'; path=/';" +
-		            "}" +
-                "}" +
-            "}";
 		
-		private static const FUNCTION_GETCOOKIE:String = 
-            "document.insertScript = function ()" +
-            "{ " +
-                "if (document.snw_getCookie==null)" +
-                "{" +
-                    "snw_getCookie = function (name)" +
-                    "{" +
-                        "var nameEQ = name + '=';"+
-						"var ca = document.cookie.split(';');"+
-						"for(var i=0;i < ca.length;i++) {"+
-							"var c = ca[i];"+
-							"while (c.charAt(0)==' ') c = c.substring(1,c.length);"+
-							"if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);"+
-						"}"+
-						"return null;" +
-		            "}" +
-                "}" +
-            "}";
-     
-            
-        private static var INITIALIZED:Boolean = false;
+		private static const ENABLE_SWFCOOKIE:String = " function() {"+
+			"if (window.SWFCookie) return;"+
+			"var SWFCookie = window.SWFCookie = {};"+
+			"SWFCookie.add = function (name, value, expire) { var exdate = new Date(); exdate.setDate(exdate.getDate() + expire); document.cookie = name + '=' +escape(value) + ((expire == null) ? '' : ';expires=' + exdate.toUTCString()); };"+
+			"SWFCookie.get = function ( name ) { var a_all_cookies = document.cookie.split( ';' );var a_temp_cookie = '';var cookie_name = '';var cookie_value = '';var b_cookie_found = false;for ( i = 0; i < a_all_cookies.length; i++ ){a_temp_cookie = a_all_cookies[i].split( '=' );cookie_name = a_temp_cookie[0].replace(/^\s+|\s+$/g, '');if ( cookie_name == name ){b_cookie_found = true;if ( a_temp_cookie.length > 1 ){cookie_value = unescape( a_temp_cookie[1].replace(/^\s+|\s+$/g, '') );}return cookie_value;break;}a_temp_cookie = null;cookie_name = '';}if ( !b_cookie_found ){return null;}};"+
+			"SWFCookie.remove = function ( name ) { if (SWFCookie.get( name )){ document.cookie = name+'='+';expires=Thu, 01-Jan-1970 00:00:01 GMT'; }};"+
+		"}";
+		private static const ADD_COOKIE:String = "SWFCookie.add";
+		private static const REMOVE_COOKIE:String = "SWFCookie.remove";
+		private static const GET_COOKIE:String = "SWFCookie.get";
 		
-		private static function init():void{
-			ExternalInterface.call(FUNCTION_GETCOOKIE);
-			ExternalInterface.call(FUNCTION_SETCOOKIE);
-			INITIALIZED = true;
+
+		/**
+		 * INIT
+		 */
+		public static function init():void {
+			if (!available) return;
+            ExternalInterface.call( ENABLE_SWFCOOKIE );
 		}
 		
-		public static function setCookie(name:String, value:Object, days:int):void{
-			if(!INITIALIZED)
-				init();
-			
-			ExternalInterface.call("snw_setCookie", name, value, days);
+		/**
+		 * ADD
+		 * 
+		 * @param	name
+		 * @param	value
+		 * @param	expire
+		 * @param	path
+		 * @param	domain
+		 */
+		public static function add(name:String, value:String, expire:int):void {
+			if (!available) return;
+			ExternalInterface.call(ADD_COOKIE, name, value, expire);
 		}
 		
-		public static function getCookie(name:String):Object{
-			if(!INITIALIZED)
-				init();
-			
-			return ExternalInterface.call("snw_getCookie", name);
+		/**
+		 * REMOVE
+		 * 
+		 * @param	name
+		 * @param	path
+		 * @param	domain
+		 */
+		public static function remove(name:String):void {
+			if (!available) return;
+			ExternalInterface.call(REMOVE_COOKIE,name);
 		}
 		
-		public static function deleteCookie(name:String):void{
-			if(!INITIALIZED)
-				init();
-			
-			ExternalInterface.call("snw_setCookie", name, "", -1);
+		/**
+		 * CHECK
+		 * 
+		 * @param	name
+		 * @return
+		 */
+		public static function check(name:String):String {
+			if (!available) return"";
+			return ExternalInterface.call(GET_COOKIE, name);
 		}
+		
+
+        /**
+         *  @return bool	true if SWFCookie is available.
+         */
+        public static function get available():Boolean {
+            var result:Boolean = false;
+            if (!ExternalInterface.available) return result;
+            try {
+                result = Boolean(ExternalInterface.call("function(){return true;}"));
+            }
+            catch (e:Error) {
+                trace("No external interface for SWFCookie.");
+            }
+            return result;
+        }
 	}
 }

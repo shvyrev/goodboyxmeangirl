@@ -155,12 +155,5 @@ package railk.as3.text
 		public function get hasAutoSize():Boolean { return _hasAutoSize; }
 		public function set hasAutoSize(value:Boolean):void { _hasAutoSize = value; }
 		override public function set autoSize(value:String):void { if (_hasAutoSize) super.autoSize = value; }
-		
-		/**
-		 * EVENT DISPATCH
-		 */
-		private function dispatchChange():void {
-			if(hasEventListener(Event.CHANGE)) dispatchEvent( new Event(Event.CHANGE) );
-		}
 	}
 }
