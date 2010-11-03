@@ -1,3 +1,10 @@
+/**
+*   COOKIE UTILS
+* 
+* 	@author Alexander
+*	http://myflex.wordpress.com/2008/11/12/actionscript-cookie-util/
+*/
+
 package railk.as3.utils
 {
 	import flash.external.ExternalInterface;
