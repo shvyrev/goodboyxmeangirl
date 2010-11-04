@@ -1,6 +1,7 @@
 /**
-*   COOKIE UTIL	/ REWRITE FROM SCRATCH
-* 
+*   COOKIE UTIL / SWFCOOKIE
+* 	
+* 	@javascript http://techpatterns.com/downloads/javascript_cookies.php
 * 	@author Richard Rodney
 * 	@version 0.1
 */
