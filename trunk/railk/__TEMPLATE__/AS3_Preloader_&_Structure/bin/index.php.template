@@ -51,6 +51,7 @@
 		params.allowScriptAccess= "always";
 		var attributes = {};
 		attributes.id = "$(ProjectID)";
+		attributes.name = "$(ProjectID)";
 		swfobject.embedSWF("flash/boot.swf", "flashContent", "100%", "100%", "9.0.124", "flash/expressInstall.swf", flashvars, params, attributes);
 		if (swfobject.hasFlashPlayerVersion("9.0.124")) swfobject.createCSS("body", "height: 100%; margin: 0; padding: 0; overflow: hidden;");
 		swffit.fit("$(ProjectID)");
