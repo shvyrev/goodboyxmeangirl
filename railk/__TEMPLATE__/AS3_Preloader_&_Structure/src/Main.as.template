@@ -19,7 +19,7 @@ package $(CSLB)
 	
 	public class Main extends Sprite $(CSLB)
 	{	
-		public var struct:Structure;
+		public var struct:Structure = Structure.getInstance();
 		public function Main() {
 			StageManager.init( TopLevel.stage, true );
 			FullScreenMode.init( TopLevel.stage );
@@ -32,11 +32,10 @@ package $(CSLB)
 		}
 		
 		private function startup(data:String):void {
-			struct = new Structure( new XML(data), [], [],[ ], [] );
-			TopLevel.main.addChild( struct.container );
+			struct.init( TopLevel.main, new XML(data), [], [],[], [] );
 			if (TopLevel.root.loaderInfo.parameters.page )struct.view((TopLevel.root.loaderInfo.parameters.page=='index')?'/':TopLevel.root.loaderInfo.parameters.page);
 		}
 		
-		private function O(classe:Class, name:String ):Object { return { name:name, classe:classe }; }
+		private function O(classe:Class, name:String ):Object { return { 'name':name, 'classe':classe }; }
 	}
 }

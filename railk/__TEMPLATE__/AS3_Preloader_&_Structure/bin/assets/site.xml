@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<site author="" title="" menu="" multiPage="" structure="" adaptToScreen=""  package="" >
+<site author="" title="" stylesheet="" menu="" multiPage="" structure="" adaptToScreen=""  package="" >
 	<static id="" onTop="" src="flash/.swf" >
 		<body>
 			<div id="" class="" align=""></div>
