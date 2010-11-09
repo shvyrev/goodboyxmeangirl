@@ -54,7 +54,7 @@ package railk.as3.ui.layout
 		}
 		
 		public function setup():void {
-			viewClass = hasDefinition(view)?getDefinitionByName(view) as Class:UIView;
+			viewClass = hasDefinition(view)?(getDefinitionByName(view) as Class):UIView;
 			div = new Div(id, float, align, margins, position, x, y, data, constraint);
 		}
 		

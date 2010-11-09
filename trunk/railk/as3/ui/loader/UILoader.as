@@ -59,7 +59,7 @@ package railk.as3.ui.loader
 		}
 		
 		private function init(url:String):String {
-			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'jpg,gif,png,swf', 'flash.net.URLLoader,,data':'xml,zip,json,css' }, type:Array;
+			var types:Object = { 'flash.display.Loader,contentLoaderInfo,content':'jpg,gif,png,swf', 'flash.net.URLLoader,,data':'xml,zip,json,css,txt' }, type:Array;
 			for ( var t:String in types) if (types[t].search(url.split('.')[url.split('.').length - 1]) != -1) { this.types[url] = type = t.split(','); break; }
 			loaders[url] = new (getDefinitionByName(type[0]))();
 			listeners[url] = (type[1])?loaders[url][type[1]]:loaders[url];
