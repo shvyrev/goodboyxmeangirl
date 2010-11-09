@@ -27,7 +27,7 @@ package railk.as3.ui.view
 		 */
 		public function classe(name:String):Class {
 			name = name.charAt()+name.substring(1);
-			return hasDefinition(name)?getDefinitionByName(name):null; 
+			return hasDefinition(name)?(getDefinitionByName(name) as Class):null; 
 		}
 		
 		/**
