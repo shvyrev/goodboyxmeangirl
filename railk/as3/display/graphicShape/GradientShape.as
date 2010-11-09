@@ -8,7 +8,9 @@
 package railk.as3.display.graphicShape
 {
 	import flash.geom.Matrix;
-	public class GradientShape
+	import railk.as3.display.UISprite;
+	
+	public class GradientShape extends UISprite 
 	{
 		public var graphicsCopy:*;
 		protected var copy:Boolean;
