@@ -29,6 +29,7 @@ package $(CSLB){
 
 		private function init(e:Event = null):void {
 			removeEventListener(Event.ADDED_TO_STAGE, init);
+			TopLevel.init(this);
 			StageManager.init( TopLevel.stage, true );
 			FullScreenMode.init( TopLevel.stage );
 			//SWFWheel.init( TopLevel.stage );
