@@ -257,7 +257,7 @@ package railk.as3.text
 			_selectable = value;
 		}
 		
-		override public function get width():Number { return _width; }
+		override public function get width():Number { return texte.width; }
 		override public function set width(value:Number):void {
 			if (!_autoSize) {
 				texte.width = value;
@@ -266,7 +266,7 @@ package railk.as3.text
 			}	
 		}
 		
-		override public function get height():Number { return _height; }
+		override public function get height():Number { return texte.height; }
 		override public function set height(value:Number):void {
 			if (!_autoSize){
 				texte.height = value;
