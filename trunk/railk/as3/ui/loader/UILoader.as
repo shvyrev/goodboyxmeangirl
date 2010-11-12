@@ -56,7 +56,6 @@ package railk.as3.ui.loader
 		 * ADD FILE TO LOAD
 		 */
 		public function add(url:String, noCache:Boolean = true):UILoader {
-			trace(url);
 			urls[url] = new URLRequest(init( url )+(noCache?'?nocache='+int(Math.random()*1000)*getTimer()+''+getTimer():''));
 			return this;
 		}

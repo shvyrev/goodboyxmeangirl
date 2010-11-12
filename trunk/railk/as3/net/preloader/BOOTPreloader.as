@@ -15,7 +15,6 @@ package railk.as3.net.preloader
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.utils.getDefinitionByName;	
-	import railk.as3.TopLevel;
 	
 	public class BOOTPreloader extends MovieClip
 	{
@@ -33,10 +32,6 @@ package railk.as3.net.preloader
 		 * INIT
 		 */
 		private function init(evt:Event = null):void {
-			TopLevel.root = this.parent.root;
-			TopLevel.stage = this.parent.stage;
-			TopLevel.main = (this.parent.root as MovieClip)?this.parent.root as MovieClip:this;
-			
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			stage.addEventListener( Event.ACTIVATE, manageEvent, false, 0, true );

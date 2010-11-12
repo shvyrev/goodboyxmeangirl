@@ -3,10 +3,12 @@
 	import flash.display.MovieClip;
 	import flash.display.Loader;
 	import flash.net.URLRequest;
+	import railk.as3.TopLevel;
 	
 	public class Boot extends MovieClip 
 	{	
 		public function Boot() {
+			TopLevel.init(this);
 			var l:Loader = new Loader();
 			l.load(new URLRequest(this.root.loaderInfo.parameters.load));
 			addChild(l);		
