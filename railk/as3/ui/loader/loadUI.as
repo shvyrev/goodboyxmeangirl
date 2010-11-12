@@ -7,5 +7,11 @@
 
 package railk.as3.ui.loader
 {	
-	public function loadUI(url:String, noCache:Boolean=true):UILoader { return new UILoader(url, noCache); }
+	/**
+	 * 
+	 * @param	url 	either a STRING or ARRAY
+	 * @param	noCache
+	 * @return
+	 */
+	public function loadUI(url:*, noCache:Boolean=true):UILoader { return new UILoader(url, noCache); }
 }

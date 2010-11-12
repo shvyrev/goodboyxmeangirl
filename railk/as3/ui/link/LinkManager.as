@@ -55,8 +55,8 @@ package railk.as3.ui.link
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
 			var dummy:Boolean = (target)?false:true;
-			link = new Link( name, target, type, action, group, colors, enable, dummy, data );
-			if ( !getLink( name ) || dummy || getLink( name ).data.isDummy() ) {
+			if ( !getLink( name ) || dummy ) {
+				link = new Link( name, target, type, action, group, colors, enable, dummy, data );
 				if (!firstLink) firstLink = lastLink = link;
 				else {
 					lastLink.next = link;
@@ -64,14 +64,14 @@ package railk.as3.ui.link
 					lastLink = link;
 				}
 			} else {
-				var l:Link = getLink(name);
-				l.target = target;
-				l.type = type;
-				l.action = action;
-				l.colors = colors;
-				l.dummy = dummy;
-				l.swfAddress = enable;
-				l.data = data;
+				link = getLink(name);
+				link.target = target;
+				link.type = type;
+				link.action = action;
+				link.group = group;
+				link.colors = target;
+				link.dummy = dummy;
+				link.data = data;
 			}
 			return link;
 		}
@@ -84,6 +84,7 @@ package railk.as3.ui.link
 			if (l.next) l.next.prev = l.prev;
 			if (l.prev) l.prev.next = l.next;
 			else if (firstLink == l) firstLink = l.next;
+			l.dispose();
 			l = null;
 		}
 		

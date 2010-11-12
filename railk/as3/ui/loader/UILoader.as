@@ -22,11 +22,13 @@ package railk.as3.ui.loader
 	public class UILoader extends EventDispatcher
 	{
 		public static const CONTENT:String = 'content';
+		public static const CONTENT_ARRAY:String = 'contentArray';
 		public static const FILE:String = 'current';
 		public static const PERCENT:String = 'percent';
 		
 		public var percent:Number;
 		public var content:Dictionary = new Dictionary(true);
+		public var contentArray:Array =[];
 		
 		private var urls:Dictionary = new Dictionary(true);
 		private var loaders:Dictionary = new Dictionary(true);
@@ -48,13 +50,19 @@ package railk.as3.ui.loader
 		 * @param	url
 		 * @param	noCache
 		 */
-		public function UILoader(url:String, noCache:Boolean=true) { add(url,noCache); }
+		public function UILoader(url:*, noCache:Boolean=true) { (url is String)?add(url,noCache):addList(url,noCache); }
 		
 		/**
 		 * ADD FILE TO LOAD
 		 */
 		public function add(url:String, noCache:Boolean = true):UILoader {
+			trace(url);
 			urls[url] = new URLRequest(init( url )+(noCache?'?nocache='+int(Math.random()*1000)*getTimer()+''+getTimer():''));
+			return this;
+		}
+		
+		public function addList(list:Array,noCache:Boolean=true):UILoader {
+			for (var i:int = 0; i < list.length; i++) add(list[i], noCache);
 			return this;
 		}
 		
@@ -114,7 +122,7 @@ package railk.as3.ui.loader
 			var listener:*= e.currentTarget, url:String, i:int;
 			switch(e.type) {
 				case Event.COMPLETE :
-					content[getUrl(listener)] = current = (listener is URLLoader)?listener.data:listener.content;
+					content[getUrl(listener)] = contentArray[contentArray.length] = current = (listener is URLLoader)?listener.data:listener.content;
 					if (_file != null) _file.apply(null, checkArgs(fArgs, FILE));
 					if (!active) { 
 						for (url in loaders) if (types[url][1]) loaders[url].unload();
@@ -163,7 +171,12 @@ package railk.as3.ui.loader
 		private function getUrl(listener:*):String { for (var url:String in listeners){ if (listeners[url] == listener) return url; } return ''; }
 		private function checkArgs(args:Array, type:String):Array {
 			var a:Array = args.slice();
-			for (var i:int = 0; i < a.length; i++) if (a[i] == type) a[i] = this[type];
+			for (var i:int = 0; i < a.length; i++) {
+				var arg:String = a[i];
+				if (arg is String) {
+					if(arg.indexOf(type) != -1) a[i] = this[arg];
+				}
+			}
 			return a; 
 		}
 	}

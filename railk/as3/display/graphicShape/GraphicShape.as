@@ -37,6 +37,11 @@ package railk.as3.display.graphicShape {
 		}
 		
 		/**
+		 * DISPOSE
+		 */
+		public function dispose():void { graphicsCopy.clear(); }
+		
+		/**
 		 * TO STRING
 		 */
 		override public function toString():String {
