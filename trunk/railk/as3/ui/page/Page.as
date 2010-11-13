@@ -137,7 +137,7 @@ package railk.as3.ui.page
 				views[i].populate(facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data) as UIView);
 				if (views[i].visible) facade.getView(views[i].id).show();
 			}
-			if (transitionName) _transition = new (getDefinitionByName(transitionName))() as ITransition;
+			if (transitionName.charAt(transitionName.length-1)!='.') _transition = new (getDefinitionByName(transitionName))() as ITransition;
 			(facade as PageManager).enablePage(this);
 		}
 		

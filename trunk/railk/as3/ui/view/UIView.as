@@ -8,18 +8,39 @@
 package railk.as3.ui.view
 {	
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.interfaces.IView;
 	import railk.as3.pattern.mvc.core.View;
-	import railk.as3.ui.div.IDiv;
+	import railk.as3.ui.div.*;
+	import railk.as3.ui.Localisation;
+	import railk.as3.ui.page.PageManager;
 	import railk.as3.utils.hasDefinition;
+	import railk.as3.display.graphicShape.RectangleShape;
 	
 	public class UIView extends View implements IView
 	{
-		private var _style:String;
-		private var _nameSpace:String;
+		protected var _bgStyle:String;
+		protected var _style:String;
+		protected var _nameSpace:String;
+		protected var local:Localisation = Localisation.getInstance();
+		protected var UIFacade:PageManager;
+		protected var background:RectangleShape = new RectangleShape();
+		
 		public function UIView( MID:String, name:String='',component:*=null, data:*=null ) {
 			super(MID, name, component, data);
+			local.addEventListener(Event.CHANGE, localisation, false, 0, true);
+			UIFacade = facade  as PageManager;
+		}
+		
+		/**
+		 * SHOW
+		 */
+		override public function show():void {
+			if (_bgStyle) {
+				UIFacade.styleSheet.applyStyle(background, _bgStyle);
+				div.addChild( background );
+			}
 		}
 		
 		/**
@@ -31,6 +52,12 @@ package railk.as3.ui.view
 		}
 		
 		/**
+		 * LOCALISE
+		 * @param	e
+		 */
+		protected function localisation(e:Event):void {}
+		
+		/**
 		 * RESIZE
 		 */
 		public function resize():void {}
@@ -38,10 +65,13 @@ package railk.as3.ui.view
 		/**
 		 * GETTER/SETTER
 		 */
+		public function get div():Div { return _component; }
 		public function get nameSpace():String { return _nameSpace; } 
 		public function set nameSpace(value:String):void { _nameSpace = value; } 
 		public function get style():String { return _style; }
 		public function set style(value:String):void { _style = value; }
+		public function get bgStyle():String { return _bgStyle; }
+		public function set bgStyle(value:String):void { _bgStyle = value; }
 		public function get container():IDiv { return _component as IDiv; }
 		public function set container(value:IDiv):void { _component = value; }
 		public function get stage():Stage { return _component.stage as Stage }

@@ -26,6 +26,7 @@ package railk.as3.ui
 		private var wheel	        :Boolean;
 		private var resize		    :Boolean;
 		private var autoCheck		:Boolean;
+		private var smooth			:Boolean;
 		private var listeners       :Boolean;
 		
 		private var baseDelta		:Number=14;
@@ -43,7 +44,7 @@ package railk.as3.ui
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function ScrollBar( toScroll:Object,slider:*,bg:*=null,wheel:Boolean=false,resize:Boolean=false,autoCheck:Boolean=false ) {
+		public function ScrollBar( toScroll:Object,slider:*,bg:*=null,wheel:Boolean=false,resize:Boolean=false,autoCheck:Boolean=false, smooth:Boolean=false ) {
 			super();
 			this.name = 'scrollbar';
 			this.toScroll = toScroll;
@@ -52,6 +53,7 @@ package railk.as3.ui
 			this.wheel = wheel;
 			this.resize = resize;
 			this.autoCheck = autoCheck;
+			this.smooth = smooth;
 			this.vertical = (bg.height > bg.width);
 			addEventListener( Event.ADDED_TO_STAGE, setup, false, 0, true );
 		}
@@ -231,7 +233,7 @@ package railk.as3.ui
 						else value = this[m] - slider[s]*.5;
 						e=Engine.to(slider,0,((vertical)?NaN:value),((vertical)?value:NaN),NaN,null,function():void { toScroll[p]= size[ts]-(slider[p]*multiplier); } );
 					} 
-					else e=Engine.to( toScroll,0,((vertical)?NaN:size[ts]-(slider[p]*multiplier)),((vertical)?size[ts]-(slider[p]*multiplier):NaN) );
+					else e=Engine.to( toScroll,(smooth?0:.2),((vertical)?NaN:size[ts]-(slider[p]*multiplier)),((vertical)?size[ts]-(slider[p]*multiplier):NaN) );
 					break;
 				case MouseEvent.MOUSE_WHEEL :
 					if ( slider[p] >= 0+evt.delta*delta  && slider[p] <= rect[s]+evt.delta*delta  ) e=Engine.to( slider,.4,(vertical?NaN:slider[p]-(evt.delta*delta)),(vertical?slider[p]-(evt.delta*delta):NaN),NaN,null,function():void  { toScroll[p] =size[ts]-(slider[p]*multiplier); });

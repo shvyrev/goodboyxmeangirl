@@ -22,12 +22,13 @@ package railk.as3.ui.layout
 		public var id:String;
 		public var view:String;
 		public var style:String;
+		public var bgStyle:String;
 		public var data:XML;
 		public var visible:Boolean;
 		
 		protected var float:String;
 		protected var align:String;
-		protected var margins:Object;
+		protected var margins:DivMargin;
 		protected var position:String;
 		protected var x:Number
 		protected var y:Number;
@@ -36,7 +37,7 @@ package railk.as3.ui.layout
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutView( container:LayoutView, master:LayoutView, view:String, id:String, float:String, align:String, margins:Object, position:String, x:Number, y:Number, style:String, data:XML, constraint:String, visible:Boolean ) {
+		public function LayoutView( container:LayoutView, master:LayoutView, view:String, id:String, float:String, align:String, margins:DivMargin, position:String, x:Number, y:Number, style:String, bgStyle:String, data:XML, constraint:String, visible:Boolean ) {
 			this.container = container;
 			this.master = master;
 			this.view = view;
@@ -49,6 +50,7 @@ package railk.as3.ui.layout
 			this.x = x;
 			this.y = y;
 			this.style = style;
+			this.bgStyle = bgStyle;
 			this.constraint = constraint;
 			this.visible = visible;
 		}
@@ -58,7 +60,7 @@ package railk.as3.ui.layout
 			div = new Div(id, float, align, margins, position, x, y, data, constraint);
 		}
 		
-		public function populate(v:UIView):void { v.style = style; v.nameSpace = view.split('::')[0]; }
+		public function populate(v:UIView):void { v.bgStyle = bgStyle; v.style = style; v.nameSpace = view.split('::')[0]; }
 		
 		public function dispose():void { div=null; }
 	}

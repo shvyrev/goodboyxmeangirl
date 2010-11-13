@@ -41,8 +41,8 @@ package railk.as3.ui.div
 		function get align():String;
 		function get position():String;
 		function set position(value:String):void;
-		function get margins():Object;
-		function set margins(value:Object):void;
+		function get margins():DivMargin;
+		function set margins(value:DivMargin):void;
 		function get x():Number;
 		function set x(value:Number):void;
 		function get y():Number;

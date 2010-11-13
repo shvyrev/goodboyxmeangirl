@@ -21,7 +21,7 @@ package railk.as3.ui.div
 		protected var _position:String;
 		protected var _float:String;
 		protected var _align:String;
-		protected var _margins:Object = { top:0, right:0, bottom:0, left:0 };
+		protected var _margins:DivMargin;
 		protected var _data:Object;
 		protected var _constraint:String;
 		
@@ -32,10 +32,10 @@ package railk.as3.ui.div
 		protected var first:IDiv;
 		protected var last:IDiv;
 		
-		public function Div(name:String='undefined', float:String='none', align:String='none', margins:Object=null, position:String='relative', x:Number=0, y:Number=0, data:Object=null, constraint:String='XY' ) {
+		public function Div(name:String='undefined', float:String='none', align:String='none', margins:DivMargin=null, position:String='relative', x:Number=0, y:Number=0, data:Object=null, constraint:String='XY' ) {
 			super();
 			this.name = name;
-			if (margins) this.margins = margins;
+			this.margins = margins?margins:new DivMargin();
 			this.float = float;
 			this.align = align;
 			this.position = position;
@@ -293,8 +293,8 @@ package railk.as3.ui.div
 		public function set align(value:String):void { _align=value; }
 		public function get position():String { return _position; }
 		public function set position(value:String):void { _position=value; }
-		public function get margins():Object { return _margins; }
-		public function set margins(value:Object):void { _margins = value; }
+		public function get margins():DivMargin { return _margins; }
+		public function set margins(value:DivMargin):void { _margins = value; }
 		public function get data():Object { return _data; }
 		public function set data(value:Object):void { _data = value; }
 		public function get constraint():String { return _constraint; }
