@@ -1,2 +1,0 @@
-﻿[LANG=FR]
-test[M]test[E]
