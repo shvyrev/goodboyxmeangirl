@@ -60,7 +60,7 @@ package railk.as3.ui.loader
 			return this;
 		}
 		
-		public function addList(list:Array,noCache:Boolean=true):UILoader {
+		public function addList(list:Array, noCache:Boolean = true):UILoader {
 			for (var i:int = 0; i < list.length; i++) add(list[i], noCache);
 			return this;
 		}

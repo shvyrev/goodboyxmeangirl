@@ -19,7 +19,6 @@ package railk.as3.net.preloader
 	public class AS3Preloader extends MovieClip
 	{
 		protected var loading:*;
-		protected var pack:String='Main';
 		
 		/**
 		 * CONSTRUCTEUR
@@ -62,9 +61,8 @@ package railk.as3.net.preloader
 		 * START MAIN
 		 */
 		private function main():void {
-			var mainClass:Class = getDefinitionByName(pack) as Class;
-			if (parent == stage) stage.addChildAt(new mainClass() as DisplayObject, 0);
-			else addChildAt(new mainClass() as DisplayObject, 0);
+			var mainClass:Class = getDefinitionByName('Main') as Class;
+			addChild(new mainClass() as DisplayObject);
 		}
 		
 		/**
