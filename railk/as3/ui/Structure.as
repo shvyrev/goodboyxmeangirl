@@ -49,6 +49,7 @@ package railk.as3.ui
 			getPages(xml);
 			container.contextMenu = pageManager.menu.menu;
 			if (css) pageManager.setStyleSheet(name, css);
+			if(!pageManager.current) view(pageManager.index.id);
 		}
 		
 		private function getStatics( xml:XML ):void {

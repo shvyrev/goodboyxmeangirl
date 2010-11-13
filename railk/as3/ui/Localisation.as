@@ -7,13 +7,16 @@
 
 package railk.as3.ui
 {	
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
+	
 	import railk.as3.TopLevel;
 	import railk.as3.pattern.singleton.Singleton;
 	
-	public class Localisation
+	public class Localisation extends EventDispatcher
 	{
-		public var current:String = '';
+		private var current:String = '';
 		private var data:Dictionary = new Dictionary(true);
 		
 		public static function getInstance():Localisation{
@@ -43,13 +46,18 @@ package railk.as3.ui
 			}
 		}
 		
+		public function setLanguage(lang:String):void {
+			current = lang;
+			dispatchEvent( new Event(Event.CHANGE));
+		}
+		
 		/**
 		 * GET THE TEXT IN THE CHOOSEN LANGUAGE
 		 * @param	key
 		 * @return
 		 */
-		public function getText(key:String, lang:String):String { 
-			return data[key][lang]; 
+		public function getText(key:String):String { 
+			return data[key][current]; 
 		}
 	}
 }

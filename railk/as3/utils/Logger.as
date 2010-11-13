@@ -25,7 +25,6 @@ package railk.as3.utils
 			txt = stg.addChild(new TextField()) as TextField;
 			txt.height = txt.width = 500;
 			txt.wordWrap = true;
-			txt.backgroundColor = 0xffffff;
 			print('\n','LOGGER ON')
 		}
 		
