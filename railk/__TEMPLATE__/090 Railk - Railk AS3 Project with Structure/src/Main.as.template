@@ -33,7 +33,7 @@ package $(CSLB){
 			StageManager.init( TopLevel.stage, true );
 			FullScreenMode.init( TopLevel.stage );
 			//SWFWheel.init( TopLevel.stage );
-			Logger.init(TopLevel.stage, '[ DEBUG MODE ON ]');
+			Logger.init(TopLevel.stage);
 			
 			///////////STARTUP/////////////
 			loadUI(context())
