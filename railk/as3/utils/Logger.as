@@ -2,21 +2,30 @@
 * Logger
 * 
 * @author Richard Rodney
-* @version 0.1
+* @version 0.2
 */
 
 package railk.as3.utils 
 {
+	import flash.display.Stage;
 	import flash.external.ExternalInterface;
+	import flash.text.TextField;
+	
 	public class Logger 
 	{
 		static private var enabled:Boolean;
-		
+		static private var stg:Stage;
+		static private var txt:TextField;
 		/**
 		 * START
 		 */
-		static public function init(info:String, enable:Boolean=true ):void {
+		static public function init(stage:Stage, info:String, enable:Boolean = true ):void {
 			enabled = true; 
+			stg = stage;
+			txt = stg.addChild(new TextField()) as TextField;
+			txt.height = txt.width = 500;
+			txt.wordWrap = true;
+			txt.backgroundColor = 0xffffff;
 			log(info);
 		}
 		
@@ -33,8 +42,10 @@ package railk.as3.utils
 		static private function inline(info:Array):String { return String(info).replace(',', ' '); }
 		
 		static private function print(mess:String,type:String):void {
-			trace( mess );
+			trace( '['+type+'] '+mess );
+			txt.appendText('['+type+'] '+mess+'\n');
 			if (ExternalInterface.available) ExternalInterface.call('console.'+type, '['+type.toUpperCase()+'] '+mess);
+			stg.swapChildrenAt(stg.getChildIndex(txt), (stg.numChildren==0)?0:stg.numChildren-1);
 		}
 	}
 }

@@ -69,9 +69,8 @@ package railk.as3.net.preloader
 		 * START MAIN
 		 */
 		private function main():void {
-			var mainClass:Class = getDefinitionByName("Main") as Class;
-			if (parent == stage) stage.addChildAt(new mainClass() as DisplayObject, 0);
-			else addChildAt(new mainClass() as DisplayObject, 0);
+			var mainClass:Class = getDefinitionByName('Main') as Class;
+			addChild(new mainClass() as DisplayObject);
 		}
 		
 		/**
