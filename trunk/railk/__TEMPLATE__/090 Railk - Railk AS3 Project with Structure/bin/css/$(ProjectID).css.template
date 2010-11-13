@@ -1,0 +1,6 @@
+#default {
+	width:150px;
+	height:300px;
+	color:#FFcc23;
+	alpha:1;
+}
