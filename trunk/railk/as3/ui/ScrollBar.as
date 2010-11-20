@@ -74,7 +74,7 @@ package railk.as3.ui
 		 * SETUP
 		 * @param	e
 		 */
-		private function setup(e:Event):void {
+		private function setup(e:Event=null):void {
 			removeEventListener( Event.ADDED_TO_STAGE, setup );
 			
 			//SIZE
@@ -88,6 +88,7 @@ package railk.as3.ui
 			
 			//BG
 			bg.mouseEnabled = false;
+			bg.name = 'bg';
 			addChild( bg );
 			
 			//SLIDER
@@ -112,6 +113,26 @@ package railk.as3.ui
 				////////////////////////////////////
 			} 
 			else showHide(0,false);
+		}
+		
+		/**
+		 * CHANGE BG
+		 * @param	bg
+		 */
+		public function changeBg(bg:*):void {
+			if (bg) removeChild(getChildByName('bg'));
+			this.bg = bg;
+			setup();
+		}
+		
+		/**
+		 * CHNAGE SLIDER
+		 * @param	slider
+		 */
+		public function changeSlider(slider:*):void {
+			if(slider) removeChild(getChildByName('slider'));
+			this.slider = slider;
+			setup();
 		}
 		
 		
@@ -233,7 +254,9 @@ package railk.as3.ui
 						else value = this[m] - slider[s]*.5;
 						e=Engine.to(slider,0,((vertical)?NaN:value),((vertical)?value:NaN),NaN,null,function():void { toScroll[p]= size[ts]-(slider[p]*multiplier); } );
 					} 
-					else e=Engine.to( toScroll,(smooth?0:.2),((vertical)?NaN:size[ts]-(slider[p]*multiplier)),((vertical)?size[ts]-(slider[p]*multiplier):NaN) );
+					else {
+						e=Engine.to( toScroll,0,((vertical)?NaN:size[ts]-(slider[p]*multiplier)),((vertical)?size[ts]-(slider[p]*multiplier):NaN));
+					}
 					break;
 				case MouseEvent.MOUSE_WHEEL :
 					if ( slider[p] >= 0+evt.delta*delta  && slider[p] <= rect[s]+evt.delta*delta  ) e=Engine.to( slider,.4,(vertical?NaN:slider[p]-(evt.delta*delta)),(vertical?slider[p]-(evt.delta*delta):NaN),NaN,null,function():void  { toScroll[p] =size[ts]-(slider[p]*multiplier); });
@@ -251,18 +274,20 @@ internal class Engine {
 	private var t:Object;
 	private var stm:Number;
 	private var dr:Number
+	private var dl:Number;
 	private var props:Array=[];
 	private var update:Function;
 	private var complete:Function;
 	
-	public static function to(t:Object,dr:Number, x:Number=NaN, y:Number=NaN, a:Number=NaN, start:Function=null, update:Function=null, complete:Function=null):Engine {
-		return new Engine(t,dr,x,y,a,start,update,complete);
+	public static function to(t:Object, dr:Number, x:Number = NaN, y:Number = NaN, a:Number = NaN, start:Function = null, update:Function = null, complete:Function = null, dl:Number=0 ):Engine {
+		return new Engine(t,dr,x,y,a,start,update,complete,dl);
 	}
 	
-	public function Engine(t:Object,dr:Number,x:Number,y:Number,a:Number,start:Function,update:Function,complete:Function){
+	public function Engine(t:Object,dr:Number,x:Number,y:Number,a:Number,start:Function,update:Function,complete:Function,dl:Number=0){
 		this.stm = getTimer()*.001;
 		this.t = t;
 		this.dr = dr;
+		this.dl = dl;
 		this.update = update;
 		this.complete = complete;
 		if(!isNaN(x)) props.push( {p:'x',s:t.x,c:x-t.x} );
@@ -273,7 +298,7 @@ internal class Engine {
 	}
 
 	private function u(evt:*):void {
-		var tm:Number = (getTimer()*.001-stm);
+		var tm:Number = (getTimer()*.001-stm)-dl;
 		if ( up(((tm>=dr)?1:((tm<=0)?0:e(tm,0,1,dr))))==1 ){
 			t.removeEventListener('enterFrame', u );
 			if (complete != null) complete.apply();

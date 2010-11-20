@@ -11,7 +11,7 @@
  * 		textColor /
  * 		hexcolor /
  * 		begin update complete function + params / 
- * 		bezier / 
+ * 		bezier / FROM EASE TWEEN
  * 		filters / 
  * 
  * @author Richard Rodney
