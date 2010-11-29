@@ -1,8 +1,18 @@
 ﻿/**
- * Localisation class
+ * LOCALISATION
  * 
  * @author Richard Rodney
  * @version 0.1
+ * 
+ * language file exmaple :
+ * 
+ * 	//begin
+ * 		
+ * 		[LANG=FR]
+ *		title[M]text[E]
+ * 	
+ *  //end
+ * 
  */
 
 package railk.as3.ui
