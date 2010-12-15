@@ -1,6 +1,11 @@
 /**
-*   COOKIE UTIL / SWFCOOKIE
+*   COOKIE UTIL
 * 	
+* 	@original http://myflex.wordpress.com/2008/11/12/actionscript-cookie-util/
+*   @author Alexander
+* 
+* 	SWFCOOKIE / REWRITE
+* 
 * 	@javascript http://techpatterns.com/downloads/javascript_cookies.php
 * 	@author Richard Rodney
 * 	@version 0.1
