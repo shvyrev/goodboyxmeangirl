@@ -20,7 +20,6 @@ package railk.as3.ui.page
 	import railk.as3.ui.styleSheet.CSS;
 	import railk.as3.utils.hasDefinition;
 	
-	
 	public class PageManager extends Facade implements IFacade
 	{
 		public var index:IPage;
@@ -62,8 +61,8 @@ package railk.as3.ui.page
 			registerContainer( new PageStruct(structure,adaptToScreen) );
 		}
 		
-		public function addStatic(id:String, classe:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean, src:String):void {
-			var s:Static = !hasDefinition(classe)?new Static(MID, id, layout, align, onTop, visible, src ):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible, src );
+		public function addStatic(id:String, classe:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean):void {
+			var s:Static = !hasDefinition(classe)?new Static(MID, id, layout, align, onTop, visible):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible);
 			if (!statics) statics = s;
 			else {
 				statics.next = s;
@@ -89,16 +88,16 @@ package railk.as3.ui.page
 			}
 		}
 		
-		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:Layout, align:String, src:String, transition:String):void {
+		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:Layout, align:String, transition:String):void {
 			if (parent == '') {
-				if( !index) registerView( index = last = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition) );
+				if( !index) registerView( index = last = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,transition) );
 				else {
 					var page:IPage;
-					registerView( page = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,src,transition));
+					registerView( page = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,transition));
 					last.next = page; page.prev = last; last = page;
 				}
 			} else {
-				registerView( (!hasDefinition(classe)?new Page(MID,id, getPage(parent),title,loading,layout,align,src,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,loading,layout,align,src,transition)) );
+				registerView( (!hasDefinition(classe)?new Page(MID,id, getPage(parent),title,loading,layout,align,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,loading,layout,align,transition)) );
 				getPage(parent).addChild(getPage(id));
 			}
 			
@@ -153,7 +152,7 @@ package railk.as3.ui.page
 		public function getPage( id:String ):IPage { return getView(id) as IPage; }
 		
 		public function setPage( id:String, anchor:String = '' ):void {
-			var change:String  = changePage(id,anchor);
+			var change:String  = changePage(id, anchor);
 			if (!change) return;
 			if (current) unsetPage(current);
 			var page:IPage = getPage(id);
