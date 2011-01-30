@@ -1,5 +1,5 @@
 /**
- * Layout Manager bloc
+ * Layout View
  * 
  * @author Richard Rodney
  * @version 0.1
@@ -7,12 +7,12 @@
 
 package railk.as3.ui.layout
 {
-	import flash.utils.getDefinitionByName;
-	import railk.as3.ui.view.UIView;
+	import railk.as3.pattern.mvc.interfaces.IFacade;
 	import railk.as3.ui.div.*;
-	import railk.as3.utils.hasDefinition;
+	import railk.as3.ui.page.Plugins;
+	import railk.as3.ui.view.UIView;
 	
-	public class LayoutView
+	public final class LayoutView
 	{	
 		public var div:IDiv;
 		public var master:LayoutView;
@@ -55,9 +55,18 @@ package railk.as3.ui.layout
 			this.visible = visible;
 		}
 		
-		public function setup():void {
-			viewClass = hasDefinition(view)?(getDefinitionByName(view) as Class):UIView;
+		public function setup(facade:IFacade,component:*,data:*):void {
 			div = new Div(id, float, align, margins, position, x, y, data, constraint);
+			Plugins.getInstance().getClass(view,run,facade,component,data);
+		}
+		
+		private function run(facade:IFacade,component:*,data:*,c:Class=null):void {
+			viewClass = (c)?c:UIView;
+			if (!container) component.addDiv( div );
+			else container.div.addDiv( div  );
+			data += (div.data != null)?div.data:'';
+			populate(facade.registerView(viewClass,id,div,data) as UIView);
+			if (visible) facade.getView(id).show();
 		}
 		
 		public function populate(v:UIView):void { v.bgStyle = bgStyle; v.style = style; v.nameSpace = view.split('::')[0]; }

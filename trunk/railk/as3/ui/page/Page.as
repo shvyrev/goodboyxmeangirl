@@ -31,15 +31,11 @@ package railk.as3.ui.page
 		
 		protected var align:String;
 		protected var layout:Layout;
-		protected var src:String;
-		protected var loaded:Boolean;
-		protected var reload:Boolean;
 		protected var transitionName:String;
 		protected var loadingView:IPageLoading;
 		protected var length:Number=0;
-		protected var loader:UILoader;
 		
-		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:Layout, align:String, src:String, transitionName:String) {
+		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:Layout, align:String, transitionName:String) {
 			super(MID,id);
 			_id = id;
 			_parent = parent;
@@ -47,7 +43,6 @@ package railk.as3.ui.page
 			this.layout = layout;
 			this.align = (align)?align:'TL';
 			this.loadingView = new (getDefinitionByName(loading))() as IPageLoading;
-			this.src = src;
 			this.transitionName = transitionName;
 			this.component = new PageDiv(id,'none',this.align);
 			data = '<h1>'+title+'</h1>\n';
@@ -85,15 +80,11 @@ package railk.as3.ui.page
 		 */
 		override public function show():void {
 			(facade.container as PageStruct).addDiv(component);
-			component.addChild( loadingView );
-			var progress:Function = function(p:Number):void { loadingView.percent = p; };
-			var complete:Function = function():void { component.removeChild( loadingView ); setupViews(layout.views); loaded = true; };
-			if (!loaded && !reload) loader = loadUI(src).complete(complete).progress(((loadingView)?progress:null),((loadingView)?UILoader.PERCENT:null)).start();
-			else complete.apply();
+			Plugins.getInstance().initMonitor(layout.views.concat(), enablePage);
+			setupViews(layout.views);
 		}
 		
 		override public function hide():void {
-			loader.stop();
 			var i:int=0, views:Array = layout.views;
 			(component as PageDiv).unbind();
 			try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
@@ -126,20 +117,15 @@ package railk.as3.ui.page
 		override public function dispose():void { layout = null; }
 		
 		/**
-		 * 	UTILITIES
+		 * 	PAGE SETUP
 		 */
 		protected function setupViews(views:Array):void {
-			for (var i:int = 0; i < views.length; i++) {
-				views[i].setup();
-				if (!views[i].container)component.addDiv( views[i].div );
-				else views[i].container.div.addDiv( views[i].div  );
-				data += (views[i].div.data != null)?views[i].div.data:'';
-				views[i].populate(facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data) as UIView);
-				if (views[i].visible) facade.getView(views[i].id).show();
-			}
-			if (transitionName.charAt(transitionName.length-1)!='.') _transition = new (getDefinitionByName(transitionName))() as ITransition;
-			(facade as PageManager).enablePage(this);
+			for (var i:int = 0; i < views.length; i++) views[i].setup(facade,component,data);
+			if (transitionName.charAt(transitionName.length - 1) != '.') _transition = new (getDefinitionByName(transitionName))() as ITransition;
+			
 		}
+		
+		protected function enablePage():void { (facade as PageManager).enablePage(this); }
 		
 		/**
 		 * 	GETTER/SETTER

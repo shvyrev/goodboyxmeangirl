@@ -25,18 +25,16 @@ package railk.as3.ui.page
 		protected var layout:Layout;
 		protected var align:String;
 		protected var onTop:Boolean;
-		protected var src:String;
 		protected var css:String;
 		protected var loader:UILoader;
 		
-		public function Static( MID:String, id:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean, src:String ) {
+		public function Static( MID:String, id:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean ) {
 			super(MID, id);
 			this.id = id;
 			this.layout = layout;
 			this.align = align;
 			this.onTop = onTop;
 			this.visible = visible;
-			this.src = src;
 			this.component = new Div(id,'none',align);
 		}
 		
@@ -59,10 +57,8 @@ package railk.as3.ui.page
 		 */
 		override public function show():void {
 			(facade.container as PageStruct).addStatic(component,onTop);
-			loader = loadUI(src).complete(function():void {
-				setupViews(layout.views);
-				if (anchor) castAnchor(anchor);
-			} ).start();
+			setupViews(layout.views);
+			if (anchor) castAnchor(anchor);
 		}
 		
 		override public function hide():void {
@@ -86,13 +82,7 @@ package railk.as3.ui.page
 		 * 	UTILITIES
 		 */		
 		protected function setupViews(views:Array):void {
-			for (var i:int = 0; i < views.length; i++) {
-				views[i].setup();
-				if (!views[i].container) component.addDiv( views[i].div );
-				else views[i].container.div.addDiv( views[i].div  );
-				facade.registerView(views[i].viewClass,views[i].id,views[i].div,views[i].data);
-				if(views[i].visible) facade.getView(views[i].id).show();
-			}
+			for (var i:int = 0; i < views.length; i++) views[i].setup(facade,component,data);
 		}
 		
 		/**
