@@ -7,9 +7,7 @@
 
 package railk.as3.ui.loader
 {	
-	import flash.display.Loader;
 	import flash.events.Event;
-	import flash.events.EventDispatcher;
 	import flash.events.ProgressEvent;
 	import flash.net.URLRequest;
 	import flash.net.URLLoader;
@@ -19,44 +17,51 @@ package railk.as3.ui.loader
 	import flash.utils.getTimer;
 	import flash.utils.getDefinitionByName;
 
-	public class UILoader extends EventDispatcher
+	public class UILoader
 	{
 		public static const CONTENT:String = 'content';
 		public static const CONTENT_ARRAY:String = 'contentArray';
 		public static const FILE:String = 'current';
+		public static const FILE_URL:String = 'currentUrl';
 		public static const PERCENT:String = 'percent';
+		public static const PERCENTS:String = 'percents';
 		
 		public var percent:Number;
 		public var content:Dictionary = new Dictionary(true);
-		public var contentArray:Array =[];
+		public var contentArray:Array = [];
+		public var active:Boolean;
 		
-		private var urls:Dictionary = new Dictionary(true);
+		private var loading:int = 0;
+		private var urls:Array = [];
 		private var loaders:Dictionary = new Dictionary(true);
 		private var listeners:Dictionary = new Dictionary(true);
 		private var types:Dictionary = new Dictionary(true);
 		private var percents:Dictionary = new Dictionary(true);
+		private var _dispose:Boolean = true;
 		private var _progress:Function;
 		private var _complete:Function;
 		private var _file:Function;
 		private var pArgs:Array=[];
 		private var cArgs:Array = [];
 		private var fArgs:Array = [];
-		private var active:int;
+		private var paused:Boolean;
 		private var count:int;
 		private var current:Object;
+		private var currentUrl:String;
+		
 		
 		/**
 		 * CONSTRUCTEUR
 		 * @param	url
 		 * @param	noCache
 		 */
-		public function UILoader(url:*, noCache:Boolean=true) { (url is String)?add(url,noCache):addList(url,noCache); }
+		public function UILoader(url:*=null, noCache:Boolean=true) { if(url) (url is String)?add(url,noCache):addList(url,noCache); }
 		
 		/**
 		 * ADD FILE TO LOAD
 		 */
 		public function add(url:String, noCache:Boolean = true):UILoader {
-			urls[url] = new URLRequest(init( url )+(noCache?'?nocache='+int(Math.random()*1000)*getTimer()+''+getTimer():''));
+			urls[urls.length] = new URLRequest(init( url )+(noCache?'?nocache='+int(Math.random()*1000)*getTimer()+''+getTimer():''));
 			return this;
 		}
 		
@@ -71,21 +76,29 @@ package railk.as3.ui.loader
 			loaders[url] = new (getDefinitionByName(type[0]))();
 			listeners[url] = (type[1])?loaders[url][type[1]]:loaders[url];
 			percents[url] = 0;
-			active = count++;
+			count++;
 			return url;
 		}
+		
+		/**
+		 * DISPOSE
+		 * 
+		 * @param	value
+		 * @return
+		 */
+		public function dispose(value:Boolean):UILoader { _dispose = value; return this; }
 		
 		/**
 		 * PROGRESS
 		 * 
 		 * @param	action
-		 * @param	...args  CAN BE UILOADER.PERCENT
+		 * @param	...args  CAN BE UILOADER.PERCENT OR/AND UILOADER.PERCENTS
 		 * @return
 		 */
 		public function progress(action:Function, ...args):UILoader {
 			_progress = action;
 			pArgs = (args.length>0)?args:pArgs;
-			for (var url:String in listeners) listeners[url].addEventListener(ProgressEvent.PROGRESS, manageEvent );
+			addEvent(ProgressEvent.PROGRESS);
 			return this;
 		}
 		
@@ -99,7 +112,7 @@ package railk.as3.ui.loader
 		public function file(action:Function, ...args):UILoader {
 			_file = action;
 			fArgs = (args.length > 0)?args:fArgs;
-			for (var url:String in listeners) listeners[url].addEventListener(Event.COMPLETE, manageEvent );
+			addEvent(Event.COMPLETE);
 			return this;
 		}
 		
@@ -107,14 +120,18 @@ package railk.as3.ui.loader
 		 * COMPLETE
 		 * 
 		 * @param	action
-		 * @param	...args CAN BE UILOADER.CONTENT
+		 * @param	...args CAN BE UILOADER.CONTENT OR/AND UILOADER.CONTENT_ARRAY
 		 * @return
 		 */
 		public function complete(action:Function, ...args):UILoader {
 			_complete = action;
 			cArgs = (args.length>0)?args:cArgs;
-			for (var url:String in listeners) listeners[url].addEventListener(Event.COMPLETE, manageEvent );
+			addEvent(Event.COMPLETE);
 			return this;
+		}
+		
+		private function addEvent(e:String):void {
+			for (var url:String in listeners) if(!listeners[url].hasEventListener(e)) listeners[url].addEventListener(e, manageEvent );
 		}
 		
 		private function manageEvent(e:*):void {
@@ -122,13 +139,15 @@ package railk.as3.ui.loader
 			switch(e.type) {
 				case Event.COMPLETE :
 					content[getUrl(listener)] = contentArray[contentArray.length] = current = (listener is URLLoader)?listener.data:listener.content;
+					currentUrl = getUrl(listener);
+					loading--;
 					if (_file != null) _file.apply(null, checkArgs(fArgs, FILE));
-					if (!active) { 
+					if (!next() && !loading) {
 						for (url in loaders) if (types[url][1]) loaders[url].unload();
 						if(_complete!=null) _complete.apply(null, checkArgs(cArgs,CONTENT)); 
-						dispose(); 
+						if (_dispose) destroy();
+						count = 0;
 					}
-					active--;
 					break;
 				case ProgressEvent.PROGRESS :
 					percent=0;
@@ -141,27 +160,33 @@ package railk.as3.ui.loader
 		}
 		
 		/**
-		 * START/STOP
+		 * START/STOP/PAUSE/NEXT
 		 */
-		public function stop():void { if (loaders) { for (var url:String in loaders){ loaders[url].close(); } dispose(); } }
-		public function start(max:int=0):UILoader {
-			for (var url:String in types) {
-				if(types[url][1]) loaders[url].load(urls[url],new LoaderContext(true, ApplicationDomain.currentDomain));
-				else loaders[url].load(urls[url]);
-			}
-			return this;
+		public function start(max:int=7):UILoader { while( --max > -1 ) { if(!next()) break; } return this; }
+		public function stop():UILoader { if (loaders) { for (var url:String in loaders) { loaders[url].close(); } destroy(); } return this; }
+		public function pause():UILoader { paused = true; return this; }
+		
+		private function next():Boolean {
+			if (!urls.length) return active = false;
+			var req:URLRequest = urls.pop(), url:String = req.url.split('?')[0];
+			if(types[url][1]) loaders[url].load(req,new LoaderContext(true, ApplicationDomain.currentDomain));
+			else loaders[url].load(req);
+			loading++;
+			return active = true;
 		}
 		
 		/**
 		 * DISPOSE
 		 */
-		private function dispose():void {
+		private function destroy():void {
 			for (var url:String in listeners) {
 				listeners[url].removeEventListener(Event.COMPLETE, manageEvent );
 				if (_progress != null) listeners[url].removeEventListener(ProgressEvent.PROGRESS, manageEvent );
 			}
-			content = urls = loaders = listeners = types = null;
-			_complete = _progress = null;
+			current = null;
+			content = loaders = listeners = types = percents = null;
+			contentArray = urls = null;
+			_complete = _progress = _file = null;
 		}
 		
 		/**
