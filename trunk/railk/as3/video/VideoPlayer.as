@@ -28,9 +28,6 @@ package railk.as3.video
 	import flash.utils.ByteArray;
 	import flash.utils.getTimer;
 	import railk.as3.event.CustomEvent;
-
-	import railk.as3.net.saver.file.FileSaver;	
-	import com.adobe.images.PNGEncoder;
 	
 	
 	public class VideoPlayer extends EventDispatcher
@@ -112,13 +109,6 @@ package railk.as3.video
 		}
 		
 		private function execute():void {
-			//--Sharing the player + the exact .flv
-			//shareTxt = '<object width="'+width+'" height="'+height+'">';
-			//shareTxt += '<param name="allowscriptaccess" value="always" />';
-			//shareTxt += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
-			//shareTxt += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
-			//shareTxt += '</embed></object>';
-			
 			//connection
 			nc = new NetConnection();
 			nc.connect( ((type=='rtmp')?path:null) );
@@ -211,15 +201,6 @@ package railk.as3.video
 			if(share) System.setClipboard( shareTxt );
 		}
 		
-		/*public function screen( name:String ):void {
-			var toSave:ByteArray;
-			var bmp:BitmapData = new BitmapData( width, height );
-			var saveImg:FileSaver = new FileSaver( name );
-			
-			bmp.draw( interfaceItemList.getNodeByName('videoContainer').data );
-			toSave = PNGEncoder.encode( bmp );
-			saveImg.create( 'local','assets\images',name, 'png', toSave, true );
-		}*/
 		
 		/**
 		 * gestion du stream
