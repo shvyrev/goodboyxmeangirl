@@ -12,9 +12,9 @@ package railk.as3.ui.view
 	import flash.utils.getDefinitionByName;
 	import railk.as3.pattern.mvc.interfaces.IView;
 	import railk.as3.pattern.mvc.core.View;
-	import railk.as3.ui.div.*;
+	import railk.as3.ui.div.IDiv;
 	import railk.as3.ui.Localisation;
-	import railk.as3.ui.page.PageManager;
+	import railk.as3.ui.page.IPageManager;
 	import railk.as3.utils.hasDefinition;
 	import railk.as3.display.graphicShape.RectangleShape;
 	
@@ -24,13 +24,13 @@ package railk.as3.ui.view
 		protected var _style:String;
 		protected var _nameSpace:String;
 		protected var local:Localisation = Localisation.getInstance();
-		protected var UIFacade:PageManager;
+		protected var UIFacade:IPageManager;
 		protected var background:RectangleShape = new RectangleShape();
 		
 		public function UIView( MID:String, name:String='',component:*=null, data:*=null ) {
 			super(MID, name, component, data);
 			local.addEventListener(Event.CHANGE, localisation, false, 0, true);
-			UIFacade = facade  as PageManager;
+			UIFacade = facade as IPageManager;
 		}
 		
 		/**
@@ -39,7 +39,7 @@ package railk.as3.ui.view
 		override public function show():void {
 			if (_bgStyle) {
 				UIFacade.styleSheet.applyStyle(background, _bgStyle);
-				div.addChild( background );
+				container.addChild( background );
 			}
 		}
 		
@@ -65,7 +65,6 @@ package railk.as3.ui.view
 		/**
 		 * GETTER/SETTER
 		 */
-		public function get div():Div { return _component; }
 		public function get nameSpace():String { return _nameSpace; } 
 		public function set nameSpace(value:String):void { _nameSpace = value; } 
 		public function get style():String { return _style; }

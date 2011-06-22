@@ -12,7 +12,7 @@ package railk.as3.ui.div
 		public var right:Number=0;
 		public var bottom:Number=0;
 		public var left:Number = 0;
-		public function init(...args):void { 
+		public function init(...args):DivMargin { 
 			if (args.length == 1) top = right = bottom = left = args[0];
 			else {
 				top = args[0];
@@ -20,6 +20,7 @@ package railk.as3.ui.div
 				bottom = args[2];
 				left = args[3];
 			}
+			return this;
 		}
 	}
 }

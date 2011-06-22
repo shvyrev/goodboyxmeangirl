@@ -12,7 +12,7 @@ package railk.as3.ui.layout
 	import railk.as3.ui.page.Plugins;
 	import railk.as3.ui.view.UIView;
 	
-	public final class LayoutView
+	public final class LayoutView implements ILayoutView
 	{	
 		public var div:IDiv;
 		public var master:LayoutView;

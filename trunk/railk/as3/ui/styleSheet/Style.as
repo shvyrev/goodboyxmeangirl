@@ -8,7 +8,7 @@
 package railk.as3.ui.styleSheet
 {
 	import flash.utils.Dictionary;
-    final public class Style
+    final public class Style implements IStyle
     {
 		public static const TYPE_ID:String = 'id';
 		public static const TYPE_CLASS:String = 'class';
@@ -20,19 +20,19 @@ package railk.as3.ui.styleSheet
 		private static const BOOLEAN:RegExp = /true|false/;
 		private static const URL:RegExp = /url([a-zA-Z0-9 .\/_-]{0,})/;
 		
-		public var id:String;
-		public var type:String;
 		private var related:Dictionary = new Dictionary(true);
 		private var pairs:Dictionary = new Dictionary(true);
 		private var colors:Object = {red:0xff0000,green:0x00ff00,yellow:0xffff00,blue:0x0000ff,white:0xffffff,black:0x000000}
+		private var _id:String;
+		private var _type:String;
 		
 		
         /**
          * CONSTRUCTEUR
          */
         public function Style(id:String, type:String) {
-			this.id = id;
-			this.type = type;
+			this._id = id;
+			this._type = type;
 		}
 		
 		/**
@@ -53,12 +53,12 @@ package railk.as3.ui.styleSheet
 		/**
 		 * MANAGE RELATED
 		 */
-		public function addRelated(style:Style):Style {
+		public function addRelated(style:IStyle):IStyle {
 			related[style.id] = style;
 			return style;
 		}
 		
-		public function getRelated(id:String):Style {
+		public function getRelated(id:String):IStyle {
 			return (related[id] != undefined)?related[id]:null;
 		}
 		
@@ -117,5 +117,7 @@ package railk.as3.ui.styleSheet
 		 * GETTER/SETTER
 		 */
 		public function get data():Dictionary { return pairs; }
+		public function get id():String { return _id; }
+		public function get type():String { return _type; }
     }
 }

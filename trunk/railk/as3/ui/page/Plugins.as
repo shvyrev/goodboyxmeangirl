@@ -40,12 +40,12 @@ package railk.as3.ui.page
 		 * SET THE PLUGINS CONTEXT
 		 */
 		public function init(context:String):void {
-			if (!context || context=='') return;
+			if (!context || context == '') return;
 			var duples:Array = context.replace(/\r|\t|\n/g, '').split(';'), length:int=duples.length, duple:Array, classes:Array;
 			for (var i:int = 0; i < length; ++i) {
 				duple = duples[i].split('=');
 				classes = duple[1].split(',');
-				for (var j:int = 0; j < classes.length; j++) hashMap[classes[j]] = new Plugin(classes[j],duple[0],monitor);
+				for (var j:int = 0; j < classes.length; j++) hashMap[classes[j]] = new Plugin(classes[j], duple[0], monitor);
 			}
 		}
 		
@@ -59,12 +59,11 @@ package railk.as3.ui.page
 		 * 
 		 * @param	name
 		 */
-		public function getClass(name:String,complete:Function,...params):void {
+		public function getClass(name:String, complete:Function, ...params):void {
 			if (hashMap[name] == undefined) {
 				complete.apply(null, params);
 				monitor(name);
-			}
-			else {
+			} else {
 				if (hashMap[name].state == Plugin.NO) hashMap[name].load(complete,params);
 				else if (hashMap[name].state == Plugin.PROGRESS) hashMap[name].addAction(complete,params);
 				else if (hashMap[name].state == Plugin.COMPLETE) {
@@ -90,6 +89,7 @@ package railk.as3.ui.page
 
 import flash.utils.getDefinitionByName;
 import railk.as3.ui.loader.loadUI;
+import railk.as3.TopLevel;
 internal class Plugin
 {
 	public static const NO:String = 'UIPlugin_NO';
@@ -106,11 +106,11 @@ internal class Plugin
 	
 	public function Plugin(name:String,file:String,monitor:Function) {
 		this.name = name;
-		this.file = file;
+		this.file = TopLevel.local+"plugins/"+file;
 		this.monitor = monitor;
 	}
 	
-	public function load(f:Function,p:Array):void {
+	public function load(f:Function, p:Array):void {
 		state = PROGRESS;
 		addAction(f,p);
 		loadUI(file).complete(onComplete).start();

@@ -12,7 +12,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.interfaces.*
 	import railk.as3.pattern.mvc.observer.Notification;
 	import railk.as3.ui.div.Div;
-	import railk.as3.ui.layout.Layout;
+	import railk.as3.ui.layout.ILayout;
 	import railk.as3.ui.loader.*;
 	import railk.as3.ui.view.UIView;
 	
@@ -30,12 +30,12 @@ package railk.as3.ui.page
 		private var _transition:ITransition;
 		
 		protected var align:String;
-		protected var layout:Layout;
+		protected var layout:ILayout;
 		protected var transitionName:String;
 		protected var loadingView:IPageLoading;
 		protected var length:Number=0;
 		
-		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:Layout, align:String, transitionName:String) {
+		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:ILayout, align:String, transitionName:String) {
 			super(MID,id);
 			_id = id;
 			_parent = parent;
