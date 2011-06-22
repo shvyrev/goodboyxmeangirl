@@ -1,5 +1,5 @@
 ﻿/**
- * Micro Tween (2.6k) 
+ * Micro Tween (2.9k) 
  * is not suitable for high number of tweens/performance test
  * as nothing is strong typed for smallness sake. 
  * Use twin instead who is strong typed
@@ -20,6 +20,7 @@
 
 package railk.as3.motion.tweens
 {
+	import flash.display.Shape;
 	import flash.utils.getTimer;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getQualifiedClassName;
@@ -29,7 +30,8 @@ package railk.as3.motion.tweens
 	
 	final public class Byte
 	{	
-		private var stm:*=getTimer()*.001;		
+		private var stm:*=getTimer()*.001;
+		private var rn:* = new Shape();
 		private var t:*;
 		private var dr:*;
 		private var ps:*=[];
@@ -47,7 +49,7 @@ package railk.as3.motion.tweens
 		 * 
 		 * @param	_t	target to be tweened
 		 */
-		public function Byte(_t:*) { t = _t; }
+		public function Byte(_t:*) { t =_t; }
 		
 		/**
 		 * TO
@@ -63,7 +65,7 @@ package railk.as3.motion.tweens
 				if (p=='color') var c:* = t.transform.colorTransform;
 				ps[ps.length] = [((p.search('Filter')!=-1)?'filter':p),((p in t && p!='color')?((_ps[p] is Array)?ibz(t[p],_ps[p]):t[p]):((p.search('Filter')!=-1)?iflt(p,_ps[p]):((p=='color')?c:((p=='volume')?t.soundTransform.volume:t)))),(p=='color')?new ColorTransform(0-c.redMultiplier,0-c.greenMultiplier,0-c.blueMultiplier,0,((_ps[p]>>16)&0xff)-c.redOffset,((_ps[p]>>8)&0xff)-c.greenOffset,(_ps[p]&0xff)-c.blueOffset):_ps[p]];
 			}
-			t.addEventListener('enterFrame', tk );
+			rn.addEventListener('enterFrame', tk );
 			return this;
 		}
 		
@@ -92,7 +94,7 @@ package railk.as3.motion.tweens
 				else if(p[0]=='text') t.text = txt(r,p[1],p[2]);
 				else if(p[0]=='textColor') t.textColor = clr(r,p[1],p[2]);
 				else if(p[0]=='color') t.transform.colorTransform=tnt(r,p[1],p[2]);
-				else if (p[0] == 'filter') t.filters = flt(r, p[1], p[2]);
+				else if(p[0] == 'filter') t.filters = flt(r, p[1], p[2]);
 				else t[p[0]] = (p[1] is Array)?bz(r,p[1]):p[1]+(p[2]-p[1])*r+1e-18-1e-18;
 			}
 			return r;
@@ -214,8 +216,8 @@ package railk.as3.motion.tweens
 		 * DISPOSE TWEEN
 		 */
 		public function dispose():void {
-			t.removeEventListener('enterFrame', tk );
-			ps = null;
+			rn.removeEventListener('enterFrame', tk );
+			ps = rn = null;
 		}
 	}
 }

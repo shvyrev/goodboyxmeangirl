@@ -13,6 +13,7 @@ package railk.as3.ui
 	import railk.as3.ui.page.PageManager;
 	import railk.as3.ui.page.Plugins;
 	import railk.as3.ui.loader.*;
+	import railk.as3.ui.styleSheet.CSS;
 	
 	public class Structure
 	{
@@ -40,17 +41,17 @@ package railk.as3.ui
 			if (commands) for (var i:int = 0; i < commands.length; i++) pageManager.registerCommand(commands[i].classe, commands[i].name ); 
 			if (proxys) for (i = 0; i < proxys.length; i++) pageManager.registerProxy(proxys[i].classe, proxys[i].name );
 			var css:String = A('stylesheet', xml);
-			if (css) loadUI(css).file(setup, container, xml, plugins, UILoader.FILE, css.split('/')[css.split('/').length-1].split('.')[0]).start();
+			if (css) loadUI(css).file(setup, container, xml, plugins, UILoader.FILE).start();
 			else setup(container, xml, plugins);
 		}
 		
-		private function setup(container:*, xml:XML, plugins:String='', css:String = '', name:String = ''):void {
+		private function setup(container:*, xml:XML, plugins:String='', css:String = ''):void {
 			Plugins.getInstance().init(plugins);
 			LinkManager.init( A('title',xml), true, true);
 			getStatics(xml);
 			getPages(xml);
 			container.contextMenu = pageManager.menu.menu;
-			if (css) pageManager.setStyleSheet(name, css);
+			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
 			if(!pageManager.current) view(pageManager.index.id);
 		}
 		
@@ -75,9 +76,7 @@ package railk.as3.ui
 		}
 		
 		private function B( value:String ):Boolean { return (value == 'true')?true:false; }
-		
 		private function C( value:String ):String { return value.charAt().toUpperCase()+value.substring(1);  }
-		
 		public function view( page:String ):void { LinkManager.setValue(page); }
 	}	
 }

@@ -26,8 +26,10 @@ package railk.as3.ui.loading
 			bg = new CircleShape(bgColor,0,0,radius);
 			cercle = new CircleShape(color,0,0,radius);
 			cercle.alpha = 0;
-			masker = new CamembertShape(0x000000,0,0,radius,0,1,100);
+			masker = new CamembertShape(0xff0000,0,0,radius,0,0);
 			masker.rotation = -90;
+			masker.x = radius;
+			masker.y = radius;
 			
 			this.addChild(bg);
 			this.addChild(cercle);
@@ -38,7 +40,12 @@ package railk.as3.ui.loading
 		public function get percent():Number { return _percent; }
 		public function set percent(value:Number):void {
 			_percent = value;
-			masker = new CamembertShape(_color,0,0,radius+10,0,(((!value)?1:value)*360)*.01,100);
+			removeChild(masker);
+			masker = new CamembertShape(_color, 0, 0, radius, 0, (((!value)?1:value) * 360) * .01);
+			masker.rotation = -90;
+			masker.x = radius;
+			masker.y = radius;
+			addChild(masker)
 			cercle.alpha = 1;
 		}
 	}

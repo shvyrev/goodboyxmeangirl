@@ -8,7 +8,7 @@
 package railk.as3.ui.styleSheet
 {
 	import flash.utils.Dictionary;
-    final public class CSS
+    final public class CSS implements ICSS
     {
 		private static const CSS_BLOCS:RegExp = /[^{]*\{([^}]*)*}/g;
         private static const CSS_COMMENT:RegExp = /\/\*[a-zA-Z0-9,:\-# ]{0,}\*\//g;
@@ -55,7 +55,7 @@ package railk.as3.ui.styleSheet
 			//parse
             var splitBlock:Array = bloc.split("{");
             var splitStyle:Array = String(splitBlock[0]).split(",");
-			var style:Style;
+			var style:IStyle;
 			
 			for (var i:int = 0; i < splitStyle.length; i++) {
 				// style
@@ -105,7 +105,7 @@ package railk.as3.ui.styleSheet
 		 */
 		private function getType(name:String):String { return (name.indexOf('#') != -1)?Style.TYPE_ID:(name.indexOf('.') != -1)?Style.TYPE_CLASS:Style.TYPE_ELEMENT; }
 		public function hasStyle(name:String):Boolean { return (styles[name] != undefined)?true:false; }
-		public function getStyle(name:String):Style {
+		public function getStyle(name:String):IStyle {
 			var a:Array;
 			if (name.indexOf(':') != -1) {
 				a = name.split(':');
@@ -119,7 +119,7 @@ package railk.as3.ui.styleSheet
 		
 		public function applyStyle(o:Object, name:String):void {
 			if (!hasStyle(name)) return;
-			var style:Style = getStyle(name), data:Dictionary = style.data;
+			var style:IStyle = getStyle(name), data:Dictionary = style.data;
 			for (var name:String in data) if (o.hasOwnProperty(name) ) o[name] = data[name];
 		}
 		

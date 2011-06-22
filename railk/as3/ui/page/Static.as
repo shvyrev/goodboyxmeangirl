@@ -10,7 +10,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.core.View;
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.mvc.observer.Notification;
-	import railk.as3.ui.layout.Layout;
+	import railk.as3.ui.layout.ILayout;
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.loader.*;
 	
@@ -22,13 +22,13 @@ package railk.as3.ui.page
 		protected var _anchor:String;
 		protected var _id:String;
 		
-		protected var layout:Layout;
+		protected var layout:ILayout;
 		protected var align:String;
 		protected var onTop:Boolean;
 		protected var css:String;
 		protected var loader:UILoader;
 		
-		public function Static( MID:String, id:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean ) {
+		public function Static( MID:String, id:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean ) {
 			super(MID, id);
 			this.id = id;
 			this.layout = layout;

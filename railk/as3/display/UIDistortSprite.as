@@ -102,28 +102,24 @@ package railk.as3.display
 		/**
 		 * GETTER/SETTER
 		 */
-		public function get topLeft():Point { return TL; }
-		public function set topLeft(value:Point): void {
-			TL = value;
-			setRender();
-		}
+		public function get topLeftX():Number { return TL.x; }
+		public function set topLeftX(value:Number): void { TL.x = value; setRender(); }
+		public function get topLeftY():Number { return TL.y; }
+		public function set topLeftY(value:Number): void { TL.y = value; setRender(); }
 		
-		public function get topRight():Point { return TR; }
-		public function set topRight(value:Point): void {
-			TR = value;
-			setRender();
-		}
+		public function get topRightX():Number { return TR.x; }
+		public function set topRightX(value:Number): void { TR.x = value; setRender(); }
+		public function get topRightY():Number { return TR.y; }
+		public function set topRightY(value:Number): void { TR.y = value; setRender(); }
 		
-		public function get bottomLeft():Point { return BL; }
-		public function set bottomLeft(value:Point): void {
-			BL = value;
-			setRender();
-		}
+		public function get bottomLeftX():Number { return BL.x; }
+		public function set bottomLeftX(value:Number): void { BL.x = value; setRender(); }
+ 		public function get bottomLeftY():Number { return BL.y; }
+		public function set bottomLeftY(value:Number): void { BL.y = value; setRender(); }
 		
-		public function get bottomRight():Point { return BR; }
-		public function set bottomRight(value:Point): void {
-			BR = value;
-			setRender();
-		}
+		public function get bottomRightX():Number { return BR.x; }
+		public function set bottomRightX(value:Number): void { BR.x = value; setRender(); }
+		public function get bottomRightY():Number { return BR.y; }
+		public function set bottomRightY(value:Number): void { BR.y = value; setRender(); }
 	}
 }

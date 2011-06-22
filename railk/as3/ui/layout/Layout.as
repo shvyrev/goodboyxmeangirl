@@ -9,12 +9,13 @@ package railk.as3.ui.layout
 {
 	import flash.utils.Dictionary;
 	import railk.as3.ui.div.DivMargin;
-	public class Layout
+	
+	public class Layout implements ILayout
 	{
 		public var name:String;
 		public var pack:String;
-		public var viewsDict:Dictionary=new Dictionary(true);
-		public var views:Array=[];
+		private var _viewsDict:Dictionary=new Dictionary(true);
+		private var _views:Array=[];
 		
 		/**
 		 * CONSTRUCTEUR
@@ -29,7 +30,7 @@ package railk.as3.ui.layout
 			for (var i:int = 0; i < xml.children().length(); i++) {
 				var d:XML = xml.children()[i];
 				if (d.name() != 'div') continue;
-				master = views[views.length] = viewsDict[d.@id.toString()] = new LayoutView(container, master, A('id', d), d.@id, A('float', d), A('align', d), A('margins', d), A('position', d), A('x', d), A('y', d), A('style', d), A('background', d), D(d), A('constraint', d), A('visible',d) );
+				master = _views[_views.length] = _viewsDict[d.@id.toString()] = new LayoutView(container, master, A('id', d), d.@id, A('float', d), A('align', d), A('margins', d), A('position', d), A('x', d), A('y', d), A('style', d), A('background', d), D(d), A('constraint', d), A('visible',d) );
 				if ( d.children().length() > 0 ) construct( d, master );
 			}
 		}		
@@ -37,10 +38,10 @@ package railk.as3.ui.layout
 		/**
 		 * MANAGE VIEWS
 		 */
-		public function getView(name:String):LayoutView { return (viewsDict[name])?viewsDict[name]:null; }
+		public function getView(name:String):ILayoutView { return (_viewsDict[name])?_viewsDict[name]:null; }
 		public function removeView(name:String):void {
-			for (var i:int = 0; i < views.length; i++) if (views[i].id == name) views.splice(i,1); 
-			delete views[name]; 
+			for (var i:int = 0; i < _views.length; i++) if (_views[i].id == name) _views.splice(i,1); 
+			delete _viewsDict[name]; 
 		}
 		
 		/**
@@ -70,5 +71,11 @@ package railk.as3.ui.layout
 			for (var i:int; i < xml.children().length(); i++ ) if (xml.children()[i].name() != 'div') result.appendChild(xml.children()[i]);
 			return (result.children().length() == 0)?null:result;
 		}
+		
+		/**
+		 * GETTER/SETTER
+		 */
+		public function get viewsDict():Dictionary { return _viewsDict; }
+		public function get views():Array { return _views; }
 	}
 }

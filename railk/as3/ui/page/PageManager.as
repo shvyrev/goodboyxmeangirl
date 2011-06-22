@@ -13,14 +13,14 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.interfaces.*;
 	import railk.as3.pattern.multiton.Multiton;
 	import railk.as3.ui.div.Div;
-	import railk.as3.ui.layout.Layout;
+	import railk.as3.ui.layout.ILayout;
 	import railk.as3.ui.loader.*;
 	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.RightClickMenu;
-	import railk.as3.ui.styleSheet.CSS;
+	import railk.as3.ui.styleSheet.ICSS;
 	import railk.as3.utils.hasDefinition;
 	
-	public class PageManager extends Facade implements IFacade
+	public class PageManager extends Facade implements IFacade,IPageManager
 	{
 		public var index:IPage;
 		public var last:IPage;
@@ -29,7 +29,6 @@ package railk.as3.ui.page
 		public var anchors:Dictionary = new Dictionary(true);
 		public var menu:RightClickMenu;
 		public var hasMenu:Boolean;
-		public var styleSheet:CSS
 		public var multiPage:Boolean;
 		public var structure:String;
 		public var adaptToScreen:Boolean;
@@ -38,6 +37,8 @@ package railk.as3.ui.page
 		private var multiPageOn:Boolean;
 		private var multiPageId:String;
 		private var multiPageAnchor:String;
+		
+		private var _styleSheet:ICSS;
 		
 		public static function getInstance():PageManager {
 			return Multiton.getInstance('S',PageManager);
@@ -61,7 +62,7 @@ package railk.as3.ui.page
 			registerContainer( new PageStruct(structure,adaptToScreen) );
 		}
 		
-		public function addStatic(id:String, classe:String, layout:Layout, align:String, onTop:Boolean, visible:Boolean):void {
+		public function addStatic(id:String, classe:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean):void {
 			var s:Static = !hasDefinition(classe)?new Static(MID, id, layout, align, onTop, visible):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible);
 			if (!statics) statics = s;
 			else {
@@ -88,7 +89,7 @@ package railk.as3.ui.page
 			}
 		}
 		
-		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:Layout, align:String, transition:String):void {
+		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:ILayout, align:String, transition:String):void {
 			if (parent == '') {
 				if( !index) registerView( index = last = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,transition) );
 				else {
@@ -196,6 +197,7 @@ package railk.as3.ui.page
 		/**
 		 * STYLESHEET
 		 */
-		public function setStyleSheet(name:String, css:String):void { styleSheet = new CSS(css, name); }
+		public function set styleSheet(value:ICSS):void { _styleSheet = value; }
+		public function get styleSheet():ICSS { return _styleSheet; }
 	}
 }
