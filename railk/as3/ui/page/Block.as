@@ -1,5 +1,5 @@
 ﻿/**
- * Static
+ * Block
  * 
  * @author Richard Rodney
  * @version 0.1
@@ -14,10 +14,10 @@ package railk.as3.ui.page
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.loader.*;
 	
-	public class Static extends View implements IStatic,IView,INotifier
+	public class Block extends View implements IBlock,IView,INotifier
 	{
-		protected var _prev:IStatic;
-		protected var _next:IStatic;
+		protected var _prev:IBlock;
+		protected var _next:IBlock;
 		protected var _visible:Boolean;
 		protected var _anchor:String;
 		protected var _id:String;
@@ -28,7 +28,7 @@ package railk.as3.ui.page
 		protected var css:String;
 		protected var loader:UILoader;
 		
-		public function Static( MID:String, id:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean ) {
+		public function Block( MID:String, id:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean ) {
 			super(MID, id);
 			this.id = id;
 			this.layout = layout;
@@ -56,19 +56,23 @@ package railk.as3.ui.page
 		 * 	SHOW/HIDE/UPDATE
 		 */
 		override public function show():void {
-			(facade.container as PageStruct).addStatic(component,onTop);
+			(facade.container as PageStruct).addBlock(component, onTop);
+			Plugins.getInstance().initMonitor(_id,layout.views.concat(), enablePage);
 			setupViews(layout.views);
-			if (anchor) castAnchor(anchor);
 		}
 		
 		override public function hide():void {
 			loader.stop();
 			for (var i:int = 0; i < component.numChildren; i++) component.removeChildAt(i);
-			(facade.container as PageStruct).delStatic(component);
+			(facade.container as PageStruct).delBlock(component);
 			component = new Div(id,'none',align);
 		}
 		
-		public function update():void {}
+		protected function enablePage():void { 
+			if (anchor) castAnchor(anchor); 
+		}
+		
+		public function update():void { }
 		
 		/**
 		 * ZOOM/DEZOOM
@@ -82,16 +86,16 @@ package railk.as3.ui.page
 		 * 	UTILITIES
 		 */		
 		protected function setupViews(views:Array):void {
-			for (var i:int = 0; i < views.length; i++) views[i].setup(facade,component,data);
+			for (var i:int = 0; i < views.length; i++) views[i].setup(_id,facade,component,data,true);
 		}
 		
 		/**
 		 * 	GETTER/SETTERS
 		 */	
-		public function get prev():IStatic { return _prev; }
-		public function set prev(value:IStatic):void { _prev = value; }
-		public function get next():IStatic { return _next; }
-		public function set next(value:IStatic):void { _next = value; }
+		public function get prev():IBlock { return _prev; }
+		public function set prev(value:IBlock):void { _prev = value; }
+		public function get next():IBlock { return _next; }
+		public function set next(value:IBlock):void { _next = value; }
 		public function get anchor():String { return _anchor; }
 		public function set anchor(value:String):void { _anchor = value; }
 		public function get visible():Boolean { return _visible; }
