@@ -12,8 +12,6 @@ package railk.as3.ui.div
 	import flash.geom.Point;
 	import railk.as3.display.UISprite;
 	
-	import railk.as3.utils.Logger;
-	
 	public class Div extends UISprite implements IDiv
 	{	
 		protected var arcs:Array = [];
