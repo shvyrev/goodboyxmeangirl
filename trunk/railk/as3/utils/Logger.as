@@ -25,7 +25,7 @@ package railk.as3.utils
 			txt = stg.addChild(new TextField()) as TextField;
 			txt.height = txt.width = 500;
 			txt.wordWrap = true;
-			print('\n','LOGGER ON')
+			log('\n','LOGGER ON')
 		}
 		
 		/**

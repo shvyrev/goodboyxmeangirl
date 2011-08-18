@@ -55,17 +55,17 @@ package railk.as3.ui.layout
 			this.visible = visible;
 		}
 		
-		public function setup(facade:IFacade,component:*,data:*):void {
+		public function setup(group:String,facade:IFacade,component:*,data:*,block:Boolean=false):void {
 			div = new Div(id, float, align, margins, position, x, y, data, constraint);
-			Plugins.getInstance().getClass(view,run,facade,component,data);
+			Plugins.getInstance().getClass(group,view,run,facade,component,data,block);
 		}
 		
-		private function run(facade:IFacade,component:*,data:*,c:Class=null):void {
+		private function run(facade:IFacade, component:*, data:*, block:Boolean, c:Class = null):void {
 			viewClass = (c)?c:UIView;
 			if (!container) component.addDiv( div );
 			else container.div.addDiv( div  );
 			data += (div.data != null)?div.data:'';
-			populate(facade.registerView(viewClass,id,div,data) as UIView);
+			populate(facade.registerView(viewClass, id, div, data) as UIView);
 			if (visible) facade.getView(id).show();
 		}
 		

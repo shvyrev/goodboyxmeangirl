@@ -24,7 +24,7 @@ package railk.as3.ui.page
 	{
 		public var index:IPage;
 		public var last:IPage;
-		public var statics:IStatic;
+		public var blocks:IBlock;
 		public var current:String = '';
 		public var anchors:Dictionary = new Dictionary(true);
 		public var menu:RightClickMenu;
@@ -56,28 +56,28 @@ package railk.as3.ui.page
 			this.adaptToScreen = adaptToScreen;
 			this.nameSpace = nameSpace;
 			menu = new RightClickMenu();
-			menu.add(author, author, null, null, true);
+			menu.add(author, author);
 			registerModel(Model);
 			registerController(Controller);
 			registerContainer( new PageStruct(structure,adaptToScreen) );
 		}
 		
-		public function addStatic(id:String, classe:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean):void {
-			var s:Static = !hasDefinition(classe)?new Static(MID, id, layout, align, onTop, visible):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible);
-			if (!statics) statics = s;
+		public function addBlock(id:String, classe:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean):void {
+			var b:Block = !hasDefinition(classe)?new Block(MID, id, layout, align, onTop, visible):new (getDefinitionByName(classe))(MID, id, layout, align, onTop, visible);
+			if (!blocks) blocks = b;
 			else {
-				statics.next = s;
-				s.prev = statics;
-				statics = s;
+				blocks.next = b;
+				b.prev = blocks;
+				blocks = b;
 			}
-			if (visible) s.show();
-			else {
-				registerView(s);
+			if (visible) b.show();
+			/*else {
+				registerView(b);
 				var action:Function = function(type:String, requester:*, data:*):void {
 					switch(type) {
 						case 'do': case 'undo' : 
 							if (changePage(id, data)) {
-								var p:IStatic = (getView(id) as IStatic);
+								var p:IBlock = (getView(id) as IBlock);
 								p.anchor = data;
 								p.show();
 							}
@@ -86,7 +86,7 @@ package railk.as3.ui.page
 					}
 				}
 				LinkManager.add('/'+id+'/', null, action, '', null, true);
-			}
+			}*/
 		}
 		
 		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:ILayout, align:String, transition:String):void {
@@ -144,7 +144,7 @@ package railk.as3.ui.page
 			else page.play();
 			current = id;
 			anchors[current] = anchor;
-			if (statics) updateStatics();
+			if (blocks) updateBlocks();
 		}
 		
 		/**
@@ -162,7 +162,7 @@ package railk.as3.ui.page
 			if (page.transition && change == 'id') page.transition.easeIn((page as IView).component );
 			current = id;
 			anchors[current] = anchor;
-			if (statics) updateStatics();
+			if (blocks) updateBlocks();
 		}
 		
 		public function unsetPage( id:String ):void {
@@ -175,7 +175,7 @@ package railk.as3.ui.page
 		/**
 		 * NAV UTILITIES
 		 */
-		private function changePage(id:String, anchor:String):String {
+		private function changePage(id:String, anchor:String = ''):String {
 			if (current != id) return 'id';
 			if (current == id && anchors[current] != anchor) return 'anchor';
 			return '';
@@ -186,8 +186,8 @@ package railk.as3.ui.page
 			else page.play();
 		}
 		
-		private function updateStatics():void {
-			var s:IStatic = statics;
+		private function updateBlocks():void {
+			var s:IBlock = blocks;
 			while (s) { 
 				if (s.visible) s.update();
 				s = s.prev;
