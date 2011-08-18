@@ -10,6 +10,7 @@ package railk.as3.ui.link
 {	
 	import com.asual.swfaddress.SWFAddress;
 	import com.asual.swfaddress.SWFAddressEvent;
+	import railk.as3.utils.Logger;
 	
 	public class LinkManager 
 	{	
@@ -124,12 +125,12 @@ package railk.as3.ui.link
 				else {
 					if ( getLink(evt.value + '/') ) getLink(evt.value + '/').deepLinkAction();
 					else {
-						var a:Array = evt.value.split('/'), i:int = a.length, anchor:String='', link:String = (evt.value.charAt(evt.value.length-1)!='/')?evt.value+'/':'/'+evt.value;
+						var a:Array = evt.value.split('/'), i:int = a.length, anchor:String = '', link:String = (evt.value.charAt(evt.value.length - 1) != '/')?evt.value + '/':'/' + evt.value;
 						while( --i > -1 ) {
 							link = link.replace(a[i] + '/', '');
-							if(a[i]) anchor = a[i] + '/' + anchor;
+							if(a[i]!="index") anchor = a[i] + '/' + anchor;
 							if (getLink(link)) {
-								getLink(link).deepLinkAction(anchor);
+								getLink(link).deepLinkAction((anchor!=""?anchor:null));
 								state = link;
 								return;
 							}

@@ -24,8 +24,7 @@ package railk.as3.ui.page
 	public final class Plugins
 	{
 		private var hashMap:Dictionary = new Dictionary(true);
-		private var monitorData:Array;
-		private var monitorComplete:Function;
+		private var groups:Dictionary = new Dictionary(true);
 		
 		public static function getInstance():Plugins{
 			return Singleton.getInstance(Plugins);
@@ -49,9 +48,8 @@ package railk.as3.ui.page
 			}
 		}
 		
-		public function initMonitor(data:Array, f:Function):void {
-			monitorData = data;
-			monitorComplete = f;
+		public function initMonitor(group:String, data:Array, f:Function):void {
+			groups[group] = new Group(data, f);
 		}
 		
 		/**
@@ -59,31 +57,48 @@ package railk.as3.ui.page
 		 * 
 		 * @param	name
 		 */
-		public function getClass(name:String, complete:Function, ...params):void {
+		public function getClass(group:String, name:String, complete:Function, ...params):void {
 			if (hashMap[name] == undefined) {
 				complete.apply(null, params);
-				monitor(name);
+				monitor(group,name);
 			} else {
 				if (hashMap[name].state == Plugin.NO) hashMap[name].load(complete,params);
 				else if (hashMap[name].state == Plugin.PROGRESS) hashMap[name].addAction(complete,params);
 				else if (hashMap[name].state == Plugin.COMPLETE) {
 					params[params.length] = hashMap[name].classe; 
 					complete.apply(null, params);
-					monitor(name);
+					monitor(group,name);
 				}
 			}
 		}
 		
-		private function monitor(name:String):void {
-			var i:int=monitorData.length;
+		private function monitor(group:String, name:String):void {
+			var g:Group = groups[group];
+			var i:int=g.monitorData.length;
 			while ( --i > -1 ) {
-				if (monitorData[i].view == name) {
-					monitorData.splice(i, 1);
+				if (g.monitorData[i].view == name) {
+					g.monitorData.splice(i, 1);
 					break;
 				}
 			}
-			if (monitorData.length == 0) monitorComplete.apply();
+			if (g.monitorData.length == 0) { g.monitorComplete.apply(); g.dispose(); delete groups[group]; }
 		}
+	}
+}
+
+internal class Group
+{
+	public var monitorData:Array;
+	public var monitorComplete:Function;
+	
+	public function Group( monitorData:Array, monitorComplete:Function) {
+		this.monitorData = monitorData;
+		this.monitorComplete = monitorComplete;
+	}
+	
+	public function dispose():void {
+		monitorComplete = null;
+		monitorData = null;
 	}
 }
 
@@ -106,7 +121,7 @@ internal class Plugin
 	
 	public function Plugin(name:String,file:String,monitor:Function) {
 		this.name = name;
-		this.file = TopLevel.local+"plugins/"+file;
+		this.file = ((TopLevel.local)?"../":"")+"plugins/"+file;
 		this.monitor = monitor;
 	}
 	

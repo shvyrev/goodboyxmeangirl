@@ -41,10 +41,10 @@ package railk.as3.ui.page
 		}
 		
 		/**
-		 * MANAGE STATIC PAGE
+		 * MANAGE BLOCKS
 		 */
-		public function addStatic(div:IDiv,onTop:Boolean):IDiv { return parent.addChildAt( div as Div, (onTop)?parent.numChildren-1:0 ) as IDiv; }
-		public function delStatic(div:IDiv):void { parent.removeChild(div as Div); }
+		public function addBlock(div:IDiv,onTop:Boolean):IDiv { return parent.addChildAt( div as Div, (onTop)?parent.numChildren-1:0 ) as IDiv; }
+		public function delBlock(div:IDiv):void { parent.removeChild(div as Div); }
 		
 		/**
 		 * PLACE THE CURRENT PAGE DEPENDING ON THE STRUCTURE TYPE

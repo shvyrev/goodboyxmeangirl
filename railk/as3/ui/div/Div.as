@@ -12,6 +12,8 @@ package railk.as3.ui.div
 	import flash.geom.Point;
 	import railk.as3.display.UISprite;
 	
+	import railk.as3.utils.Logger;
+	
 	public class Div extends UISprite implements IDiv
 	{	
 		protected var arcs:Array = [];
@@ -113,9 +115,6 @@ package railk.as3.ui.div
 			var d:IDiv = getDiv((div is String)?div:div.name);
 			if (!d) return;
 			if(d.prev) d.prev.removeArc(d);
-			d.unbind();
-			d.resetArcs();
-			d.delAllDiv();
 			if (d.next) {
 				if(d.prev) d.prev.addArc(d.next)
 				placeDiv(d.next,d.prev);
@@ -128,6 +127,9 @@ package railk.as3.ui.div
 				else { d.prev.next = d.next; d.next.prev = d.prev; }
 			}
 			else first = last = null;
+			d.resetArcs();
+			d.delAllDiv();
+			d.unbind();
 			removeChild(d as Div);
 			_numDiv--;
 		}
@@ -270,7 +272,7 @@ package railk.as3.ui.div
 			resize();
 		}
 		 
-		public function resize(evt:Event=null):void {
+		public function resize(evt:Event = null):void {
 			var W:Number = (!isDiv)?stage.stageWidth:parent.width, H:Number = (!isDiv)?stage.stageHeight:parent.height, a:String=_align;
 			x = (a=='TL' || a=='L' || a=='CENTERY' )?state.x:(a=='TR' || a=='BR' || a=='R')?W-width:(a=='BL')?0:(a=='T' || a=='B' || a=='CENTER' || a=='CENTERX')?W*.5-width*.5:x;
 			y = (a=='TL' || a=='TR' || a=='T' || a=='CENTERX')?state.y:(a=='BR' || a=='BL' || a=='B')?stage.stageHeight-height:(a=='L' || a=='R' || a=='CENTER' || a=='CENTERY')?H*.5-height*.5:y;

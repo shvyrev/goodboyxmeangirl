@@ -17,13 +17,13 @@ package railk.as3
 		public static var root:DisplayObject;
 		public static var stage:Stage;
 		public static var main:Sprite;
-		public static var local:String;
+		public static var local:Boolean;
 		public static function init(d:DisplayObject):void {
 			if (inited) return;
 			root = d.root;
 			stage = d.stage;
 			main = d as Sprite;
-			local = (root.loaderInfo.url.indexOf("file") == 0)?'../':'';
+			local = (root.loaderInfo.url.indexOf("file") == 0)?true:false;
 			inited = true;
 		}
 	}

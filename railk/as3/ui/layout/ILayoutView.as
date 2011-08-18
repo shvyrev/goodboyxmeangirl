@@ -12,7 +12,7 @@ package railk.as3.ui.layout
 	
 	public interface ILayoutView
 	{	
-		function setup(facade:IFacade, component:*, data:*):void;
+		function setup(group:String,facade:IFacade, component:*, data:*,block:Boolean=false):void;
 		function populate(v:UIView):void;
 		function dispose():void;
 	}

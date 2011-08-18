@@ -14,6 +14,7 @@ package railk.as3.ui
 	import railk.as3.ui.page.Plugins;
 	import railk.as3.ui.loader.*;
 	import railk.as3.ui.styleSheet.CSS;
+	import railk.as3.TopLevel;
 	
 	public class Structure
 	{
@@ -41,23 +42,23 @@ package railk.as3.ui
 			if (commands) for (var i:int = 0; i < commands.length; i++) pageManager.registerCommand(commands[i].classe, commands[i].name ); 
 			if (proxys) for (i = 0; i < proxys.length; i++) pageManager.registerProxy(proxys[i].classe, proxys[i].name );
 			var css:String = A('stylesheet', xml);
-			if (css) loadUI(css).file(setup, container, xml, plugins, UILoader.FILE).start();
+			if (css) loadUI(((TopLevel.local)?'../':'')+css).file(setup, container, xml, plugins, UILoader.FILE).start();
 			else setup(container, xml, plugins);
 		}
 		
-		private function setup(container:*, xml:XML, plugins:String='', css:String = ''):void {
+		private function setup(container:*, xml:XML, plugins:String = '', css:String = ''):void {
+			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
 			Plugins.getInstance().init(plugins);
-			LinkManager.init( A('title',xml), true, true);
-			getStatics(xml);
+			LinkManager.init( A('title', xml), true, true);
+			getBlocks(xml);
 			getPages(xml);
 			container.contextMenu = pageManager.menu.menu;
-			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
 			if(!pageManager.current) view(pageManager.index.id);
 		}
 		
-		private function getStatics( xml:XML ):void {
-			if ( xml..static.toString() == '' ) return;
-			for each ( var s:XML in xml..static) if (s.@id.toString() != '') pageManager.addStatic(s.@id,A('id',s,A('package',xml)+'.view::'), getPageLayout( A('package', xml)+'.view.'+s.@id, s.@id, new XML(s.child('body')) ),A('align',s), B(A('onTop',s)), B(A('visible',s)));
+		private function getBlocks( xml:XML ):void {
+			if ( xml..block.toString() == '' ) return;
+			for each ( var s:XML in xml..block) if (s.@id.toString() != '') pageManager.addBlock(s.@id,A('id',s,A('package',xml)+'.view::'), getPageLayout( A('package', xml)+'.view.'+s.@id, s.@id, new XML(s.child('body')) ),A('align',s), B(A('onTop',s)), B(A('visible',s)));
 		}
 		
 		private function getPages( xml:XML ):void {

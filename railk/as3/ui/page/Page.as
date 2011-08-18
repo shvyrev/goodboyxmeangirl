@@ -44,7 +44,6 @@ package railk.as3.ui.page
 			this.align = (align)?align:'TL';
 			this.loadingView = new (getDefinitionByName(loading))() as IPageLoading;
 			this.transitionName = transitionName;
-			this.component = new PageDiv(id,'none',this.align);
 			data = '<h1>'+title+'</h1>\n';
 		}
 		
@@ -79,20 +78,21 @@ package railk.as3.ui.page
 		 * SHOW/HIDE
 		 */
 		override public function show():void {
+			component = new PageDiv(id,'none',align);
 			(facade.container as PageStruct).addDiv(component);
-			Plugins.getInstance().initMonitor(layout.views.concat(), enablePage);
+			Plugins.getInstance().initMonitor(_id,layout.views.concat(), enablePage);
 			setupViews(layout.views);
 		}
 		
 		override public function hide():void {
 			var i:int=0, views:Array = layout.views;
-			(component as PageDiv).unbind();
-			try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
-			catch (e:Error) { /*throw e;*/}
-			while(component.numChildren) component.removeChildAt(0);
-			try { (facade.container as PageStruct).removeChild(component); }
-			catch (e:ArgumentError){ /*throw e;*/ }
-			component = new PageDiv(id,'none',align);
+			//(component as PageDiv).unbind();
+			//try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
+			//catch (e:Error) { /*throw e;*/}
+			//while(component.numChildren) component.removeChildAt(0);
+			try { (facade.container as PageStruct).delDiv(component); }
+			catch (e:ArgumentError){ throw e; }
+			component = null;
 		}
 		
 		/**
@@ -120,7 +120,7 @@ package railk.as3.ui.page
 		 * 	PAGE SETUP
 		 */
 		protected function setupViews(views:Array):void {
-			for (var i:int = 0; i < views.length; i++) views[i].setup(facade,component,data);
+			for (var i:int = 0; i < views.length; i++) views[i].setup(_id,facade,component,data);
 			if (transitionName.charAt(transitionName.length - 1) != '.') _transition = new (getDefinitionByName(transitionName))() as ITransition;
 			
 		}
