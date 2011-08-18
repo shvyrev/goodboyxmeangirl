@@ -10,7 +10,6 @@ package railk.as3.ui.link
 {	
 	import com.asual.swfaddress.SWFAddress;
 	import com.asual.swfaddress.SWFAddressEvent;
-	import railk.as3.utils.Logger;
 	
 	public class LinkManager 
 	{	
