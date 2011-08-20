@@ -40,6 +40,7 @@ package railk.as3.ui.page
 		
 		private var _styleSheet:ICSS;
 		private var _linkManager:ILinkManager = LinkManager.getInstance();
+		private var _loadingView:IPageLoading;
 		
 		public static function getInstance():PageManager {
 			return Multiton.getInstance('S',PageManager);
@@ -50,7 +51,7 @@ package railk.as3.ui.page
 			MID = Multiton.assertSingle(id,PageManager); 
 		}
 		
-		public function init( author:String, hasMenu:Boolean, multiPage:Boolean, structure:String, adaptToScreen:Boolean, nameSpace:String ):void {
+		public function init( author:String, hasMenu:Boolean, multiPage:Boolean, structure:String, loading:String, adaptToScreen:Boolean, nameSpace:String ):void {
 			this.hasMenu = hasMenu;
 			this.multiPage = multiPage;
 			this.structure = structure;
@@ -60,7 +61,8 @@ package railk.as3.ui.page
 			menu.add(author, author);
 			registerModel(Model);
 			registerController(Controller);
-			registerContainer( new PageStruct(structure,adaptToScreen) );
+			registerContainer( new PageStruct(structure, adaptToScreen) );
+			if (loading) _loadingView = new (getDefinitionByName(loading))() as IPageLoading;
 		}
 		
 		public function addBlock(id:String, classe:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean):void {
@@ -90,16 +92,16 @@ package railk.as3.ui.page
 			}
 		}
 		
-		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:ILayout, align:String, transition:String):void {
+		public function addPage(id:String, parent:String, title:String, classe:String, layout:ILayout, align:String, transition:String):void {
 			if (parent == '') {
-				if( !index) registerView( index = last = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,transition) );
+				if( !index) registerView( index = last = !hasDefinition(classe)?new Page(MID,id,null,title,layout,align,transition):new (getDefinitionByName(classe))(MID,id,null,title,layout,align,transition) );
 				else {
 					var page:IPage;
-					registerView( page = !hasDefinition(classe)?new Page(MID,id,null,title,loading,layout,align,transition):new (getDefinitionByName(classe))(MID,id,null,title,loading,layout,align,transition));
+					registerView( page = !hasDefinition(classe)?new Page(MID,id,null,title,layout,align,transition):new (getDefinitionByName(classe))(MID,id,null,title,layout,align,transition));
 					last.next = page; page.prev = last; last = page;
 				}
 			} else {
-				registerView( (!hasDefinition(classe)?new Page(MID,id, getPage(parent),title,loading,layout,align,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,loading,layout,align,transition)) );
+				registerView( (!hasDefinition(classe)?new Page(MID,id, getPage(parent),title,layout,align,transition):new (getDefinitionByName(classe))(MID,id, getPage(parent),title,layout,align,transition)) );
 				getPage(parent).addChild(getPage(id));
 			}
 			
@@ -119,6 +121,8 @@ package railk.as3.ui.page
 			menu.add(id, title, _linkManager.setValue, [link], ((id == 'index')?true:false) );
 			_linkManager.add(link, null, action, 'main_menu', null, true);
 		}
+		
+		public function addLoading():void {  if(loadingView) container.addChild(_loadingView); }
 		
 		/**
 		 * MULTIPAGE NAV
@@ -201,5 +205,6 @@ package railk.as3.ui.page
 		public function set styleSheet(value:ICSS):void { _styleSheet = value; }
 		public function get styleSheet():ICSS { return _styleSheet; }
 		public function get linkManager():ILinkManager { return _linkManager; }
+		public function get loadingView():IPageLoading { return _loadingView; }
 	}
 }

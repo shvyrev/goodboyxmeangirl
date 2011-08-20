@@ -16,7 +16,7 @@ package railk.as3.stage
 	
 	public class FullScreenMode
 	{
-		private var linkManager:ILinkManager = LinkManager.getInstance();
+		private var linkManager:ILinkManager;
 		private var link:ILink;
 		private var stage:Stage;
 		private var action:Function;
@@ -34,8 +34,9 @@ package railk.as3.stage
 		/**
 		 * INIT
 		 */		
-		public function init(stage:Stage,target:Object, action:Function = null,  colors:Object = null):void {
+		public function init(linkManager:ILinkManager, stage:Stage,target:Object, action:Function = null,  colors:Object = null):void {
 			if (!stage) return;
+			this.linkManager = linkManager;
 			this.action = action;
 			this.stage = stage;
 			if ( stage.hasOwnProperty("displayState") ) {

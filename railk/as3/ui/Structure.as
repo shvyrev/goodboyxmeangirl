@@ -36,8 +36,9 @@ package railk.as3.ui
 		 * @param	proxys		proxys Class
 		 */
 		public function init( container:*, xml:XML, plugins:String='', loadings:Array = null, transitions:Array=null, views:Array = null, commands:Array = null, proxys:Array = null ):void {
-			pageManager.init(A('author', xml), B(A('menu', xml)), B(A('multiPage', xml)), A('structure', xml), B(A('adaptToScreen', xml)), A('package',xml));
+			pageManager.init(A('author', xml), B(A('menu', xml)), B(A('multiPage', xml)), A('structure', xml),A('loading',xml,A('package',xml)+'.loading::'), B(A('adaptToScreen', xml)), A('package',xml));
 			container.addChild( pageManager.container );
+			container.addChild( pageManager.loadingView );
 			if (commands) for (var i:int = 0; i < commands.length; i++) pageManager.registerCommand(commands[i].classe, commands[i].name ); 
 			if (proxys) for (i = 0; i < proxys.length; i++) pageManager.registerProxy(proxys[i].classe, proxys[i].name );
 			var css:String = A('stylesheet', xml);
@@ -47,7 +48,7 @@ package railk.as3.ui
 		
 		private function setup(container:*, xml:XML, plugins:String = '', css:String = ''):void {
 			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
-			Plugins.getInstance().init(plugins);
+			Plugins.getInstance().init(plugins,pageManager.loadingView);
 			pageManager.linkManager.init( A('title', xml), true, true).addGroup('main_menu', true);
 			getBlocks(xml);
 			getPages(xml);
@@ -63,7 +64,7 @@ package railk.as3.ui
 			for each ( var p:XML in xml..page) {
 				var title:String = A('title', p);
 				var parent:String = (p.parent().localName() == 'page')?p.parent().@id:'';
-				pageManager.addPage(A('id', p),parent,title,A('id',p,A('package',xml)+'.view::'),A('loading',p,A('package',xml)+'.loading::'),getPageLayout( A('package',xml)+'.view.'+A('id', p), title, new XML(p.child('body')) ),A('align',p),A('package',xml)+'.transition.'+A('transition',p));
+				pageManager.addPage(A('id', p),parent,title,A('id',p,A('package',xml)+'.view::'),getPageLayout( A('package',xml)+'.view.'+A('id', p), title, new XML(p.child('body')) ),A('align',p),A('package',xml)+'.transition.'+A('transition',p));
 			}
 		}
 		

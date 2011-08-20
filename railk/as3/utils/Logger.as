@@ -27,7 +27,6 @@ package railk.as3.utils
 			txt.width = 400;
 			txt.wordWrap = true;
 			txt.textColor = color;
-			txt.mouseEnabled = false;
 			say('\n', 'LOGGER ON');
 			
 		}
