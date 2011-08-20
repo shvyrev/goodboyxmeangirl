@@ -40,7 +40,8 @@ package railk.as3.stage
 			this.stage = stage;
 			if ( stage.hasOwnProperty("displayState") ) {
 				stage.addEventListener(FullScreenEvent.FULL_SCREEN, manageEvent, false, 0, true);
-				link = linkManager.add("fullscreenmode", target, execute, '', colors, false, 'mouse');
+				linkManager.addGroup("fullscreenmode");
+				link = linkManager.add("fullscreenmode", target, execute, 'fullscreenmode', colors, false, 'mouse');
 			}
 		}
 		

@@ -116,7 +116,7 @@ package railk.as3.ui.link
 		public function getLinks(group:String=''):Array { 
 			var walker:ILink = firstLink, result:Array=[];
 			while (walker ) {
-				if(group!=""){ result[result.length] = walker; }
+				if(group==""){ result[result.length] = walker; }
 				else { if (walker.group == group ) result[result.length] = walker; }
 				walker = walker.next;
 			}
@@ -125,7 +125,7 @@ package railk.as3.ui.link
 		
 		private function navigationChange(value:String):void {
 			var group:String = getLink(value).group;
-			if (!groups[group]) return;
+			if (groups[group]==undefined) return;
 			var a:Array = getLinks(group), i:int= a.length;
 			while ( --i > -1) if (a[i].active && a[i].name!=value) a[i].action();
 		}
