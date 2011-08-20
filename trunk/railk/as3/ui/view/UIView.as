@@ -57,10 +57,6 @@ package railk.as3.ui.view
 		 */
 		protected function localisation(e:Event):void {}
 		
-		/**
-		 * RESIZE
-		 */
-		public function resize():void {}
 		
 		/**
 		 * GETTER/SETTER

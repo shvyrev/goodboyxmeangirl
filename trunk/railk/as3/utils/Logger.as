@@ -8,6 +8,7 @@
 package railk.as3.utils 
 {
 	import flash.display.Stage;
+	import flash.events.MouseEvent;
 	import flash.external.ExternalInterface;
 	import flash.text.TextField;
 	
@@ -19,13 +20,17 @@ package railk.as3.utils
 		/**
 		 * START
 		 */
-		static public function init(stage:Stage):void {
+		static public function init(stage:Stage,color:uint=0x000000):void {
 			enabled = true; 
 			stg = stage;
 			txt = stg.addChild(new TextField()) as TextField;
-			txt.height = txt.width = 500;
+			txt.addEventListener(MouseEvent.CLICK, visibility);
+			txt.height = stg.stageHeight;
+			txt.width = 500;
 			txt.wordWrap = true;
-			log('\n','LOGGER ON')
+			txt.textColor = color;
+			log('\n', 'LOGGER ON');
+			
 		}
 		
 		/**
@@ -46,5 +51,7 @@ package railk.as3.utils
 			if (ExternalInterface.available) ExternalInterface.call('console.'+type, '['+type.toUpperCase()+'] '+mess);
 			stg.swapChildrenAt(stg.getChildIndex(txt), (stg.numChildren==0)?0:stg.numChildren-1);
 		}
+		
+		static private function visibility(e:MouseEvent):void { txt.height = (txt.height==stg.stageHeight)?20:stg.stageHeight; }
 	}
 }

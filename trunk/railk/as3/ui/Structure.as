@@ -49,11 +49,10 @@ package railk.as3.ui
 		private function setup(container:*, xml:XML, plugins:String = '', css:String = ''):void {
 			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
 			Plugins.getInstance().init(plugins);
-			LinkManager.init( A('title', xml), true, true);
+			LinkManager.getInstance().init( A('title', xml), true, true).addGroup('main_menu', true);
 			getBlocks(xml);
 			getPages(xml);
 			container.contextMenu = pageManager.menu.menu;
-			if(!pageManager.current) view(pageManager.index.id);
 		}
 		
 		private function getBlocks( xml:XML ):void {
@@ -78,6 +77,6 @@ package railk.as3.ui
 		
 		private function B( value:String ):Boolean { return (value == 'true')?true:false; }
 		private function C( value:String ):String { return value.charAt().toUpperCase()+value.substring(1);  }
-		public function view( page:String ):void { LinkManager.setValue(page); }
+		public function view( page:String ):void { LinkManager.getInstance().setValue(page); }
 	}	
 }
