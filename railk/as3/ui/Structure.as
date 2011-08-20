@@ -9,7 +9,6 @@ package railk.as3.ui
 {
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.ui.layout.Layout;
-	import railk.as3.ui.link.LinkManager;
 	import railk.as3.ui.page.PageManager;
 	import railk.as3.ui.page.Plugins;
 	import railk.as3.ui.loader.*;
@@ -49,7 +48,7 @@ package railk.as3.ui
 		private function setup(container:*, xml:XML, plugins:String = '', css:String = ''):void {
 			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
 			Plugins.getInstance().init(plugins);
-			LinkManager.getInstance().init( A('title', xml), true, true).addGroup('main_menu', true);
+			pageManager.linkManager.init( A('title', xml), true, true).addGroup('main_menu', true);
 			getBlocks(xml);
 			getPages(xml);
 			container.contextMenu = pageManager.menu.menu;
@@ -77,6 +76,6 @@ package railk.as3.ui
 		
 		private function B( value:String ):Boolean { return (value == 'true')?true:false; }
 		private function C( value:String ):String { return value.charAt().toUpperCase()+value.substring(1);  }
-		public function view( page:String ):void { LinkManager.getInstance().setValue(page); }
+		public function view( page:String ):void { pageManager.linkManager.setValue(page); }
 	}	
 }
