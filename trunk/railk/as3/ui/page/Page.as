@@ -11,7 +11,7 @@ package railk.as3.ui.page
 	import railk.as3.pattern.mvc.core.View;
 	import railk.as3.pattern.mvc.interfaces.*
 	import railk.as3.pattern.mvc.observer.Notification;
-	import railk.as3.ui.div.Div;
+	import railk.as3.ui.div.*;
 	import railk.as3.ui.layout.ILayout;
 	import railk.as3.ui.loader.*;
 	import railk.as3.ui.view.UIView;
@@ -32,17 +32,15 @@ package railk.as3.ui.page
 		protected var align:String;
 		protected var layout:ILayout;
 		protected var transitionName:String;
-		protected var loadingView:IPageLoading;
 		protected var length:Number=0;
 		
-		public function Page( MID:String, id:String, parent:IPage, title:String, loading:String, layout:ILayout, align:String, transitionName:String) {
+		public function Page( MID:String, id:String, parent:IPage, title:String, layout:ILayout, align:String, transitionName:String) {
 			super(MID,id);
 			_id = id;
 			_parent = parent;
 			_title = title;
 			this.layout = layout;
 			this.align = (align)?align:'TL';
-			this.loadingView = new (getDefinitionByName(loading))() as IPageLoading;
 			this.transitionName = transitionName;
 			data = '<h1>'+title+'</h1>\n';
 		}
@@ -78,9 +76,9 @@ package railk.as3.ui.page
 		 * SHOW/HIDE
 		 */
 		override public function show():void {
-			component = new PageDiv(id,'none',align);
+			component = new PageDiv(id, 'none', align);
 			(facade.container as PageStruct).addDiv(component);
-			Plugins.getInstance().initMonitor(_id,layout.views.concat(), enablePage);
+			Plugins.getInstance().initMonitor(_id,layout.views.concat(),enablePage);
 			setupViews(layout.views);
 		}
 		

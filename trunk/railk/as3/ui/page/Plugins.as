@@ -40,19 +40,19 @@ package railk.as3.ui.page
 		/**
 		 * SET THE PLUGINS CONTEXT
 		 */
-		public function init(context:String):void {
+		public function init(context:String,loadingView:IPageLoading):void {
 			if (!context || context == '') return;
 			var duples:Array = context.replace(/\r|\t|\n/g, '').split(';'), length:int=duples.length-1, duple:Array, classes:Array;
 			for (var i:int = 0; i < length; ++i) {
 				duple = duples[i].split('=');
 				classes = duple[1].split(',');
-				var p:Plugin = plugins[duple[0]] = new Plugin(duple[0], monitor);
+				var p:Plugin = plugins[duple[0]] = new Plugin(duple[0], monitor, loadingView);
 				for (var j:int = 0; j < classes.length; j++) hashMap[classes[j]] = duple[0];
 			}
 		}
 		
-		public function initMonitor(group:String, data:Array, f:Function):void {
-			groups[group] = new Group(data, f);
+		public function initMonitor(group:String,data:Array,f:Function):void {
+			groups[group] = new Group(data,f);
 		}
 		
 		/**
@@ -107,8 +107,9 @@ internal class Group
 }
 
 import flash.utils.getDefinitionByName;
-import railk.as3.ui.loader.loadUI;
+import railk.as3.ui.loader.*;
 import railk.as3.TopLevel;
+import railk.as3.ui.page.IPageLoading;
 internal class Plugin
 {
 	public static const NO:String = 'UIPlugin_NO';
@@ -119,16 +120,22 @@ internal class Plugin
 	public var monitor:Function;
 	public var state:String = NO;
 	public var actions:Array = [];
+	public var loadingView:IPageLoading;
 	
-	public function Plugin(file:String,monitor:Function) {
+	public function Plugin(file:String,monitor:Function,loadingView:IPageLoading) {
 		this.file = ((TopLevel.local)?"../":"")+"plugins/"+file;
 		this.monitor = monitor;
+		this.loadingView = loadingView;
 	}
 	
 	public function load(f:Function,p:Array,n:String,g:String):void {
 		state = PROGRESS;
 		addAction(f,p,n,g);
-		loadUI(file).complete(onComplete).start();
+		loadUI(file).progress(onProgress,UILoader.PERCENT).complete(onComplete).start();
+	}
+	
+	private function onProgress(percent:Number):void {
+		if(loadingView) loadingView.percent = percent;
 	}
 	
 	private function onComplete():void {
