@@ -11,7 +11,7 @@ package railk.as3.pattern.mvc.interfaces
 	import railk.as3.pattern.mvc.proxy.Data;
 	public interface IProxy
 	{
-		function getData( name:String,options:*=null ):*;
+		function getData( name:String,options:*=null ):void;
 		function removeData( name:String ):void;
 		function clearData():void;
 		function dispose():void;

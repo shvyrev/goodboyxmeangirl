@@ -43,7 +43,7 @@ package railk.as3.ui.page
 		/**
 		 * MANAGE BLOCKS
 		 */
-		public function addBlock(div:IDiv,onTop:Boolean):IDiv { return parent.addChildAt( div as Div, (onTop)?parent.numChildren-1:0 ) as IDiv; }
+		public function addBlock(div:IDiv, onTop:Boolean):IDiv { return parent.addChildAt( div as Div, (onTop?parent.numChildren:0)) as IDiv; }
 		public function delBlock(div:IDiv):void { parent.removeChild(div as Div); }
 		
 		/**

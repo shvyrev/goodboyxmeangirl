@@ -23,14 +23,13 @@ package railk.as3.pattern.mvc.proxy
 			if(name) _name = name;
 		}
 		
-		public function getData( name:String, options:*=null ):* {
-			var walker:Data = firstData;
+		public function getData( name:String, options:*=null ):void {
+			var walker:Data = firstData, found:Boolean;
 			while (walker) {
-				if (walker.name == name)  return walker.data;
+				if (walker.name == name) { sendNotification(name, walker.info, walker.data); found = true; break; }
 				walker = walker.next;
 			}
-			request(name,options);
-			return null;
+			if(!found) request(name,options);
 		}
 		
 		/**
@@ -41,8 +40,8 @@ package railk.as3.pattern.mvc.proxy
 		protected function request( name:String,options:* ):void {
 		}
 		
-		protected function addData(name:String, data:*):void {
-			var d:Data = new Data(name, data);
+		protected function addData(name:String, data:*, info:String=""):void {
+			var d:Data = new Data(name, data, info);
 			if (!firstData) firstData = lastData = d;
 			else {
 				lastData.next = d;
@@ -52,7 +51,11 @@ package railk.as3.pattern.mvc.proxy
 		}
 		
 		public function removeData( name:String ):void {
-			var d:Data = getData(name);
+			var walker:Data = firstData, d:Data;
+			while (walker) {
+				if (walker.name == name){ d= walker;  break; }
+				walker = walker.next;
+			}
 			if (d.next) d.next.prev = d.prev;
 			if (d.prev) d.prev.next = d.next;
 			else if (firstData == d) firstData = d.next;

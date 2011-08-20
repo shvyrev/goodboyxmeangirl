@@ -18,12 +18,14 @@
 
 package railk.as3.ui.page
 {
+	import flash.utils.getDefinitionByName;
 	import flash.utils.Dictionary;
 	import railk.as3.pattern.singleton.Singleton;
 	
 	public final class Plugins
 	{
 		private var hashMap:Dictionary = new Dictionary(true);
+		private var plugins:Dictionary = new Dictionary(true);
 		private var groups:Dictionary = new Dictionary(true);
 		
 		public static function getInstance():Plugins{
@@ -40,11 +42,12 @@ package railk.as3.ui.page
 		 */
 		public function init(context:String):void {
 			if (!context || context == '') return;
-			var duples:Array = context.replace(/\r|\t|\n/g, '').split(';'), length:int=duples.length, duple:Array, classes:Array;
+			var duples:Array = context.replace(/\r|\t|\n/g, '').split(';'), length:int=duples.length-1, duple:Array, classes:Array;
 			for (var i:int = 0; i < length; ++i) {
 				duple = duples[i].split('=');
 				classes = duple[1].split(',');
-				for (var j:int = 0; j < classes.length; j++) hashMap[classes[j]] = new Plugin(classes[j], duple[0], monitor);
+				var p:Plugin = plugins[duple[0]] = new Plugin(duple[0], monitor);
+				for (var j:int = 0; j < classes.length; j++) hashMap[classes[j]] = duple[0];
 			}
 		}
 		
@@ -62,10 +65,11 @@ package railk.as3.ui.page
 				complete.apply(null, params);
 				monitor(group,name);
 			} else {
-				if (hashMap[name].state == Plugin.NO) hashMap[name].load(complete,params);
-				else if (hashMap[name].state == Plugin.PROGRESS) hashMap[name].addAction(complete,params);
-				else if (hashMap[name].state == Plugin.COMPLETE) {
-					params[params.length] = hashMap[name].classe; 
+				var p:Plugin = plugins[hashMap[name]];
+				if (p.state == Plugin.NO) { p.load(complete,params,name,group); }
+				else if (p.state == Plugin.PROGRESS){ p.addAction(complete,params,name,group); }
+				else if (p.state == Plugin.COMPLETE) {
+					params[params.length] = getDefinitionByName(name) as Class; 
 					complete.apply(null, params);
 					monitor(group,name);
 				}
@@ -111,39 +115,34 @@ internal class Plugin
 	public static const PROGRESS:String = 'UIPlugin_PROGRESS';
 	public static const COMPLETE:String = 'UIPlugin_COMPLETE';
 	
-	public var name:String;
 	public var file:String;
-	public var state:String = NO;
-	public var classe:Class = null;
 	public var monitor:Function;
+	public var state:String = NO;
 	public var actions:Array = [];
-	public var params:Array = [];
 	
-	public function Plugin(name:String,file:String,monitor:Function) {
-		this.name = name;
+	public function Plugin(file:String,monitor:Function) {
 		this.file = ((TopLevel.local)?"../":"")+"plugins/"+file;
 		this.monitor = monitor;
 	}
 	
-	public function load(f:Function, p:Array):void {
+	public function load(f:Function,p:Array,n:String,g:String):void {
 		state = PROGRESS;
-		addAction(f,p);
+		addAction(f,p,n,g);
 		loadUI(file).complete(onComplete).start();
 	}
 	
 	private function onComplete():void {
-		classe = getDefinitionByName(name) as Class;
 		state = COMPLETE;
-		var i:int=actions.length;
-		while( --i > -1 ) {
-			params[i][params[i].length] = classe;
-			actions[i].apply(null, params[i]);
+		var i:int=actions.length, action:Object, params:Array;
+		while ( --i > -1 ) {
+			action = actions[i];
+			action.p[action.p.length] = getDefinitionByName(action.n) as Class;
+			action.f.apply(null, action.p);
+			monitor.apply(null, [action.g,action.n]);
 		}
-		monitor.apply(null, [name]);
 	}
 	
-	public function addAction(f:Function, p:Array):void { 
-		actions[actions.length] = f; 
-		params[params.length] = p;
+	public function addAction(f:Function, p:Array, n:String, g:String):void { 
+		actions[actions.length] = { f:f, p:p, n:n, g:g }; 
 	}
 }

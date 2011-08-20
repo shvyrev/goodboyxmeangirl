@@ -9,9 +9,11 @@
 
 package railk.as3.ui.link 
 {	
+	import flash.events.Event;
 	import flash.display.Shape;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
+	import flash.utils.Dictionary;
 	import flash.utils.getTimer;
 	import flash.geom.ColorTransform;
 	import com.asual.swfaddress.SWFAddress;
@@ -19,19 +21,17 @@ package railk.as3.ui.link
 	
 	public class Link  
 	{	
+		public static const ROLL_EVENT:String = "roll";
+		public static const MOUSE_EVENT:String = "mouse";
+		
 		public var next:Link;
 		public var prev:Link;
 		
 		public var name:String;
-		public var target:Object;
-		public var content:Object;
-		public var action:Function;
 		public var group:String;
-		public var colors:Object;
-		public var type:String;
-		public var dummy:Boolean;
-		public var data:*;
-		public var swfAddress:Boolean;     
+		public var navigation:Boolean;
+		public var swfAddress:Boolean; 
+		public var targets:Dictionary = new Dictionary(true);
 		public var active:Boolean;
 		
 		private var startTime:Number;
@@ -44,31 +44,24 @@ package railk.as3.ui.link
 		 * CONSTRUCTEUR
 		 * 
 		 * @param	name
-		 * @param	target
-		 * @param	type
-		 * @param	colors
-		 * @param	actions
+		 * @param	group
 		 * @param	swfAddressEnable
-		 * @param	dummy
 		 */
-		public function Link( name:String, target:Object = null, type:String = 'mouse', action:Function = null, group:String='', colors:Object = null, swfAddress:Boolean = false, dummy:Boolean = false, data:*=null ) {
-			this.content = new Object();
+		public function Link( name:String, group:String = '', navigation:Boolean=false, swfAddress:Boolean = false ) {
 			this.name = name;
-			this.target = (dummy)?new Shape():target;
-			this.action = action;
 			this.group = group;
-			this.colors = colors;
-			this.type = type;
-			this.dummy = dummy;
-			this.data = data;			
+			this.navigation = navigation;
 			this.swfAddress = swfAddress;
-			initListeners();			
 		}
 		
-		public function addContent( name:String, target:Object = null, action:Function = null, colors:Object = null, inside:Boolean = false, data:*=null):void {
+		public function addTarget(name:String, target:Object, event:String = 'mouse', action:Function = null, colors:Object = null, inside:Boolean = false, data:*= null):Link {
 			if (inside) target.mouseEnabled = false;
-			content[name] = { object:target, type:getType(target), colors:colors, action:action, data:data };
-			
+			if (target) {
+				initListeners(target, event);
+				targets[name] = { target:target, type:getType(target), event:event, colors:colors, action:action, data:data };
+			} else targets[name] = { target:target, action:action, data:data };
+			activate(targets[name]);
+			return this;
 		}
 		
 		/**
@@ -79,130 +72,98 @@ package railk.as3.ui.link
 		/**
 		 * LISTENERS
 		 */
-		public function initListeners():void {
-			if(!dummy) this.target.buttonMode = true;
-			if ( type == 'mouse'){
+		public function initListeners(target:Object,event:String):void {
+			if(target.hasOwnProperty("buttonMode")) target.buttonMode = true;
+			if ( event == MOUSE_EVENT){
 				target.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
 				target.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
-			} else if ( type == 'roll') {
+			} else if ( event == ROLL_EVENT) {
 				target.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
 				target.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 			}
 			target.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 		}
 		
-		public function delListeners():void {
-			if(!dummy) this.target.buttonMode = false;
-			if ( type == 'mouse') {
+		public function delListeners(target:Object,event:String):void {
+			if(target.hasOwnProperty("buttonMode")) target.buttonMode = false;
+			if ( event == MOUSE_EVENT){
 				target.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent );
 				target.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );
-			} else if ( type == 'roll') {
+			} else if ( event == ROLL_EVENT) {
 				target.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
 				target.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 			}
 			target.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
-		/**
-		 * TO STRING
-		 */
-		public function toString():String {
-			return '[ LINK > ' + this.name +' ]';
-		}
+		public function initAllListeners():void { for each (var t:Object in targets) if (t.target) initListeners(t.target,t.event); }
+		public function delAllListeners():void { for each (var t:Object in targets) if (t.target) delListeners(t.target,t.event); }
 		
 		
 		/**
-		 * DEEP LINK ACTIONS
+		 * ACTION
 		 * 
-		 * @param	data
+		 * @param	anchor
 		 */
-		public function deepLinkAction(anchor:*= null):void {
-			data = anchor;
-			if ( !active ) doAction();
-			else undoAction();
-		}
-		
-		
-		/**
-		 * NORMAL LINK ACTIONS
-		 */
-		public function doAction():void { 
-			var prop:String;
-			if ( action != null ) { 
+		public function action(data:*= null,mouse:Boolean=false):void {
+			var t:Object ;
+			if ( !active ) {
 				active = true; 
-				action("do",target,((data is Function)?data.call():data));
-				for ( prop in content ) if ( content[prop].action != null ) content[prop].action("do",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data));
-			} 
-		}
-		
-		public function undoAction():void {
-			var prop:String;
-			if ( action != null ) { 
+				for each (t in targets) {
+					data = (data)?data:((t.data is Function)?t.data.call():t.data);
+					if( t.colors != null && t.target ) changeColor(t.target, t.type, (mouse?t.colors.hover:t.colors.out), t.colors.click);
+					if ( t.action != null ) t.action("do",t.target,data);
+				}
+			} else {
 				active = false; 
-				action("undo",target,((data is Function)?data.call():data));
-				for ( prop in content ) if ( content[prop].action != null ) content[prop].action("undo",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data));
-			} 
+				for each (t in targets) {
+					data = (data)?data:((t.data is Function)?t.data.call():t.data);
+					if( t.colors != null && t.target) changeColor(t.target, t.type, t.colors.click, (mouse?t.colors.hover:t.colors.out));
+					if ( t.action != null ) t.action("undo",t.target,data);
+				}
+			}
 		}
 		
-		
-		/**
-		 * GETTER/SETTER
-		 */
-		public function get mouseChildren():Boolean { return target.mouseChildren; }
-		public function set mouseChildren(value:Boolean):void { target.mouseChildren = value; }
+		private function activate(t:Object):void {
+			if (!active) return;
+			if( t.colors != null && t.target) changeColor(t.target, t.type, t.colors.out, t.colors.click);
+			if ( t.action != null ) t.action("undo",t.target,t.data);
+		}
 		
 		
 		/**
 		 * DISPOSE
 		 */
-		public function dispose():void { delListeners(); }
+		public function dispose():void { delAllListeners(); }
 		
 		
 		/**
 		 * MANAGE EVENT
 		 */
-		private function manageEvent( evt:* ):void {
-			var prop:String, type:String = getType( target );
-			switch( evt.type ) {
+		private function manageEvent( e:MouseEvent ):void {
+			var t:Object;
+			switch( e.type ) {
 				case MouseEvent.MOUSE_OVER : 
 				case MouseEvent.ROLL_OVER :
 					if ( swfAddress ) SWFAddress.setStatus(name);
-					if ( colors ) changeColor(target, type, colors.out, colors.hover );
-					if ( action != null ) action('hover',target,((data is Function)?data.call():data) );
-					//--content
-					for ( prop in content ) {
-						if ( content[prop].colors != null ) changeColor(content[prop].object, type, content[prop].colors.out, content[prop].colors.hover); 
-						if ( content[prop].action != null ) content[prop].action('hover',content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data) );
+					for each (t in targets) {
+						if ( t.colors != null && !active) changeColor(t.target, t.type, t.colors.out, t.colors.hover); 
+						if ( t.action != null ) t.action('hover',t.target,((t.data is Function)?t.data.call():t.data) );
 					}
 					break;
 					
 				case MouseEvent.MOUSE_OUT :
 				case MouseEvent.ROLL_OUT :
 					if ( swfAddress ) SWFAddress.resetStatus();
-					if ( colors ) changeColor(target, type, colors.hover, colors.out );
-					if ( action != null ) action('out',target,((data is Function)?data.call():data) );
-					//--content
-					for ( prop in content ) {
-						if( content[prop].colors != null ) changeColor(content[prop].object, type, content[prop].colors.hover, content[prop].colors.out); 
-						if( content[prop].action != null ) content[prop].action('out',content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data) );
+					for each (t in targets) {
+						if( t.colors != null && !active) changeColor(t.target, t.type, t.colors.hover, t.colors.out); 
+						if( t.action != null ) t.action('out',t.target,((t.data is Function)?t.data.call():t.data) );
 					}	
 					break;
 					
 				case MouseEvent.CLICK :
 					if ( swfAddress ) SWFAddress.setValue(name);
-					else {
-						if (active) { active = false; if( action != null ){ action("undo",target,((data is Function)?data.call():data) ); } }
-						else{ active = true; if( action != null ){ action("do",target,((data is Function)?data.call():data)); } }
-					}
-					if ( colors ) changeColor(target, type, colors.hover, colors.click );
-					//--content
-					for ( prop in content ) {
-						if( content[prop].colors != null ) changeColor(content[prop].object, type, content[prop].colors.hover, content[prop].colors.click); 
-						if ( content[prop].action != null  ) { 
-							if( !active ) content[prop].action("do",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data) );
-							else content[prop].action("undo",content[prop].object,((content[prop].data is Function)?content[prop].data.call():content[prop].data) );
-						}
-					}	
+					else action(null,true);
 					break;
 				default : break;
 			}
@@ -212,7 +173,7 @@ package railk.as3.ui.link
 		 * ENGINE
 		 */
 		private function changeColor(target:*, type:String, startColor:uint, endColor:uint):void {
-			target.addEventListener('enterFrame', update );
+			target.addEventListener(Event.ENTER_FRAME, update );
 			this.startTime = getTimer()*.001;
 			this.startColor = startColor 
 			this.endColor = endColor 
@@ -220,12 +181,12 @@ package railk.as3.ui.link
 			this.toUpdate = target;
 		}
 		
-		private function update(evt:*):void {
-			var time:Number = (getTimer()*.001-startTime);
-			if ( updateColor(((time>=.2)?1:((time<=0)?0:ease(time,0,1,.2))))==1 ) target.removeEventListener('enterFrame', update );
+		private function update(e:Event):void {
+			var time:Number = (getTimer()*.001-startTime), target:Object=e.currentTarget;
+			if ( updateColor(target,((time>=.2)?1:((time<=0)?0:ease(time,0,1,.2))))==1 ) target.removeEventListener(Event.ENTER_FRAME, update );
 		}
 		
-		private function updateColor(ratio:Number):int {
+		private function updateColor(target:Object,ratio:Number):int {
 			if ( updateType == 'text') target.textColor = clr(ratio,startColor,endColor);
 			else { var c:ColorTransform = new ColorTransform(); c.color=clr(ratio,startColor,endColor); target.transform.colorTransform=c; }
 			return ratio;
@@ -236,6 +197,14 @@ package railk.as3.ui.link
 			return  (((b>>24)&0xFF)*q+((e>>24)&0xFF)*r)<<24|(((b>>16)&0xFF)*q+((e>>16)&0xFF)*r)<<16|(((b>>8)&0xFF)*q+((e>>8)&0xFF)*r)<<8|(b&0xFF)*q+(e&0xFF)*r;
 		}
 		
-		private function ease(t:Number,b:Number,c:Number,d:Number):Number { return c*t/d+b; }
+		private function ease(t:Number, b:Number, c:Number, d:Number):Number { return c * t / d + b; }
+		
+		
+		/**
+		 * TO STRING
+		 */
+		public function toString():String {
+			return '[ LINK > ' + this.name +' ]';
+		}
 	}
 }

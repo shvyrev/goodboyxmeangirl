@@ -71,11 +71,11 @@ package railk.as3.ui.page
 				blocks = b;
 			}
 			if (visible) b.show();
-			/*else {
+			else {
 				registerView(b);
 				var action:Function = function(type:String, requester:*, data:*):void {
 					switch(type) {
-						case 'do': case 'undo' : 
+						case 'do': 
 							if (changePage(id, data)) {
 								var p:IBlock = (getView(id) as IBlock);
 								p.anchor = data;
@@ -85,8 +85,8 @@ package railk.as3.ui.page
 						default : break;
 					}
 				}
-				LinkManager.add('/'+id+'/', null, action, '', null, true);
-			}*/
+				LinkManager.getInstance().add('/'+id+'/', null, action, '', null, true);
+			}
 		}
 		
 		public function addPage(id:String, parent:String, title:String, classe:String, loading:String, layout:ILayout, align:String, transition:String):void {
@@ -108,15 +108,15 @@ package railk.as3.ui.page
 			link+=(id!='index')?'/'+id+'/':'/';
 			var action:Function = function(type:String, requester:*, data:*):void {
 				switch(type) {
-					case 'do': case 'undo' :
+					case 'do':
 						if ( !multiPageOn && multiPage ) showAll(id,data);
 						else (multiPage)?goToPage(id,data):setPage(id,data);
 						break;
 					default : break;
 				}
 			}
-			menu.add(id, title, LinkManager.setValue, [link], ((id == 'index')?true:false) );
-			LinkManager.add(link, null, action, '', null, true);
+			menu.add(id, title, LinkManager.getInstance().setValue, [link], ((id == 'index')?true:false) );
+			LinkManager.getInstance().add(link, null, action, 'main_menu', null, true);
 		}
 		
 		/**
