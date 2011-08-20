@@ -24,13 +24,13 @@ package railk.as3.ui.view
 		protected var _style:String;
 		protected var _nameSpace:String;
 		protected var local:Localisation = Localisation.getInstance();
-		protected var UIFacade:IPageManager;
+		protected var UI:IPageManager;
 		protected var background:RectangleShape = new RectangleShape();
 		
 		public function UIView( MID:String, name:String='',component:*=null, data:*=null ) {
 			super(MID, name, component, data);
 			local.addEventListener(Event.CHANGE, localisation, false, 0, true);
-			UIFacade = facade as IPageManager;
+			UI = facade as IPageManager;
 		}
 		
 		/**
@@ -38,7 +38,7 @@ package railk.as3.ui.view
 		 */
 		override public function show():void {
 			if (_bgStyle) {
-				UIFacade.styleSheet.applyStyle(background, _bgStyle);
+				UI.styleSheet.applyStyle(background, _bgStyle);
 				container.addChild( background );
 			}
 		}

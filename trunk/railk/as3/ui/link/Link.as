@@ -19,20 +19,16 @@ package railk.as3.ui.link
 	import com.asual.swfaddress.SWFAddress;
 	
 	
-	public class Link  
+	public class Link implements ILink
 	{	
-		public static const ROLL_EVENT:String = "roll";
-		public static const MOUSE_EVENT:String = "mouse";
-		
-		public var next:Link;
-		public var prev:Link;
-		
-		public var name:String;
-		public var group:String;
-		public var navigation:Boolean;
-		public var swfAddress:Boolean; 
-		public var targets:Dictionary = new Dictionary(true);
-		public var active:Boolean;
+		private var _next:ILink;
+		private var _prev:ILink;
+		private var _name:String;
+		private var _group:String;
+		private var _navigation:Boolean;
+		private var _swfAddress:Boolean; 
+		private var _targets:Dictionary = new Dictionary(true);
+		private var _active:Boolean;
 		
 		private var startTime:Number;
 		private var startColor:uint;
@@ -48,19 +44,19 @@ package railk.as3.ui.link
 		 * @param	swfAddressEnable
 		 */
 		public function Link( name:String, group:String = '', navigation:Boolean=false, swfAddress:Boolean = false ) {
-			this.name = name;
-			this.group = group;
-			this.navigation = navigation;
-			this.swfAddress = swfAddress;
+			_name = name;
+			_group = group;
+			_navigation = navigation;
+			_swfAddress = swfAddress;
 		}
 		
-		public function addTarget(name:String, target:Object, event:String = 'mouse', action:Function = null, colors:Object = null, inside:Boolean = false, data:*= null):Link {
+		public function addTarget(name:String, target:Object, event:String = 'mouse', action:Function = null, colors:Object = null, inside:Boolean = false, data:*= null):ILink {
 			if (inside) target.mouseEnabled = false;
 			if (target) {
 				initListeners(target, event);
-				targets[name] = { target:target, type:getType(target), event:event, colors:colors, action:action, data:data };
+				_targets[name] = { target:target, type:getType(target), event:event, colors:colors, action:action, data:data };
 			} else targets[name] = { target:target, action:action, data:data };
-			activate(targets[name]);
+			activate(_targets[name]);
 			return this;
 		}
 		
@@ -73,11 +69,11 @@ package railk.as3.ui.link
 		 * LISTENERS
 		 */
 		public function initListeners(target:Object,event:String):void {
-			if(target.hasOwnProperty("buttonMode")) target.buttonMode = true;
-			if ( event == MOUSE_EVENT){
+			target.buttonMode = true;
+			if ( event == 'mouse'){
 				target.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
 				target.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
-			} else if ( event == ROLL_EVENT) {
+			} else if ( event == 'roll') {
 				target.addEventListener( MouseEvent.ROLL_OVER, manageEvent, false, 0, true );
 				target.addEventListener( MouseEvent.ROLL_OUT, manageEvent, false, 0, true );
 			}
@@ -85,19 +81,19 @@ package railk.as3.ui.link
 		}
 		
 		public function delListeners(target:Object,event:String):void {
-			if(target.hasOwnProperty("buttonMode")) target.buttonMode = false;
-			if ( event == MOUSE_EVENT){
+			target.buttonMode = false;
+			if ( event == 'mouse'){
 				target.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent );
 				target.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );
-			} else if ( event == ROLL_EVENT) {
+			} else if ( event == 'roll') {
 				target.removeEventListener( MouseEvent.ROLL_OVER, manageEvent );
 				target.removeEventListener( MouseEvent.ROLL_OUT, manageEvent );
 			}
 			target.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
-		public function initAllListeners():void { for each (var t:Object in targets) if (t.target) initListeners(t.target,t.event); }
-		public function delAllListeners():void { for each (var t:Object in targets) if (t.target) delListeners(t.target,t.event); }
+		public function initAllListeners():void { for each (var t:Object in _targets) if (t.target) initListeners(t.target,t.event); }
+		public function delAllListeners():void { for each (var t:Object in _targets) if (t.target) delListeners(t.target,t.event); }
 		
 		
 		/**
@@ -107,15 +103,15 @@ package railk.as3.ui.link
 		 */
 		public function action(data:*= null,mouse:Boolean=false):void {
 			var t:Object ;
-			if ( !active ) {
-				active = true; 
+			if ( !_active ) {
+				_active = true; 
 				for each (t in targets) {
 					data = (data)?data:((t.data is Function)?t.data.call():t.data);
 					if( t.colors != null && t.target ) changeColor(t.target, t.type, (mouse?t.colors.hover:t.colors.out), t.colors.click);
 					if ( t.action != null ) t.action("do",t.target,data);
 				}
 			} else {
-				active = false; 
+				_active = false; 
 				for each (t in targets) {
 					data = (data)?data:((t.data is Function)?t.data.call():t.data);
 					if( t.colors != null && t.target) changeColor(t.target, t.type, t.colors.click, (mouse?t.colors.hover:t.colors.out));
@@ -125,7 +121,7 @@ package railk.as3.ui.link
 		}
 		
 		private function activate(t:Object):void {
-			if (!active) return;
+			if (!_active) return;
 			if( t.colors != null && t.target) changeColor(t.target, t.type, t.colors.out, t.colors.click);
 			if ( t.action != null ) t.action("undo",t.target,t.data);
 		}
@@ -198,6 +194,21 @@ package railk.as3.ui.link
 		}
 		
 		private function ease(t:Number, b:Number, c:Number, d:Number):Number { return c * t / d + b; }
+		
+		
+		/**
+		 * GETTER/SETTER
+		 */
+		public function get next():ILink { return _next; }
+		public function set next(value:ILink):void { _next = value; }
+		public function get prev():ILink { return _prev; }
+		public function set prev(value:ILink):void { _prev = value; }
+		public function get name():String { return _name; }
+		public function get group():String { return _group; }
+		public function get navigation():Boolean { return _navigation; }
+		public function get swfAddress():Boolean { return _swfAddress; }
+		public function get targets():Dictionary { return _targets; }
+		public function get active():Boolean { return _active; }
 		
 		
 		/**

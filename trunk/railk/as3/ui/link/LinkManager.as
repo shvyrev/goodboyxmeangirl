@@ -13,17 +13,17 @@ package railk.as3.ui.link
 	import com.asual.swfaddress.SWFAddressEvent;
 	import railk.as3.pattern.singleton.Singleton;
 	
-	public class LinkManager 
+	public class LinkManager implements ILinkManager
 	{	
 		public var inited:Boolean;
 		public var state:String;
 		
-		private var firstLink:Link
-		private var lastLink:Link
+		private var firstLink:ILink
+		private var lastLink:ILink
 		private var siteTitre:String;
 		private var swfAdress:Boolean;
 		private var hasUpdateTitle:Boolean;	
-		private var link:Link;
+		private var link:ILink;
 		private var groups:Dictionary = new Dictionary(true);
 		
 		public static function getInstance():LinkManager {
@@ -38,7 +38,7 @@ package railk.as3.ui.link
 		/**
 		 * INIT
 		 */
-		public function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnable:Boolean=false ):LinkManager {
+		public function init( titre:String, swfAdressEnable:Boolean=false, updateTitleEnable:Boolean=false ):ILinkManager {
 			if(swfAdressEnable){
 				SWFAddress.addEventListener( SWFAddressEvent.CHANGE, manageEvent );
 				siteTitre = titre;
@@ -54,7 +54,7 @@ package railk.as3.ui.link
 		 * ADD GROUP
 		 * @param	name
 		 */
-		public function addGroup(name:String, navigation:Boolean = false):LinkManager {
+		public function addGroup(name:String, navigation:Boolean = false):ILinkManager {
 			if (groups[name] != undefined) throw new Error("ce groupe existe dèjà");
 			groups[name] = navigation;
 			return this;
@@ -70,7 +70,7 @@ package railk.as3.ui.link
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 * @param   type                   'mouse' | 'roll'
 		 */
-		public function add( name:String, target:Object=null, action:Function = null, group:String='', colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):Link {	
+		public function add( name:String, target:Object=null, action:Function = null, group:String='', colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):ILink {	
 			if(!group && group[group]== undefined) throw new Error ("le groupe "+group+" n'éxiste pas, veuillez le créer");
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
@@ -95,7 +95,7 @@ package railk.as3.ui.link
 		 * MANAGE LINKS
 		 */
 		public function remove( name:String ):void {
-			var l:Link = getLink(name);
+			var l:ILink = getLink(name);
 			if (l.next) l.next.prev = l.prev;
 			if (l.prev) l.prev.next = l.next;
 			else if (firstLink == l) firstLink = l.next;
@@ -103,8 +103,8 @@ package railk.as3.ui.link
 			l = null;
 		}
 		
-		public function getLink( name:String, group:String='' ):Link { 
-			var walker:Link = firstLink;
+		public function getLink( name:String, group:String='' ):ILink { 
+			var walker:ILink = firstLink;
 			while (walker ) {
 				if(group!=""){ if (walker.name == name && walker.group == group ) return walker; }
 				else{ if (walker.name == name ) return walker; }
@@ -114,7 +114,7 @@ package railk.as3.ui.link
 		}
 		
 		public function getLinks(group:String=''):Array { 
-			var walker:Link = firstLink, result:Array=[];
+			var walker:ILink = firstLink, result:Array=[];
 			while (walker ) {
 				if(group!=""){ result[result.length] = walker; }
 				else { if (walker.group == group ) result[result.length] = walker; }
@@ -122,8 +122,6 @@ package railk.as3.ui.link
 			}
 			return result;
 		}
-		
-		public function getLinkContent( name:String, group:String = '' ):* { return getLink( name, group ).targets; }
 		
 		private function navigationChange(value:String):void {
 			var group:String = getLink(value).group;

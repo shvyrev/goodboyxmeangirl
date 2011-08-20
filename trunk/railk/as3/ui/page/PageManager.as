@@ -15,7 +15,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.div.Div;
 	import railk.as3.ui.layout.ILayout;
 	import railk.as3.ui.loader.*;
-	import railk.as3.ui.link.LinkManager;
+	import railk.as3.ui.link.*;
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.styleSheet.ICSS;
 	import railk.as3.utils.hasDefinition;
@@ -39,6 +39,7 @@ package railk.as3.ui.page
 		private var multiPageAnchor:String;
 		
 		private var _styleSheet:ICSS;
+		private var _linkManager:ILinkManager = LinkManager.getInstance();
 		
 		public static function getInstance():PageManager {
 			return Multiton.getInstance('S',PageManager);
@@ -85,7 +86,7 @@ package railk.as3.ui.page
 						default : break;
 					}
 				}
-				LinkManager.getInstance().add('/'+id+'/', null, action, '', null, true);
+				_linkManager.add('/'+id+'/', null, action, '', null, true);
 			}
 		}
 		
@@ -115,8 +116,8 @@ package railk.as3.ui.page
 					default : break;
 				}
 			}
-			menu.add(id, title, LinkManager.getInstance().setValue, [link], ((id == 'index')?true:false) );
-			LinkManager.getInstance().add(link, null, action, 'main_menu', null, true);
+			menu.add(id, title, _linkManager.setValue, [link], ((id == 'index')?true:false) );
+			_linkManager.add(link, null, action, 'main_menu', null, true);
 		}
 		
 		/**
@@ -195,9 +196,10 @@ package railk.as3.ui.page
 		}
 		
 		/**
-		 * STYLESHEET
+		 * GETTER/SETTER
 		 */
 		public function set styleSheet(value:ICSS):void { _styleSheet = value; }
 		public function get styleSheet():ICSS { return _styleSheet; }
+		public function get linkManager():ILinkManager { return _linkManager; }
 	}
 }
