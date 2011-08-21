@@ -8,6 +8,7 @@
 package railk.as3.ui
 {
 	import railk.as3.pattern.singleton.Singleton;
+	import railk.as3.ui.FontManager;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.page.PageManager;
 	import railk.as3.ui.page.Plugins;
@@ -35,7 +36,7 @@ package railk.as3.ui
 		 * @param	commands	commands Class
 		 * @param	proxys		proxys Class
 		 */
-		public function init( container:*, xml:XML, plugins:String='', loadings:Array = null, transitions:Array=null, views:Array = null, commands:Array = null, proxys:Array = null ):void {
+		public function init( container:*, xml:XML, plugins:String='',loadings:Array = null, transitions:Array=null, views:Array = null, commands:Array = null, proxys:Array = null ):void {
 			pageManager.init(A('author', xml), B(A('menu', xml)), B(A('multiPage', xml)), A('structure', xml),A('loading',xml,A('package',xml)+'.loading::'), B(A('adaptToScreen', xml)), A('package',xml));
 			container.addChild( pageManager.container );
 			container.addChild( pageManager.loadingView );
@@ -48,11 +49,17 @@ package railk.as3.ui
 		
 		private function setup(container:*, xml:XML, plugins:String = '', css:String = ''):void {
 			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
-			Plugins.getInstance().init(plugins,pageManager.loadingView);
-			pageManager.linkManager.init( A('title', xml), true, true).addGroup('main_menu', true);
+			Plugins.getInstance().init(plugins, pageManager.loadingView);
+			pageManager.linkManager.init( A('title', xml), true, true).addGroup(pageManager.MID, true);
+			getFonts(xml);
 			getBlocks(xml);
 			getPages(xml);
 			container.contextMenu = pageManager.menu.menu;
+		}
+		
+		private function getFonts(xml:XML):void {
+			if ( xml..fonts.toString() == '' ) return;
+			FontManager.addFonts(xml..fonts.toString().split(','));
 		}
 		
 		private function getBlocks( xml:XML ):void {

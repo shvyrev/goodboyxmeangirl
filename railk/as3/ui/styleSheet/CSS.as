@@ -117,10 +117,11 @@ package railk.as3.ui.styleSheet
 			return hasStyle(name)?styles[name]:null; 
 		}
 		
-		public function applyStyle(o:Object, name:String):void {
-			if (!hasStyle(name)) return;
+		public function applyStyle(o:Object, name:String):Object {
+			if (!hasStyle(name)) return o;
 			var style:IStyle = getStyle(name), data:Dictionary = style.data;
 			for (var name:String in data) if (o.hasOwnProperty(name) ) o[name] = data[name];
+			return o;
 		}
 		
 		

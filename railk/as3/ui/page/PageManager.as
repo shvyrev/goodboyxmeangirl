@@ -88,7 +88,7 @@ package railk.as3.ui.page
 						default : break;
 					}
 				}
-				_linkManager.add('/'+id+'/', null, action, '', null, true);
+				_linkManager.add('/'+id+'/', null, action, '', '', null, true);
 			}
 		}
 		
@@ -119,10 +119,8 @@ package railk.as3.ui.page
 				}
 			}
 			menu.add(id, title, _linkManager.setValue, [link], ((id == 'index')?true:false) );
-			_linkManager.add(link, null, action, 'main_menu', null, true);
+			_linkManager.add(link, null, action, title, _MID, null, true);
 		}
-		
-		public function addLoading():void {  if(loadingView) container.addChild(_loadingView); }
 		
 		/**
 		 * MULTIPAGE NAV

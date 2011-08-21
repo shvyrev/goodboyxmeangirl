@@ -24,6 +24,7 @@ package railk.as3.ui.link
 		private var _next:ILink;
 		private var _prev:ILink;
 		private var _name:String;
+		private var _title:String;
 		private var _group:String;
 		private var _navigation:Boolean;
 		private var _swfAddress:Boolean; 
@@ -43,8 +44,9 @@ package railk.as3.ui.link
 		 * @param	group
 		 * @param	swfAddressEnable
 		 */
-		public function Link( name:String, group:String = '', navigation:Boolean=false, swfAddress:Boolean = false ) {
+		public function Link( name:String, title:String='', group:String = '', navigation:Boolean=false, swfAddress:Boolean = false ) {
 			_name = name;
+			_title = title;
 			_group = group;
 			_navigation = navigation;
 			_swfAddress = swfAddress;
@@ -204,6 +206,7 @@ package railk.as3.ui.link
 		public function get prev():ILink { return _prev; }
 		public function set prev(value:ILink):void { _prev = value; }
 		public function get name():String { return _name; }
+		public function get title():String { return _title; }
 		public function get group():String { return _group; }
 		public function get navigation():Boolean { return _navigation; }
 		public function get swfAddress():Boolean { return _swfAddress; }

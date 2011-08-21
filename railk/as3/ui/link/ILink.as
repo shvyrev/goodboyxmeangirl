@@ -21,6 +21,7 @@ package railk.as3.ui.link
 		function get prev():ILink;
 		function set prev(value:ILink):void;
 		function get name():String;
+		function get title():String;
 		function get group():String;
 		function get navigation():Boolean;
 		function get swfAddress():Boolean;

@@ -70,7 +70,7 @@ package railk.as3.ui.link
 		 * @param	swfAdressEnable        est-ce que le liens utilise swfadress
 		 * @param   type                   'mouse' | 'roll'
 		 */
-		public function add( name:String, target:Object=null, action:Function = null, group:String='', colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):ILink {	
+		public function add( name:String, target:Object=null, action:Function = null, title:String='', group:String='', colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):ILink {	
 			if(group && groups[group]== undefined) throw new Error ("le groupe "+group+" n'éxiste pas, veuillez le créer");
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
@@ -79,7 +79,7 @@ package railk.as3.ui.link
 			else if ( !swfAdress && !swfAdressEnable ) enable = false;
 			
 			if (!getLink(name)) {
-				link = new Link(name, group, (group?groups[group]:false), enable).addTarget((target?target.name:name), target, type, action, colors, false, data);
+				link = new Link(name, title, group, (group?groups[group]:false), enable).addTarget((target?target.name:name), target, type, action, colors, false, data);
 				if (!firstLink) firstLink = lastLink = link;
 				else {
 					lastLink.next = link;

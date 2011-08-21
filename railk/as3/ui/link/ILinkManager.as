@@ -10,7 +10,7 @@ package railk.as3.ui.link
 	{	
 		function init( titre:String, swfAdressEnable:Boolean = false, updateTitleEnable:Boolean = false ):ILinkManager;
 		function addGroup(name:String, navigation:Boolean = false):ILinkManager;
-		function add( name:String, target:Object = null, action:Function = null, group:String = '', colors:Object = null, swfAdressEnable:Boolean = false, type:String = 'mouse', data:*= null):ILink;
+		function add( name:String, target:Object = null, action:Function = null, title:String='', group:String = '', colors:Object = null, swfAdressEnable:Boolean = false, type:String = 'mouse', data:*= null):ILink;
 		function remove( name:String ):void;
 		function getLink( name:String, group:String = '' ):ILink;
 		function getLinks(group:String = ''):Array;
