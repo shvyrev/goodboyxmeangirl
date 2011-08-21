@@ -25,6 +25,7 @@ package railk.as3.ui.link
 		private var hasUpdateTitle:Boolean;	
 		private var link:ILink;
 		private var groups:Dictionary = new Dictionary(true);
+		private var current:String;
 		
 		public static function getInstance():LinkManager {
 			return Singleton.getInstance(LinkManager);
@@ -127,7 +128,12 @@ package railk.as3.ui.link
 			var group:String = getLink(value).group;
 			if (groups[group]==undefined) return;
 			var a:Array = getLinks(group), i:int= a.length;
-			while ( --i > -1) if (a[i].active && a[i].name!=value) a[i].action();
+			while ( --i > -1) {
+				if (a[i].active && a[i].name != value) {
+					a[i].action();
+					break;
+				}
+			}
 		}
 		
 		/**
@@ -149,27 +155,38 @@ package railk.as3.ui.link
 		 * MANAGE EVENT
 		 */
 		private function manageEvent( e:SWFAddressEvent ):void {
-			state = (e.value == '/')?"/home":e.value;
-			if ( getLink(e.value) ) { getLink(e.value).action(); navigationChange(e.value); }
-			else {
-				if ( getLink(e.value + '/') ) { getLink(e.value + '/').action(); navigationChange(e.value+'/');}
-				else {
+			var l:ILink;
+			if ( getLink(e.value) ) {
+				l = getLink(e.value);
+				if (current == l.name) return;
+				l.action(); 
+				navigationChange(e.value);
+			} else {
+				if ( getLink(e.value + '/') ) {
+					l = getLink(e.value + '/'); 
+					if (current == l.name) return;
+					l.action(); 
+					navigationChange(e.value + '/');
+				} else {
 					var a:Array = e.value.split('/'), i:int = a.length, anchor:String = '', link:String = (e.value.charAt(e.value.length - 1) != '/')?e.value + '/':'/' + e.value;
 					while( --i > -1 ) {
 						link = link.replace(a[i] + '/', '');
 						if(a[i]) anchor = a[i] + '/' + anchor;
 						if (getLink(link)) {
-							getLink(link).action(anchor);
-							navigationChange(link)
-							state = link;
+							l = getLink(link);
+							if (current == l.name) return;
+							l.action(anchor);
+							navigationChange(link);
 							return;
 						}
 					}
-					setValue('404');
-					state = "/unknown";
+					setValue('/');
+					return;
 				}
-			}			
+			}
+			state = '/' + l.title;
 			if (hasUpdateTitle) updateTitle(state);
+			current = l.name;
 		}
 		
 		/**
