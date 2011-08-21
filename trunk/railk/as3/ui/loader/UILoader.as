@@ -144,14 +144,14 @@ package railk.as3.ui.loader
 					if (_file != null) _file.apply(null, checkArgs(fArgs, FILE));
 					if (!next() && !loading) {
 						for (url in loaders) if (types[url][1]) loaders[url].unload();
-						if(_complete!=null) _complete.apply(null, checkArgs(cArgs,CONTENT)); 
+						if(_complete!=null) _complete.apply(null, checkArgs(cArgs,CONTENT));
 						if (_dispose) destroy();
 						count = 0;
 					}
 					break;
 				case ProgressEvent.PROGRESS :
 					percent=0;
-					percents[getUrl(listener)] = int(e.bytesLoaded/e.bytesTotal*100);
+					percents[getUrl(listener)] = int(e.bytesLoaded / e.bytesTotal * 100);
 					for (url in percents) percent += percents[url]/count;
 					_progress.apply(null, checkArgs(pArgs,PERCENT));
 					break;

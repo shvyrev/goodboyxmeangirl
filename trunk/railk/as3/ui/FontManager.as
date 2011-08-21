@@ -14,8 +14,13 @@ package railk.as3.ui
 	public class FontManager
 	{
 		static private var registeredFonts:Dictionary = new Dictionary(true);
-		static public function register(name:String,font:*):void {
-			var c:Class = (font is String )?(getDefinitionByName( font ) as Class):font;
+		
+		static public function addFonts(fonts:Array):void {
+			for (var i:int = 0; i < fonts.length; i++) addFont(fonts[i])
+		}
+		
+		static public function addFont(name:String):void {
+			var c:Class = getDefinitionByName( name ) as Class;
 			Font.registerFont(c);
 			registeredFonts[name] = (new c()).fontName;
 		}
@@ -30,6 +35,5 @@ package railk.as3.ui
 			if ( registeredFonts[name] != undefined) return registeredFonts[name];
 			throw new Error("la font n'existe pas");
 		}
-		
 	}
 }

@@ -7,7 +7,8 @@
 */
 package railk.as3.ui.loading
 {
-	public interface ILoading {
+	public interface ILoading
+	{
 		function get percent():Number;
 		function set percent(value:Number):void;
 	}

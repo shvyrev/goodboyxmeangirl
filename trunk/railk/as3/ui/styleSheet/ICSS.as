@@ -14,7 +14,7 @@ package railk.as3.ui.styleSheet
 		function toArray():Array;
 		function hasStyle(name:String):Boolean;
 		function getStyle(name:String):IStyle;
-		function applyStyle(o:Object, name:String):void;
+		function applyStyle(o:Object, name:String):Object;
 		function get length():int;
     }
 }
