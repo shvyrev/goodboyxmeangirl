@@ -14,7 +14,7 @@ package railk.as3.ui.link
 		function delListeners(target:Object, event:String):void;
 		function initAllListeners():void;
 		function delAllListeners():void;
-		function action(data:*= null, mouse:Boolean = false):void;
+		function action(data:*= null):void;
 		function dispose():void;
 		function get next():ILink;
 		function set next(value:ILink):void;

@@ -16,7 +16,7 @@ package railk.as3.ui.styleSheet
 		public static const TYPE_LINK:String = 'link';
 		
 		private static const NUMBER:RegExp = /[0-9][px|]{1,}/;
-		private static const COLOR:RegExp = /[a-zA-Z0-9#]{7,}/;
+		private static const COLOR:RegExp = /#[a-zA-Z0-9]{6,}/;
 		private static const BOOLEAN:RegExp = /true|false/;
 		private static const URL:RegExp = /url([a-zA-Z0-9 .\/_-]{0,})/;
 		
