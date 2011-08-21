@@ -18,7 +18,6 @@ package railk.as3.ui.link
 	import flash.geom.ColorTransform;
 	import com.asual.swfaddress.SWFAddress;
 	
-	
 	public class Link implements ILink
 	{	
 		private var _next:ILink;
@@ -36,6 +35,7 @@ package railk.as3.ui.link
 		private var endColor:uint;
 		private var updateType:String;
 		private var toUpdate:*;
+		private var mouse:Boolean = false;
 		
 		/**
 		 * CONSTRUCTEUR
@@ -103,7 +103,7 @@ package railk.as3.ui.link
 		 * 
 		 * @param	anchor
 		 */
-		public function action(data:*= null,mouse:Boolean=false):void {
+		public function action(data:*= null):void {
 			var t:Object ;
 			if ( !_active ) {
 				_active = true; 
@@ -160,8 +160,10 @@ package railk.as3.ui.link
 					break;
 					
 				case MouseEvent.CLICK :
+					mouse = true;
 					if ( swfAddress ) SWFAddress.setValue(name);
-					else action(null,true);
+					else action();
+					mouse = false;
 					break;
 				default : break;
 			}

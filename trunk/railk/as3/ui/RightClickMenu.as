@@ -18,6 +18,7 @@ package railk.as3.ui
 	public class RightClickMenu extends EventDispatcher
 	{
 		public var menu:ContextMenu;
+		public var prefix:String;
 		public var menus:Array = [];
 		private var items:Array=[];
 		private var item:ContextMenuItem;
@@ -26,15 +27,17 @@ package railk.as3.ui
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function RightClickMenu( hideDefault:Boolean=true ) {
-			menu = new ContextMenu();
+		public function RightClickMenu( hideDefault:Boolean=true, prefix:String="-> " ) {
+			this.menu = new ContextMenu();
+			this.prefix = prefix;
 			if(hideDefault) menu.hideBuiltInItems();
 		}
 		
 		/**
 		 * MANAGE ITEMS
 		 */
-		public function add( id:String, name:String, action:Function=null, actionParams:Array=null, separator:Boolean=false ):void {
+		public function add( id:String, name:String, action:Function = null, actionParams:Array = null, separator:Boolean = false ):void {
+			name = prefix + name;
 			actions[name] = {action:action, actionParams:actionParams};
 			item = new ContextMenuItem( name,separator );
 			if(action!=null) item.addEventListener( ContextMenuEvent.MENU_ITEM_SELECT, manageEvent, false, 0, true );
@@ -44,6 +47,7 @@ package railk.as3.ui
 		}
 		
 		public function remove( name:String ):void {
+			name = prefix + name;
 			actions[name] = null;
 			loop:for ( var i:int = 0; i < menu.customItems.length; i++ ) {
 				if ( menu.customItems[i].caption == name ) {
@@ -65,6 +69,7 @@ package railk.as3.ui
 		}
 		
 		public function getItemByName( name:String ):ContextMenuItem {
+			name = prefix + name;
 			var result:ContextMenuItem;
 			loop:for ( var i:int = 0; i < menu.customItems.length; i++ ) {
 				if ( menu.customItems[i].caption == name ) {

@@ -112,10 +112,12 @@ package railk.as3.text
 				texte.type = _type;
 				if ( !_htmlText ){
 					texte.text = (_text) ? _text : ' ';
-					texte.setTextFormat( format ); 
+					texte.setTextFormat( format );
 				} else { 
 					texte.htmlText = (_text) ? _text : ' '; 
 				}
+				texte.width = texte.textWidth+_size;
+				texte.height = texte.textHeight+_size;
 				texte.embedFonts = _embedFont;
 				texte.selectable = _selectable;
 				if ( autoSize ) {

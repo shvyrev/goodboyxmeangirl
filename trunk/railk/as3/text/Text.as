@@ -61,6 +61,8 @@ package railk.as3.text
 			} else { 
 				super.htmlText = (text) ? text : ' '; 
 			}
+			super.width = super.textWidth+size;
+			super.height = super.textHeight+size;
 			super.embedFonts = embedFont;
 			super.selectable = selectable;
 			if ( hasAutoSize ){
