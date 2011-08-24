@@ -21,8 +21,8 @@ package railk.as3.ui.page
 		protected var _visible:Boolean;
 		protected var _anchor:String;
 		protected var _id:String;
+		protected var _layout:ILayout;
 		
-		protected var layout:ILayout;
 		protected var align:String;
 		protected var onTop:Boolean;
 		protected var css:String;
@@ -30,11 +30,11 @@ package railk.as3.ui.page
 		
 		public function Block( MID:String, id:String, layout:ILayout, align:String, onTop:Boolean, visible:Boolean ) {
 			super(MID, id);
-			this.id = id;
-			this.layout = layout;
+			_id = id;
+			_layout = layout;
+			_visible = visible;
 			this.align = align;
 			this.onTop = onTop;
-			this.visible = visible;
 			this.component = new Div(id,'none',align);
 		}
 		
@@ -57,8 +57,8 @@ package railk.as3.ui.page
 		 */
 		override public function show():void {
 			(facade.container as PageStruct).addBlock(component, onTop);
-			Plugins.getInstance().initMonitor(_id,layout.views.concat(), enablePage);
-			setupViews(layout.views);
+			Plugins.getInstance().initMonitor(_id,_layout.views.concat(), enablePage);
+			setupViews(_layout.views);
 		}
 		
 		override public function hide():void {
@@ -86,7 +86,7 @@ package railk.as3.ui.page
 		 * 	UTILITIES
 		 */		
 		protected function setupViews(views:Array):void {
-			for (var i:int = 0; i < views.length; i++) views[i].setup(_id,facade,component,data,true);
+			for (var i:int = 0; i < views.length; i++) views[i].setup(_id,facade,component,data);
 		}
 		
 		/**
@@ -102,6 +102,6 @@ package railk.as3.ui.page
 		public function set visible(value:Boolean):void { _visible = value; }
 		public function get id():String { return _id; }
 		public function set id(value:String):void { _id = value; }
-
+		public function get layout():ILayout { return _layout; }
 	}
 }

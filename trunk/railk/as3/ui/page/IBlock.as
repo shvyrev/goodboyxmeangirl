@@ -6,6 +6,7 @@
 
 package railk.as3.ui.page
 {	
+	import railk.as3.ui.layout.ILayout;
 	import railk.as3.pattern.mvc.observer.Notification;
 	public interface IBlock
 	{	
@@ -23,5 +24,6 @@ package railk.as3.ui.page
 		function set visible(value:Boolean):void;
 		function get id():String;
 		function set id(value:String):void;
+		function get layout():ILayout;
 	}
 }

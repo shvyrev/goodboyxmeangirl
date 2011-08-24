@@ -12,6 +12,7 @@ package railk.as3.pattern.mvc.interfaces
 	public interface IProxy
 	{
 		function getData( name:String,options:*=null ):void;
+		function sendData( name:String,info:String,data:* ):void;
 		function removeData( name:String ):void;
 		function clearData():void;
 		function dispose():void;

@@ -26,11 +26,13 @@ package railk.as3.pattern.mvc.proxy
 		public function getData( name:String, options:*=null ):void {
 			var walker:Data = firstData, found:Boolean;
 			while (walker) {
-				if (walker.name == name) { sendNotification(name, walker.info, walker.data); found = true; break; }
+				if (walker.name == name) { sendData(name, walker.info, walker.data); found = true; break; }
 				walker = walker.next;
 			}
 			if(!found) request(name,options);
 		}
+		
+		public function sendData(name:String,info:String,data:*):void { sendNotification(name, info, data); }
 		
 		/**
 		 * TO OVERRIDE TO REQUEST DATA

@@ -13,7 +13,7 @@ package railk.as3.utils
 	
 	public class Logger 
 	{
-		static private var enabled:Boolean;
+		static public var enabled:Boolean;
 		static private var stg:Stage;
 		static private var txt:TextField;
 		/**
@@ -27,8 +27,8 @@ package railk.as3.utils
 			txt.width = 400;
 			txt.wordWrap = true;
 			txt.textColor = color;
+			txt.mouseEnabled = false;
 			say('\n', 'LOGGER ON');
-			
 		}
 		
 		/**
@@ -45,8 +45,8 @@ package railk.as3.utils
 		static private function inline(info:Array):String { return String(info).replace(',', ' '); }
 		
 		static private function print(mess:String,type:String):void {
-			trace( '['+type.toUpperCase()+'] '+mess );
-			txt.appendText('['+type.toUpperCase()+'] '+mess+'\n');
+			trace( '[' + type.toUpperCase() + '] ' + mess );
+			txt.text = '[' + type.toUpperCase() + '] ' + mess + '\n' + txt.text;
 			if (ExternalInterface.available) ExternalInterface.call('console.'+type, '['+type.toUpperCase()+'] '+mess);
 			stg.swapChildrenAt(stg.getChildIndex(txt), (stg.numChildren==0)?0:stg.numChildren-1);
 		}

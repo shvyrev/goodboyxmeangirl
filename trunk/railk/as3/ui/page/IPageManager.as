@@ -9,6 +9,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.layout.ILayout;
 	import railk.as3.ui.link.ILinkManager;
 	import railk.as3.ui.styleSheet.ICSS;
+	import railk.as3.ui.view.UIView;
 	public interface IPageManager
 	{	
 		function init( author:String, hasMenu:Boolean, multiPage:Boolean, structure:String, loading:String, adaptToScreen:Boolean, nameSpace:String ):void;
@@ -20,6 +21,7 @@ package railk.as3.ui.page
 		function setPage( id:String, anchor:String = '' ):void;
 		function unsetPage( id:String ):void
 		function enablePage(page:IPage):void;
+		function getUIView( name:String ):UIView;
 		function set styleSheet(value:ICSS):void;
 		function get styleSheet():ICSS;
 		function get linkManager():ILinkManager;

@@ -6,6 +6,7 @@
 
 package railk.as3.ui.page
 {	
+	import railk.as3.ui.layout.ILayout;
 	import railk.as3.pattern.mvc.observer.Notification;
 	public interface IPage
 	{	
@@ -38,6 +39,7 @@ package railk.as3.ui.page
 		function set prev(value:IPage):void;
 		function get anchor():String;
 		function set anchor(value:String):void;
+		function get layout():ILayout;
 		function toString():String;
 	}
 }

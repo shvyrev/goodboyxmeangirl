@@ -18,6 +18,7 @@ package railk.as3.ui.page
 	import railk.as3.ui.link.*;
 	import railk.as3.ui.RightClickMenu;
 	import railk.as3.ui.styleSheet.ICSS;
+	import railk.as3.ui.view.UIView;
 	import railk.as3.utils.hasDefinition;
 	
 	public class PageManager extends Facade implements IFacade,IPageManager
@@ -118,7 +119,7 @@ package railk.as3.ui.page
 					default : break;
 				}
 			}
-			menu.add(id, title, _linkManager.setValue, [link], ((id == 'index')?true:false) );
+			menu.add(id, '-> '+title, _linkManager.setValue, [link], ((id == 'index')?true:false) );
 			_linkManager.add(link, null, action, title, _MID, null, true);
 		}
 		
@@ -174,6 +175,11 @@ package railk.as3.ui.page
 			if (page.transition) page.transition.easeOut((page as IView).component, page.hide );
 			else page.hide();
 		}
+		
+		/**
+		 * UI VIEWS
+		 */
+		public function getUIView(name:String):UIView { return getView(name) as UIView; }
 		
 		/**
 		 * NAV UTILITIES

@@ -9,6 +9,7 @@ package railk.as3.ui
 {
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.ui.FontManager;
+	import railk.as3.ui.AssetsManager;
 	import railk.as3.ui.layout.Layout;
 	import railk.as3.ui.page.PageManager;
 	import railk.as3.ui.page.Plugins;
@@ -51,15 +52,11 @@ package railk.as3.ui
 			if (css) pageManager.styleSheet = new CSS(css, A('author', xml));
 			Plugins.getInstance().init(plugins, pageManager.loadingView);
 			pageManager.linkManager.init( A('title', xml), true, true).addGroup(pageManager.MID, true);
-			getFonts(xml);
+			if ( xml..fonts.toString() != '' ) FontManager.addFonts(xml..fonts.toString().split(','));
+			if ( xml..assets.toString() != '' ) AssetsManager.addAssets(xml..assets.toString().split(','));
 			getBlocks(xml);
 			getPages(xml);
 			container.contextMenu = pageManager.menu.menu;
-		}
-		
-		private function getFonts(xml:XML):void {
-			if ( xml..fonts.toString() == '' ) return;
-			FontManager.addFonts(xml..fonts.toString().split(','));
 		}
 		
 		private function getBlocks( xml:XML ):void {
