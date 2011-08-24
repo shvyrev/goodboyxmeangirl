@@ -9,11 +9,10 @@ package railk.as3.ui.layout
 {
 	import railk.as3.pattern.mvc.interfaces.IFacade;
 	import railk.as3.ui.view.UIView;
-	
 	public interface ILayoutView
 	{	
-		function setup(group:String,facade:IFacade, component:*, data:*,block:Boolean=false):void;
-		function populate(v:UIView):void;
+		function setup(group:String,facade:IFacade, component:*, data:*):void;
+		function populate(v:UIView):UIView;
 		function dispose():void;
 	}
 }

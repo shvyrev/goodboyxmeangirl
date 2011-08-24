@@ -18,9 +18,10 @@ package railk.as3.ui.layout
 		public var master:LayoutView;
 		public var container:LayoutView;
 		public var viewClass:Class;
+		public var view:UIView;
 		
 		public var id:String;
-		public var view:String;
+		public var viewName:String;
 		public var style:String;
 		public var bgStyle:String;
 		public var data:XML;
@@ -37,10 +38,10 @@ package railk.as3.ui.layout
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function LayoutView( container:LayoutView, master:LayoutView, view:String, id:String, float:String, align:String, margins:DivMargin, position:String, x:Number, y:Number, style:String, bgStyle:String, data:XML, constraint:String, visible:Boolean ) {
+		public function LayoutView( container:LayoutView, master:LayoutView, viewName:String, id:String, float:String, align:String, margins:DivMargin, position:String, x:Number, y:Number, style:String, bgStyle:String, data:XML, constraint:String, visible:Boolean ) {
 			this.container = container;
 			this.master = master;
-			this.view = view;
+			this.viewName = viewName;
 			this.data = data;
 			this.id = id;
 			this.float = float;
@@ -55,21 +56,21 @@ package railk.as3.ui.layout
 			this.visible = visible;
 		}
 		
-		public function setup(group:String,facade:IFacade,component:*,data:*,block:Boolean=false):void {
+		public function setup(group:String,facade:IFacade,component:*,data:*):void {
 			div = new Div(id, float, align, margins, position, x, y, data, constraint);
-			Plugins.getInstance().getClass(group,view,run,facade,component,data,block);
+			Plugins.getInstance().getClass(group,viewName,run,facade,component,data);
 		}
 		
-		private function run(facade:IFacade, component:*, data:*, block:Boolean, c:Class = null):void {
+		private function run(facade:IFacade, component:*, data:*, c:Class = null):void {
 			viewClass = (c)?c:UIView;
 			if (!container) component.addDiv( div );
 			else container.div.addDiv( div  );
 			data += (div.data != null)?div.data:'';
-			populate(facade.registerView(viewClass, id, div, data) as UIView);
+			view = populate(facade.registerView(viewClass, id, div, data) as UIView);
 			if (visible) facade.getView(id).show();
 		}
 		
-		public function populate(v:UIView):void { v.bgStyle = bgStyle; v.style = style; v.nameSpace = view.split('::')[0]; }
+		public function populate(v:UIView):UIView { v.bgStyle = bgStyle; v.style = style; v.nameSpace = viewName.split('::')[0]; return v; }
 		
 		public function dispose():void { div=null; }
 	}

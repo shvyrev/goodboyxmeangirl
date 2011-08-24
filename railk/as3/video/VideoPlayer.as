@@ -1,271 +1,311 @@
 /**
-* Flvplayer engine rtmp/stream
+*  VIDEO PLAYER rtmp/stream
 * 
 * @author Richard Rodney.
 * @version 0.2
 * 
 */
 
-package railk.as3.video 
-{	
-	import flash.display.Shape;
-	import flash.display.BitmapData;
-	import flash.events.EventDispatcher;
-	import flash.net.NetStream;
-	import flash.media.Video;
+package railk.as3.video
+{
+	import flash.display.StageDisplayState;
+	import flash.events.AsyncErrorEvent;
+	import flash.events.ErrorEvent;
+	import flash.events.Event;
+	import flash.events.FullScreenEvent;
+	import flash.events.IOErrorEvent;
+	import flash.events.MouseEvent;
+	import flash.events.NetStatusEvent;
+	import flash.events.SecurityErrorEvent;
+	import flash.events.TimerEvent;
 	import flash.media.SoundTransform;
-	import flash.net.URLRequest;
+	//import flash.media.StageVideo;
+	//import flash.media.StageVideoAvailability;
+	import flash.media.Video;
+	import flash.net.navigateToURL;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
-	import flash.events.Event;
-	import flash.events.ProgressEvent;
-	import flash.events.NetStatusEvent;
-	import flash.events.IOErrorEvent;
-	import flash.external.ExternalInterface;
-	import flash.net.navigateToURL;
-	import flash.system.Security;
+	import flash.net.URLRequest;
+	import flash.utils.Timer;
 	import flash.system.System;
-	import flash.utils.ByteArray;
-	import flash.utils.getTimer;
-	import railk.as3.event.CustomEvent;
-	
-	
-	public class VideoPlayer extends EventDispatcher
+	import flash.system.Security;
+	import railk.as3.ui.div.Div;
+	import railk.as3.utils.Logger;
+	import railk.as3.utils.StringUtils;
+
+
+	public class VideoPlayer extends Div
 	{
-		private var nc                  :NetConnection;
-		private var stream              :NetStream;
-		private var ticker				:Shape = new Shape();
-		private var streamMetadata      :Object={};
-		private var ready         		:Boolean = false;
-		private var streamBufferState   :Number = 0;
-		private var previousBytesLoaded :Number = 0;
-		private var previousBytesPLayed :Number = 0;
-		private var bytesPlayed			:Number;
-		private var bytesTotal			:Number;
-		private var startTime           :Number;
-		private var responseTime        :Number;
-		private var time  				:String;
-		private var loaded				:Number;
+		private static const EMPTY:String = "empty";
+		private static const PLAYING:String = "playing";
+		private static const PAUSED:String = "paused";
+		private static const STOPPED:String = "stopped";
 		
-		private var url                  :String;
-		private var path  				:String;
-		private var filename  			:String;
-		private var bufferSize       	:int;
-		private var width          		:Number;
-		private var height         		:Number;
-		private var type 				:String;
+		private var video:Video;
+		//private var stageVideo:StageVideo;
+		private var videoUrl:String;
+		private var _videoWidth:int;
+		private var _videoHeight:int;
+		private var type:String;
+		private var videoMetaData:VideoMetadatas;
 		
-		public var share         		:Boolean;
-		public var download     		:Boolean;
-		public var screenshot   		:Boolean;
-		public var externalDomain       :Boolean;
+		private var nc:NetConnection;
+		private var ns:NetStream;
+		private var sound:SoundTransform;
+		private var loadTimer:Timer;
+		private var playTimer:Timer;
+		private var scrubbingIndex:int;
+		private var stateBeforeScrubbing:String;
+		private var activated:Boolean;
+		private var loadBeforePlay:Boolean;
+		private var autoPlay:Boolean;
 		
-		private var video 				:Video;
-		private var sound				:SoundTransform;										
-		private var shareTxt            :String
+		private var _videoState:String;
+		private var _loaded:Number;
+		private var _played:Number;
+		private var _buffering:Boolean;
+
+
+		public function VideoPlayer(width:int, height:int, autoPlay:Boolean=false, type:String="stream",domain:String="") { init(width, height,autoPlay,type,domain); }
 		
-		
-		
-		/**
-		 * CONSTRUCTEUR
-		 */
-		public function VideoPlayer() {}
-		
-		/**
-		 * INIT
-		 */
-		public function init( share:Boolean = false, download:Boolean = false, screenshot:Boolean=false, externalDomain:Boolean=false ):void {
-			this.download = download;
-			this.screenshot = screenshot;
-			this.share = share;
-			this.externalDomain = externalDomain;
-		}
-		
-		/**
-		 * CREATE
-		 * 
-		 * @param	path
-		 * @param	filename
-		 * @param	width
-		 * @param	height
-		 * @param	buffersize
-		 * @param	type		rtmp/stream
-		 * @param	domain
-		 */
-		public function create(path:String, filename:String, width:Number, height:Number, buffersize:int=0, type:String='stream', domain:String='' ):void {
-			if (externalDomain) {
+		private function init(width:int, height:int, autoPlay:Boolean, type:String, domain:String):void {
+			if (domain) {
 				Security.allowDomain(domain);
-				Security.loadPolicyFile("http://"+domain+"/crossdomain.xml");
+				Security.loadPolicyFile(domain+"/crossdomain.xml");
 			}
 			
-			this.url = path + filename;
-			this.path = path;
-			this.filename = filename;
-			this.width = width;
-			this.height = height;
 			this.type = type;
-			this.bufferSize = buffersize;
-			execute();
-		}
-		
-		private function execute():void {
-			//connection
-			nc = new NetConnection();
-			nc.connect( ((type=='rtmp')?path:null) );
-			stream = new NetStream( nc );
-			sound = new SoundTransform();
-			stream.soundTransform = sound;
+			this.autoPlay = autoPlay;
+			_videoWidth = width;
+			_videoHeight = height;
+			scrubbingIndex = 0;
+			loadBeforePlay = false;
+			_videoState = EMPTY;
 			
-			var customClient:Object = new Object();
-			customClient.onMetaData = onVideoMetaData;
-			customClient.onCuePoint = onVideoCuePoint;
-			customClient.onPlayStatus = onVideoPlayStatus;
-			stream.client = customClient;
+			//TIMERS
+			loadTimer = new Timer(500);
+			playTimer = new Timer(100);
 			
-			//-video
+			//VIDEO
 			video = new Video(width, height);
+			video.height = height
 			video.width = width;
-			video.height = height;
-			video.attachNetStream ( stream );			
+			video.visible = false;
+			addChild(video);
 			
-			//--listeners
+			//CONNEXION
+			nc = new NetConnection();
+			
+			/////////////////////
 			initListeners();
-			
-			//--launch stream and apuse lecture
-			stream.play( ((type=='rtmp')?filename:path+filename+'?nocache='+int(Math.random()*100000*getTimer()+getTimer())) );
-			stream.seek(0);
-			stream.togglePause();	
+			nc.connect(null);
+			////////////////////
 		}
 		
-		/**
-		 * LISTENERS
-		 */
+		private function launch():void {
+			//STREAM
+			ns = new NetStream(nc);
+			ns.bufferTime = 5;
+			ns.client = this;
+			ns.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0, true);
+			ns.addEventListener(IOErrorEvent.IO_ERROR, onError, false, 0, true);
+			ns.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError, false, 0, true);
+			
+			//SOUND
+			sound = new SoundTransform();
+			ns.soundTransform = sound;
+		}
+		
 		private function initListeners():void {
-			stream.addEventListener( IOErrorEvent.IO_ERROR, manageEvent, false, 0, true );
-            stream.addEventListener( NetStatusEvent.NET_STATUS, manageEvent, false, 0, true );
-            stream.addEventListener( Event.OPEN, manageEvent, false, 0, true );
-			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+			playTimer.addEventListener(TimerEvent.TIMER, onPlayTimer, false, 0, true);
+			loadTimer.addEventListener(TimerEvent.TIMER, onLoadTimer, false, 0, true);
+			nc.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0, true);
+			nc.addEventListener(SecurityErrorEvent.SECURITY_ERROR, onError, false, 0, true);
+			nc.addEventListener(AsyncErrorEvent.ASYNC_ERROR, onError, false, 0, true);
 		}
 		
 		private function delListeners():void {
-			stream.removeEventListener( IOErrorEvent.IO_ERROR, manageEvent );
-            stream.removeEventListener( NetStatusEvent.NET_STATUS, manageEvent );
-			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
+			playTimer.removeEventListener(TimerEvent.TIMER, onPlayTimer );
+			loadTimer.removeEventListener(TimerEvent.TIMER, onLoadTimer);
+			nc.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus);
+			nc.removeEventListener(SecurityErrorEvent.SECURITY_ERROR, onError);
+			nc.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onError);
+			if (ns != null) {
+				ns.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus);
+				ns.removeEventListener(IOErrorEvent.IO_ERROR, onError);
+				ns.removeEventListener(AsyncErrorEvent.ASYNC_ERROR, onAsyncError);
+			}
 		}
 		
-		/**
-		 * META DATA
-		 */
-		private  function onVideoMetaData( metaData:Object ):void { streamMetadata = metaData; }
-		private  function onVideoCuePoint( evt:* ):void { /*return evt;*/ }
-		private  function onVideoPlayStatus( evt:* ):void { /*return evt;*/ }
-		
-		/**
-		 * ACTIONS
-		 */
-		public function play():void {
-			stream.togglePause();
-			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+		public function load(videoUrl:String):void {
+			if (videoUrl == null) return
+			this.videoUrl = videoUrl;
+			videoMetaData = null;
+			
+			if(autoPlay || loadBeforePlay) {
+				ns.play(videoUrl);
+				video.attachNetStream(ns);
+				video.visible = true;
+				activated = true;	
+				loadTimer.start();
+				playTimer.start();
+			}
 		}
 		
 		public function pause():void {
-			stream.togglePause();
-			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
+			if(!activated) return;
+			ns.pause();
+			playTimer.reset();
 		}
 		
-		public function stop():void {
-			stream.seek(0);
-			stream.pause();
-			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
+		public function play():void{
+			if(!activated) {
+				loadBeforePlay = true;
+				load(videoUrl);
+				return;
+			}
+			if(_videoState == STOPPED) ns.seek(0);
+			else ns.resume();
+			playTimer.start(),
+			_videoState = PLAYING
 		}
 		
-		public function replay():void {
-			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
-			stream.seek(0);
-		}
-		
-		public function seek(pos:Number,size:Number):void {
-			stream.seek( (pos*streamMetadata.duration)/size );
-		}
-		
-		public function volume(pos:Number, size:Number):void {
-			sound.volume = (pos*100)/size;
-			stream.soundTransform = sound;
-		}
-		
-		public function downloadVideo():void {
-			if(download) navigateToURL( new URLRequest( url ), '_blank' );
-		}
-		
-		public function shareVideo():void {
-			if(share) System.setClipboard( shareTxt );
-		}
-		
-		
-		/**
-		 * gestion du stream
-		 */
-		private function streamReady():void {
-			if ( !ready ) {
-				ready = true;
-				dispatchEvent( new CustomEvent( "stream ready" ));
-			}	
-		}
-		
-		/**
-		 * DISPOSE
-		 */
-		public function dispose():void{
+		public function dispose():void {
+			pause();
+			video.clear();
+			ns.close();
+			video.attachNetStream(null);
+			video.visible = false;
 			delListeners();
-			video = null;
+		}			
+		
+		public function seek(seekPercent:Number, scrubbing:Boolean=false):void {
+			if(seekPercent < 0) seekPercent = 0;
+			if(seekPercent > ns.bytesLoaded/ns.bytesTotal) seekPercent = ns.bytesLoaded/ns.bytesTotal;
+			if (!scrubbing) { 
+				scrubbingIndex = 0;
+				if(!playTimer.running) { playTimer.reset(); playTimer.start(); }
+			}
+			else ++scrubbingIndex;
+			
+			if(scrubbingIndex == 1) {
+				stateBeforeScrubbing = videoState;
+				if(_videoState == PLAYING || _videoState == STOPPED) { pause(); }
+			}
+			
+			ns.seek(seekPercent * videoMetaData.duration);
+			
+			if(!scrubbing) { if(stateBeforeScrubbing == PLAYING || stateBeforeScrubbing == STOPPED)play(); }
+		}
+		
+		public function onMetaData(data:Object):void {
+			if(videoMetaData == null)
+			{
+				videoMetaData = new VideoMetadatas(data);
+				if(!isNaN(videoMetaData.width) && !isNaN(videoMetaData.height)) {
+					if(stage.displayState == StageDisplayState.FULL_SCREEN) resizeVideo(stage.stageWidth, stage.stageHeight);
+					else resizeVideo(_videoWidth, _videoHeight);						
+				}
+			}
+		}
+		
+		/**
+		 * RESIZE VIDEO
+		 */
+		public function resizeVideo(width:Number, height:Number):void {
+			if (videoMetaData == null) return;
+			
+			var videoRatio:Number = videoMetaData.width / videoMetaData.height;
+			var playerRatio:Number = width / height;
+			
+			if(videoRatio > playerRatio) {
+				video.width = width;
+				video.height = width / videoRatio;
+			} else {
+				video.width = height * videoRatio;
+				video.height = height;
+			}
+		}
+		
+		/**
+		 * TOGGLE PLAY PAUSE
+		 */
+		private function togglePlayPause():void {
+			if(_videoState == PLAYING) pause();
+			else if(_videoState == PAUSED || _videoState == EMPTY) play();
+			else if(_videoState == STOPPED) { seek(0); play(); }
+		}
+		
+		/**
+		 * TICKERS
+		 * @param	event
+		 */
+		private function onLoadTimer(event:TimerEvent):void {
+			if(ns == null) return
+			_loaded = (ns.bytesLoaded/ns.bytesTotal)*100;
+			if(ns.bytesLoaded >= ns.bytesTotal) loadTimer.reset();
+		}
+		
+		private function onPlayTimer(event:TimerEvent):void {
+			if(videoMetaData == null) return;
+			_played  = (ns.time / videoMetaData.duration)*100;
+			if (_videoState == STOPPED) playTimer.reset();
+			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_PROGRESS, played));
+		}
+		
+		/**
+		 * ERRORS AND INFOS
+		 */
+		private function onAsyncError(e:ErrorEvent):void { Logger.log("onAsyncError() >>> " + e.text); }
+		private function onError(e:ErrorEvent):void { Logger.log("onError() >>> " + e.text);	}
+		private function onNetStatus(e:NetStatusEvent):void {
+			Logger.log(e.info['code']);
+			switch(e.info["code"]) {
+				case "NetStream.Play.Start": if(_videoState != PAUSED) _videoState = PLAYING; break;
+				case "NetStream.Play.Stop": _videoState = STOPPED; break;
+				case "NetStream.Buffer.Full": 
+					_buffering = false;
+					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START_BUFFERING, played));
+					break;
+				case "NetStream.Buffer.Empty": 
+					_buffering = true;
+					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STOP_BUFFERING, played));
+					break;
+				case "NetConnection.Connect.Success": launch(); break;
+				case "NetConnection.Connect.Failed": Logger.log(e.info["code"]); break;
+			}
+		}
+		
+		/**
+		 * UTILS
+		 */
+		public function downloadVideo():void { navigateToURL( new URLRequest( videoUrl ), '_blank' ); }
+		public function shareVideo():void { System.setClipboard( '' ); }
+		public function get time():String {
+			var seconds:Number = ns.time % 60;
+			var minutes:Number = (ns.time - seconds) / 60;
+			var secondsStr:String = seconds.toString().split(".")[0];
+			secondsStr = StringUtils.padString(secondsStr, 2, "0");
+			var minutesStr:String = StringUtils.padString(minutes.toString(), 2, "0");
+			return minutesStr + ":" + secondsStr;
 		}
 		
 		/**
 		 * GETTER/SETTER
 		 */
-		public function getVideo():Video { return video; }
-		public function get duration():Number { return streamMetadata.duration; }
-		public function get played():Number { return bytesPlayed; }
-		
-		/**
-		 * MANAGE EVENT
-		 */
-		private function manageEvent( evt:*):void {
-			switch( evt.type ) {
-				case Event.OPEN :
-					startTime = getTimer();
-					break;
-				case NetStatusEvent.NET_STATUS : switch( evt.info.code ){ case "NetStream.Play.Start" : responseTime = getTimer(); break;} break;
-				case IOErrorEvent.IO_ERROR : break;
-				case Event.ENTER_FRAME :
-					var timeElapsed:Number = getTimer()-startTime;
-					var currentSpeed:Number = stream.bytesLoaded / (timeElapsed*.001);
-					var downloadTimeLeft:Number = (stream.bytesLoaded-stream.bytesLoaded)/(currentSpeed*.8);
-					var remainingBuffer:Number = streamMetadata.duration - stream.bufferLength ;
-					var buffer:Number = ( bufferSize * stream.bytesTotal ) / streamMetadata.duration;
-					bytesPlayed = Math.round(( Math.round(stream.time) * stream.bytesTotal )/Math.round(streamMetadata.duration));
-					
-					if ( !bufferSize ) if ( remainingBuffer > downloadTimeLeft && evt.bytesLoaded > 8 ) streamReady();
-					else {
-						if ( !ready ) {
-							if ( streamBufferState <= buffer ) streamBufferState += stream.bytesLoaded-previousBytesLoaded;
-							else stream.togglePause();
-						} else {
-							if ( streamBufferState > buffer*.2 && (stream.bytesLoaded - bytesPlayed) >= stream.bufferLength ) streamBufferState = streamBufferState-(bytesPlayed-previousBytesPLayed);
-							else stream.togglePause();
-						}
-					}	
-					previousBytesLoaded = stream.bytesLoaded;
-					previousBytesPLayed = bytesPlayed;
-					bytesTotal = stream.bytesTotal;
-					if ( bytesPlayed == bytesTotal ) {
-						ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
-						dispatchEvent( new VideoPlayerEvent( VideoPlayerEvent.ON_COMPLETE ));
-					}
-					dispatchEvent( new VideoPlayerEvent(VideoPlayerEvent.ON_PROGRESS, { percentLoaded:(stream.bytesLoaded / stream.bytesTotal) * 100, percentPlayed:(bytesPlayed / bytesTotal) * 100 } ));
-					break;
-				default : break;
+		public function get videoState():String { return _videoState; }
+		public function get loaded():Number  { return _loaded; }
+		public function get played():Number { return _played; }
+		public function get videoWidth():int { return video.width; }
+		public function set videoWidth(width:int):void{ video.width = _videoWidth = width; }
+		public function get videoHeight():int { return video.height; }
+		public function set videoHeight(height:int):void { video.height = _videoHeight = height; }
+		public function get volume():Number { return sound.volume; }
+		public function set volume(volume:Number):void {
+			if (ns != null) {
+				sound.volume = volume
+				ns.soundTransform = sound;
 			}
 		}
-	}	
+	}
 }

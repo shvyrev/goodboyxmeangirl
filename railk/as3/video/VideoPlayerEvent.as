@@ -9,14 +9,16 @@
 package railk.as3.video 
 {	
 	import flash.events.Event;
-	dynamic public class VideoPlayerEvent extends Event
+	public class VideoPlayerEvent extends Event
 	{
-		static public const ON_PROGRESS:String = "onProgress";
-		static public const ON_COMPLETE:String = "onComplete";
+		static public const VIDEO_PROGRESS:String = "onProgress";
+		static public const VIDEO_START_BUFFERING:String = "onStartBuffer";
+		static public const VIDEO_STOP_BUFFERING:String = "onStopBuffer";
 		
-		public function VideoPlayerEvent(type:String, data:Object=null, bubbles:Boolean=false, cancelable:Boolean=false) {
+		public var percent:Number;
+		public function VideoPlayerEvent(type:String, percent:Number, bubbles:Boolean=false, cancelable:Boolean=false) {
 			super(type, bubbles, cancelable) ;
-			if(data!=null )for(var name:String in data) this[name] = data[name];
+			this.percent = percent;
 		}
 	}	
 }

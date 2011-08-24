@@ -28,9 +28,9 @@ package railk.as3.ui.page
 		private var _parent:IPage;
 		private var _anchor:String;
 		private var _transition:ITransition;
+		protected var _layout:ILayout;
 		
 		protected var align:String;
-		protected var layout:ILayout;
 		protected var transitionName:String;
 		protected var length:Number=0;
 		
@@ -39,7 +39,7 @@ package railk.as3.ui.page
 			_id = id;
 			_parent = parent;
 			_title = title;
-			this.layout = layout;
+			_layout = layout;
 			this.align = (align)?align:'TL';
 			this.transitionName = transitionName;
 			data = '<h1>'+title+'</h1>\n';
@@ -78,16 +78,17 @@ package railk.as3.ui.page
 		override public function show():void {
 			component = new PageDiv(id, 'none', align);
 			(facade.container as PageStruct).addDiv(component);
-			Plugins.getInstance().initMonitor(_id,layout.views.concat(),enablePage);
+			Plugins.getInstance().initMonitor(_id,_layout.views.concat(),enablePage);
 			setupViews(layout.views);
 		}
 		
 		override public function hide():void {
-			var i:int=0, views:Array = layout.views;
+			var i:int=0, views:Array = _layout.views;
 			//(component as PageDiv).unbind();
 			//try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
 			//catch (e:Error) { /*throw e;*/}
 			//while(component.numChildren) component.removeChildAt(0);
+			for (i = 0; i < views.length; ++i) views[i].view.hide();
 			try { (facade.container as PageStruct).delDiv(component); }
 			catch (e:ArgumentError){ throw e; }
 			component = null;
@@ -112,7 +113,7 @@ package railk.as3.ui.page
 		/**
 		 * DISPOSE
 		 */
-		override public function dispose():void { layout = null; }
+		override public function dispose():void { _layout = null; }
 		
 		/**
 		 * 	PAGE SETUP
@@ -154,6 +155,7 @@ package railk.as3.ui.page
 		public function set prev(value:IPage):void { _prev = value; }
 		public function get anchor():String { return _anchor; }
 		public function set anchor(value:String):void { _anchor = value; }
+		public function get layout():ILayout { return _layout; }
 		
 		/**
 		 * TO STRING

@@ -72,7 +72,7 @@ package railk.as3.ui.link
 		 * @param   type                   'mouse' | 'roll'
 		 */
 		public function add( name:String, target:Object=null, action:Function = null, title:String='', group:String='', colors:Object=null, swfAdressEnable:Boolean = false, type:String='mouse', data:*=null):ILink {	
-			if(group && groups[group]== undefined) throw new Error ("le groupe "+group+" n'éxiste pas, veuillez le créer");
+			if(group!="" && groups[group]== undefined) throw new Error ("le groupe "+group+" n'éxiste pas, veuillez le créer");
 			var enable:Boolean;
 			if ( swfAdress && swfAdressEnable ) enable = true;
 			else if( swfAdress && !swfAdressEnable ) enable = false;
