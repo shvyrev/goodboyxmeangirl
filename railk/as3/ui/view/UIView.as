@@ -17,6 +17,7 @@ package railk.as3.ui.view
 	import railk.as3.ui.page.IPageManager;
 	import railk.as3.utils.hasDefinition;
 	import railk.as3.display.graphicShape.RectangleShape;
+	import railk.as3.utils.Logger;
 	
 	public class UIView extends View implements IView
 	{
@@ -50,6 +51,16 @@ package railk.as3.ui.view
 			name = name.charAt() + name.substring(1);
 			return hasDefinition(name)?(getDefinitionByName(name) as Class):null; 
 		}
+		
+		/**
+		 * PLAY
+		 */
+		public function play(action:String='', data:*=null ):void {}
+		
+		/**
+		 * STOP
+		 */
+		public function stop():void {}
 		
 		/**
 		 * LOCALISE

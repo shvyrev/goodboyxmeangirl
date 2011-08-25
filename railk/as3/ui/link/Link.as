@@ -36,6 +36,7 @@ package railk.as3.ui.link
 		private var updateType:String;
 		private var toUpdate:*;
 		private var mouse:Boolean = false;
+		private var enabled:Boolean;
 		
 		/**
 		 * CONSTRUCTEUR
@@ -70,7 +71,7 @@ package railk.as3.ui.link
 		/**
 		 * LISTENERS
 		 */
-		public function initListeners(target:Object,event:String):void {
+		private function initListeners(target:Object,event:String):void {
 			target.buttonMode = true;
 			if ( event == 'mouse'){
 				target.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
@@ -82,7 +83,7 @@ package railk.as3.ui.link
 			target.addEventListener( MouseEvent.CLICK, manageEvent, false, 0, true );
 		}
 		
-		public function delListeners(target:Object,event:String):void {
+		private function delListeners(target:Object,event:String):void {
 			target.buttonMode = false;
 			if ( event == 'mouse'){
 				target.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent );
@@ -94,9 +95,8 @@ package railk.as3.ui.link
 			target.removeEventListener( MouseEvent.CLICK, manageEvent );
 		}
 		
-		public function initAllListeners():void { for each (var t:Object in _targets) if (t.target) initListeners(t.target,t.event); }
-		public function delAllListeners():void { for each (var t:Object in _targets) if (t.target) delListeners(t.target,t.event); }
-		
+		private function initAllListeners():void { enabled = true; for each (var t:Object in _targets) if (t.target) initListeners(t.target,t.event); }
+		private function delAllListeners():void { enabled = false; for each (var t:Object in _targets) if (t.target) delListeners(t.target,t.event); }
 		
 		/**
 		 * ACTION
@@ -104,21 +104,29 @@ package railk.as3.ui.link
 		 * @param	anchor
 		 */
 		public function action(data:*= null):void {
+			if ( !_active ) doAction(data);
+			else undoAction(data);
+		}
+		
+		public function doAction(data:*=null):void {
+			if (_active) return;
 			var t:Object ;
-			if ( !_active ) {
-				_active = true; 
-				for each (t in targets) {
-					data = (data)?data:((t.data is Function)?t.data.call():t.data);
-					if( t.colors != null && t.target ) changeColor(t.target, t.type, (mouse?t.colors.hover:t.colors.out), t.colors.click);
-					if ( t.action != null ) t.action("do",t.target,data);
-				}
-			} else {
-				_active = false; 
-				for each (t in targets) {
-					data = (data)?data:((t.data is Function)?t.data.call():t.data);
-					if( t.colors != null && t.target) changeColor(t.target, t.type, t.colors.click, (mouse?t.colors.hover:t.colors.out));
-					if ( t.action != null ) t.action("undo",t.target,data);
-				}
+			_active = true; 
+			for each (t in targets) {
+				data = (data)?data:((t.data is Function)?t.data.call():t.data);
+				if( t.colors != null && t.target ) changeColor(t.target, t.type, (mouse?t.colors.hover:t.colors.out), t.colors.click);
+				if ( t.action != null ) t.action("do",t.target,data);
+			}
+		}
+		
+		public function undoAction(data:*=null):void {
+			if (!_active) return;
+			var t:Object ;
+			_active = false; 
+			for each (t in targets) {
+				data = (data)?data:((t.data is Function)?t.data.call():t.data);
+				if( t.colors != null && t.target) changeColor(t.target, t.type, t.colors.click, (mouse?t.colors.hover:t.colors.out));
+				if ( t.action != null ) t.action("undo",t.target,data);
 			}
 		}
 		
@@ -128,6 +136,11 @@ package railk.as3.ui.link
 			if ( t.action != null ) t.action("undo",t.target,t.data);
 		}
 		
+		/**
+		 * ENABLE
+		 */
+		public function disable():void { if (enabled) delAllListeners(); }
+		public function enable():void { if (!enabled) initAllListeners(); }
 		
 		/**
 		 * DISPOSE
@@ -162,7 +175,10 @@ package railk.as3.ui.link
 				case MouseEvent.CLICK :
 					mouse = true;
 					if ( swfAddress ) SWFAddress.setValue(name);
-					else action();
+					else {
+						action();
+						LinkManager.getInstance().navigationChange(name);
+					}
 					mouse = false;
 					break;
 				default : break;

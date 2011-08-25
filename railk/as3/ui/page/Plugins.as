@@ -80,7 +80,7 @@ package railk.as3.ui.page
 			var g:Group = groups[group];
 			var i:int=g.monitorData.length;
 			while ( --i > -1 ) {
-				if (g.monitorData[i].view == name) {
+				if (g.monitorData[i].viewName == name) {
 					g.monitorData.splice(i, 1);
 					break;
 				}

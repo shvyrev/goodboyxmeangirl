@@ -17,6 +17,7 @@ package railk.as3.ui.link
 		function forward():void;
 		function back():void;
 		function blanc(url:String):void;
+		function navigationChange(name:String):void;
 		function setValue(value:String):void;
 		function get titre():String;
 		function set titre( value:String ):void;	
