@@ -124,12 +124,12 @@ package railk.as3.ui.link
 			return result;
 		}
 		
-		private function navigationChange(value:String):void {
-			var group:String = getLink(value).group;
+		public function navigationChange(name:String):void {
+			var group:String = getLink(name).group;
 			if (groups[group]==undefined) return;
 			var a:Array = getLinks(group), i:int= a.length;
 			while ( --i > -1) {
-				if (a[i].active && a[i].name != value) {
+				if (a[i].active && a[i].name != name) {
 					a[i].action();
 					break;
 				}

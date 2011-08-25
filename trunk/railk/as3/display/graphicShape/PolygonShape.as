@@ -8,9 +8,9 @@
 package railk.as3.display.graphicShape
 {
 	import flash.geom.Point;
-	public class TriangleShape extends GraphicShape
+	public class PolygonShape extends GraphicShape
 	{
-		public function TriangleShape(A:Point=null,B:Point=null,C:Point=null,color:uint=0x000000,lineThickness:Number=NaN, lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
+		public function PolygonShape(points:Array,color:uint=0x000000,lineThickness:Number=NaN, lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
 			super(copy);
 			_type = 'triangle';
 			A = (A)?A: new Point(0, -8);
@@ -19,9 +19,9 @@ package railk.as3.display.graphicShape
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);
-			this.graphicsCopy.moveTo( A.x, A.y );
-			this.graphicsCopy.lineTo( B.x, B.y );
-			this.graphicsCopy.lineTo( C.x, C.y );
+			this.graphicsCopy.moveTo( points[0].x, points[0].y );
+			var length:int = points.length;
+			for (var i:int = 1; i < length; i++) this.graphicsCopy.lineTo( points[i].x, points[i].y );
 			this.graphicsCopy.endFill();
 			this.color = color;
 		}

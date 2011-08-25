@@ -10,11 +10,11 @@ package railk.as3.ui.link
 	public interface ILink
 	{	
 		function addTarget(name:String, target:Object, event:String = 'mouse', action:Function = null, colors:Object = null, inside:Boolean = false, data:*= null):ILink;
-		function initListeners(target:Object, event:String):void;
-		function delListeners(target:Object, event:String):void;
-		function initAllListeners():void;
-		function delAllListeners():void;
 		function action(data:*= null):void;
+		function doAction(data:*= null):void;
+		function undoAction(data:*= null):void;
+		function enable():void;
+		function disable():void;
 		function dispose():void;
 		function get next():ILink;
 		function set next(value:ILink):void;
