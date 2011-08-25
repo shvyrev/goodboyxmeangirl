@@ -17,7 +17,6 @@ package railk.as3.ui.view
 	import railk.as3.ui.page.IPageManager;
 	import railk.as3.utils.hasDefinition;
 	import railk.as3.display.graphicShape.RectangleShape;
-	import railk.as3.utils.Logger;
 	
 	public class UIView extends View implements IView
 	{
