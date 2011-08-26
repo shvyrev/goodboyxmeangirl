@@ -12,9 +12,9 @@ package railk.as3.ui.bitmap
 	import flash.events.EventDispatcher;
 	import flash.utils.Dictionary;
 	import railk.as3.event.CustomEvent;
-	import railk.as3.display.UIBitmap;
 	import railk.as3.pattern.singleton.Singleton;
 	import railk.as3.ui.loader.UILoader;
+	import railk.as3.TopLevel;
 	
 	public final class BitmapManager extends EventDispatcher
 	{
@@ -49,15 +49,15 @@ package railk.as3.ui.bitmap
 		 * @param	url
 		 */
 		public function addUrlList(urls:Array):BitmapManager { for (var i:int = 0; i < urls.length; i++) addUrl(urls[i]); return this; }
-		public function addUrl(url:String):BitmapManager { loader.add(url); return this; }
+		public function addUrl(url:String):BitmapManager { loader.add((TopLevel.local?'../':'')+url); return this; }
 		public function load(slot:int=7):BitmapManager {
-			if (!loader.active) loader.progress(_progress,UILoader.PERCENT,UILoader.PERCENTS).file(add,UILoader.FILE,UILoader.FILE_URL).complete(_complete).start(slot);
+			if (!loader.active) loader.progress(_progress,UILoader.PERCENT,UILoader.PERCENTS).file(add,UILoader.FILE,UILoader.FILE_URL).complete(_complete,UILoader.CONTENT_ARRAY).start(slot);
 			return this;
 		}
 		
 		private function add(data:Bitmap,url:String):void {
 			var name:String = url.split('/').pop().split('.')[0];
-			var bmp:UIBitmap = bmds.pick(data.width, data.height);
+			var bmp:Bitmap = bmds.pick(data.width, data.height);
 			bmp.bitmapData.draw(data);
 			bmps[name] = bmp;
 			loader.content[url].bitmapData.dispose();
@@ -75,15 +75,16 @@ package railk.as3.ui.bitmap
 			e.percents = filesPercent;
 			dispatchEvent(e);
 		}
-		private function _file(bitmap:UIBitmap,name:String):void { 
+		private function _file(bitmap:Bitmap,name:String):void { 
 			var e:BitmapManagerEvent = new BitmapManagerEvent(BitmapManagerEvent.FILE);
 			e.bitmap = bitmap;
 			e.name = name;
 			dispatchEvent(e);
 		}
 		
-		private function _complete():void { 
+		private function _complete(bitmaps:Array):void { 
 			var e:BitmapManagerEvent = new BitmapManagerEvent(BitmapManagerEvent.COMPLETE);
+			e.bitmaps = bitmaps;
 			dispatchEvent(e);
 		}
 		
@@ -134,7 +135,7 @@ package railk.as3.ui.bitmap
 		 * @param	name
 		 * @return
 		 */
-		public function getByName(name:String):UIBitmap {
+		public function getByName(name:String):Bitmap {
 			if (has(name)) return bmps[name];
 			throw new Error("le bitmap n'existe pas, veuiller le télécharger");
 		}
@@ -142,7 +143,7 @@ package railk.as3.ui.bitmap
 }
 
 import flash.display.BitmapData;
-import railk.as3.display.UIBitmap
+import flash.display.Bitmap;
 internal final class BitmapPool
 {
 	public var growthRate:int;
@@ -151,8 +152,8 @@ internal final class BitmapPool
 	
 	private var free:int=0;
 	private var os:Array = [];
-	private var last:UIBitmap;
-	private var picked:UIBitmap;
+	private var last:Bitmap;
+	private var picked:Bitmap;
 	
 	
 	public function BitmapPool( size:int, growthRate:int, limit:int) {
@@ -164,13 +165,13 @@ internal final class BitmapPool
 	private function populate(i:int):void {
 		if (size >= limit) throw Error('bitmapManager limit exceeded');
 		while( --i > -1 ) {
-			last = new UIBitmap();
+			last = new Bitmap();
 			os[free++] = last;
 			size++;
 		}
 	}
 	
-	public function pick(width:int, height:int):UIBitmap {
+	public function pick(width:int, height:int):Bitmap {
 		if (free < 1 ) populate(growthRate);
 		picked = last;
 		last = os[--free-1];
@@ -178,7 +179,7 @@ internal final class BitmapPool
 		return picked;
 	}
 	
-	public function release( o:UIBitmap ):void {
+	public function release( o:Bitmap ):void {
 		o.bitmapData.dispose();
 		os[free++] = o;
 		last = o;
