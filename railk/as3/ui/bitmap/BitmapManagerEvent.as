@@ -9,7 +9,7 @@ package railk.as3.ui.bitmap
 {
 	import flash.events.Event;
 	import flash.utils.Dictionary;
-	import railk.as3.display.UIBitmap;
+	import flash.display.Bitmap;
 	
 	public class BitmapManagerEvent extends Event
 	{
@@ -20,7 +20,8 @@ package railk.as3.ui.bitmap
 		public var percents:Dictionary
 		public var percent:int;
 		public var name:String;
-		public var bitmap:UIBitmap;
+		public var bitmap:Bitmap;
+		public var bitmaps:Array;
 		
 		public function BitmapManagerEvent(type:String, bubbles:Boolean=false, cancelable:Boolean=false) {
 			super(type, bubbles, cancelable);

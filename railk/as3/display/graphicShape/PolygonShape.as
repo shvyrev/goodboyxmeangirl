@@ -12,10 +12,7 @@ package railk.as3.display.graphicShape
 	{
 		public function PolygonShape(points:Array,color:uint=0x000000,lineThickness:Number=NaN, lineColor:uint=0xFFFFFF,copy:Boolean=false ) {
 			super(copy);
-			_type = 'triangle';
-			A = (A)?A: new Point(0, -8);
-			B = (B)?B: new Point(10, 10);
-			C = (C)?C: new Point(-10, 10);
+			_type = 'ploygon';
 			this.graphicsCopy.clear();
 			if(lineThickness) this.graphicsCopy.lineStyle(lineThickness,lineColor,1);
 			this.graphicsCopy.beginFill(color);

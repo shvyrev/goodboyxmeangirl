@@ -54,7 +54,7 @@ package railk.as3.ui.view
 		/**
 		 * PLAY
 		 */
-		public function play(action:String='', data:*=null ):void {}
+		public function play(data:*=null):void {}
 		
 		/**
 		 * STOP

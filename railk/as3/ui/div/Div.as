@@ -11,7 +11,7 @@ package railk.as3.ui.div
 	import flash.events.Event;
 	import flash.geom.Point;
 	import railk.as3.display.UISprite;
-	
+
 	public class Div extends UISprite implements IDiv
 	{	
 		protected var arcs:Array = [];
@@ -68,6 +68,7 @@ package railk.as3.ui.div
 		public function addDiv(div:IDiv):IDiv {
 			div.master = getMaster();
 			if (div.position == 'relative') setupDiv(div);
+			else div.bind();
 			addChild(div as Div);
 			if (!first) first = last = div;
 			else {
@@ -155,7 +156,7 @@ package railk.as3.ui.div
 		 * MONITOR CHANGES
 		 */
 		public function bind():void {
-			if (position != 'asbolute') {
+			if (position != 'absolute') {
 				this.addEventListener(Event.CHANGE, check);
 				activate(this);
 			}
@@ -164,7 +165,7 @@ package railk.as3.ui.div
 		}
 		
 		public function unbind():void {
-			if (position != 'asbolute') {
+			if (position != 'absolute') {
 				this.removeEventListener(Event.CHANGE, check);
 				desactivate(this);
 			}
@@ -233,10 +234,10 @@ package railk.as3.ui.div
 		
 		protected function placeDiv(div:IDiv, prev:IDiv):void {
 			var X:Number = ((prev)?prev.x:0), Y:Number = ((prev)?prev.y:0);
-			if (div.float == 'none') Y = Y+div.margins.top+((prev)?prev.height+prev.margins.bottom:0)+div.padding.y;
-			else if (div.float == 'left') X = X+div.margins.left+((prev)?prev.width+prev.margins.right:0)+div.padding.x;
-			div.x = X;
-			div.y = Y;
+			if (div.float == 'none') Y = Y+div.margins.top+((prev)?prev.height+prev.margins.bottom:0);
+			else if (div.float == 'left') X = X+div.margins.left+((prev)?prev.width+prev.margins.right:0);
+			div.x = X+div.padding.x;
+			div.y = Y+div.padding.y;
 		}
 		
 		protected function insert(div:IDiv):void {
@@ -254,7 +255,7 @@ package railk.as3.ui.div
 		protected function getMaster():* { return this; }
 		
 		protected function boulderDash():void {
-			state.init();
+			//state.init();
 			if (stage) initResize();
 			else if(!hasEventListener(Event.ADDED_TO_STAGE)) addEventListener(Event.ADDED_TO_STAGE, initResize);
 			var m:* = master;
@@ -264,7 +265,7 @@ package railk.as3.ui.div
 		/**
 		 * RESIZE
 		 */
-		protected function initResize(evt:Event=null):void {
+		protected function initResize(evt:Event = null):void {
 			removeEventListener( Event.ADDED_TO_STAGE, initResize);
 			stage.addEventListener(Event.RESIZE, resize, false , 0, true );
 			resize();
@@ -272,8 +273,8 @@ package railk.as3.ui.div
 		 
 		public function resize(evt:Event = null):void {
 			var W:Number = (!isDiv)?stage.stageWidth:parent.width, H:Number = (!isDiv)?stage.stageHeight:parent.height, a:String=_align;
-			x = (a=='TL' || a=='L' || a=='CENTERY' )?state.x:(a=='TR' || a=='BR' || a=='R')?W-width:(a=='BL')?0:(a=='T' || a=='B' || a=='CENTER' || a=='CENTERX')?W*.5-width*.5:x;
-			y = (a=='TL' || a=='TR' || a=='T' || a=='CENTERX')?state.y:(a=='BR' || a=='BL' || a=='B')?stage.stageHeight-height:(a=='L' || a=='R' || a=='CENTER' || a=='CENTERY')?H*.5-height*.5:y;
+			x = (a=='TL' || a=='L' || a=='CENTERY' )?state.x:(a=='TR' || a=='BR' || a=='R')?(W-width)+_padding.x:(a=='BL')?0:(a=='T' || a=='B' || a=='CENTER' || a=='CENTERX')?(W*.5-width*.5)+_padding.x:state.x;
+			y = (a=='TL' || a=='TR' || a=='T' || a=='CENTERX')?state.y:(a=='BR' || a=='BL' || a=='B')?(stage.stageHeight-height)+_padding.y:(a=='L' || a=='R' || a=='CENTER' || a=='CENTERY')?(H*.5-height*.5)+_padding.y:state.y;
 		}
 		
 		/**

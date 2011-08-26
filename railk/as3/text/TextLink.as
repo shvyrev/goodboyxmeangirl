@@ -48,7 +48,6 @@ package railk.as3.text
 		private var _autoSize                :Boolean; 
 		private var _hasMask                 :Boolean; 
 		private var _autoSizeType            :String;
-		private var _letterSpacing           :Number;
 		private var _backgroundColor         :uint;
 		private var _borderColor             :uint;
 		
@@ -110,14 +109,15 @@ package railk.as3.text
 				texte = new TextField();
 				texte.name = _name;
 				texte.type = _type;
+				texte.wordWrap = _wordwrap;
 				if ( !_htmlText ){
 					texte.text = (_text) ? _text : ' ';
 					texte.setTextFormat( format );
 				} else { 
 					texte.htmlText = (_text) ? _text : ' '; 
 				}
-				texte.width = texte.textWidth+_size;
-				texte.height = texte.textHeight+_size;
+				texte.width = texte.textWidth+_size*.5;
+				texte.height = texte.textHeight+_size*.5;
 				texte.embedFonts = _embedFont;
 				texte.selectable = _selectable;
 				if ( autoSize ) {
@@ -136,7 +136,7 @@ package railk.as3.text
 					texte.border = true;
 					texte.borderColor = _borderColor;
 				}
-				texte.wordWrap = _wordwrap;
+				
 				texte.mouseEnabled = _selectable;
 				if(!_pixelFont) texte.antiAliasType = AntiAliasType.ADVANCED;
 				textLink.addChild( texte );
@@ -227,10 +227,15 @@ package railk.as3.text
 			_embedFont = value;
 		}
 		
-		public function get letterSpacing():Number { return _letterSpacing; }
+		public function get leading():Number { return format.leading as Number; }
+		public function set leading(value:Number):void { 
+			format.leading = value;
+			texte.setTextFormat( format );
+		}
+		
+		public function get letterSpacing():Number { return format.letterSpacing as Number }
 		public function set letterSpacing(value:Number):void { 
 			format.letterSpacing = value;
-			_letterSpacing = value;
 			texte.setTextFormat( format );
 		}
 		
@@ -259,6 +264,12 @@ package railk.as3.text
 			_selectable = value;
 		}
 		
+		public function get wordwrap():Boolean { return _wordwrap; }
+		public function set wordwrap(value:Boolean):void {
+			texte.wordWrap = value;
+			_wordwrap = value;
+		}
+		
 		override public function get width():Number { return texte.width; }
 		override public function set width(value:Number):void {
 			if (!_autoSize) {
@@ -276,6 +287,9 @@ package railk.as3.text
 				dispatchChange();
 			}
 		}
+		
+		public function get textWidth():Number { return texte.textWidth; }
+		public function get textHeight():Number { return texte.textHeight; }
 		
 		public function get autoSize():Boolean { return _autoSize; }
 		public function set autoSize(value:Boolean):void { _autoSize = value; }
