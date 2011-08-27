@@ -7,6 +7,7 @@
 
 package railk.as3.display 
 {	
+	import flash.display.DisplayObject;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.geom.Point;
@@ -37,6 +38,10 @@ package railk.as3.display
 		override public function set y(value:Number):void { super.y = value; dispatchChange(); }
 		override public function set width(value:Number):void { super.width = value; dispatchChange(); }
 		override public function set height(value:Number):void { super.height = value; dispatchChange(); }
+		override public function addChild(child:DisplayObject):DisplayObject { super.addChild(child); dispatchChange(); return child; }
+		override public function addChildAt(child:DisplayObject, index:int):DisplayObject { super.addChildAt(child, index); dispatchChange(); return child; }
+		override public function removeChild(child:DisplayObject):DisplayObject { super.removeChild(child); dispatchChange(); return child; }
+		override public function removeChildAt(index:int):DisplayObject { var child:DisplayObject = super.removeChildAt(index); dispatchChange(); return child; }
 		
 		/**
 		 * X2

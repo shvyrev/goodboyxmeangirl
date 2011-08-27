@@ -69,15 +69,15 @@ package railk.as3.ui.div
 			div.master = getMaster();
 			if (div.position == 'relative') setupDiv(div);
 			else div.bind();
-			addChild(div as Div);
 			if (!first) first = last = div;
 			else {
 				last.next = div;
 				div.prev = last;
 				last = div;
 			}
+			addChild(div as Div);
 			_numDiv++;
-			return this;
+			return div;
 		}
 		
 		public function insertDivBefore(before:*,div:IDiv):IDiv {
@@ -92,7 +92,7 @@ package railk.as3.ui.div
 			d.prev.removeArc(div.next);
 			placeDiv(div,div.prev);
 			insert(div);
-			return this;
+			return div;
 		}
 		
 		public function insertDivAfter(after:*,div:IDiv):IDiv {
@@ -107,10 +107,11 @@ package railk.as3.ui.div
 			d.removeArc(div.next);
 			placeDiv(div,d);
 			insert(div);
-			return this;
+			return div;
 		}
 		
 		public function delDiv(div:*):void {
+			if (!div) return;
 			var d:IDiv = getDiv((div is String)?div:div.name);
 			if (!d) return;
 			if(d.prev) d.prev.removeArc(d);
@@ -255,7 +256,8 @@ package railk.as3.ui.div
 		protected function getMaster():* { return this; }
 		
 		protected function boulderDash():void {
-			//state.init();
+			placeDiv(this, prev);
+			state.init();
 			if (stage) initResize();
 			else if(!hasEventListener(Event.ADDED_TO_STAGE)) addEventListener(Event.ADDED_TO_STAGE, initResize);
 			var m:* = master;
@@ -273,8 +275,8 @@ package railk.as3.ui.div
 		 
 		public function resize(evt:Event = null):void {
 			var W:Number = (!isDiv)?stage.stageWidth:parent.width, H:Number = (!isDiv)?stage.stageHeight:parent.height, a:String=_align;
-			x = (a=='TL' || a=='L' || a=='CENTERY' )?state.x:(a=='TR' || a=='BR' || a=='R')?(W-width)+_padding.x:(a=='BL')?0:(a=='T' || a=='B' || a=='CENTER' || a=='CENTERX')?(W*.5-width*.5)+_padding.x:state.x;
-			y = (a=='TL' || a=='TR' || a=='T' || a=='CENTERX')?state.y:(a=='BR' || a=='BL' || a=='B')?(stage.stageHeight-height)+_padding.y:(a=='L' || a=='R' || a=='CENTER' || a=='CENTERY')?(H*.5-height*.5)+_padding.y:state.y;
+			x = (a=='TL' || a=='L' || a=='CENTERY' )?state.x:(a=='TR' || a=='BR' || a=='R')?(W-width)+_padding.x:(a=='BL')?0:(a=='T' || a=='B' || a=='CENTER' || a=='CENTERX')?(W*.5-width*.5)+_padding.x:x;
+			y = (a=='TL' || a=='TR' || a=='T' || a=='CENTERX')?state.y:(a=='BR' || a=='BL' || a=='B')?(stage.stageHeight-height)+_padding.y:(a=='L' || a=='R' || a=='CENTER' || a=='CENTERY')?(H*.5-height*.5)+_padding.y:y;
 		}
 		
 		/**

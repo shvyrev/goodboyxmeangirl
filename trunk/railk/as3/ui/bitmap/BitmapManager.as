@@ -59,7 +59,7 @@ package railk.as3.ui.bitmap
 			var name:String = url.split('/').pop().split('.')[0];
 			var bmp:Bitmap = bmds.pick(data.width, data.height);
 			bmp.bitmapData.draw(data);
-			bmps[name] = bmp;
+			bmps[(url.split('?')[0])] = bmps[name] = bmp;
 			loader.content[url].bitmapData.dispose();
 			loader.content[url] = null;
 			delete loader.content[url];
@@ -128,6 +128,16 @@ package railk.as3.ui.bitmap
 		public function has( name:String ):Boolean {
 			if (bmps[name] != undefined) return true;
 			return false;
+		}
+		
+		/**
+		 * HAS LIST
+		 * @param	name
+		 * @return
+		 */
+		public function hasList( list:Array ):Boolean {
+			for (var i:int = 0; i < list.length; i++ ) if (bmps[list[i]] == undefined) return false;
+			return true;
 		}
 		
 		/**

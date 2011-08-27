@@ -25,5 +25,7 @@ package railk.as3.ui.div
 		}
 		
 		public function dispose():void { div = null; }
+		
+		public function toString():String { return '[DIVSTATE > x:'+x+', y:'+y+', width:'+width+', height:'+height+' ]'; }
 	}
 }

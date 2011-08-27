@@ -18,8 +18,7 @@ package railk.as3.ui.link
 		public var inited:Boolean;
 		public var state:String;
 		
-		private var firstLink:ILink
-		private var lastLink:ILink
+		private var links:ILink
 		private var siteTitre:String;
 		private var swfAdress:Boolean;
 		private var hasUpdateTitle:Boolean;	
@@ -62,6 +61,12 @@ package railk.as3.ui.link
 		}
 		
 		/**
+		 * DELETE GROUP
+		 * @param	name
+		 */
+		public function delGroup(name:String):void { if (groups[name] != undefined) delete groups[name]; }
+		
+		/**
 		 * ADD LINK
 		 * 
 		 * @param	name                   nom du lien de type /.../.../...
@@ -81,11 +86,10 @@ package railk.as3.ui.link
 			
 			if (!getLink(name)) {
 				link = new Link(name, title, group, (group?groups[group]:false), enable).addTarget((target?target.name:name), target, type, action, colors, false, data);
-				if (!firstLink) firstLink = lastLink = link;
+				if (!links) links = link;
 				else {
-					lastLink.next = link;
-					link.prev = lastLink;
-					lastLink = link;
+					link.prev = links;
+					links = link;
 				}
 			} 
 			else throw new Error ("liens déjà existant");
@@ -96,31 +100,36 @@ package railk.as3.ui.link
 		 * MANAGE LINKS
 		 */
 		public function remove( name:String ):void {
-			var l:ILink = getLink(name);
-			if (l.next) l.next.prev = l.prev;
-			if (l.prev) l.prev.next = l.next;
-			else if (firstLink == l) firstLink = l.next;
-			l.dispose();
-			l = null;
+			var walker:ILink = links, previous:ILink;
+			while (walker ) {
+				if (walker.name == name) {
+					if (previous) previous.prev = walker.prev;
+					else links = walker.prev;
+					walker.dispose();
+				}
+				previous = walker;
+				walker = walker.prev;
+			}
 		}
 		
 		public function getLink( name:String, group:String='' ):ILink { 
-			var walker:ILink = firstLink;
+			var walker:ILink = links;
 			while (walker ) {
 				if(group!=""){ if (walker.name == name && walker.group == group ) return walker; }
 				else{ if (walker.name == name ) return walker; }
-				walker = walker.next;
+				walker = walker.prev;
 			}
 			return null;
 		}
 		
 		public function getLinks(group:String=''):Array { 
-			var walker:ILink = firstLink, result:Array=[];
+			var walker:ILink = links, result:Array=[];
 			while (walker ) {
 				if(group==""){ result[result.length] = walker; }
 				else { if (walker.group == group ) result[result.length] = walker; }
-				walker = walker.next;
+				walker = walker.prev;
 			}
+			result.reverse();
 			return result;
 		}
 		

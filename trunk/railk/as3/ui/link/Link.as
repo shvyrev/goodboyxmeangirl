@@ -20,7 +20,6 @@ package railk.as3.ui.link
 	
 	public class Link implements ILink
 	{	
-		private var _next:ILink;
 		private var _prev:ILink;
 		private var _name:String;
 		private var _title:String;
@@ -219,8 +218,6 @@ package railk.as3.ui.link
 		/**
 		 * GETTER/SETTER
 		 */
-		public function get next():ILink { return _next; }
-		public function set next(value:ILink):void { _next = value; }
 		public function get prev():ILink { return _prev; }
 		public function set prev(value:ILink):void { _prev = value; }
 		public function get name():String { return _name; }
