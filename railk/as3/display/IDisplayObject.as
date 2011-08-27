@@ -16,6 +16,9 @@ package railk.as3.display
 		function addChildAt(child:DisplayObject, index:int):DisplayObject;
 		function removeChild(child:DisplayObject):DisplayObject;
 		function removeChildAt(index:int):DisplayObject;
+		function getChildAt(index:int):DisplayObject;
+		function getChildByName(name:String):DisplayObject;
+		function getChildIndex(child:DisplayObject):int;
 		function get stage():Stage;
 	}
 }

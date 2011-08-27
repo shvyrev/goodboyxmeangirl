@@ -16,8 +16,6 @@ package railk.as3.ui.link
 		function enable():void;
 		function disable():void;
 		function dispose():void;
-		function get next():ILink;
-		function set next(value:ILink):void;
 		function get prev():ILink;
 		function set prev(value:ILink):void;
 		function get name():String;
