@@ -44,6 +44,7 @@ package railk.as3.ui.div
 			this.constraint = constraint;
 			_state = new DivState(this);
 			addEventListener(Event.ADDED_TO_STAGE, added );
+			addEventListener(Event.REMOVED_FROM_STAGE, removed);
 		}
 		
 		/**
@@ -54,13 +55,18 @@ package railk.as3.ui.div
 			isDiv = (master)?('addDiv' in master):false;
 		}
 		
+		private function removed(evt:Event):void {
+			removeEventListener(Event.REMOVED_FROM_STAGE, removed);
+			unbind();
+		}
+		
 		/**
 		 * CHILD MANAGEMENT
 		 */
 		override public function addChild(child:DisplayObject):DisplayObject { activate(this); super.addChild(child); boulderDash(); return child; }
 		override public function addChildAt(child:DisplayObject, index:int):DisplayObject { activate(this); super.addChildAt(child, index); boulderDash(); return child; }
-		override public function removeChild(child:DisplayObject):DisplayObject { activate(this); super.removeChild(child); check(); boulderDash(); return child; }
-		override public function removeChildAt(index:int):DisplayObject { activate(this); var c:DisplayObject = super.removeChildAt(index); check(); boulderDash(); return c; }
+		override public function removeChild(child:DisplayObject):DisplayObject { desactivate(this); super.removeChild(child); check(); boulderDash(); return child; }
+		override public function removeChildAt(index:int):DisplayObject { desactivate(this); var c:DisplayObject = super.removeChildAt(index); check(); boulderDash(); return c; }
 		
 		/**
 		 * MANAGE DIVS
@@ -234,9 +240,9 @@ package railk.as3.ui.div
 		}
 		
 		protected function placeDiv(div:IDiv, prev:IDiv):void {
-			var X:Number = ((prev)?prev.x:0), Y:Number = ((prev)?prev.y:0);
-			if (div.float == 'none') Y = Y+div.margins.top+((prev)?prev.height+prev.margins.bottom:0);
-			else if (div.float == 'left') X = X+div.margins.left+((prev)?prev.width+prev.margins.right:0);
+			var X:Number = ((prev && div.position!='absolute')?prev.x:0), Y:Number = ((prev && div.position!='absolute')?prev.y:0);
+			if (div.float == 'none') Y = Y+div.margins.top+((prev && div.position!='absolute')?prev.height+prev.margins.bottom:0);
+			else if (div.float == 'left') X = X + div.margins.left + ((prev && div.position!='absolute')?prev.width + prev.margins.right:0);
 			div.x = X+div.padding.x;
 			div.y = Y+div.padding.y;
 		}

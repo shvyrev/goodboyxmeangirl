@@ -30,6 +30,7 @@ package railk.as3.ui.bitmap
 		private var loader:UILoader;
 		private var bmps:Dictionary = new Dictionary(true);
 		private var bmds:BitmapPool;
+		private var local:String;
 		
 		/**
 		 * INIT
@@ -41,6 +42,7 @@ package railk.as3.ui.bitmap
 		public function init(size:int, growthRate:int, limit:int):BitmapManager { 
 			loader = new UILoader().dispose(false);
 			bmds = new BitmapPool(size, growthRate, limit);
+			local = (TopLevel.local?'../':'');
 			return this; 
 		}
 		
@@ -49,7 +51,7 @@ package railk.as3.ui.bitmap
 		 * @param	url
 		 */
 		public function addUrlList(urls:Array):BitmapManager { for (var i:int = 0; i < urls.length; i++) addUrl(urls[i]); return this; }
-		public function addUrl(url:String):BitmapManager { loader.add((TopLevel.local?'../':'')+url); return this; }
+		public function addUrl(url:String):BitmapManager { loader.add(local+url); return this; }
 		public function load(slot:int=7):BitmapManager {
 			if (!loader.active) loader.progress(_progress,UILoader.PERCENT,UILoader.PERCENTS).file(add,UILoader.FILE,UILoader.FILE_URL).complete(_complete,UILoader.CONTENT_ARRAY).start(slot);
 			return this;
@@ -103,9 +105,9 @@ package railk.as3.ui.bitmap
 		 * @param	name
 		 */
 		public function del(name:String):BitmapManager {
-			bmds.release(bmps[name]);
-			bmps[name] = null;
-			delete bmps[name];
+			bmds.release(bmps[local+name]);
+			bmps[local+name] = null;
+			delete bmps[local+name];
 			return this;
 		}
 		
@@ -126,7 +128,7 @@ package railk.as3.ui.bitmap
 		 * @return
 		 */
 		public function has( name:String ):Boolean {
-			if (bmps[name] != undefined) return true;
+			if (bmps[local+name] != undefined) return true;
 			return false;
 		}
 		
@@ -136,7 +138,9 @@ package railk.as3.ui.bitmap
 		 * @return
 		 */
 		public function hasList( list:Array ):Boolean {
-			for (var i:int = 0; i < list.length; i++ ) if (bmps[list[i]] == undefined) return false;
+			for (var i:int = 0; i < list.length; i++ ) {
+				if (bmps[local+list[i]] == undefined) return false;
+			}
 			return true;
 		}
 		
@@ -146,7 +150,7 @@ package railk.as3.ui.bitmap
 		 * @return
 		 */
 		public function getByName(name:String):Bitmap {
-			if (has(name)) return bmps[name];
+			if (has(name)) return bmps[local+name];
 			throw new Error("le bitmap n'existe pas, veuiller le télécharger");
 		}
 	}

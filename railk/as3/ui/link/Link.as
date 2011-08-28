@@ -72,6 +72,7 @@ package railk.as3.ui.link
 		 */
 		private function initListeners(target:Object,event:String):void {
 			target.buttonMode = true;
+			target.mouseChildren = false;
 			if ( event == 'mouse'){
 				target.addEventListener( MouseEvent.MOUSE_OVER, manageEvent, false, 0, true );
 				target.addEventListener( MouseEvent.MOUSE_OUT, manageEvent, false, 0, true );
@@ -84,6 +85,7 @@ package railk.as3.ui.link
 		
 		private function delListeners(target:Object,event:String):void {
 			target.buttonMode = false;
+			target.mouseChildren = true;
 			if ( event == 'mouse'){
 				target.removeEventListener( MouseEvent.MOUSE_OVER, manageEvent );
 				target.removeEventListener( MouseEvent.MOUSE_OUT, manageEvent );

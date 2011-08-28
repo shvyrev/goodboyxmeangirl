@@ -140,8 +140,8 @@ internal class Plugin
 	
 	private function onComplete():void {
 		state = COMPLETE;
-		var i:int=actions.length, action:Object, params:Array;
-		while ( --i > -1 ) {
+		var length:int=actions.length, action:Object, params:Array;
+		for (var i:int = 0; i < length; i++) {
 			action = actions[i];
 			action.p[action.p.length] = getDefinitionByName(action.n) as Class;
 			action.f.apply(null, action.p);

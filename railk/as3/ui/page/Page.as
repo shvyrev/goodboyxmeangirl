@@ -88,7 +88,10 @@ package railk.as3.ui.page
 			//try { for (i = 0; i < views.length; ++i) views[i].div.unbind(); }
 			//catch (e:Error) { /*throw e;*/}
 			//while(component.numChildren) component.removeChildAt(0);
-			for (i = 0; i < views.length; ++i) views[i].view.hide();
+			for (i = 0; i < views.length; ++i) {
+				views[i].view.hide();
+				views[i].view.dispose();
+			}
 			try { (facade.container as PageStruct).delDiv(component); }
 			catch (e:ArgumentError){ throw e; }
 			component = null;
