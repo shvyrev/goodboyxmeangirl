@@ -10,9 +10,7 @@ package railk.as3.pattern.mvc.proxy
 {
 	public class Data 
 	{
-		public var next:Data;
 		public var prev:Data;
-		
 		public var name:String;
 		public var info:String;
 		public var data:*;

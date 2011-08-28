@@ -144,7 +144,8 @@ package railk.as3.ui.loader
 					if (_file != null) _file.apply(null, checkArgs(fArgs, FILE));
 					if (!next() && !loading) {
 						for (url in loaders) if (types[url][1]) loaders[url].unload();
-						if(_complete!=null) _complete.apply(null, checkArgs(cArgs,CONTENT));
+						if (_complete != null) _complete.apply(null, checkArgs(cArgs, CONTENT));
+						clean();
 						if (_dispose) destroy();
 						count = 0;
 					}
@@ -176,13 +177,22 @@ package railk.as3.ui.loader
 		}
 		
 		/**
-		 * DISPOSE
+		 * CLEAN
 		 */
-		private function destroy():void {
+		private function clean():void {
 			for (var url:String in listeners) {
 				listeners[url].removeEventListener(Event.COMPLETE, manageEvent );
 				if (_progress != null) listeners[url].removeEventListener(ProgressEvent.PROGRESS, manageEvent );
+				delete listeners[url];
+				delete loaders[url];
+				delete percents[url];
 			}
+		}
+		
+		/**
+		 * DISPOSE
+		 */
+		private function destroy():void {
 			current = null;
 			content = loaders = listeners = types = percents = null;
 			contentArray = urls = null;

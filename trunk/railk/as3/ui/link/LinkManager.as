@@ -134,6 +134,7 @@ package railk.as3.ui.link
 		}
 		
 		public function navigationChange(name:String):void {
+			if (!getLink(name)) return;
 			var group:String = getLink(name).group;
 			if (groups[group]==undefined) return;
 			var a:Array = getLinks(group), i:int= a.length;
