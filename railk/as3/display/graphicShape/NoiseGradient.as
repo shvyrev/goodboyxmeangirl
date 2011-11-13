@@ -56,7 +56,7 @@ package railk.as3.display.graphicShape
 			
 			// draw
 			bitmapData.draw( gradient );
-			bitmapData.draw( noise,null, new ColorTransform(1,1,1,.1,0,0,0,0) );
+			bitmapData.draw( noise,null, new ColorTransform(1,1,1,.05,0,0,0,0) );
 			
 			//dispose intermediatary
 			noise.dispose();

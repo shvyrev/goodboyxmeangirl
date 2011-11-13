@@ -19,6 +19,7 @@ package railk.as3.motion.tweens
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.geom.ColorTransform;
+	import flash.utils.Dictionary;
 	import flash.utils.getDefinitionByName;
 	import flash.utils.getTimer;
 	import railk.as3.motion.utils.*;
@@ -27,6 +28,7 @@ package railk.as3.motion.tweens
 	{
 		static private const ticker:Shape = new Shape();
 		static private var tweens:Normal;
+		static private var targets:Dictionary = new Dictionary(true);
 		
 		public var prev:Normal;		
 		public var running:Boolean;
@@ -39,18 +41,18 @@ package railk.as3.motion.tweens
 		public var autoStart:Boolean=true;
 		public var autoVisible:Boolean;
 		
-		public var _repeat:int=0;
-		public var _reflect:Boolean;
-		public var _delay:Number=0;
-		public var _ease:Function=easeOut;
-		public var _rounded:Boolean;
-		public var _dispose:Boolean=true;
-		public var _onBegin:Function;
-		public var _onBeginA:Array=[];
-		public var _onUpdate:Function;
-		public var _onUpdateA:Array=[];
-		public var _onComplete:Function;
-		public var _onCompleteA:Array = [];
+		protected var _repeat:int=0;
+		protected var _reflect:Boolean;
+		protected var _delay:Number=0;
+		protected var _ease:Function=easeOut;
+		protected var _rounded:Boolean;
+		protected var _dispose:Boolean=true;
+		protected var _onBegin:Function;
+		protected var _onBeginA:Array=[];
+		protected var _onUpdate:Function;
+		protected var _onUpdateA:Array=[];
+		protected var _onComplete:Function;
+		protected var _onCompleteA:Array = [];
 		
 		
 		/**
@@ -60,7 +62,9 @@ package railk.as3.motion.tweens
 		 */
 		public function Normal(target:Object = null, autoStart:Boolean = true) { 
 			this.target = target; 
-			this.autoStart
+			this.autoStart = autoStart;
+			if (targets[target] != undefined) targets[target].killTween(); 
+			targets[target] = this;
 		}
 		
 		/**
@@ -108,6 +112,7 @@ package railk.as3.motion.tweens
 		 * KILL TWEEN
 		 */
 		public function killTween():void { 
+			pause();
 			target = null;
 			_ease = _onBegin = _onComplete = _onUpdate = null;
 			_onBeginA = _onCompleteA = _onUpdateA = null;
@@ -117,6 +122,7 @@ package railk.as3.motion.tweens
 				p.dispose();
 				p = null;
 			}
+			delete targets[this.target];
 		}
 		
 		/**
@@ -254,7 +260,6 @@ package railk.as3.motion.tweens
 		 * UTILITIES
 		 */
 		private function easeOut(t:Number, b:Number, c:Number, d:Number):Number { return -c * (t /= d) * (t - 2) + b; }
-		
 		public function cap(str:String):String { return str.substr(0, 1).toUpperCase() +  str.substr(1, str.length); }
 		
 		/**

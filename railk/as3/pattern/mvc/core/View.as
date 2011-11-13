@@ -21,20 +21,17 @@ package railk.as3.pattern.mvc.core
 			if (name) _name = name;
 			_component = component;
 			_data = data;
-			facade.addEventListener(Notification.NOTE, handleNotification );
 		}
 		
 		public function handleNotification(evt:Notification):void {
 		}
 		
 		public function show():void {
+			facade.addEventListener(Notification.NOTE, handleNotification );
 		}
 		
 		public function hide():void {
-		}
-		
-		public function dispose():void {
-			facade.removeEventListener(Notification.NOTE, handleNotification);
+			facade.removeEventListener(Notification.NOTE, handleNotification );
 		}
 		
 		public function get name():String { return _name; }

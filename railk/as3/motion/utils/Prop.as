@@ -20,7 +20,8 @@ package railk.as3.motion.utils
 			this.type = type;
 			this.prop = prop;
 			this.start = sNum = current =(rotation)?(start%360+((Math.abs(start%360-end%360)<180)?0:(start%360>end%360)?-360:360)):start;
-			this.end = eNum = (rotation)?end%360:end;
+			if (end is Number) this.end = eNum = (rotation)?end % 360:end;
+			else this.end = end;
 		}
 		
 		public function dispose():void { prev = null; current = start = end = null; }

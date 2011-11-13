@@ -116,8 +116,8 @@ package railk.as3.text
 				} else { 
 					texte.htmlText = (_text) ? _text : ' '; 
 				}
-				texte.width = texte.textWidth+_size*.5;
-				texte.height = texte.textHeight+_size*.5;
+				texte.width = texte.textWidth+_size;
+				texte.height = texte.textHeight+_size;
 				texte.embedFonts = _embedFont;
 				texte.selectable = _selectable;
 				if ( autoSize ) {
@@ -249,6 +249,7 @@ package railk.as3.text
 		public function set size(value:Number):void {
 			format.size = value;
 			_size = value;
+			texte.setTextFormat( format );
 			dispatchChange();
 		}
 		

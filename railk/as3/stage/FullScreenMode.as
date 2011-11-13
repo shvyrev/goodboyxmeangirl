@@ -41,11 +41,11 @@ package railk.as3.stage
 			this.stage = stage;
 			if ( stage.hasOwnProperty("displayState") ) {
 				stage.addEventListener(FullScreenEvent.FULL_SCREEN, manageEvent, false, 0, true);
-				linkManager.addGroup("fullscreenmode");
-				if (on == off) link = linkManager.add("fullscreenmode", on, execute, 'fullscreenmode','fullscreenmode', colors);
+				linkManager.addGroup("fullscreenmode",true);
+				if (on == off) link = linkManager.add("fullscreenmode", on, execute,'fullscreenmode', colors);
 				else {
-					link = linkManager.add("fullscreenmodeON", on, activate, 'fullscreenmodeON','fullscreenmode',colors);
-					linkOff = linkManager.add("fullscreenmodeOFF", off, desactivate, 'fullscreenmodeOFF', 'fullscreenmode', colors);
+					link = linkManager.add("fullscreenmodeON", on, activate,'fullscreenmode',colors);
+					linkOff = linkManager.add("fullscreenmodeOFF", off, desactivate,'fullscreenmode', colors);
 					linkOff.doAction();
 				}
 			}
@@ -55,30 +55,30 @@ package railk.as3.stage
 			stage.removeEventListener(FullScreenEvent.FULL_SCREEN, manageEvent);
 		}
 		
-		private function execute(type:*, requester:*, data:*):void {
+		private function execute(type:String,data:LinkData):void {
 			switch(type) {
 				case "do" : stage.displayState = state = StageDisplayState.FULL_SCREEN; break;
 				case "undo" : stage.displayState = state = StageDisplayState.NORMAL; break;
 				default:break;
 			}
-			if(action!=null) action.apply(null,[type,requester,data]);
+			if(action!=null) action.apply(null,[type,data]);
 		}
 
 		
-		private function activate(type:*, requester:*, data:*):void {
+		private function activate(type:String,data:LinkData):void {
 			switch(type) {
 				case "do" : stage.displayState = state = StageDisplayState.FULL_SCREEN; break;
 				default:break;
 			}
-			if(action!=null) action.apply(null,[type,requester,data]);
+			if(action!=null) action.apply(null,[type,data]);
 		}
 		
-		private function desactivate(type:*, requester:*, data:*):void {
+		private function desactivate(type:String,data:LinkData):void {
 			switch(type) {
 				case "do" :  stage.displayState = state = StageDisplayState.NORMAL;break;
 				default:break;
 			}
-			if(action!=null) action.apply(null,[type,requester,data]);
+			if(action!=null) action.apply(null,[type,data]);
 		}
 		
 		private function manageEvent(e:FullScreenEvent):void {
