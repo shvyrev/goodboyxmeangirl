@@ -14,6 +14,8 @@ package railk.as3.display
 
 	public class UISprite extends Sprite
 	{
+		static public var dispatch:Boolean = true;
+		
 		private var rp:Point;
 		private var _x2:Number = 0;
 		private var _y2:Number = 0;
@@ -21,7 +23,6 @@ package railk.as3.display
 		private var _scaleY2:Number = 1;
 		private var _scaleXY:Number = 1;
 		private var _rotation2:Number = 0;
-		public var dispatch:Boolean = true;
 		
 		public function UISprite() {
 			super();

@@ -61,7 +61,7 @@ package railk.as3.stage
 		 * @param	align
 		 * @param	quality
 		 */
-		public static function init( stage:Stage, cxMenu:Boolean = false, frameRate:int=40, minFramerate:int=5, align:String = 'TL', quality:String = "high" ):void {
+		public static function init( stage:Stage, cxMenu:Boolean = false, frameRate:int=60, minFramerate:int=5, align:String = 'TL', quality:String = "high" ):void {
 			//initialisation variable mouse idle .2*60*1000 = 30 seconds
 			timeOut = .2*15*1000;
 			
@@ -86,12 +86,13 @@ package railk.as3.stage
 		/**
 		 * MOUSE ACTIVITIES
 		 */
-		public static function checkMouseOn( t:Number=0 ):void {
-			if( t != 0 ) timeOut =  t;
+		public static function checkMouseOn(t:Number=NaN):void {
+			if(!isNaN(t)) timeOut =  t;
 			isIdle = 0;
 			isActive = 0;
 			_stage.addEventListener(Event.ENTER_FRAME, idled ,false,0,true );
-			_stage.addEventListener(MouseEvent.MOUSE_MOVE, moved ,false,0,true );
+			_stage.addEventListener(MouseEvent.MOUSE_MOVE, moved , false, 0, true );
+			moved();
 		}
 		
 		public static function checkMouseOff():void{
@@ -99,27 +100,24 @@ package railk.as3.stage
 			isActive = 0;
 			_stage.removeEventListener(Event.ENTER_FRAME, idled );
 			_stage.removeEventListener(MouseEvent.MOUSE_MOVE, moved );
+			dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSEACTIVE, { info:"mouse Active"} ));
 		}
 		
-		private static function moved( evt:MouseEvent ):void { lastMove = getTimer(); }
+		private static function moved( evt:MouseEvent=null ):void { lastMove = getTimer(); }
 		
-		private static function idled ( evt:Event ):void 
-		{
+		private static function idled ( evt:Event ):void {
 			var args:Object = new Object();
 			if ( (lastMove+timeOut) < getTimer() ) {
 				if( isIdle == 0 ){
 					isActive = 0;
 					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSEIDLE, { info:"mouse Idle"} ) );
 				}
-				//on incremente isIdle pour n'envoyer le message q'une seule fois
 				isIdle += 1;
 			} else if ( _stage.mouseX || _stage.mouseY == true ) {
 				if( isActive == 0 ){
-					//on passe isactive a 0 pour pouvoir envoyer un message
 					isIdle = 0;	
 					dispatchEvent( new StageManagerEvent( StageManagerEvent.ONMOUSEACTIVE, { info:"mouse Active"} ));
 				}
-				//on incremente isActive pour n'envoyer le message q'une seule fois
 				isActive += 1;
 			}
 		}

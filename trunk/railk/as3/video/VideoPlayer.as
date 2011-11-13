@@ -11,30 +11,27 @@ package railk.as3.video
 	import flash.display.StageDisplayState;
 	import flash.events.AsyncErrorEvent;
 	import flash.events.ErrorEvent;
-	import flash.events.Event;
-	import flash.events.FullScreenEvent;
 	import flash.events.IOErrorEvent;
-	import flash.events.MouseEvent;
 	import flash.events.NetStatusEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.events.TimerEvent;
 	import flash.media.SoundTransform;
-	//import flash.media.StageVideo;
-	//import flash.media.StageVideoAvailability;
 	import flash.media.Video;
 	import flash.net.navigateToURL;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
 	import flash.net.URLRequest;
-	import flash.utils.Timer;
-	import flash.system.System;
 	import flash.system.Security;
-	import railk.as3.ui.div.Div;
+	import flash.system.System;
+	import flash.utils.Timer;
+	import railk.as3.display.UISprite;
 	import railk.as3.utils.Logger;
 	import railk.as3.utils.StringUtils;
+	//import flash.media.StageVideo;
+	//import flash.media.StageVideoAvailability;
 
 
-	public class VideoPlayer extends Div
+	public class VideoPlayer extends UISprite
 	{
 		private static const EMPTY:String = "empty";
 		private static const PLAYING:String = "playing";
@@ -46,8 +43,8 @@ package railk.as3.video
 		private var videoUrl:String;
 		private var _videoWidth:int;
 		private var _videoHeight:int;
+		private var _videoMetaData:VideoMetadatas;
 		private var type:String;
-		private var videoMetaData:VideoMetadatas;
 		
 		private var nc:NetConnection;
 		private var ns:NetStream;
@@ -66,9 +63,9 @@ package railk.as3.video
 		private var _buffering:Boolean;
 
 
-		public function VideoPlayer(width:int, height:int, autoPlay:Boolean=false, type:String="stream",domain:String="") { init(width, height,autoPlay,type,domain); }
+		public function VideoPlayer(width:int, height:int, autoPlay:Boolean=false, type:String="stream",domain:String="") { setup(width, height,autoPlay,type,domain); }
 		
-		private function init(width:int, height:int, autoPlay:Boolean, type:String, domain:String):void {
+		private function setup(width:int, height:int, autoPlay:Boolean, type:String, domain:String):void {
 			if (domain) {
 				Security.allowDomain(domain);
 				Security.loadPolicyFile(domain+"/crossdomain.xml");
@@ -91,6 +88,7 @@ package railk.as3.video
 			video.height = height
 			video.width = width;
 			video.visible = false;
+			video.smoothing = true;
 			addChild(video);
 			
 			//CONNEXION
@@ -140,9 +138,9 @@ package railk.as3.video
 		public function load(videoUrl:String):void {
 			if (videoUrl == null) return
 			this.videoUrl = videoUrl;
-			videoMetaData = null;
+			_videoMetaData = null;
 			
-			if(autoPlay || loadBeforePlay) {
+			if (autoPlay || loadBeforePlay) {
 				ns.play(videoUrl);
 				video.attachNetStream(ns);
 				video.visible = true;
@@ -174,12 +172,13 @@ package railk.as3.video
 			pause();
 			video.clear();
 			ns.close();
+			nc.close();
 			video.attachNetStream(null);
 			video.visible = false;
 			delListeners();
 		}			
 		
-		public function seek(seekPercent:Number, scrubbing:Boolean=false):void {
+		public function seekPercent(seekPercent:Number, scrubbing:Boolean=false):void {
 			if(seekPercent < 0) seekPercent = 0;
 			if(seekPercent > ns.bytesLoaded/ns.bytesTotal) seekPercent = ns.bytesLoaded/ns.bytesTotal;
 			if (!scrubbing) { 
@@ -193,19 +192,40 @@ package railk.as3.video
 				if(_videoState == PLAYING || _videoState == STOPPED) { pause(); }
 			}
 			
-			ns.seek(seekPercent * videoMetaData.duration);
+			ns.seek(seekPercent * _videoMetaData.duration);
 			
-			if(!scrubbing) { if(stateBeforeScrubbing == PLAYING || stateBeforeScrubbing == STOPPED)play(); }
+			if(!scrubbing) { if(stateBeforeScrubbing == PLAYING || stateBeforeScrubbing == STOPPED) play(); }
+		}
+		
+		public function seek(seekTime:Number, scrubbing:Boolean = false):void {
+			var seekPercent:Number = seekTime / _videoMetaData.duration;
+			if(seekPercent < 0) seekPercent = 0;
+			if(seekPercent > ns.bytesLoaded/ns.bytesTotal) seekPercent = ns.bytesLoaded/ns.bytesTotal;
+			if (!scrubbing) { 
+				scrubbingIndex = 0;
+				if(!playTimer.running) { playTimer.reset(); playTimer.start(); }
+			}
+			else ++scrubbingIndex;
+			
+			if(scrubbingIndex == 1) {
+				stateBeforeScrubbing = videoState;
+				if(_videoState == PLAYING || _videoState == STOPPED) { pause(); }
+			}
+			
+			ns.seek(seekTime);
+			
+			if(!scrubbing) { if(stateBeforeScrubbing == PLAYING || stateBeforeScrubbing == STOPPED) play(); }
 		}
 		
 		public function onMetaData(data:Object):void {
-			if(videoMetaData == null)
+			if(_videoMetaData == null)
 			{
-				videoMetaData = new VideoMetadatas(data);
+				_videoMetaData = new VideoMetadatas(data);
 				if(!isNaN(videoMetaData.width) && !isNaN(videoMetaData.height)) {
 					if(stage.displayState == StageDisplayState.FULL_SCREEN) resizeVideo(stage.stageWidth, stage.stageHeight);
 					else resizeVideo(_videoWidth, _videoHeight);						
 				}
+				dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_METADATA));
 			}
 		}
 		
@@ -244,13 +264,14 @@ package railk.as3.video
 			if(ns == null) return
 			_loaded = (ns.bytesLoaded/ns.bytesTotal)*100;
 			if(ns.bytesLoaded >= ns.bytesTotal) loadTimer.reset();
+			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_LOAD, _loaded));
 		}
 		
 		private function onPlayTimer(event:TimerEvent):void {
 			if(videoMetaData == null) return;
 			_played  = (ns.time / videoMetaData.duration)*100;
 			if (_videoState == STOPPED) playTimer.reset();
-			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_PROGRESS, played));
+			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_PROGRESS, _played));
 		}
 		
 		/**
@@ -259,20 +280,29 @@ package railk.as3.video
 		private function onAsyncError(e:ErrorEvent):void { Logger.log("onAsyncError() >>> " + e.text); }
 		private function onError(e:ErrorEvent):void { Logger.log("onError() >>> " + e.text);	}
 		private function onNetStatus(e:NetStatusEvent):void {
-			Logger.log(e.info['code']);
+			Logger.log(e.info["code"]);
 			switch(e.info["code"]) {
-				case "NetStream.Play.Start": if(_videoState != PAUSED) _videoState = PLAYING; break;
-				case "NetStream.Play.Stop": _videoState = STOPPED; break;
+				case "NetStream.Play.Start": 
+					if (_videoState != PAUSED) {
+						_videoState = PLAYING;
+						dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START));
+					}
+					break;
+				case "NetStream.Play.Stop": 
+					_videoState = STOPPED; 
+					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STOP));
+					break;
 				case "NetStream.Buffer.Full": 
 					_buffering = false;
-					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START_BUFFERING, played));
+					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STOP_BUFFERING, _played));
 					break;
 				case "NetStream.Buffer.Empty": 
 					_buffering = true;
-					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STOP_BUFFERING, played));
+					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START_BUFFERING, _played));
 					break;
 				case "NetConnection.Connect.Success": launch(); break;
 				case "NetConnection.Connect.Failed": Logger.log(e.info["code"]); break;
+				default:break;
 			}
 		}
 		
@@ -284,15 +314,18 @@ package railk.as3.video
 		public function get time():String {
 			var seconds:Number = ns.time % 60;
 			var minutes:Number = (ns.time - seconds) / 60;
+			var heures:Number = int((ns.time - minutes) / 60);
 			var secondsStr:String = seconds.toString().split(".")[0];
 			secondsStr = StringUtils.padString(secondsStr, 2, "0");
 			var minutesStr:String = StringUtils.padString(minutes.toString(), 2, "0");
-			return minutesStr + ":" + secondsStr;
+			var heuresStr:String = StringUtils.padString(heures.toString(), 2, "0");
+			return "00:"+minutesStr + ":" + secondsStr;
 		}
 		
 		/**
 		 * GETTER/SETTER
 		 */
+		public function get videoMetaData():VideoMetadatas { return _videoMetaData; }
 		public function get videoState():String { return _videoState; }
 		public function get loaded():Number  { return _loaded; }
 		public function get played():Number { return _played; }

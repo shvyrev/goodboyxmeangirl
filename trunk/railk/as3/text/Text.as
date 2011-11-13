@@ -128,6 +128,12 @@ package railk.as3.text
 			dispatchChange();
 		}
 		
+		public function get leading():Number { return format.leading as Number; }
+		public function set leading(value:Number):void { 
+			format.leading = value;
+			super.setTextFormat( format );
+		}
+		
 		public function get align():String { return format.align; }
 		public function set align(value:String):void {
 			format.align = value;
