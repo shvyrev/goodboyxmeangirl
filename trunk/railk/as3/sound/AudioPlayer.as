@@ -7,8 +7,6 @@
 
 package railk.as3.sound
 {	
-	import flash.display.Shape;
-	import flash.events.EventDispatcher;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
 	import flash.media.SoundTransform;
@@ -16,81 +14,65 @@ package railk.as3.sound
 	import flash.events.Event;
 	import flash.events.ProgressEvent;
 	import flash.events.IOErrorEvent;
-	import flash.external.ExternalInterface;
-	import flash.net.navigateToURL;
+	import flash.events.TimerEvent;
+	import flash.net.URLRequest;
 	import flash.system.Security;
 	import flash.system.System;	
+	import flash.utils.Timer;
+	import railk.as3.display.UIShape;
 	
-	public class AudioPlayer extends EventDispatcher
+	public class AudioPlayer extends UIShape
 	{
-		private var url				:String;
-		private var sound           :Sound;
-		private var channel         :SoundChannel;
-		private var volume          :SoundTransform;
-		
-		private var share     		:Boolean;
-		private var download  		:Boolean;		
-		
-		private var ticker          :Shape = new Shape();
-		public var loaded           :Number;
-		public var played           :Number;
-		private var total           :Number;
-		
-		private var share           :String
-		
+		private var autoPlay:Boolean;
+		private var loops:int;
+		private var sound:Sound;
+		private var channel:SoundChannel;
+		private var soundTransform:SoundTransform;
+		private var isBuffering:Boolean;
+		private var isPlaying:Boolean;
+		private var timer:Timer;
+		private var position:Number=0;
 		
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function AudioPlayer() {
-			sound = new Sound();
-			volume = new SoundTransform();
-			initListeners();
-		}
+		public function AudioPlayer(autoPlay:Boolean=false,loops:int=1,domain:String='') { setup(autoPlay,loops,domain); }
 		
 		/**
-		 * INIT
+		 * SETUP
 		 */
-		public function init( share:Boolean = false, download:Boolean = false, externalDomain:Boolean=false ):void {
-			this.download = download;
-			this.share = share;
-			this.externalDomain = externalDomain;
-		}
-		
-		/**
-		 * CREATE
-		 */
-		public function create( url:String, domain:String='' ):void {
-			if (externalDomain) {
+		public function setup(autoPlay:Boolean,loops:int,domain:String):void {
+			if (domain) {
 				Security.allowDomain(domain);
-				Security.loadPolicyFile("http://+"domain+"/crossdomain.xml");
+				Security.loadPolicyFile("http://"+domain+"/crossdomain.xml");
 			}
 			
-			this.url = url;
+			this.autoPlay = autoPlay;
+			this.loops = loops;
+			sound = new Sound();
+			channel = new SoundChannel();
+			soundTransform = new SoundTransform();
+			timer = new Timer(100);
 			
-			//--Sharing the player
-			var path:String = ExternalInterface.call("window.location.href.toString");
-			share = '<object width="'+width+'" height="'+height+'">';
-			share += '<param name="allowscriptaccess" value="always" />';
-			share += '< param name = "movie" value ="' + path + 'flash/'+name+'.swf" / >';
-			share += '< embed src ="' + path + 'flash/'+name+'.swf" type="application/x-shockwave-flash"  allowscriptaccess="always" width="'+width+'" height="'+height+'" >';
-			share += '</embed></object>';
+			//////////////////////////
+			initListeners();
+			/////////////////////////
 		}
 		
 		/**
 		 * LISTENERS
 		 */
-		private function initListeners():void { 
-			ticker.addEventListener( Event.ENTER_FRAME, manageEvent, false, 0, true );
+		private function initListeners():void {
 			channel.addEventListener( Event.SOUND_COMPLETE, manageEvent, false, 0, true );
+			timer.addEventListener(TimerEvent.TIMER, manageEvent, false, 0, true);
 			sound.addEventListener( Event.COMPLETE, manageEvent, false, 0, true );
 			sound.addEventListener( ProgressEvent.PROGRESS, manageEvent, false, 0, true );
 			sound.addEventListener( Event.OPEN, manageEvent, false, 0, true );
 			sound.addEventListener( IOErrorEvent.IO_ERROR, manageEvent, false, 0, true );
 		}
 		private function delListeners():void {
-			ticker.removeEventListener( Event.ENTER_FRAME, manageEvent );
 			channel.removeEventListener( Event.SOUND_COMPLETE, manageEvent );
+			timer.removeEventListener(TimerEvent.TIMER, manageEvent );
 			sound.removeEventListener( Event.COMPLETE, manageEvent );
 			sound.removeEventListener( ProgressEvent.PROGRESS, manageEvent );
 			sound.removeEventListener( Event.OPEN, manageEvent );
@@ -98,36 +80,74 @@ package railk.as3.sound
 		}
 		
 		/**
-		 * ACTIONS
+		 * LOAD
+		 */
+		public function load(soundUrl:String):void {
+			sound.load( new URLRequest(soundUrl), new SoundLoaderContext(3000,true) );
+		}
+		
+		/**
+		 * PLAY
 		 */
 		public function play():void {
-			if(!channel) sound.load( url, new SoundLoaderContext(3000,true) );
-			else channel = sound.play( channel.position );
+			if (!isPlaying) {
+				channel = sound.play(position, loops, soundTransform);
+				isPlaying = true; 
+				timer.start();
+			}
 		}
 		
-		public function pause():void {
+		/**
+		 * PAUSE
+		 */
+		public function pause():void { 
+			if (isPlaying) {
+				position = channel.position;
+				channel.stop(); 
+				isPlaying = false; 
+				timer.stop();
+			}	
+		}
+		
+		/**
+		 * STOP
+		 */
+		public function stop():void { 
+			if (isPlaying) {
+				channel.stop();
+				position = 0;
+				isPlaying = false; 
+				timer.stop();
+			}	
+		}
+		
+		/**
+		 * REPLAY
+		 */
+		public function replay():void { 
+			channel = sound.play(0,loops,soundTransform)
+			if (!isPlaying) {
+				isPlaying = true;
+				timer.start();
+			}
+		}
+		
+		/**
+		 * SEEK
+		 * @param	percent
+		 */
+		public function seek(percent:Number):void {
 			channel.stop();
+			channel = sound.play( (sound.length * percent), loops, soundTransform );
 		}
 		
-		public function replay():void {
-			channel = sound.play(0);
-		}
-		
-		public function seek(pos:Number,size:Number):void {
-			channel = _sound.play( (pos*sound.length)/size );
-		}
-		
-		public function volume(pos:Number, size:Number):void {
-			volume.volume = (pos*100)/size;
-			channel.soundTransform = volume;
-		}
-		
-		public function downloadVideo():void {
-			navigateToURL( new URLRequest( url ), '_blank' );
-		}
-		
-		public function shareAudio():void {
-			System.setClipboard( share );
+		/**
+		 * VOLUME
+		 */
+		public function get volume():Number { return soundTransform.volume*100; }
+		public function set volume(value:Number):void {
+			soundTransform.volume = value;
+			channel.soundTransform = soundTransform;
 		}
 		
 		/**
@@ -135,41 +155,47 @@ package railk.as3.sound
 		 */
 		public function dispose():void {
 			delListeners();
+			channel.stop();
+			sound.close();
+			timer.stop();
+			channel =  null;
 			sound = null;
 		}
 		
 		/**
 		 * MANAGE EVENT
 		 */
-		private function manageEvent( evt:* ):void {
-			switch( evt.type ) {
+		private function manageEvent(e:*):void {
+			switch( e.type ) {
 				case Event.OPEN :
-					channel = sound.play();
-					channel.stop();
+					if (autoPlay) play();
+					dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_LOAD_BEGIN));
 					break;
-					
 				case ProgressEvent.PROGRESS :
-					if ( sound.isBuffering ) channel.stop();
-					else channel = sound.play(channel.position)
-					loaded = (evt.bytesLoaded/evt.bytesTotal)*100;
-					dispatchEvent(evt);
+					if ( sound.isBuffering ) {
+						isBuffering = true;
+						position = channel.position;
+						channel.stop();
+						timer.stop();
+						dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_START_BUFFERING));
+					} else {
+						if (isBuffering) {
+							isBuffering = false;
+							if (isPlaying) {
+								channel = sound.play(position,loops,soundTransform);
+								timer.start();
+							}
+							dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_STOP_BUFFERING));
+						}
+					}
+					dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_LOAD_PROGRESS,(e.bytesLoaded/e.bytesTotal)*100));
 					break;
-					
-				case Event.COMPLETE :
-					loaded = 100;
-					delListeners();
-					dispatchEvent(evt);
+				case Event.COMPLETE : dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_LOAD_COMPLETE,100)); break;
+				case Event.SOUND_COMPLETE : 
+					timer.stop();
+					dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_COMPLETE, 100)); 
 					break;
-					
-				case Event.SOUND_COMPLETE : dispatchEvent(evt); break;
-				
-				case Event.ENTER_FRAME :
-					current = Math.floor( channel.position );	
-					total = Math.round( sound.length );
-					played = current / total;
-					dispatchEvent(evt);
-					break;
-					
+				case TimerEvent.TIMER : dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_PROGRESS,(channel.position/sound.length)*100)); break;
 				default : break;
 			}
 		}
