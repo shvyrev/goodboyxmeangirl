@@ -8,8 +8,6 @@
 
 
 package railk.as3.utils {
-		
-	import flash.display.Bitmap;
 	
 	public class DateUtil 
 	{	

@@ -148,7 +148,8 @@ package railk.as3.motion.tweens
 			if ( r >= 1 ) rs = sgs[l].p + sgs[l].d2;
 			else if (sgs.length == 1) rs = sgs[0].calc(r);
 			else {
-				if(i<0) i=0; else if(i>l) i=l;
+				if(i<0) i=0; 
+				else if(i>l) i=l;
 				rs = sgs[i].calc(sgs.length*(r-i/sgs.length));
 			}
 			return rs;
