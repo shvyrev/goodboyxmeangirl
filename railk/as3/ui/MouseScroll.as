@@ -9,7 +9,6 @@ package railk.as3.ui
 {
 	import flash.display.Stage;
 	import flash.events.Event;
-	import railk.as3.utils.Logger;
 	
 	public class MouseScroll
 	{
@@ -34,6 +33,7 @@ package railk.as3.ui
 			this.offset = offset;
 			this.speed = speed;
 			this.offset = offset;
+			this.direction = direction;
 			type = (direction == VERTICAL?'y':'x');
 			stage.addEventListener(Event.ENTER_FRAME, move, false, 0, true);
 		}
@@ -44,7 +44,7 @@ package railk.as3.ui
 			if (targetSize > size) {	
 				mouse = (direction == VERTICAL)?stage.mouseY:stage.mouseX;
 				scroll = -((targetSize+offset*2-size)*(mouse/size)-offset);
-				target[type] += ((scroll-target[type])/speed);
+				target[type] += ((scroll - target[type]) / speed);
 			}
 			else {
 				target[type] = size*.5 - targetSize *.5;

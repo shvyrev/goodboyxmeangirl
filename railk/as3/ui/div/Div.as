@@ -109,9 +109,9 @@ package railk.as3.ui.div
 			return null;
 		}
 		
-		public function delDiv(div:IDiv):void {
+		public function delDiv(div:IDiv,child:Boolean=true):void {
 			if (!div) return;
-			div.delAllDiv();
+			if(child) div.delAllDiv();
 			div.unbind();
 			if(div.next) placeDiv(div.next, div.prev);
 			removeChild(div as Div);

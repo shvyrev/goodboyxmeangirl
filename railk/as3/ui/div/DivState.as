@@ -43,6 +43,12 @@ package railk.as3.ui.div
 			return this;
 		}
 		
+		public function reset():void { top = right = bottom = left = x = y = 0; }
+		
+		public function toString():String {
+			return "[DIVSTATE x:"+x+" y:"+y+" top:"+top+" right:"+right+" bottom:"+bottom+" left:"+left+" ]";
+		}
+		
 		public function get stageHeight():Number { return _stageHeight; }
 		public function get stageWidth():Number { return _stageWidth; }
 		public function get width():Number { return _width; }

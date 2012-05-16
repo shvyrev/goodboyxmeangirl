@@ -17,7 +17,7 @@ package railk.as3.ui.div
 		function addDiv(div:IDiv):IDiv;
 		function insertDivBefore(div:IDiv, next:IDiv):IDiv;
 		function insertDivAfter(div:IDiv, prev:IDiv):IDiv;
-		function delDiv(div:IDiv):void;
+		function delDiv(div:IDiv,child:Boolean=true):void;
 		function getDiv(name:String):IDiv;
 		function delAllDiv():void;
 		function updateDiv():void;
