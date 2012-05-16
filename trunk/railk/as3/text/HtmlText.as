@@ -23,13 +23,14 @@ package railk.as3.text
 		 * @param	name
 		 * @param	text
 		 */
-		public function HtmlText( name:String = '', text:String = '', wordwrap:Boolean = false ) {
+		public function HtmlText( name:String = '', text:String = '', wordwrap:Boolean = false, antialias:Boolean=false, embedFonts:Boolean=true ) {
 			super.name = name;
 			super.multiline = true;
 			super.htmlText = (text) ? text : ' '; 
-			super.antiAliasType = AntiAliasType.ADVANCED;
+			if(antialias) super.antiAliasType = AntiAliasType.ADVANCED;
+			else super.antiAliasType = AntiAliasType.NORMAL;
 			super.wordWrap = wordwrap;
-			super.embedFonts = true;
+			super.embedFonts = embedFonts;
 		}
 		
 		/**

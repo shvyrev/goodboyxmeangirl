@@ -280,7 +280,7 @@ package railk.as3.video
 		private function onAsyncError(e:ErrorEvent):void { Logger.log("onAsyncError() >>> " + e.text); }
 		private function onError(e:ErrorEvent):void { Logger.log("onError() >>> " + e.text);	}
 		private function onNetStatus(e:NetStatusEvent):void {
-			Logger.log(e.info["code"]);
+			//Logger.log(e.info["code"]);
 			switch(e.info["code"]) {
 				case "NetStream.Play.Start": 
 					if (_videoState != PAUSED) {
@@ -301,7 +301,7 @@ package railk.as3.video
 					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START_BUFFERING, _played));
 					break;
 				case "NetConnection.Connect.Success": launch(); break;
-				case "NetConnection.Connect.Failed": Logger.log(e.info["code"]); break;
+				case "NetConnection.Connect.Failed": /*Logger.log(e.info["code"]);*/ break;
 				default:break;
 			}
 		}

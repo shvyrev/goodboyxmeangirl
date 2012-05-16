@@ -38,6 +38,7 @@ package $(CSLB){
 			///////////STARTUP/////////////
 			loadUI(context())
 				.add(language('FR'))
+				.add(plugins())
 				.complete(startup,UILoader.CONTENT)
 				.start();
 			///////////////////////////////
@@ -45,14 +46,14 @@ package $(CSLB){
 		
 		private function startup(content:Dictionary):void {
 			local.addLanguage(content[language('FR')]);
-			struct.init( TopLevel.main, new XML(content[context()]), [], [],[], [] );
+			struct.init( TopLevel.main, new XML(content[context()]), content[plugins()], [PageLoading]);
 			if (TopLevel.root.loaderInfo.parameters.page )struct.view((TopLevel.root.loaderInfo.parameters.page=='index')?'/':TopLevel.root.loaderInfo.parameters.page);
 		}
 		
 		private function O(classe:Class, name:String ):Object { return { 'name':name, 'classe':classe }; }
-		private function language(lang:String):String { return assets+lang+'.txt'; }
-		private function context(zip:Boolean=false):String { return assets+'site'+((zip)?'.zip':'.xml'); }
-		
-		private function get assets():String { return (TopLevel.root.loaderInfo.url.indexOf("file") == 0)?'../assets/':'assets/'; }
+		private function language(lang:String):String { return config+lang+'.txt'; }
+		private function context(zip:Boolean=false):String { return config+'siteLocal'+((zip)?'.zip':'.xml'); }
+		private function plugins():String { return config+'plugins.txt'; }
+		private function get config():String { return TopLevel.local+'config/'; }
 	}
 }

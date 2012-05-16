@@ -193,7 +193,7 @@ internal final class BitmapPool
 		if (free < 1 ) populate(growthRate);
 		picked = last;
 		last = os[--free-1];
-		picked.bitmapData = new BitmapData(width, height, true, 0xFF000000);
+		picked.bitmapData = new BitmapData(width, height, true, 0x00000000);
 		return picked;
 	}
 	

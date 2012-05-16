@@ -135,7 +135,7 @@ package railk.as4.text
 		}
 		
 		private function addMedia(media:String, width:Number, height:Number):void {
-			loadUI(media).complete(placeMedia,media);
+			loadUI(media).complete(placeMedia,media,UILoader.CONTENT).start();
 			var gfx:GraphicElement = new GraphicElement(getPlaceHolder(width, height), width, height, format);
 			gfx.userData = media;
 			content[content.length] = gfx;
