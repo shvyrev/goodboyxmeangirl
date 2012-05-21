@@ -15,7 +15,6 @@ package railk.as3.video
 	import flash.events.NetStatusEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.events.TimerEvent;
-	import flash.events.VideoEvent;
 	import flash.geom.Rectangle;
 	import flash.media.SoundTransform;
 	import flash.media.Video;
@@ -82,8 +81,8 @@ package railk.as3.video
 			
 			//VIDEO
 			video = new Video(width, height);
-			video.height = height
 			video.width = width;
+			video.height = height;
 			video.visible = false;
 			video.smoothing = true;
 			addChild(video);
@@ -112,7 +111,6 @@ package railk.as3.video
 		}
 		
 		private function initListeners():void {
-			video.addEventListener(VideoEvent.RENDER_STATE, onRenderState, false, 0, true);
 			playTimer.addEventListener(TimerEvent.TIMER, onPlayTimer, false, 0, true);
 			loadTimer.addEventListener(TimerEvent.TIMER, onLoadTimer, false, 0, true);
 			nc.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0, true);
@@ -121,7 +119,6 @@ package railk.as3.video
 		}
 		
 		private function delListeners():void {
-			video.removeEventListener(VideoEvent.RENDER_STATE, onRenderState);
 			playTimer.removeEventListener(TimerEvent.TIMER, onPlayTimer );
 			loadTimer.removeEventListener(TimerEvent.TIMER, onLoadTimer);
 			nc.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus);
@@ -220,9 +217,9 @@ package railk.as3.video
 			if(_videoMetaData == null)
 			{
 				_videoMetaData = new VideoMetadatas(data);
-				if(!isNaN(videoMetaData.width) && !isNaN(videoMetaData.height)) {
+				if (!isNaN(videoMetaData.width) && !isNaN(videoMetaData.height)) {
 					if(stage.displayState == StageDisplayState.FULL_SCREEN) resizeVideo(stage.stageWidth, stage.stageHeight);
-					else resizeVideo(_videoWidth, _videoHeight);						
+					else resizeVideo(_videoWidth, _videoHeight);
 				}
 				dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_METADATA));
 			}
@@ -231,35 +228,35 @@ package railk.as3.video
 		/**
 		 * RESIZE VIDEO
 		 */
-		public function resizeVideo(width:int=0, height:int=0):void{	
+		public function resizeVideo(width:int = 0, height:int = 0):void {
 			_videoWidth = width, _videoHeight = height;
-			videoRect = getVideoRect(video.videoWidth,video.videoHeight);
+			videoRect = getVideoRect(_videoMetaData.width,_videoMetaData.height);
 			video.width = videoRect.width;
 			video.height = videoRect.height;
 			video.x = videoRect.x, video.y = videoRect.y;
 		}
 		
-		private function getVideoRect(width:int, height:int):Rectangle {	
-			var videoWidth:uint = width;
-			var videoHeight:uint = height;
-			var scaling:Number = Math.min ( stage.stageWidth / videoWidth, stage.stageHeight / videoHeight );
+		private function getVideoRect(width:int, height:int):Rectangle {
+			var vW:int = width;
+			var vH:int = height;
+			var scaling:Number = Math.min ( stage.stageWidth / vW, stage.stageHeight / vH );
 			
-			videoWidth *= scaling, videoHeight *= scaling;
+			vW *= scaling, vH *= scaling;
 			
-			videoHeight = (videoHeight*_videoWidth)/videoWidth;
-			videoWidth = _videoWidth;
-			if (videoHeight < _videoHeight) {
-				videoWidth = (videoWidth*_videoHeight)/videoHeight;
-				videoHeight = _videoHeight;
+			vH = (vH*_videoWidth)/vW;
+			vW = _videoWidth;
+			if (vH < _videoHeight) {
+				vW = (vW*_videoHeight)/vH;
+				vH = _videoHeight;
 			}
 			
-			var posX:int = stage.stageWidth - videoWidth >> 1;
-			var posY:int = stage.stageHeight - videoHeight >> 1;
+			var posX:int = stage.stageWidth - vW >> 1;
+			var posY:int = stage.stageHeight - vH >> 1;
 			
 			videoRect.x = posX;
 			videoRect.y = posY;
-			videoRect.width = videoWidth;
-			videoRect.height = videoHeight;
+			videoRect.width = vW;
+			videoRect.height = vH;
 			return videoRect;
 		}
 		
@@ -320,15 +317,6 @@ package railk.as3.video
 				case "NetConnection.Connect.Failed": /*Logger.log(e.info["code"]);*/ break;
 				default:break;
 			}
-		}
-		
-		/**
-		 * RENDER STATE
-		 * @param	e
-		 */
-		private function onRenderState(e:*):void {	
-			Logger.log( "Render State : " + e.target +" "+ e.status);
-			resizeVideo(_videoWidth,_videoHeight);
 		}
 		
 		/**
