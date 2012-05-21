@@ -1,0 +1,1 @@
+colorBar.swf=railk.internal.test.view.references::ColorBar
