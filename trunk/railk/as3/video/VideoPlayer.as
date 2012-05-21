@@ -15,20 +15,17 @@ package railk.as3.video
 	import flash.events.NetStatusEvent;
 	import flash.events.SecurityErrorEvent;
 	import flash.events.TimerEvent;
+	import flash.events.VideoEvent;
+	import flash.geom.Rectangle;
 	import flash.media.SoundTransform;
 	import flash.media.Video;
-	import flash.net.navigateToURL;
 	import flash.net.NetConnection;
 	import flash.net.NetStream;
-	import flash.net.URLRequest;
 	import flash.system.Security;
-	import flash.system.System;
 	import flash.utils.Timer;
 	import railk.as3.display.UISprite;
 	import railk.as3.utils.Logger;
 	import railk.as3.utils.StringUtils;
-	//import flash.media.StageVideo;
-	//import flash.media.StageVideoAvailability;
 
 
 	public class VideoPlayer extends UISprite
@@ -39,8 +36,8 @@ package railk.as3.video
 		private static const STOPPED:String = "stopped";
 		
 		private var video:Video;
-		//private var stageVideo:StageVideo;
 		private var videoUrl:String;
+		private var videoRect:Rectangle = new Rectangle();
 		private var _videoWidth:int;
 		private var _videoHeight:int;
 		private var _videoMetaData:VideoMetadatas;
@@ -115,6 +112,7 @@ package railk.as3.video
 		}
 		
 		private function initListeners():void {
+			video.addEventListener(VideoEvent.RENDER_STATE, onRenderState, false, 0, true);
 			playTimer.addEventListener(TimerEvent.TIMER, onPlayTimer, false, 0, true);
 			loadTimer.addEventListener(TimerEvent.TIMER, onLoadTimer, false, 0, true);
 			nc.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0, true);
@@ -123,6 +121,7 @@ package railk.as3.video
 		}
 		
 		private function delListeners():void {
+			video.removeEventListener(VideoEvent.RENDER_STATE, onRenderState);
 			playTimer.removeEventListener(TimerEvent.TIMER, onPlayTimer );
 			loadTimer.removeEventListener(TimerEvent.TIMER, onLoadTimer);
 			nc.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus);
@@ -232,19 +231,36 @@ package railk.as3.video
 		/**
 		 * RESIZE VIDEO
 		 */
-		public function resizeVideo(width:Number, height:Number):void {
-			if (videoMetaData == null) return;
+		public function resizeVideo(width:int=0, height:int=0):void{	
+			_videoWidth = width, _videoHeight = height;
+			videoRect = getVideoRect(video.videoWidth,video.videoHeight);
+			video.width = videoRect.width;
+			video.height = videoRect.height;
+			video.x = videoRect.x, video.y = videoRect.y;
+		}
+		
+		private function getVideoRect(width:int, height:int):Rectangle {	
+			var videoWidth:uint = width;
+			var videoHeight:uint = height;
+			var scaling:Number = Math.min ( stage.stageWidth / videoWidth, stage.stageHeight / videoHeight );
 			
-			var videoRatio:Number = videoMetaData.width / videoMetaData.height;
-			var playerRatio:Number = width / height;
+			videoWidth *= scaling, videoHeight *= scaling;
 			
-			if(videoRatio > playerRatio) {
-				video.width = width;
-				video.height = width / videoRatio;
-			} else {
-				video.width = height * videoRatio;
-				video.height = height;
+			videoHeight = (videoHeight*_videoWidth)/videoWidth;
+			videoWidth = _videoWidth;
+			if (videoHeight < _videoHeight) {
+				videoWidth = (videoWidth*_videoHeight)/videoHeight;
+				videoHeight = _videoHeight;
 			}
+			
+			var posX:int = stage.stageWidth - videoWidth >> 1;
+			var posY:int = stage.stageHeight - videoHeight >> 1;
+			
+			videoRect.x = posX;
+			videoRect.y = posY;
+			videoRect.width = videoWidth;
+			videoRect.height = videoHeight;
+			return videoRect;
 		}
 		
 		/**
@@ -280,7 +296,7 @@ package railk.as3.video
 		private function onAsyncError(e:ErrorEvent):void { Logger.log("onAsyncError() >>> " + e.text); }
 		private function onError(e:ErrorEvent):void { Logger.log("onError() >>> " + e.text);	}
 		private function onNetStatus(e:NetStatusEvent):void {
-			//Logger.log(e.info["code"]);
+			Logger.log(e.info["code"]);
 			switch(e.info["code"]) {
 				case "NetStream.Play.Start": 
 					if (_videoState != PAUSED) {
@@ -307,10 +323,17 @@ package railk.as3.video
 		}
 		
 		/**
+		 * RENDER STATE
+		 * @param	e
+		 */
+		private function onRenderState(e:*):void {	
+			Logger.log( "Render State : " + e.target +" "+ e.status);
+			resizeVideo(_videoWidth,_videoHeight);
+		}
+		
+		/**
 		 * UTILS
 		 */
-		public function downloadVideo():void { navigateToURL( new URLRequest( videoUrl ), '_blank' ); }
-		public function shareVideo():void { System.setClipboard( '' ); }
 		public function get time():String {
 			var seconds:Number = ns.time % 60;
 			var minutes:Number = (ns.time - seconds) / 60;

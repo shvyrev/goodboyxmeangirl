@@ -11,7 +11,9 @@ package railk.as3.stage
 	import flash.display.StageDisplayState;
 	import flash.events.FullScreenEvent;
 	import railk.as3.pattern.singleton.Singleton;
-	import railk.as3.ui.link.*;
+	import railk.as3.ui.link.ILink;
+	import railk.as3.ui.link.ILinkManager;
+	import railk.as3.ui.link.LinkData;
 	
 	public class FullScreenMode
 	{
@@ -33,7 +35,14 @@ package railk.as3.stage
 		
 		/**
 		 * INIT
-		 */		
+		 * 
+		 * @param	linkManager
+		 * @param	stage
+		 * @param	on
+		 * @param	off
+		 * @param	action                 Function(type:String("hover"|"out"|"do"|"undo"),data:LinkData)=null
+		 * @param	colors                 Object {hover:,out:,click:}
+		 */	
 		public function init(linkManager:ILinkManager, stage:Stage,on:Object,off:Object, action:Function = null, colors:Object = null):void {
 			if (!stage) return;
 			this.linkManager = linkManager;
@@ -41,9 +50,12 @@ package railk.as3.stage
 			this.stage = stage;
 			if ( stage.hasOwnProperty("displayState") ) {
 				stage.addEventListener(FullScreenEvent.FULL_SCREEN, manageEvent, false, 0, true);
-				linkManager.addGroup("fullscreenmode",true);
-				if (on == off) link = linkManager.add("fullscreenmode", on, execute,'fullscreenmode', colors);
+				if (on == off) {
+					linkManager.addGroup("fullscreenmode");
+					link = linkManager.add("fullscreenmode", on, execute,'fullscreenmode', colors);
+				}
 				else {
+					linkManager.addGroup("fullscreenmode",true);
 					link = linkManager.add("fullscreenmodeON", on, activate,'fullscreenmode',colors);
 					linkOff = linkManager.add("fullscreenmodeOFF", off, desactivate,'fullscreenmode', colors);
 					linkOff.doAction();
@@ -55,7 +67,7 @@ package railk.as3.stage
 			stage.removeEventListener(FullScreenEvent.FULL_SCREEN, manageEvent);
 		}
 		
-		private function execute(type:String,data:LinkData):void {
+		private function execute(type:String, data:LinkData):void {
 			switch(type) {
 				case "do" : stage.displayState = state = StageDisplayState.FULL_SCREEN; break;
 				case "undo" : stage.displayState = state = StageDisplayState.NORMAL; break;
@@ -82,8 +94,7 @@ package railk.as3.stage
 		}
 		
 		private function manageEvent(e:FullScreenEvent):void {
-			if (linkOff) 
-			{	
+			if (linkOff) {	
 				if (state != stage.displayState && state == StageDisplayState.FULL_SCREEN) {
 					linkOff.action();
 					linkManager.navigationChange('fullscreenmodeOFF');

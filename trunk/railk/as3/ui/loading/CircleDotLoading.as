@@ -13,9 +13,6 @@ package railk.as3.ui.loading
 	
 	public class CircleDotLoading extends UISprite
 	{	
-		private var cercle:CircleShape;
-		private var bg:CircleShape;
-		private var masker:CamembertShape;
 		private var radius:Number;
 		private var _percent:Number;
 		private var _color:uint;
