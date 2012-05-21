@@ -1,0 +1,3 @@
+set sdk=C:\Progra~2\Adobe\FlexSDK\4.1\bin\mxmlc.exe
+set buildfile=src\plugins\config.xml
+call %sdk% -load-config+=%buildfile% -debug=false -incremental=false -benchmark=false -o bin\flash\boot.swf -file-specs src\Boot.as
