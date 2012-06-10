@@ -1,14 +1,24 @@
 package railk.as3.ui.key 
 {	
 	import flash.events.Event;
-	public dynamic class KeyEvent extends Event
+	public class KeyEvent extends Event
 	{	
-		static public const ON_KEY_PRESS	                   	 :String = "onKeyPress";
-		static public const ON_KEY_RELEASE                   	 :String = "onKeyRelease";
+		static public const ON_KEY_PRESS:String = "onKeyPress";
+		static public const ON_KEY_RELEASE:String = "onKeyRelease";
 		
-		public function KeyEvent(type:String, data:Object, bubbles:Boolean=false, cancelable:Boolean=false) {
+		public var keyCode:int;
+		public var keyLocation:uint;
+		public var altKey:Boolean;
+		public var ctrlKey:Boolean;
+		public var shiftKey:Boolean;
+		
+		public function KeyEvent(type:String,keyCode:int,altKey:Boolean,ctrlKey:Boolean,shiftKey:Boolean,keyLocation:uint,bubbles:Boolean=false,cancelable:Boolean=false) {
 			super(type, bubbles, cancelable) ;
-			for(var name:String in data) this[name] = data[name];
+			this.keyCode = keyCode;
+			this.keyLocation = keyLocation;
+			this.altKey = altKey;
+			this.ctrlKey = ctrlKey;
+			this.shiftKey = shiftKey;
 		}
 	}
 }

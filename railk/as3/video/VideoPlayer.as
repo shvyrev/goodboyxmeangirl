@@ -29,10 +29,10 @@ package railk.as3.video
 
 	public class VideoPlayer extends UISprite
 	{
-		private static const EMPTY:String = "empty";
-		private static const PLAYING:String = "playing";
-		private static const PAUSED:String = "paused";
-		private static const STOPPED:String = "stopped";
+		public static const EMPTY:String = "empty";
+		public static const PLAYING:String = "playing";
+		public static const PAUSED:String = "paused";
+		public static const STOPPED:String = "stopped";
 		
 		private var video:Video;
 		private var videoUrl:String;
@@ -136,14 +136,14 @@ package railk.as3.video
 			this.videoUrl = videoUrl;
 			_videoMetaData = null;
 			
-			if (autoPlay || loadBeforePlay) {
-				ns.play(videoUrl);
-				video.attachNetStream(ns);
-				video.visible = true;
-				activated = true;	
-				loadTimer.start();
-				playTimer.start();
-			}
+			ns.play(videoUrl);
+			video.attachNetStream(ns);
+			video.visible = true;
+			activated = true;	
+			loadTimer.start();
+			
+			if (autoPlay || loadBeforePlay) playTimer.start();
+			else ns.pause();
 		}
 		
 		public function pause():void {
@@ -226,11 +226,18 @@ package railk.as3.video
 		}
 		
 		/**
+		 * XMP DATAS
+		 * 
+		 * @param	data
+		 */
+		public function onXMPData(data:Object):void {}
+		
+		/**
 		 * RESIZE VIDEO
 		 */
 		public function resizeVideo(width:int = 0, height:int = 0):void {
 			_videoWidth = width, _videoHeight = height;
-			videoRect = getVideoRect(_videoMetaData.width,_videoMetaData.height);
+			videoRect = getVideoRect(video.videoWidth,video.videoHeight);
 			video.width = videoRect.width;
 			video.height = videoRect.height;
 			video.x = videoRect.x, video.y = videoRect.y;
@@ -278,6 +285,7 @@ package railk.as3.video
 			_loaded = (ns.bytesLoaded/ns.bytesTotal)*100;
 			if(ns.bytesLoaded >= ns.bytesTotal) loadTimer.reset();
 			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_LOAD, _loaded));
+			if(_loaded==100) dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_LOAD_COMPLETE, _loaded));
 		}
 		
 		private function onPlayTimer(event:TimerEvent):void {
@@ -314,7 +322,7 @@ package railk.as3.video
 					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START_BUFFERING, _played));
 					break;
 				case "NetConnection.Connect.Success": launch(); break;
-				case "NetConnection.Connect.Failed": /*Logger.log(e.info["code"]);*/ break;
+				case "NetConnection.Connect.Failed": break;
 				default:break;
 			}
 		}

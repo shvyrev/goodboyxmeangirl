@@ -15,6 +15,7 @@ package railk.as3.video
 		static public const VIDEO_START:String = "onStop";
 		static public const VIDEO_PROGRESS:String = "onProgress";
 		static public const VIDEO_LOAD:String = "onLoad";
+		static public const VIDEO_LOAD_COMPLETE:String = "onLoadComplete";
 		static public const VIDEO_START_BUFFERING:String = "onStartBuffer";
 		static public const VIDEO_STOP_BUFFERING:String = "onStopBuffer";
 		static public const VIDEO_METADATA:String = "onMetadata";

@@ -26,6 +26,11 @@ package railk.as3.time
 		private var state:String;
 		
 		/**
+		 * CONSTRUCTEUR
+		 */
+		public function TimeLine() {}
+		
+		/**
 		 * MANAGEMENT
 		 */
 		public function add(time:int, action:Function, ...params):TimeLine { 
@@ -87,6 +92,12 @@ package railk.as3.time
 				current = current.next;
 				if (!current) stop();
 			}
+		}
+		
+		public function clear():void {
+			stop();
+			first = last = null;
+			first;
 		}
 		
 		public function toString():String {
