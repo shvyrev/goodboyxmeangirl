@@ -4,7 +4,7 @@
  * @author Richard Rodney
  * @version 0.1
  * 
- * language file exmaple :
+ * language file exemple :
  * 
  * 	//begin
  * 		
@@ -42,8 +42,8 @@ package railk.as3.ui
 		 * ADD LANGUAGE
 		 * @param	lang
 		 */
-		public function addLanguage(file:String):void {
-			if (file.length == 0) return;
+		public function addLanguage(file:String):Localisation {
+			if (file.length == 0) return this;
 			var lang:String = file.match(/\[LANG=[A-Z]*\]/)[0].replace(/[\[|\]]/g,'').split('=')[1]; 
 			var texts:Array = file.replace(/\[LANG=[A-Z]*\]/, '').replace(/\r|\t|\n/g, '').split('[E]');
 			
@@ -54,6 +54,7 @@ package railk.as3.ui
 				if (data[key] == undefined) data[key] = {};
 				data[key][lang] = a[1];
 			}
+			return this;
 		}
 		
 		public function setLanguage(lang:String):void {

@@ -24,7 +24,8 @@ package railk.as3.sound
 	public class AudioPlayer extends UIShape
 	{
 		private var autoPlay:Boolean;
-		private var loops:int;
+		private var nbPlay:int;
+		private var loop:Boolean;
 		private var sound:Sound;
 		private var channel:SoundChannel;
 		private var soundTransform:SoundTransform;
@@ -36,19 +37,20 @@ package railk.as3.sound
 		/**
 		 * CONSTRUCTEUR
 		 */
-		public function AudioPlayer(autoPlay:Boolean=false,loops:int=1,domain:String='') { setup(autoPlay,loops,domain); }
+		public function AudioPlayer(autoPlay:Boolean=false,loop:Boolean=false,nbPlay:int=1,domain:String='') { setup(autoPlay,loop,nbPlay,domain); }
 		
 		/**
 		 * SETUP
 		 */
-		public function setup(autoPlay:Boolean,loops:int,domain:String):void {
+		public function setup(autoPlay:Boolean,loop:Boolean,nbPlay:int,domain:String):void {
 			if (domain) {
 				Security.allowDomain(domain);
 				Security.loadPolicyFile("http://"+domain+"/crossdomain.xml");
 			}
 			
 			this.autoPlay = autoPlay;
-			this.loops = loops;
+			this.nbPlay = nbPlay;
+			this.loop = loop;
 			sound = new Sound();
 			channel = new SoundChannel();
 			soundTransform = new SoundTransform();
@@ -63,7 +65,6 @@ package railk.as3.sound
 		 * LISTENERS
 		 */
 		private function initListeners():void {
-			channel.addEventListener( Event.SOUND_COMPLETE, manageEvent, false, 0, true );
 			timer.addEventListener(TimerEvent.TIMER, manageEvent, false, 0, true);
 			sound.addEventListener( Event.COMPLETE, manageEvent, false, 0, true );
 			sound.addEventListener( ProgressEvent.PROGRESS, manageEvent, false, 0, true );
@@ -71,13 +72,20 @@ package railk.as3.sound
 			sound.addEventListener( IOErrorEvent.IO_ERROR, manageEvent, false, 0, true );
 		}
 		private function delListeners():void {
-			channel.removeEventListener( Event.SOUND_COMPLETE, manageEvent );
 			timer.removeEventListener(TimerEvent.TIMER, manageEvent );
 			sound.removeEventListener( Event.COMPLETE, manageEvent );
 			sound.removeEventListener( ProgressEvent.PROGRESS, manageEvent );
 			sound.removeEventListener( Event.OPEN, manageEvent );
 			sound.removeEventListener( IOErrorEvent.IO_ERROR, manageEvent );
 		}
+		
+		/**
+		 * CHANNEL LISTENERS
+		 * @param	soundUrl
+		 */
+		private function initChannelEvent(channel:SoundChannel):void {channel.addEventListener( Event.SOUND_COMPLETE, manageEvent, false, 0, true );}
+		private function delChannelEvent(channel:SoundChannel):void {channel.removeEventListener( Event.SOUND_COMPLETE, manageEvent );}
+		
 		
 		/**
 		 * LOAD
@@ -91,7 +99,9 @@ package railk.as3.sound
 		 */
 		public function play():void {
 			if (!isPlaying) {
-				channel = sound.play(position, loops, soundTransform);
+				delChannelEvent(channel);
+				channel = sound.play(position, nbPlay, soundTransform);
+				initChannelEvent(channel);
 				isPlaying = true; 
 				timer.start();
 			}
@@ -124,8 +134,10 @@ package railk.as3.sound
 		/**
 		 * REPLAY
 		 */
-		public function replay():void { 
-			channel = sound.play(0,loops,soundTransform)
+		public function replay():void {
+			delChannelEvent(channel);
+			channel = sound.play(0, nbPlay, soundTransform)
+			initChannelEvent(channel);
 			if (!isPlaying) {
 				isPlaying = true;
 				timer.start();
@@ -138,7 +150,9 @@ package railk.as3.sound
 		 */
 		public function seek(percent:Number):void {
 			channel.stop();
-			channel = sound.play( (sound.length * percent), loops, soundTransform );
+			delChannelEvent(channel);
+			channel = sound.play( (sound.length * percent), nbPlay, soundTransform );
+			initChannelEvent(channel);
 		}
 		
 		/**
@@ -182,7 +196,9 @@ package railk.as3.sound
 						if (isBuffering) {
 							isBuffering = false;
 							if (isPlaying) {
-								channel = sound.play(position,loops,soundTransform);
+								initChannelEvent(channel);
+								channel = sound.play(position, nbPlay, soundTransform);
+								delChannelEvent(channel);
 								timer.start();
 							}
 							dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_STOP_BUFFERING));
@@ -191,8 +207,9 @@ package railk.as3.sound
 					dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_LOAD_PROGRESS,(e.bytesLoaded/e.bytesTotal)*100));
 					break;
 				case Event.COMPLETE : dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_LOAD_COMPLETE,100)); break;
-				case Event.SOUND_COMPLETE : 
-					timer.stop();
+				case Event.SOUND_COMPLETE :
+					stop();
+					if (loop) replay();
 					dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_COMPLETE, 100)); 
 					break;
 				case TimerEvent.TIMER : dispatchEvent(new AudioPlayerEvent(AudioPlayerEvent.SOUND_PROGRESS,(channel.position/sound.length)*100)); break;

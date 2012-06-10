@@ -35,10 +35,10 @@ package railk.as3.video
 
 	public class StageVideoPlayer extends UISprite
 	{
-		private static const EMPTY:String = "empty";
-		private static const PLAYING:String = "playing";
-		private static const PAUSED:String = "paused";
-		private static const STOPPED:String = "stopped";
+		public static const EMPTY:String = "empty";
+		public static const PLAYING:String = "playing";
+		public static const PAUSED:String = "paused";
+		public static const STOPPED:String = "stopped";
 		
 		private var video:Video;
 		private var stageVideo:StageVideo;
@@ -47,7 +47,7 @@ package railk.as3.video
 		private var _videoWidth:int;
 		private var _videoHeight:int;
 		private var _videoMetaData:VideoMetadatas;
-		private var type:String;
+		private var rtmp:String;
 		
 		private var nc:NetConnection;
 		private var ns:NetStream;
@@ -61,6 +61,8 @@ package railk.as3.video
 		private var loadBeforePlay:Boolean;
 		private var autoPlay:Boolean;
 		
+		private var _launched:Boolean;
+		private var _connected:Boolean;
 		private var _hasStageVideo:Boolean;
 		private var _videoState:String;
 		private var _loaded:Number;
@@ -77,7 +79,7 @@ package railk.as3.video
 		 * @param	type
 		 * @param	domain
 		 */
-		public function StageVideoPlayer(width:int, height:int, autoPlay:Boolean=false, type:String="stream",domain:String="") { setup(width, height,autoPlay,type,domain); }
+		public function StageVideoPlayer(width:int, height:int, autoPlay:Boolean=false, rtmp:String="",domain:String="") { setup(width, height,autoPlay,rtmp,domain); }
 		
 		/**
 		 * SETUP
@@ -88,13 +90,13 @@ package railk.as3.video
 		 * @param	type
 		 * @param	domain
 		 */
-		private function setup(width:int, height:int, autoPlay:Boolean, type:String, domain:String):void {
-			if (domain) {
+		private function setup(width:int, height:int, autoPlay:Boolean, rtmp:String, domain:String):void {
+			if (domain!="") {
 				Security.allowDomain(domain);
 				Security.loadPolicyFile(domain+"/crossdomain.xml");
 			}
 			
-			this.type = type;
+			this.rtmp = rtmp;
 			this.autoPlay = autoPlay;
 			_videoWidth = width;
 			_videoHeight = height;
@@ -113,22 +115,29 @@ package railk.as3.video
 			video.visible = false;
 			video.smoothing = true;
 			
-			//CONNEXION
-			nc = new NetConnection();
-			
-			////////////////////
-			initListeners();
-			nc.connect(null);
-			////////////////////
+			// STAGE VIDEO AVAILABLE
+			TopLevel.stage.addEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, connect, false, 0, true);
 		}
 		
 		/**
-		 * HAS STAGE VIDEO
+		 * CONNECT
 		 * @param	event
 		 */
-		private function hasStageVideo(event:StageVideoAvailabilityEvent):void {	
-			_hasStageVideo = (event.availability == StageVideoAvailability.AVAILABLE);
+		private function connect(e:StageVideoAvailabilityEvent):void {	
+			TopLevel.stage.removeEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, connect);
+			_hasStageVideo = (e.availability == StageVideoAvailability.AVAILABLE);
 			
+			//////////////////////////////////////
+			nc = new NetConnection();
+			initListeners();
+			nc.connect( (rtmp!=""?rtmp:null) );
+			/////////////////////////////////////
+		}
+		
+		/**
+		 * LAUNCH
+		 */
+		private function launch():void {
 			//INIT VIDEO
 			if (_hasStageVideo) {
 				if (stageVideo == null && stage.stageVideos.length > 0) {
@@ -139,28 +148,7 @@ package railk.as3.video
 				video.addEventListener(VideoEvent.RENDER_STATE, onRenderState, false, 0, true);
 				addChild(video);
 			}
-			
-			// VIDEO ATTACHED
-			videoAvailable = true;
-			
-			if (autoPlay || loadBeforePlay) {
-				ns.play(videoUrl);
-				if (_hasStageVideo) {
-					stageVideo.attachNetStream(ns);
-				} else {
-					video.attachNetStream(ns);
-					video.visible = true;
-				}
-				activated = true;	
-				loadTimer.start();
-				playTimer.start();
-			}
-		}
-		
-		/**
-		 * LAUNCH
-		 */
-		private function launch():void {
+
 			//STREAM
 			ns = new NetStream(nc);
 			ns.bufferTime = 5;
@@ -172,13 +160,27 @@ package railk.as3.video
 			//SOUND
 			sound = new SoundTransform();
 			ns.soundTransform = sound;
+			
+			// ATTACH STREAM TO VIDEO
+			if (_hasStageVideo) stageVideo.attachNetStream(ns);
+			else {
+				video.attachNetStream(ns);
+				video.visible = true;
+			}
+			videoAvailable = true;
+			activated = true;
+			
+			// PLAY/LOAD
+			loadTimer.start();
+			ns.play(videoUrl);
+			if (autoPlay || loadBeforePlay) playTimer.start();
+			else ns.pause();
 		}
 		
 		/**
 		 * LISTENERS
 		 */
 		private function initListeners():void {
-			TopLevel.stage.addEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, hasStageVideo, false, 0, true);
 			playTimer.addEventListener(TimerEvent.TIMER, onPlayTimer, false, 0, true);
 			loadTimer.addEventListener(TimerEvent.TIMER, onLoadTimer, false, 0, true);
 			nc.addEventListener(NetStatusEvent.NET_STATUS, onNetStatus, false, 0, true);
@@ -187,7 +189,6 @@ package railk.as3.video
 		}
 		
 		private function delListeners():void {
-			TopLevel.stage.removeEventListener(StageVideoAvailabilityEvent.STAGE_VIDEO_AVAILABILITY, hasStageVideo);
 			playTimer.removeEventListener(TimerEvent.TIMER, onPlayTimer );
 			loadTimer.removeEventListener(TimerEvent.TIMER, onLoadTimer);
 			nc.removeEventListener(NetStatusEvent.NET_STATUS, onNetStatus);
@@ -217,6 +218,7 @@ package railk.as3.video
 			if(!activated) return;
 			ns.pause();
 			playTimer.reset();
+			_videoState = PAUSED;
 		}
 		
 		/**
@@ -298,7 +300,11 @@ package railk.as3.video
 			}
 			
 			ns.seek(seekTime);
-			
+			if (_videoState == STOPPED) {
+				_videoState = PLAYING;
+				ns.resume();
+				playTimer.start();
+			}
 			if(!scrubbing) { if(stateBeforeScrubbing == PLAYING || stateBeforeScrubbing == STOPPED) play(); }
 		}
 		
@@ -319,11 +325,26 @@ package railk.as3.video
 		}
 		
 		/**
+		 * ON PLAY STATUS
+		 * 
+		 * @param	data
+		 */
+		public function onPlayStatus( data:Object ) :void {
+			Logger.log("onPlayStatus: " + data);
+		}
+		
+		/**
+		 * XMP DATAS
+		 * 
+		 * @param	data
+		 */
+		public function onXMPData(data:Object):void {}
+		
+		/**
 		 * RESIZE VIDEO
 		 */
 		public function resizeVideo(width:int=0, height:int=0):void{	
 			_videoWidth = width, _videoHeight = height;
-			
 			if ( _hasStageVideo ) stageVideo.viewPort = getVideoRect(stageVideo.videoWidth, stageVideo.videoHeight);
 			else  {
 				videoRect = getVideoRect(video.videoWidth,video.videoHeight);
@@ -361,7 +382,7 @@ package railk.as3.video
 		/**
 		 * TOGGLE PLAY PAUSE
 		 */
-		private function togglePlayPause():void {
+		public function togglePlayPause():void {
 			if(_videoState == PLAYING) pause();
 			else if(_videoState == PAUSED || _videoState == EMPTY) play();
 			else if(_videoState == STOPPED) { seek(0); play(); }
@@ -372,16 +393,19 @@ package railk.as3.video
 		 * @param	event
 		 */
 		private function onLoadTimer(event:TimerEvent):void {
-			if(ns == null) return
-			_loaded = (ns.bytesLoaded/ns.bytesTotal)*100;
-			if(ns.bytesLoaded >= ns.bytesTotal) loadTimer.reset();
+			if (ns == null) return
+			_loaded = rtmp!=""?Math.min(Math.round(ns.bufferLength/ns.bufferTime*100), 100):(ns.bytesLoaded/ns.bytesTotal)*100;
 			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_LOAD, _loaded));
+			if (_loaded == 100) {
+				loadTimer.stop();
+				dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_LOAD_COMPLETE, _loaded));
+			}
 		}
 		
 		private function onPlayTimer(event:TimerEvent):void {
 			if(videoMetaData == null) return;
 			_played  = (ns.time / videoMetaData.duration)*100;
-			if (_videoState == STOPPED) playTimer.reset();
+			if (_videoState == STOPPED) playTimer.stop();
 			dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_PROGRESS, _played));
 		}
 		
@@ -405,11 +429,11 @@ package railk.as3.video
 					break;
 				case "NetStream.Buffer.Full": 
 					_buffering = false;
-					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STOP_BUFFERING, _played));
+					if(_videoState!=STOPPED) dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_STOP_BUFFERING, _played));
 					break;
 				case "NetStream.Buffer.Empty": 
 					_buffering = true;
-					dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START_BUFFERING, _played));
+					if(_videoState!=STOPPED) dispatchEvent(new VideoPlayerEvent(VideoPlayerEvent.VIDEO_START_BUFFERING, _played));
 					break;
 				case "NetConnection.Connect.Success": launch(); break;
 				case "NetConnection.Connect.Failed": break;
@@ -437,7 +461,7 @@ package railk.as3.video
 			secondsStr = StringUtils.padString(secondsStr, 2, "0");
 			var minutesStr:String = StringUtils.padString(minutes.toString(), 2, "0");
 			var heuresStr:String = StringUtils.padString(heures.toString(), 2, "0");
-			return "00:"+minutesStr + ":" + secondsStr;
+			return minutesStr + ":" + secondsStr;
 		}
 		
 		/**

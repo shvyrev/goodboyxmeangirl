@@ -23,6 +23,7 @@ package railk.as3.stage
 		private var stage:Stage;
 		private var action:Function;
 		private var state:String = 'normal';
+		public var isFull:Boolean;
 		
 		public static function getInstance():FullScreenMode {
 			return Singleton.getInstance(FullScreenMode);
@@ -69,8 +70,8 @@ package railk.as3.stage
 		
 		private function execute(type:String, data:LinkData):void {
 			switch(type) {
-				case "do" : stage.displayState = state = StageDisplayState.FULL_SCREEN; break;
-				case "undo" : stage.displayState = state = StageDisplayState.NORMAL; break;
+				case "do" : stage.displayState = state = StageDisplayState.FULL_SCREEN; isFull = true; break;
+				case "undo" : stage.displayState = state = StageDisplayState.NORMAL; isFull = false; break;
 				default:break;
 			}
 			if(action!=null) action.apply(null,[type,data]);
@@ -79,7 +80,7 @@ package railk.as3.stage
 		
 		private function activate(type:String,data:LinkData):void {
 			switch(type) {
-				case "do" : stage.displayState = state = StageDisplayState.FULL_SCREEN; break;
+				case "do" : stage.displayState = state = StageDisplayState.FULL_SCREEN; isFull = true; break;
 				default:break;
 			}
 			if(action!=null) action.apply(null,[type,data]);
@@ -87,7 +88,7 @@ package railk.as3.stage
 		
 		private function desactivate(type:String,data:LinkData):void {
 			switch(type) {
-				case "do" :  stage.displayState = state = StageDisplayState.NORMAL;break;
+				case "do" :  stage.displayState = state = StageDisplayState.NORMAL;  isFull = false; break;
 				default:break;
 			}
 			if(action!=null) action.apply(null,[type,data]);
